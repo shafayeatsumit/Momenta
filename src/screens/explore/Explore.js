@@ -32,7 +32,8 @@ const Explore = () => {
             <Category
               item={item}
               key={item.id}
-              handlePress={() => handleCategoryPress(item.id)}
+              handlePress={() => refRBSheet.current.open()}
+              handleLongPress={() => handleCategoryPress(item.id)}
             />
           ))}
         </ScrollView>

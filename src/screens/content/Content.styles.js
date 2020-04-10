@@ -18,18 +18,24 @@ const styles = StyleSheet.create({
   },
   middleRow: {
     flex: 1,
-    marginLeft: 30,
+    paddingLeft: 30,
+    paddingRight: 20,
+  },
+  bottomRow: {
+    height: '10%',
+    backgroundColor: '#827397',
+    width: ScreenWidth,
   },
   category: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 20,
+    fontSize: 21,
     paddingBottom: 40,
   },
   content: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 25,
+    fontSize: 24,
     textAlign: 'left',
     paddingRight: 20,
     lineHeight: 40,
@@ -42,8 +48,9 @@ const styles = StyleSheet.create({
     width: ScreenWidth / 2,
     top: -20,
     left: 0,
-    backgroundColor: 'transparent',
+    //backgroundColor: 'transparent',
     zIndex: 3,
+    backgroundColor: 'red',
   },
   rightTouchable: {
     position: 'absolute',
@@ -52,12 +59,8 @@ const styles = StyleSheet.create({
     width: ScreenWidth / 2,
     top: -20,
     zIndex: 3,
-    backgroundColor: 'transparent',
-  },
-  bottomRow: {
-    height: '15%',
-    backgroundColor: 'yellow',
-    width: ScreenWidth,
+    backgroundColor: 'red',
+    // backgroundColor: 'transparent',
   },
 });
 

@@ -6,8 +6,11 @@ import {ScreenWidth} from '../../helpers/constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const Category = ({item, handlePress}) => (
-  <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
+const Category = ({item, handlePress, handleLongPress}) => (
+  <TouchableOpacity
+    activeOpacity={0.5}
+    onPress={handlePress}
+    onLongPress={handleLongPress}>
     <LinearGradient
       key={item.id}
       start={{x: 0.2, y: 0}}

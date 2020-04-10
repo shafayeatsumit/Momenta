@@ -4,16 +4,32 @@ import {
   View,
   ImageBackground,
   Animated,
+  TouchableWithoutFeedback,
   Text,
   PanResponder,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
 import AllContents from '../../helpers/constants/tempdata';
+import {ScreenWidth} from '../../helpers/constants/common';
 
 const THOUGHT = 'Notice how you \nfeel compared to \nbefore.';
 const BG =
   'https://images.unsplash.com/photo-1581090824720-3c9f822192dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80';
+
+const findNextSetIndex = (state) => {
+  const {activeIndex, allContents} = state;
+  let nextIndex = null;
+  for (let i = activeIndex + 1; i < allContents.length; i++) {
+    const elem = allContents[activeIndex];
+    if (elem.setId !== allContents[i].setId) {
+      nextIndex = i;
+      break;
+    }
+  }
+
+  return nextIndex;
+};
 
 function reducer(state, action) {
   let updatedIndex, rewindCount;
@@ -42,6 +58,13 @@ function reducer(state, action) {
         activeIndex: updatedIndex,
         rewindCount,
       };
+    case 'GO_TO_NEXT_SET':
+      const nextIndex = findNextSetIndex(state);
+      return {
+        ...state,
+        activeIndex: nextIndex,
+        rewindCount: 0,
+      };
     default:
       return state;
   }
@@ -60,23 +83,27 @@ const Content = (props) => {
   );
 
   // setting up pan responder
-  const pan = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        console.log('panrespnder grant');
-        pan.setOffset({
-          x: pan.x._value,
-          y: pan.y._value,
-        });
-      },
-      onPanResponderMove: (event, gestureState) => {
-        console.log('gstate', gestureState);
-      },
-      onPanResponderRelease: () => {
-        pan.flattenOffset();
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {},
+      onPanResponderMove: (event, gestureState) => {},
+      onPanResponderRelease: (event, gestureState) => {
+        const x = event.nativeEvent.locationX.toFixed(2);
+        const left = ScreenWidth / 2;
+        const SWIPE_THRESHOLD = 0.25 * ScreenWidth;
+        if (gestureState.dx < -SWIPE_THRESHOLD) {
+          // swipe left
+          fadeOut('GO_TO_NEXT_SET');
+        } else if (x > left) {
+          // right clicked
+          fadeOut('GO_NEXT');
+        } else {
+          // left clicked
+          fadeOut('GO_BACK');
+        }
       },
     }),
   ).current;
@@ -146,14 +173,6 @@ const Content = (props) => {
           <Animated.Text style={[styles.content, {opacity: contentOpacity}]}>
             {contentText}
           </Animated.Text>
-          <View
-            onStartShouldSetResponder={() => fadeOut('GO_BACK')}
-            style={styles.leftTouchable}
-          />
-          <View
-            style={styles.rightTouchable}
-            onStartShouldSetResponder={() => fadeOut('GO_NEXT')}
-          />
         </View>
         <View style={styles.bottomRow} />
       </LinearGradient>

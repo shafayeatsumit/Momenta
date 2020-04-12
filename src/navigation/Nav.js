@@ -61,6 +61,7 @@ const style = StyleSheet.create({
   container: {
     backgroundColor: '#31396C',
     borderTopColor: 'transparent',
+    // height: 0,
   },
 });
 

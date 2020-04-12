@@ -12,19 +12,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topRow: {
-    height: ScreenHeight / 2.2,
-    marginLeft: 30,
-    justifyContent: 'flex-end',
-  },
-  middleRow: {
-    flex: 1,
-    paddingLeft: 30,
-    paddingRight: 20,
+    height: ScreenHeight * 0.3,
   },
   bottomRow: {
-    height: '10%',
-    backgroundColor: '#827397',
-    width: ScreenWidth,
+    height: ScreenHeight * 0.6,
+  },
+  categoryContainer: {
+    height: '20%',
+    paddingHorizontal: 20,
+    justifyContent: 'flex-end',
+    marginTop: 20,
+  },
+  thoughtContainer: {
+    height: '60%',
+    paddingHorizontal: 20,
+  },
+  footerContainer: {
+    height: '20%',
   },
   category: {
     fontFamily: FontType.SemiBold,
@@ -41,26 +45,24 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     zIndex: 1,
   },
-  leftTouchable: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: ScreenWidth / 2,
-    top: -20,
-    left: 0,
-    //backgroundColor: 'transparent',
-    zIndex: 3,
-    backgroundColor: 'red',
+  // will remove
+  wrapper: {},
+  slide1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
-  rightTouchable: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: ScreenWidth / 2,
-    top: -20,
-    zIndex: 3,
-    backgroundColor: 'red',
-    // backgroundColor: 'transparent',
+  slide2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
   },
 });
 

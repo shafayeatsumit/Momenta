@@ -10,19 +10,32 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {toggleCategory} from '../../redux/actions/toggleCategory';
-import {colors, fontType, fonts} from '../../helpers/theme';
 import Content from '../content/Content';
+import {getCategory, getProgress} from '../../helpers/common';
 import Category from './Category';
 import RBSheet from '../../components/rbsheet';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
-import {FontType} from '../../helpers/theme';
-
+import styles from './Explore.styles';
+import closeIcon from '../../../assets/icons/close.png';
+import {Image} from 'react-native';
 const Explore = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const categories = useSelector((state) => state.categories);
+  const contents = useSelector((state) => state.contents);
   const handleCategoryPress = (id) => dispatch(toggleCategory(id));
   const showStart = categories.some((item) => item.selected);
+  const rbsheetClose = () => {
+    dispatch({type: 'MINIMIZE_CONTENT'});
+    refRBSheet.current.close();
+  };
+  const minimizeScreenClose = () => dispatch({type: 'RESET_CONTENT'});
+
+  const rbSheetOpen = () => refRBSheet.current.open();
+  const {minimized, activeIndex, allContents} = contents;
+
+  const progress = getProgress(activeIndex, allContents);
+  console.log('progress', progress);
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -32,15 +45,13 @@ const Explore = () => {
             <Category
               item={item}
               key={item.id}
-              handlePress={() => refRBSheet.current.open()}
+              handlePress={rbSheetOpen}
               handleLongPress={() => handleCategoryPress(item.id)}
             />
           ))}
         </ScrollView>
         {showStart && (
-          <TouchableOpacity
-            style={styles.startButton}
-            onPress={() => refRBSheet.current.open()}>
+          <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
             <Text style={styles.start}>Start</Text>
           </TouchableOpacity>
         )}
@@ -57,40 +68,29 @@ const Explore = () => {
               backgroundColor: 'transparent',
             },
           }}>
-          <Content />
+          <Content closeSheet={rbsheetClose} />
         </RBSheet>
+        {minimized && (
+          <View style={styles.miminizedView}>
+            <TouchableOpacity
+              style={styles.minimizedContentHolder}
+              onPress={rbSheetOpen}>
+              <Text style={styles.minimizeCategory}>
+                {getCategory(activeIndex, allContents)}
+              </Text>
+              <Text style={styles.minimizeProgress}>
+                {progress.currentIndex}/{progress.totalInTheSet}
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.minimizedIconHolder}>
+              <TouchableOpacity onPress={minimizeScreenClose}>
+                <Image source={closeIcon} style={styles.closeIcon} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </SafeAreaView>
     </>
   );
 };
 export default Explore;
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: colors.primary,
-  },
-  tilesContainer: {
-    marginTop: 20,
-    flexGrow: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginHorizontal: ScreenWidth * 0.05,
-  },
-  startButton: {
-    position: 'absolute',
-    alignSelf: 'center',
-    height: 50,
-    width: ScreenWidth * 0.7,
-    borderRadius: 5,
-    backgroundColor: '#3D71DE',
-    bottom: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  start: {
-    fontFamily: FontType.SemiBold,
-    fontSize: 20,
-    color: 'white',
-  },
-});

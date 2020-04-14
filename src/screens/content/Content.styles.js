@@ -3,6 +3,8 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
 
+const ICON_SIZE = RFValue(30);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -14,7 +16,11 @@ const styles = StyleSheet.create({
   },
   topRow: {
     height: ScreenHeight * 0.3,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
+
   bottomRow: {
     height: ScreenHeight * 0.6,
   },
@@ -22,7 +28,7 @@ const styles = StyleSheet.create({
     height: ScreenHeight * 0.1,
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
-    marginTop: 20,
+    // marginTop: 20,
   },
   thoughtContainer: {
     height: ScreenHeight * 0.4,
@@ -45,27 +51,32 @@ const styles = StyleSheet.create({
     fontSize: RFValue(30),
     textAlign: 'left',
     paddingRight: 20,
-    lineHeight: 40,
     zIndex: 1,
   },
-  // will remove
-  wrapper: {},
-  slide1: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+  icon: {
+    height: ICON_SIZE,
+    width: ICON_SIZE,
+    tintColor: 'white',
   },
-  slide2: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+  iconMore: {
+    height: ICON_SIZE,
+    width: ICON_SIZE,
+    tintColor: 'white',
+    marginRight: 20,
   },
-  text: {
-    color: '#fff',
-    fontSize: 30,
-    fontWeight: 'bold',
+  iconDown: {
+    height: ICON_SIZE,
+    width: ICON_SIZE,
+    tintColor: 'white',
+    marginLeft: 10,
+    paddingHorizontal: 10,
+  },
+  bookmarkIcon: {
+    height: ICON_SIZE,
+    width: ICON_SIZE,
+    tintColor: 'white',
+    marginTop: 5,
+    marginLeft: 30,
   },
 });
 

@@ -16,6 +16,7 @@ const findNextSetIndex = (state) => {
 const INIT_STATE = {
   allContents: [],
   activeIndex: null,
+  minimized: false,
 };
 
 const contents = (state = INIT_STATE, action) => {
@@ -27,6 +28,7 @@ const contents = (state = INIT_STATE, action) => {
         ...state,
         allContents: [...state.allContents, ...DEFAULT_DATA],
         activeIndex: updatedIndex,
+        minimized: false,
       };
     case 'NEXT_CONTENT':
       updatedIndex = state.activeIndex === null ? 0 : state.activeIndex + 1;
@@ -45,6 +47,16 @@ const contents = (state = INIT_STATE, action) => {
       return {
         ...state,
         activeIndex: nextIndex,
+      };
+    case 'MINIMIZE_CONTENT':
+      return {
+        ...state,
+        minimized: true,
+      };
+    case 'RESET_CONTENT':
+      return {
+        ...state,
+        ...INIT_STATE,
       };
     default:
       return state;

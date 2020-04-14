@@ -11,6 +11,7 @@ import {
   Text,
   PanResponder,
 } from 'react-native';
+import ProgressCircle from '../../components/ProgressCircle';
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
@@ -21,6 +22,7 @@ import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import {RFValue} from '../../helpers/responsiveFont';
 import _ from 'lodash';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 const BG =
   'https://images.unsplash.com/photo-1581090824720-3c9f822192dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80';
 
@@ -161,7 +163,12 @@ class Content extends Component {
   };
 
   componentDidMount() {
-    const {dispatch} = this.props;
+    const {dispatch, activeIndex} = this.props;
+    if (activeIndex !== null) {
+      this.categoryOpacity.setValue(1);
+      this.contentOpacity.setValue(1);
+      return;
+    }
     dispatch({type: 'ADD_CONTENT'});
   }
 
@@ -183,7 +190,6 @@ class Content extends Component {
     const contentText = contentAvailable
       ? allContents[activeIndex].content
       : null;
-
     return (
       <ImageBackground style={styles.container} source={{uri: BG}}>
         <LinearGradient
@@ -193,7 +199,13 @@ class Content extends Component {
             'rgba(27,31,56,1)',
           ]}
           style={styles.contentContainer}>
-          <View style={styles.topRow} />
+          <View style={styles.topRow}>
+            <TouchableOpacity onPress={this.props.closeSheet}>
+              <Image source={downIcon} style={styles.iconDown} />
+            </TouchableOpacity>
+            <ProgressCircle progress={1 - 2 / 3} />
+            <Image source={moreIcon} style={styles.iconMore} />
+          </View>
           <Swiper
             style={styles.bottomRow}
             showsButtons={false}
@@ -223,24 +235,8 @@ class Content extends Component {
                   )}
                 </View>
                 <View style={styles.footerContainer}>
-                  <Image
-                    source={shareIcon}
-                    style={{
-                      height: ICON_SIZE,
-                      width: ICON_SIZE,
-                      tintColor: 'white',
-                    }}
-                  />
-                  <Image
-                    source={bookmarkIcon}
-                    style={{
-                      height: ICON_SIZE,
-                      width: ICON_SIZE,
-                      tintColor: 'white',
-                      marginTop: 5,
-                      marginLeft: 30,
-                    }}
-                  />
+                  <Image source={shareIcon} style={styles.icon} />
+                  <Image source={bookmarkIcon} style={styles.bookmarkIcon} />
                 </View>
               </View>
             ))}

@@ -6,38 +6,60 @@ import {
   ImageBackground,
   ScrollView,
   Animated,
+  Image,
   TouchableWithoutFeedback,
   Text,
   PanResponder,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
-import {
-  addContent,
-  nextContent,
-  previousContent,
-  goToNextSet,
-} from '../../redux/actions/contents';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import Swiper from 'react-native-swiper';
-import {useSelector, useDispatch} from 'react-redux';
+import bookmarkIcon from '../../../assets/icons/bookmark.png';
+import downIcon from '../../../assets/icons/down.png';
+import moreIcon from '../../../assets/icons/more.png';
+import shareIcon from '../../../assets/icons/share.png';
+import {RFValue} from '../../helpers/responsiveFont';
 import _ from 'lodash';
 const BG =
   'https://images.unsplash.com/photo-1581090824720-3c9f822192dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80';
 
+const ICON_SIZE = RFValue(30);
 class Content extends Component {
   constructor(props) {
     super(props);
     this.state = {
       scrollActive: true,
-      scrollIndex: 1,
+      scrollIndex: 0,
     };
+
     this.categoryOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
     this.tapActive = true;
     this.swiperPanResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
       onStartShouldSetPanResponder: () => true,
+      onPanResponderRelease: (event, gestureState) => {
+        const x = event.nativeEvent.locationX.toFixed(2);
+        const y = gestureState.y0.toFixed(2);
+        const maxTappableY = ScreenHeight - ScreenHeight * 0.1;
+        const leftTapArea = ScreenWidth / 2;
+        if (x > leftTapArea) {
+          // right clickable area
+          if (this.tapActive) {
+            this.fadeOut({type: 'NEXT_CONTENT'});
+          }
+        } else if (x < leftTapArea && y < maxTappableY) {
+          // left clickable area
+          const hasPreviousContent = this.props.allContents[
+            this.props.activeIndex
+          ];
+          const isSetChange = this.checkSetChange();
+          if (this.tapActive && !isSetChange && hasPreviousContent) {
+            this.fadeOut({type: 'PREVIOUS_CONTENT'});
+          }
+        }
+      },
     });
 
     this.tapPanResponder = PanResponder.create({
@@ -46,11 +68,6 @@ class Content extends Component {
       onPanResponderRelease: (event, gestureState) => {
         const x = event.nativeEvent.locationX.toFixed(2);
         const leftTapArea = ScreenWidth / 2;
-        const SWIPE_THRESHOLD = 0.25 * ScreenWidth;
-        console.log('swiped left', gestureState.dx);
-        if (gestureState.dx < -SWIPE_THRESHOLD) {
-          console.log('swiped left');
-        }
         if (x > leftTapArea) {
           // right click
           if (this.tapActive) {
@@ -92,13 +109,10 @@ class Content extends Component {
   };
 
   handleScroll = (index) => {
-    console.log('scroll index', index);
     this.setState({scrollIndex: index});
-    this.fadeOutQucik({type: 'GO_TO_NEXT_SET'});
-  };
-
-  handleScrollEnd = (e, state, context) => {
-    console.log('state', state);
+    if (index > this.state.scrollIndex) {
+      this.fadeOutQucik({type: 'GO_TO_NEXT_SET'});
+    }
   };
 
   fadeOutQucik = (actionType) => {
@@ -183,28 +197,51 @@ class Content extends Component {
           <Swiper
             style={styles.bottomRow}
             showsButtons={false}
-            loop={true}
+            loop={false}
             onIndexChanged={this.handleScroll}
-            scrollEnabled={this.state.scrollActive}
-            onResponderRelease={this.handleScrollEnd}
+            scrollEnabled={this.state.scrollEnabled}
             showsPagination={false}>
-            {[...Array(2).keys()].map((item, itemIndex) => (
+            {[...Array(4).keys()].map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
                 <View style={styles.categoryContainer}>
-                  <Animated.Text
-                    style={[styles.category, {opacity: this.categoryOpacity}]}>
-                    {contentCategory}
-                  </Animated.Text>
+                  {item === this.state.scrollIndex && (
+                    <Animated.Text
+                      style={[
+                        styles.category,
+                        {opacity: this.categoryOpacity},
+                      ]}>
+                      {contentCategory}
+                    </Animated.Text>
+                  )}
                 </View>
-                <View
-                  style={styles.thoughtContainer}
-                  {...this.tapPanResponder.panHandlers}>
-                  <Animated.Text
-                    style={[styles.content, {opacity: this.contentOpacity}]}>
-                    {contentText}
-                  </Animated.Text>
+                <View style={styles.thoughtContainer}>
+                  {item === this.state.scrollIndex && (
+                    <Animated.Text
+                      style={[styles.content, {opacity: this.contentOpacity}]}>
+                      {contentText}
+                    </Animated.Text>
+                  )}
                 </View>
-                <View style={styles.footerContainer} />
+                <View style={styles.footerContainer}>
+                  <Image
+                    source={shareIcon}
+                    style={{
+                      height: ICON_SIZE,
+                      width: ICON_SIZE,
+                      tintColor: 'white',
+                    }}
+                  />
+                  <Image
+                    source={bookmarkIcon}
+                    style={{
+                      height: ICON_SIZE,
+                      width: ICON_SIZE,
+                      tintColor: 'white',
+                      marginTop: 5,
+                      marginLeft: 30,
+                    }}
+                  />
+                </View>
               </View>
             ))}
           </Swiper>

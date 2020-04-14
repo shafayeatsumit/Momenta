@@ -6,19 +6,9 @@ import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 export default class Project extends Component {
   render() {
     return (
-      <>
-        <View style={{height: ScreenHeight * 0.2, backgroundColor: 'red'}} />
-        <Swiper
-          style={{height: ScreenHeight * 0.8, backgroundColor: 'yellow'}}
-          showsButtons={true}>
-          <View style={styles.slide1}>
-            <Text style={styles.text}>Hello Swiper</Text>
-          </View>
-          <View style={styles.slide2}>
-            <Text style={styles.text}>Beautiful</Text>
-          </View>
-        </Swiper>
-      </>
+      <View style={styles.MainContainer}>
+        <Text>Home</Text>
+      </View>
     );
   }
 }

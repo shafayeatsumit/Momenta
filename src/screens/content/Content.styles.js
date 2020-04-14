@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
+import {RFValue} from '../../helpers/responsiveFont';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,28 +19,30 @@ const styles = StyleSheet.create({
     height: ScreenHeight * 0.6,
   },
   categoryContainer: {
-    height: '20%',
+    height: ScreenHeight * 0.1,
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
     marginTop: 20,
   },
   thoughtContainer: {
-    height: '60%',
+    height: ScreenHeight * 0.4,
     paddingHorizontal: 20,
   },
   footerContainer: {
-    height: '20%',
+    height: ScreenHeight * 0.1,
+    marginLeft: 20,
+    flexDirection: 'row',
   },
   category: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 21,
+    fontSize: RFValue(24),
     paddingBottom: 40,
   },
   content: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 24,
+    fontSize: RFValue(30),
     textAlign: 'left',
     paddingRight: 20,
     lineHeight: 40,

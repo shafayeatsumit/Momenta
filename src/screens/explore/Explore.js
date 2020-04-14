@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginHorizontal: 20,
+    marginHorizontal: ScreenWidth * 0.05,
   },
   startButton: {
     position: 'absolute',

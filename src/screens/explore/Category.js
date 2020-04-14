@@ -5,6 +5,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ScreenWidth} from '../../helpers/constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {RFValue} from '../../helpers/responsiveFont';
 
 const Category = ({item, handlePress, handleLongPress}) => (
   <TouchableOpacity
@@ -19,7 +20,11 @@ const Category = ({item, handlePress, handleLongPress}) => (
       style={styles.tiles}>
       <View style={styles.iconContainer}>
         {item.selected && (
-          <Icon name="ios-checkmark-circle" size={30} color={'white'} />
+          <Icon
+            name="ios-checkmark-circle"
+            size={RFValue(32)}
+            color={'white'}
+          />
         )}
       </View>
       <View style={styles.nameContainer}>
@@ -49,7 +54,7 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18,
+    fontSize: RFValue(20),
     color: 'white',
     paddingLeft: 10,
     textAlign: 'left',

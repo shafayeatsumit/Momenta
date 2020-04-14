@@ -5,12 +5,11 @@ const findNextSetIndex = (state) => {
   let nextIndex = null;
   for (let i = activeIndex + 1; i < allContents.length; i++) {
     const elem = allContents[activeIndex];
-    if (elem.setId !== allContents[i].setId) {
+    if (elem && elem.setId !== allContents[i].setId) {
       nextIndex = i;
       break;
     }
   }
-
   return nextIndex;
 };
 

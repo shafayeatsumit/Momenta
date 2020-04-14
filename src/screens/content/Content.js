@@ -203,7 +203,10 @@ class Content extends Component {
             <TouchableOpacity onPress={this.props.closeSheet}>
               <Image source={downIcon} style={styles.iconDown} />
             </TouchableOpacity>
-            <ProgressCircle progress={1 - 2 / 3} />
+            <ProgressCircle
+              allContents={allContents}
+              activeIndex={activeIndex}
+            />
             <Image source={moreIcon} style={styles.iconMore} />
           </View>
           <Swiper

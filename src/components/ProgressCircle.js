@@ -14,13 +14,21 @@ const r = (size - strokeWidth) / 2;
 const cx = size / 2;
 const cy = size / 2;
 const FontSize = RFValue(12);
-const ProgressCircle = ({progress}) => {
+import {getProgress} from '../helpers/common';
+
+const ProgressCircle = ({allContents, activeIndex}) => {
   const circumference = r * 2 * PI;
+  const progressObject = getProgress(activeIndex, allContents);
+  const progress = progressObject
+    ? 1 - progressObject.currentIndex / progressObject.totalInTheSet
+    : 1;
   const α = interpolate(progress, {
     inputRange: [0, 1],
     outputRange: [0, PI * 2],
   });
   const strokeDashoffset = multiply(α, r);
+  const currentIndex = progressObject ? progressObject.currentIndex : 0;
+  const totalInTheSet = progressObject ? progressObject.totalInTheSet : 0;
   return (
     <View style={styles.main}>
       <Svg width={size} height={size} style={styles.container}>
@@ -45,7 +53,9 @@ const ProgressCircle = ({progress}) => {
           }}
         />
       </Svg>
-      <Text style={styles.text}>2/3</Text>
+      <Text style={styles.text}>
+        {currentIndex}/{totalInTheSet}
+      </Text>
     </View>
   );
 };

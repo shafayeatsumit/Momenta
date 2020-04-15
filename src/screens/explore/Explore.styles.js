@@ -10,8 +10,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.primary,
   },
+  header: {
+    marginTop: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+  },
+  cancelButton: {
+    paddingHorizontal: 15,
+  },
+  cancelText: {
+    fontFamily: FontType.Medium,
+    fontSize: RFValue(18),
+    color: '#ffffff',
+  },
   tilesContainer: {
-    marginTop: 20,
+    marginTop: 10,
     flexGrow: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',

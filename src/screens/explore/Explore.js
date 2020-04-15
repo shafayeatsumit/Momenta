@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {toggleCategory} from '../../redux/actions/toggleCategory';
+import {toggleCategory} from '../../redux/actions/category';
 import Content from '../content/Content';
 import {getCategory, getProgress} from '../../helpers/common';
 import Category from './Category';
@@ -23,15 +23,23 @@ const Explore = () => {
   const refRBSheet = useRef();
   const categories = useSelector((state) => state.categories);
   const contents = useSelector((state) => state.contents);
-  const handleCategoryPress = (id) => dispatch(toggleCategory(id));
-  const showStart = categories.some((item) => item.selected);
+  const handleCategoryPress = (id) => {
+    if (categories.multiselectMode) {
+      dispatch(toggleCategory(id));
+    } else {
+      dispatch(toggleCategory(id));
+      refRBSheet.current.open();
+    }
+  };
+  const longPressCategory = () => dispatch({type: 'MULTI_SELECT_MODE'});
+  // const showStart = categories.some((item) => item.selected);
   const rbsheetClose = () => {
     dispatch({type: 'MINIMIZE_CONTENT'});
     refRBSheet.current.close();
   };
   const handleClose = () => dispatch({type: 'MINIMIZE_CONTENT'});
-
   const minimizeScreenClose = () => dispatch({type: 'RESET_CONTENT'});
+  const cancelMultiselect = () => dispatch({type: 'CACEL_MULTI_SELECT_MODE'});
 
   const rbSheetOpen = () => {
     refRBSheet.current.open();
@@ -39,26 +47,31 @@ const Explore = () => {
   const {minimized, activeIndex, allContents} = contents;
 
   const progress = getProgress(activeIndex, allContents);
-
   return (
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.mainContainer}>
+        <View style={styles.header}>
+          <View />
+          {categories.multiselectMode && (
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={cancelMultiselect}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         <ScrollView contentContainerStyle={styles.tilesContainer}>
-          {categories.map((item) => (
+          {categories.items.map((item) => (
             <Category
               item={item}
               key={item.id}
-              handlePress={rbSheetOpen}
-              handleLongPress={() => handleCategoryPress(item.id)}
+              handlePress={() => handleCategoryPress(item.id)}
+              multiselectMode={categories.multiselectMode}
+              handleLongPress={longPressCategory}
             />
           ))}
         </ScrollView>
-        {showStart && (
-          <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
-            <Text style={styles.start}>Start</Text>
-          </TouchableOpacity>
-        )}
         <RBSheet
           ref={refRBSheet}
           closeOnDragDown={true}

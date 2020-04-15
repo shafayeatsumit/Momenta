@@ -29,13 +29,17 @@ const Explore = () => {
     dispatch({type: 'MINIMIZE_CONTENT'});
     refRBSheet.current.close();
   };
+  const handleClose = () => dispatch({type: 'MINIMIZE_CONTENT'});
+
   const minimizeScreenClose = () => dispatch({type: 'RESET_CONTENT'});
 
-  const rbSheetOpen = () => refRBSheet.current.open();
+  const rbSheetOpen = () => {
+    refRBSheet.current.open();
+  };
   const {minimized, activeIndex, allContents} = contents;
 
   const progress = getProgress(activeIndex, allContents);
-  console.log('progress', progress);
+
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -58,8 +62,10 @@ const Explore = () => {
         <RBSheet
           ref={refRBSheet}
           closeOnDragDown={true}
+          onClose={handleClose}
           closeOnPressMask={false}
           height={ScreenHeight - 40}
+          duration={350}
           customStyles={{
             wrapper: {
               backgroundColor: 'transparent',

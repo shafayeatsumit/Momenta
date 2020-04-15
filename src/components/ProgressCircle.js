@@ -6,7 +6,7 @@ import {FontType} from '../helpers/theme';
 import {RFValue} from '../helpers/responsiveFont';
 const {interpolate, multiply} = Animated;
 const {width} = Dimensions.get('window');
-const size = width * 0.1;
+const size = width * 0.12;
 const strokeWidth = RFValue(3);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const {PI} = Math;

@@ -1,14 +1,11 @@
-import React, {Component, useEffect, useState, useReducer, useRef} from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
   View,
   ImageBackground,
-  ScrollView,
   Animated,
   Image,
-  TouchableWithoutFeedback,
-  Text,
   PanResponder,
 } from 'react-native';
 import ProgressCircle from '../../components/ProgressCircle';
@@ -20,13 +17,11 @@ import bookmarkIcon from '../../../assets/icons/bookmark.png';
 import downIcon from '../../../assets/icons/down.png';
 import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
-import {RFValue} from '../../helpers/responsiveFont';
 import _ from 'lodash';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 const BG =
   'https://images.unsplash.com/photo-1581090824720-3c9f822192dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80';
 
-const ICON_SIZE = RFValue(30);
 class Content extends Component {
   constructor(props) {
     super(props);
@@ -37,6 +32,8 @@ class Content extends Component {
 
     this.categoryOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
+    this.iconOpacity = new Animated.Value(0);
+    this.progressOpacity = new Animated.Value(0);
     this.tapActive = true;
     this.swiperPanResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -129,7 +126,19 @@ class Content extends Component {
     if (isSetChanged) {
       Animated.timing(this.categoryOpacity, {
         toValue: 1,
-        duration: 3000,
+        duration: 3500,
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(this.progressOpacity, {
+        toValue: 1,
+        duration: 1000,
+        delay: 800,
+        useNativeDriver: true,
+      }).start();
+      Animated.timing(this.iconOpacity, {
+        toValue: 1,
+        duration: 300,
+        delay: 1000,
         useNativeDriver: true,
       }).start();
     }
@@ -149,12 +158,28 @@ class Content extends Component {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
         duration: 3000,
+        delay: 1500,
+        useNativeDriver: true,
+      }).start();
+      //second
+      Animated.timing(this.progressOpacity, {
+        toValue: 0,
+        delay: 800,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+      // third
+      Animated.timing(this.iconOpacity, {
+        toValue: 0,
+        duration: 300,
+        delay: 1000,
         useNativeDriver: true,
       }).start();
     }
+    // fist
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 3500,
+      duration: 1500,
       delay: 1500,
       useNativeDriver: true,
     }).start(() => {
@@ -167,6 +192,8 @@ class Content extends Component {
     if (activeIndex !== null) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
+      this.progressOpacity.setValue(1);
+      this.iconOpacity.setValue(1);
       return;
     }
     dispatch({type: 'ADD_CONTENT'});
@@ -201,13 +228,21 @@ class Content extends Component {
           style={styles.contentContainer}>
           <View style={styles.topRow}>
             <TouchableOpacity onPress={this.props.closeSheet}>
-              <Image source={downIcon} style={styles.iconDown} />
+              <Animated.Image
+                source={downIcon}
+                style={[styles.iconDown, {opacity: this.iconOpacity}]}
+              />
             </TouchableOpacity>
-            <ProgressCircle
-              allContents={allContents}
-              activeIndex={activeIndex}
+            <Animated.View style={{opacity: this.progressOpacity}}>
+              <ProgressCircle
+                allContents={allContents}
+                activeIndex={activeIndex}
+              />
+            </Animated.View>
+            <Animated.Image
+              source={moreIcon}
+              style={[styles.iconMore, {opacity: this.iconOpacity}]}
             />
-            <Image source={moreIcon} style={styles.iconMore} />
           </View>
           <Swiper
             style={styles.bottomRow}
@@ -238,8 +273,14 @@ class Content extends Component {
                   )}
                 </View>
                 <View style={styles.footerContainer}>
-                  <Image source={shareIcon} style={styles.icon} />
-                  <Image source={bookmarkIcon} style={styles.bookmarkIcon} />
+                  <Animated.Image
+                    source={shareIcon}
+                    style={[styles.icon, {opacity: this.iconOpacity}]}
+                  />
+                  <Animated.Image
+                    source={bookmarkIcon}
+                    style={[styles.bookmarkIcon, {opacity: this.iconOpacity}]}
+                  />
                 </View>
               </View>
             ))}

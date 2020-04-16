@@ -5,6 +5,7 @@ import {
   ScrollView,
   StatusBar,
   View,
+  Image,
   Text,
   TouchableOpacity,
 } from 'react-native';
@@ -17,7 +18,6 @@ import RBSheet from '../../components/rbsheet';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import styles from './Explore.styles';
 import closeIcon from '../../../assets/icons/close.png';
-import {Image} from 'react-native';
 const Explore = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
@@ -32,28 +32,30 @@ const Explore = () => {
     }
   };
   const longPressCategory = () => dispatch({type: 'MULTI_SELECT_MODE'});
-  // const showStart = categories.some((item) => item.selected);
   const rbsheetClose = () => {
     dispatch({type: 'MINIMIZE_CONTENT'});
     refRBSheet.current.close();
   };
   const handleClose = () => dispatch({type: 'MINIMIZE_CONTENT'});
-  const minimizeScreenClose = () => dispatch({type: 'RESET_CONTENT'});
-  const cancelMultiselect = () => dispatch({type: 'CACEL_MULTI_SELECT_MODE'});
+  const minimizeScreenClose = () =>
+    dispatch({type: 'RESET_CATEGORIES_CONTENT'});
+  const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
 
-  const rbSheetOpen = () => {
-    refRBSheet.current.open();
-  };
+  const rbSheetOpen = () => refRBSheet.current.open();
+
   const {minimized, activeIndex, allContents} = contents;
-
+  const itemSelected = categories.selected.length;
+  const showStartButton =
+    categories.multiselectMode && !minimized && itemSelected > 1;
   const progress = getProgress(activeIndex, allContents);
+  const showCancelButton = categories.multiselectMode && !minimized;
   return (
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.header}>
           <View />
-          {categories.multiselectMode && (
+          {showCancelButton && (
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={cancelMultiselect}>
@@ -69,6 +71,7 @@ const Explore = () => {
               handlePress={() => handleCategoryPress(item.id)}
               multiselectMode={categories.multiselectMode}
               handleLongPress={longPressCategory}
+              selectedItems={categories.selected}
             />
           ))}
         </ScrollView>
@@ -106,6 +109,13 @@ const Explore = () => {
                 <Image source={closeIcon} style={styles.closeIcon} />
               </TouchableOpacity>
             </View>
+          </View>
+        )}
+        {showStartButton && (
+          <View style={styles.startButtonContainer}>
+            <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
+              <Text style={styles.start}>Start Mix</Text>
+            </TouchableOpacity>
           </View>
         )}
       </SafeAreaView>

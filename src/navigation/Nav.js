@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/home/Home';
 import ExploreScreen from '../screens/explore/Explore';
 import ProfileScreen from '../screens/profile/Profile';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useSelector, useDispatch} from 'react-redux';
 Icon.loadFont();
 const TabColors = {
   activeTint: '#FFFFFF',
@@ -14,10 +15,13 @@ const TabColors = {
 };
 
 const Tab = createBottomTabNavigator();
-
 const Nav = () => {
+  const categories = useSelector((state) => state.categories);
+  const contents = useSelector((state) => state.contents);
+  const hideHomeScreen = categories.multiselectMode && !contents.minimized;
   return (
     <NavigationContainer>
+      <StatusBar hidden />
       <Tab.Navigator
         tabBarOptions={{
           style: style.container,
@@ -38,6 +42,7 @@ const Nav = () => {
           name="explore"
           component={ExploreScreen}
           options={{
+            tabBarVisible: !hideHomeScreen,
             tabBarIcon: ({color}) => (
               <Icon name="ios-search" size={30} color={color} />
             ),

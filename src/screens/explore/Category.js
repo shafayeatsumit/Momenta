@@ -7,7 +7,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {RFValue} from '../../helpers/responsiveFont';
 
-const Category = ({item, handlePress, handleLongPress, multiselectMode}) => {
+const Category = ({
+  item,
+  handlePress,
+  handleLongPress,
+  multiselectMode,
+  selectedItems,
+}) => {
+  const selectedIndex = selectedItems.findIndex(
+    (selectedItem) => selectedItem === item.id,
+  );
+  const isSelected = selectedIndex !== -1;
   const textColor = item.gradientColors[0];
   return (
     <TouchableOpacity
@@ -25,11 +35,13 @@ const Category = ({item, handlePress, handleLongPress, multiselectMode}) => {
             <View
               style={[
                 styles.categoryIndexHolder,
-                item.orderId && {backgroundColor: 'white'},
+                isSelected && styles.whiteBackground,
               ]}>
-              <Text style={[styles.categoryIndex, {color: textColor}]}>
-                {item.orderId}
-              </Text>
+              {isSelected && (
+                <Text style={[styles.categoryIndex, {color: textColor}]}>
+                  {selectedIndex + 1}
+                </Text>
+              )}
             </View>
           )}
         </View>

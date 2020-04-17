@@ -1,15 +1,20 @@
 import React from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {RFValue} from '../helpers/responsiveFont';
+import BookmarkScreen from '../screens/bookmarks/bookmarks';
 import HomeScreen from '../screens/home/Home';
-import ExploreScreen from '../screens/explore/Explore';
 import ProfileScreen from '../screens/profile/Profile';
+import {colors} from '../helpers/theme';
+import HomeIcon from '../../assets/icons/home.png';
+import BookmarkIcon from '../../assets/icons/bookmark.png';
+import UserIcon from '../../assets/icons/user.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 Icon.loadFont();
 const TabColors = {
-  activeTint: '#FFFFFF',
+  activeTint: '#ffffff',
   inactiveTint: '#696E95',
   inactiveBackgroundColor: '#31396C',
 };
@@ -24,7 +29,7 @@ const Nav = () => {
       <StatusBar hidden />
       <Tab.Navigator
         tabBarOptions={{
-          style: style.container,
+          style: styles.container,
           activeTintColor: TabColors.activeTint,
           inactiveTintColor: TabColors.inactiveTint,
           showLabel: false,
@@ -33,18 +38,24 @@ const Nav = () => {
           name="home"
           component={HomeScreen}
           options={{
+            tabBarVisible: !hideHomeScreen,
             tabBarIcon: ({color}) => (
-              <Icon name="ios-home" size={30} color={color} />
+              <Image
+                source={HomeIcon}
+                style={[styles.icon, {tintColor: color}]}
+              />
             ),
           }}
         />
         <Tab.Screen
-          name="explore"
-          component={ExploreScreen}
+          name="bookmarks"
+          component={BookmarkScreen}
           options={{
-            tabBarVisible: !hideHomeScreen,
             tabBarIcon: ({color}) => (
-              <Icon name="ios-search" size={30} color={color} />
+              <Image
+                source={BookmarkIcon}
+                style={[styles.icon, {tintColor: color}]}
+              />
             ),
           }}
         />
@@ -53,7 +64,10 @@ const Nav = () => {
           component={ProfileScreen}
           options={{
             tabBarIcon: ({color}) => (
-              <Icon name="md-person" size={30} color={color} />
+              <Image
+                source={UserIcon}
+                style={[styles.icon, {tintColor: color}]}
+              />
             ),
           }}
         />
@@ -62,11 +76,15 @@ const Nav = () => {
   );
 };
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#31396C',
+    backgroundColor: colors.primaryLight,
     borderTopColor: 'transparent',
-    // height: 0,
+    height: RFValue(100),
+  },
+  icon: {
+    height: RFValue(30),
+    width: RFValue(30),
   },
 });
 

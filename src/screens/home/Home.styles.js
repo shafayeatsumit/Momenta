@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   miminizedView: {
     width: ScreenWidth,
     height: ScreenHeight * 0.08,
-    backgroundColor: '#31396C',
+    backgroundColor: colors.primaryLight,
     borderBottomWidth: 0.3,
     borderBottomColor: 'white',
     borderTopLeftRadius: 5,

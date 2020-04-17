@@ -1,5 +1,12 @@
-import * as React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Easing,
+  Animated as RNAnimated,
+} from 'react-native';
 import Svg, {Circle} from 'react-native-svg';
 import Animated from 'react-native-reanimated';
 import {FontType} from '../helpers/theme';
@@ -16,19 +23,20 @@ const cy = size / 2;
 const FontSize = RFValue(12);
 import {getProgress} from '../helpers/common';
 
-const ProgressCircle = ({allContents, activeIndex}) => {
+const ProgressCircle = ({allContents, activeIndex, progress}) => {
   const circumference = r * 2 * PI;
-  const progressObject = getProgress(activeIndex, allContents);
-  const progress = progressObject
-    ? 1 - progressObject.currentIndex / progressObject.totalInTheSet
-    : 1;
+  // const progressObject = getProgress(activeIndex, allContents);
+  // const progress = progressObject
+  //   ? 1 - progressObject.currentIndex / progressObject.totalInTheSet
+  //   : 1;
   const α = interpolate(progress, {
     inputRange: [0, 1],
     outputRange: [0, PI * 2],
   });
+
   const strokeDashoffset = multiply(α, r);
-  const currentIndex = progressObject ? progressObject.currentIndex : 0;
-  const totalInTheSet = progressObject ? progressObject.totalInTheSet : 0;
+  // const currentIndex = progressObject ? progressObject.currentIndex : 0;
+  // const totalInTheSet = progressObject ? progressObject.totalInTheSet : 0;
   return (
     <View style={styles.main}>
       <Svg width={size} height={size} style={styles.container}>
@@ -53,9 +61,9 @@ const ProgressCircle = ({allContents, activeIndex}) => {
           }}
         />
       </Svg>
-      <Text style={styles.text}>
+      {/* <Text style={styles.text}>
         {currentIndex}/{totalInTheSet}
-      </Text>
+      </Text> */}
     </View>
   );
 };

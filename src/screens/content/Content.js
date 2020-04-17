@@ -6,6 +6,8 @@ import {
   ImageBackground,
   Animated,
   Image,
+  Text,
+  SafeAreaView,
   PanResponder,
 } from 'react-native';
 import ProgressCircle from '../../components/ProgressCircle';
@@ -19,21 +21,24 @@ import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-const BG =
-  'https://images.unsplash.com/photo-1581090824720-3c9f822192dd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1351&q=80';
+import {getProgress} from '../../helpers/common';
 
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
+
+// import DefaultBackground from '../../../assets/default_background.png';
+import DefaultBackground from '../../../assets/background_two.png';
 class Content extends Component {
   constructor(props) {
     super(props);
     this.state = {
       scrollActive: true,
       scrollIndex: 0,
+      progressIndex: 0,
     };
 
     this.categoryOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
     this.iconOpacity = new Animated.Value(0);
-    this.progressOpacity = new Animated.Value(0);
     this.tapActive = true;
     this.swiperPanResponder = PanResponder.create({
       onMoveShouldSetPanResponder: () => true,
@@ -56,27 +61,6 @@ class Content extends Component {
           const isSetChange = this.checkSetChange();
           if (this.tapActive && !isSetChange && hasPreviousContent) {
             this.fadeOut({type: 'PREVIOUS_CONTENT'});
-          }
-        }
-      },
-    });
-
-    this.tapPanResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderRelease: (event, gestureState) => {
-        const x = event.nativeEvent.locationX.toFixed(2);
-        const leftTapArea = ScreenWidth / 2;
-        if (x > leftTapArea) {
-          // right click
-          if (this.tapActive) {
-            console.log('click right++');
-            this.fadeOut({type: 'NEXT_CONTENT'});
-          }
-        } else {
-          // left click
-          if (this.tapActive) {
-            console.log('click left++');
           }
         }
       },
@@ -126,19 +110,7 @@ class Content extends Component {
     if (isSetChanged) {
       Animated.timing(this.categoryOpacity, {
         toValue: 1,
-        duration: 3500,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(this.progressOpacity, {
-        toValue: 1,
-        duration: 1000,
-        delay: 800,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(this.iconOpacity, {
-        toValue: 1,
-        duration: 300,
-        delay: 1000,
+        duration: 3000,
         useNativeDriver: true,
       }).start();
     }
@@ -152,38 +124,29 @@ class Content extends Component {
 
   fadeOut = (actionType) => {
     const {dispatch} = this.props;
+
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
     if (willSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
         duration: 3000,
-        delay: 1500,
-        useNativeDriver: true,
-      }).start();
-      //second
-      Animated.timing(this.progressOpacity, {
-        toValue: 0,
-        delay: 800,
-        duration: 500,
-        useNativeDriver: true,
-      }).start();
-      // third
-      Animated.timing(this.iconOpacity, {
-        toValue: 0,
-        duration: 300,
         delay: 1000,
         useNativeDriver: true,
       }).start();
     }
-    // fist
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 1500,
-      delay: 1500,
+      duration: 2000,
+      delay: 500,
       useNativeDriver: true,
     }).start(() => {
+      this.setState({progressIndex: this.state.progressIndex + 1});
       dispatch(actionType);
+      if (willSetChange) {
+        // TODO: remove that later
+        setTimeout(() => this.setState({progressIndex: 0}), 1600);
+      }
     });
   };
 
@@ -192,8 +155,6 @@ class Content extends Component {
     if (activeIndex !== null) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
-      this.progressOpacity.setValue(1);
-      this.iconOpacity.setValue(1);
       return;
     }
     dispatch({type: 'ADD_CONTENT'});
@@ -209,7 +170,11 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex} = this.props;
+    const {allContents, activeIndex, categories} = this.props;
+    const progressObject = getProgress(activeIndex, allContents);
+    const progress = progressObject
+      ? (this.state.progressIndex / progressObject.totalInTheSet) * 100
+      : 0;
     const contentAvailable = allContents[activeIndex];
     const contentCategory = contentAvailable
       ? allContents[activeIndex].category
@@ -217,39 +182,44 @@ class Content extends Component {
     const contentText = contentAvailable
       ? allContents[activeIndex].content
       : null;
+    const background = categories.items.find(
+      (item) => item.id === categories.selected[categories.selected.length - 1],
+    ).image;
+    // console.log('baccc', categories.selected[categories.selected.length - 1]);
     return (
-      <ImageBackground style={styles.container} source={{uri: BG}}>
-        <LinearGradient
-          colors={[
-            'rgba(27,31,55,0.57)',
-            'rgba(27,31,56,1)',
-            'rgba(27,31,56,1)',
-          ]}
-          style={styles.contentContainer}>
+      <ImageBackground style={styles.container} source={background}>
+        <SafeAreaView style={styles.contentContainer}>
           <View style={styles.topRow}>
             <TouchableOpacity onPress={this.props.closeSheet}>
-              <Animated.Image
-                source={downIcon}
-                style={[styles.iconDown, {opacity: this.iconOpacity}]}
-              />
+              <Animated.Image source={downIcon} style={styles.iconDown} />
             </TouchableOpacity>
-            <Animated.View style={{opacity: this.progressOpacity}}>
-              <ProgressCircle
-                allContents={allContents}
-                activeIndex={activeIndex}
-              />
-            </Animated.View>
-            <Animated.Image
-              source={moreIcon}
-              style={[styles.iconMore, {opacity: this.iconOpacity}]}
-            />
+            {this.state.progressIndex ? (
+              <AnimatedCircularProgress
+                size={45}
+                width={3}
+                fill={progress}
+                rotation={0}
+                duration={2000}
+                tintColor="white"
+                backgroundColor="rgba(255, 255, 255, 0.2)">
+                {progressObject
+                  ? (fill) => (
+                      <Text style={styles.progressText}>
+                        {this.state.progressIndex}/
+                        {progressObject.totalInTheSet}
+                      </Text>
+                    )
+                  : null}
+              </AnimatedCircularProgress>
+            ) : null}
+
+            <Animated.Image source={moreIcon} style={styles.iconMore} />
           </View>
           <Swiper
-            style={styles.bottomRow}
             showsButtons={false}
             loop={false}
             onIndexChanged={this.handleScroll}
-            scrollEnabled={this.state.scrollEnabled}
+            scrollEnabled={this.state.scrollActive}
             showsPagination={false}>
             {[...Array(4).keys()].map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
@@ -272,31 +242,27 @@ class Content extends Component {
                     </Animated.Text>
                   )}
                 </View>
-                <View style={styles.footerContainer}>
-                  <Animated.Image
-                    source={shareIcon}
-                    style={[styles.icon, {opacity: this.iconOpacity}]}
-                  />
-                  <Animated.Image
-                    source={bookmarkIcon}
-                    style={[styles.bookmarkIcon, {opacity: this.iconOpacity}]}
-                  />
-                </View>
               </View>
             ))}
           </Swiper>
-        </LinearGradient>
+          <View style={styles.footerContainer}>
+            <Animated.Image source={shareIcon} style={styles.icon} />
+            <Animated.Image source={bookmarkIcon} style={styles.bookmarkIcon} />
+          </View>
+        </SafeAreaView>
       </ImageBackground>
     );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {contents} = state;
+  const {contents, categories} = state;
   const {allContents, activeIndex} = contents;
+
   return {
     allContents,
     activeIndex,
+    categories,
   };
 };
 

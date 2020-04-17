@@ -132,13 +132,6 @@ class RBSheet extends Component {
               {height: animatedHeight},
               customStyles.container,
             ]}>
-            {/* {closeOnDragDown && (
-              <View style={styles.draggableContainer}>
-                <View
-                  style={[styles.draggableIcon, customStyles.draggableIcon]}
-                />
-              </View>
-            )} */}
             {children}
           </Animated.View>
         </KeyboardAvoidingView>

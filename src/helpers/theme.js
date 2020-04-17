@@ -1,6 +1,7 @@
 const colors = {
   cornflowerBlue: '#3c71de',
-  primary: '#252a43',
+  primary: '#1b1f37',
+  primaryLight: '#232741',
   secondary: '#2BDA8E',
   tertiary: '#FFE358',
   black: '#323643',

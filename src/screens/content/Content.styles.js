@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   content: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: RFValue(30),
+    fontSize: RFValue(36),
     textAlign: 'left',
     paddingRight: 20,
     zIndex: 1,
@@ -56,27 +56,27 @@ const styles = StyleSheet.create({
   icon: {
     height: ICON_SIZE,
     width: ICON_SIZE,
-    tintColor: 'white',
+    tintColor: 'rgba(255,255,255,0.2)',
   },
   iconMore: {
     height: ICON_SIZE,
     width: ICON_SIZE,
-    tintColor: 'white',
     marginRight: 20,
+    tintColor: 'rgba(255,255,255,0.2)',
   },
   iconDown: {
     height: ICON_SIZE,
     width: ICON_SIZE,
-    tintColor: 'white',
     marginLeft: 10,
     paddingHorizontal: 10,
+    tintColor: 'rgba(255,255,255,0.2)',
   },
   bookmarkIcon: {
     height: ICON_SIZE,
     width: ICON_SIZE,
-    tintColor: 'white',
     marginTop: 5,
     marginLeft: 30,
+    tintColor: 'rgba(255,255,255,0.2)',
   },
   progressText: {
     fontSize: RFValue(12),

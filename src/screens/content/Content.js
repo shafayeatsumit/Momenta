@@ -10,30 +10,24 @@ import {
   SafeAreaView,
   PanResponder,
 } from 'react-native';
-import ProgressCircle from '../../components/ProgressCircle';
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import Swiper from 'react-native-swiper';
+import DEFAULT_IMAGE from '../../../assets/default_background.png';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
 import downIcon from '../../../assets/icons/down.png';
 import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {getProgress} from '../../helpers/common';
 
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
-
-// import DefaultBackground from '../../../assets/default_background.png';
-import DefaultBackground from '../../../assets/background_two.png';
 class Content extends Component {
   constructor(props) {
     super(props);
     this.state = {
       scrollActive: true,
       scrollIndex: 0,
-      progressIndex: 0,
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -47,20 +41,25 @@ class Content extends Component {
         const x = event.nativeEvent.locationX.toFixed(2);
         const y = gestureState.y0.toFixed(2);
         const maxTappableY = ScreenHeight - ScreenHeight * 0.1;
-        const leftTapArea = ScreenWidth / 2;
-        if (x > leftTapArea) {
+        const halfScreenWidth = ScreenWidth / 2;
+        const {contentType} = this.props;
+        if (x > halfScreenWidth) {
           // right clickable area
           if (this.tapActive) {
-            this.fadeOut({type: 'NEXT_CONTENT'});
+            contentType === 'bookmarks'
+              ? this.fadeOut({type: 'NEXT_BOOKMARK_CONTENT'})
+              : this.fadeOut({type: 'NEXT_CONTENT'});
           }
-        } else if (x < leftTapArea && y < maxTappableY) {
+        } else if (x < halfScreenWidth && y < maxTappableY) {
           // left clickable area
           const hasPreviousContent = this.props.allContents[
             this.props.activeIndex
           ];
           const isSetChange = this.checkSetChange();
           if (this.tapActive && !isSetChange && hasPreviousContent) {
-            this.fadeOut({type: 'PREVIOUS_CONTENT'});
+            contentType === 'bookmarks'
+              ? this.fadeOut({type: 'PREVIOUS_BOOKMARK_CONTENT'}, true)
+              : this.fadeOut({type: 'PREVIOUS_CONTENT'}, true);
           }
         }
       },
@@ -94,15 +93,17 @@ class Content extends Component {
   handleScroll = (index) => {
     this.setState({scrollIndex: index});
     if (index > this.state.scrollIndex) {
-      this.fadeOutQucik({type: 'GO_TO_NEXT_SET'});
+      this.fadeOutQucik();
     }
   };
 
-  fadeOutQucik = (actionType) => {
-    const {dispatch} = this.props;
+  fadeOutQucik = () => {
+    const {dispatch, contentType} = this.props;
     this.categoryOpacity.setValue(0);
     this.contentOpacity.setValue(0);
-    dispatch({type: 'GO_TO_NEXT_SET'});
+    contentType === 'bookmarks'
+      ? dispatch({type: 'GO_TO_NEXT_BOOKMARK_SET'})
+      : dispatch({type: 'GO_TO_NEXT_SET'});
   };
 
   fadeIn = (isSetChanged) => {
@@ -122,12 +123,11 @@ class Content extends Component {
     }).start(this.turnOnInteraction);
   };
 
-  fadeOut = (actionType) => {
+  fadeOut = (actionType, ingnoreSetChange = false) => {
     const {dispatch} = this.props;
-
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
-    if (willSetChange) {
+    if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
         duration: 3000,
@@ -141,23 +141,25 @@ class Content extends Component {
       delay: 500,
       useNativeDriver: true,
     }).start(() => {
-      this.setState({progressIndex: this.state.progressIndex + 1});
       dispatch(actionType);
-      if (willSetChange) {
-        // TODO: remove that later
-        setTimeout(() => this.setState({progressIndex: 0}), 1600);
-      }
     });
   };
 
   componentDidMount() {
-    const {dispatch, activeIndex} = this.props;
+    const {dispatch, activeIndex, contentType} = this.props;
     if (activeIndex !== null) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
       return;
     }
-    dispatch({type: 'ADD_CONTENT'});
+    // depending on the playing mode fetch data or play bookmark
+    if (contentType === 'bookmarks') {
+      // do nothing
+      dispatch({type: 'START_BOOKMARKS'});
+    } else {
+      // TODO: change the name to fetch content
+      dispatch({type: 'ADD_CONTENT'});
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -170,11 +172,7 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex, categories} = this.props;
-    const progressObject = getProgress(activeIndex, allContents);
-    const progress = progressObject
-      ? (this.state.progressIndex / progressObject.totalInTheSet) * 100
-      : 0;
+    const {allContents, activeIndex, categories, contentType} = this.props;
     const contentAvailable = allContents[activeIndex];
     const contentCategory = contentAvailable
       ? allContents[activeIndex].category
@@ -182,10 +180,16 @@ class Content extends Component {
     const contentText = contentAvailable
       ? allContents[activeIndex].content
       : null;
-    const background = categories.items.find(
-      (item) => item.id === categories.selected[categories.selected.length - 1],
-    ).image;
-    // console.log('baccc', categories.selected[categories.selected.length - 1]);
+    // TODO: we need to remove this
+
+    const background =
+      contentType === 'bookmarks'
+        ? DEFAULT_IMAGE
+        : categories.items.find(
+            (item) =>
+              item.id === categories.selected[categories.selected.length - 1],
+          ).image;
+
     return (
       <ImageBackground style={styles.container} source={background}>
         <SafeAreaView style={styles.contentContainer}>
@@ -193,25 +197,6 @@ class Content extends Component {
             <TouchableOpacity onPress={this.props.closeSheet}>
               <Animated.Image source={downIcon} style={styles.iconDown} />
             </TouchableOpacity>
-            {this.state.progressIndex ? (
-              <AnimatedCircularProgress
-                size={45}
-                width={3}
-                fill={progress}
-                rotation={0}
-                duration={2000}
-                tintColor="white"
-                backgroundColor="rgba(255, 255, 255, 0.2)">
-                {progressObject
-                  ? (fill) => (
-                      <Text style={styles.progressText}>
-                        {this.state.progressIndex}/
-                        {progressObject.totalInTheSet}
-                      </Text>
-                    )
-                  : null}
-              </AnimatedCircularProgress>
-            ) : null}
 
             <Animated.Image source={moreIcon} style={styles.iconMore} />
           </View>
@@ -221,6 +206,9 @@ class Content extends Component {
             onIndexChanged={this.handleScroll}
             scrollEnabled={this.state.scrollActive}
             showsPagination={false}>
+            {/** Array(4) will be replaced by content/bookmarks sets*/}
+            {/** initially we will set content/bookmarks to the state */}
+            {/** the moment we scroll rtl we are going to remove that set from from the set */}
             {[...Array(4).keys()].map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
                 <View style={styles.categoryContainer}>
@@ -256,13 +244,16 @@ class Content extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {contents, categories} = state;
-  const {allContents, activeIndex} = contents;
-
+  const {contents, categories, contentType, bookmarks} = state;
+  const allContents =
+    contentType === 'bookmarks' ? bookmarks.contents : contents.allContents;
+  const activeIndex =
+    contentType === 'bookmarks' ? bookmarks.activeIndex : contents.activeIndex;
   return {
     allContents,
     activeIndex,
     categories,
+    contentType,
   };
 };
 

@@ -1,4 +1,4 @@
-import DEFAULT_DATA from '../../helpers/constants/tempdata';
+import {data} from '../../helpers/constants/tempdata';
 
 const findNextSetIndex = (state) => {
   const {activeIndex, allContents} = state;
@@ -26,7 +26,7 @@ const contents = (state = INIT_STATE, action) => {
       updatedIndex = state.activeIndex === null ? 0 : state.activeIndex;
       return {
         ...state,
-        allContents: [...state.allContents, ...DEFAULT_DATA],
+        allContents: [...state.allContents, ...data],
         activeIndex: updatedIndex,
         minimized: false,
       };

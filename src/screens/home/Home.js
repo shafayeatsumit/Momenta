@@ -1,7 +1,6 @@
 import React, {useRef} from 'react';
 import {
   SafeAreaView,
-  StyleSheet,
   ScrollView,
   StatusBar,
   View,

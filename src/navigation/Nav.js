@@ -3,7 +3,7 @@ import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RFValue} from '../helpers/responsiveFont';
-import BookmarkScreen from '../screens/bookmarks/bookmarks';
+import BookmarkScreen from '../screens/bookmarks/Bookmarks';
 import HomeScreen from '../screens/home/Home';
 import ProfileScreen from '../screens/profile/Profile';
 import {colors} from '../helpers/theme';
@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
 Icon.loadFont();
 const TabColors = {
-  activeTint: '#ffffff',
+  activeTint: 'rgb(216,216,216)',
   inactiveTint: '#696E95',
   inactiveBackgroundColor: '#31396C',
 };

@@ -1,22 +1,17 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { 
-  View,
-  Text,
-  StyleSheet
-} from "react-native";
+import React from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 
-const Profile = (props) => (
+const Profile = () => (
   <View style={styles.container}>
-    <Text>Profile</Text>
+    <Text> PROFILE VIEW</Text>
   </View>
-  )
+);
 export default Profile;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+  },
 });

@@ -9,6 +9,7 @@ const minimized = (state = false, action) => {
     case 'SET_MINIMIZE_TRUE':
       return true;
     case 'SET_CONTENT_TYPE':
+    case 'RESET_BOOKMARKS':
     case 'SET_MINIMIZE_FALSE':
       return false;
     default:

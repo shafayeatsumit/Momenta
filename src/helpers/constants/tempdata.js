@@ -153,6 +153,25 @@ const bookmarks = [
     content: 'What makes this person special to you.',
     setId: 'connection-1',
   },
+  {
+    id: 13,
+    category: 'calm',
+    setId: 'calm-2',
+    content: 'Check in with your breath to see how it feels',
+  },
+  {
+    id: 14,
+    category: 'calm',
+    setId: 'calm-2',
+    content:
+      "Focus on the part of your body that's moving most with your breath",
+  },
+  {
+    id: 15,
+    category: 'calm',
+    setId: 'calm-2',
+    content: 'How is that movement changing with your focus',
+  },
 ];
 
 export {data, bookmarks};

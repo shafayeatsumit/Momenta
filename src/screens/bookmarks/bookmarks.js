@@ -1,13 +1,17 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
+import {View, TouchableOpacity, Text, SafeAreaView, Image} from 'react-native';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {connect} from 'react-redux';
 import Content from '../content/Content';
 import RBSheet from '../../components/rbsheet';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
-import {colors} from '../../helpers/theme';
+import {RFValue} from '../../helpers/responsiveFont';
+import StartOptions from './StartOptions';
 import _ from 'lodash';
-import ShuffleIcon from '../../../assets/icons/shuffle.png';
+import MinimizedView from '../../components/minimizedView/MinimizedView';
+import styles from './Bookmarks.styles';
+import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
+import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
+import BookmarkSet from './BookmarkSet';
 
 class Bookmarks extends Component {
   constructor(props) {
@@ -30,8 +34,9 @@ class Bookmarks extends Component {
   handleClose = () => this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
 
   rbsheetClose = () => {
-    this.props.dispatch({type: 'SET_MINIMIZE_FALSE'});
+    // this.props.dispatch({type: 'SET_MINIMIZE_FALSE'});
     this.RBSheet.close();
+    // this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
   };
 
   handleStart = () => {
@@ -39,74 +44,134 @@ class Bookmarks extends Component {
     this.RBSheet.open();
   };
 
-  renderItem = ({item, index, drag, isActive}) => {
-    const bookmarkItems = this.groupBookmarksBySet[item];
+  rbSheetOpen = () => {
+    this.RBSheet.open();
+  };
 
-    return (
-      <TouchableOpacity
-        style={[
-          styles.item,
-          isActive && {backgroundColor: 'rgb(216, 216, 216)'},
-        ]}
-        onLongPress={drag}>
-        <Text style={styles.itemText}>{bookmarkItems[0].category}</Text>
-        <Text />
-        <Text style={[styles.itemText, {paddingHorizontal: 10}]}>
-          {bookmarkItems[0].content}
-        </Text>
-      </TouchableOpacity>
+  handleSetPress = (setId) => {
+    const {contents, dispatch} = this.props;
+    const index = contents.findIndex((item) => item.setId === setId);
+    dispatch({type: 'START_FROM_INDEX', updatedActiveIndex: index});
+  };
+
+  deleteBookmark = (setId) => {
+    this.props.dispatch({type: 'DELTE_BOOKMARK', setId});
+  };
+
+  getSetIdOfActiveCotent = () => {
+    const {activeIndex, contents} = this.props;
+    const activeContent = contents[activeIndex];
+    const activeSet = activeContent ? activeContent.setId : null;
+    return activeSet;
+  };
+
+  getActiveContentIndex = (updatedBookmarks) => {
+    // finds out the current active content position
+    // after draging and changing the position;
+    const {activeIndex, contents} = this.props;
+    const activeContent = contents[activeIndex];
+    return updatedBookmarks.findIndex((item) => item.id === activeContent.id);
+  };
+
+  getActivesetPosition = (activeSetId, previousSetIds, currentSetIds) => {
+    const prevPositionIndex = previousSetIds.indexOf(activeSetId);
+    const currentPositionIndex = currentSetIds.indexOf(activeSetId);
+    if (currentPositionIndex > prevPositionIndex) {
+      return 'DRAGGED_DOWN';
+    } else {
+      return 'DRAGGED_UP';
+    }
+  };
+
+  sortBookmarks = (newOrderOfSetIds) => {
+    const {bookmarks} = this.props;
+    const updatedBookmarks = _.sortBy(bookmarks.slice(), (item) =>
+      newOrderOfSetIds.indexOf(item.setId),
     );
+    return updatedBookmarks;
+  };
+
+  handleDrag = ({data}) => {
+    const {shuffle, bookmarks, dispatch} = this.props;
+    if (shuffle) {
+      return;
+    }
+    const bookmarkSetIds = Object.keys(this.groupBookmarksBySet);
+    const noChangedInOrder = _.isEqual(bookmarkSetIds, data);
+    if (noChangedInOrder) {
+      return;
+    }
+
+    const activeSet = this.getSetIdOfActiveCotent();
+    const newSortedBookmarks = this.sortBookmarks(data);
+    if (activeSet) {
+      const dragPosition = this.getActivesetPosition(
+        activeSet,
+        bookmarkSetIds,
+        data,
+      );
+      const updatedActiveIndex = this.getActiveContentIndex(newSortedBookmarks);
+      if (dragPosition === 'DRAGGED_UP') {
+        dispatch({
+          type: 'ACTIVE_SET_MOVED_UP',
+          updatedActiveIndex,
+          bookmarks: newSortedBookmarks,
+        });
+      } else {
+        dispatch({
+          type: 'ACTIVE_SET_MOVED_DOWN',
+          updatedActiveIndex,
+          bookmarks: newSortedBookmarks,
+        });
+      }
+    } else {
+      dispatch({type: 'UPDATE_BOOKMARK_ORDER', bookmarks: newSortedBookmarks});
+    }
   };
 
   render() {
-    const {bookmarks, shuffle, minimized, contentType} = this.props;
+    const {bookmarks, shuffle, minimized} = this.props;
     this.groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
     const bookmarkSets = Object.keys(this.groupBookmarksBySet);
+
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.safeArea}>
         <DraggableFlatList
           data={bookmarkSets}
-          renderItem={this.renderItem}
-          keyExtractor={(item, index) => `draggable-item-${item}`}
-          onDragEnd={({data}) => this.setState({data})}
-        />
-        <View style={styles.buttonHolder}>
-          <TouchableOpacity
-            style={styles.startButton}
-            onPress={this.handleStart}>
-            <Text style={styles.start}>Start</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.handleShuffle}>
-            <Image
-              source={ShuffleIcon}
-              style={[
-                styles.shuffle,
-                shuffle && {tintColor: 'rgb(60,113,222)'},
-              ]}
+          renderItem={({item, index, drag, isActive}) => (
+            <BookmarkSet
+              item={item}
+              index={index}
+              drag={drag}
+              isActive={isActive}
+              minimized={minimized}
+              bookmarkItems={this.groupBookmarksBySet}
             />
-          </TouchableOpacity>
-        </View>
+          )}
+          keyExtractor={(item, index) => `draggable-item-${item}`}
+          onDragEnd={({data}) => this.handleDrag({data})}
+          contentContainerStyle={{marginTop: 20}}
+        />
+
         <RBSheet
           ref={(ref) => {
             this.RBSheet = ref;
           }}
-          closeOnDragDown={true}
           onClose={this.handleClose}
-          animationType={'fade'}
-          closeOnPressMask={false}
-          height={ScreenHeight}
-          duration={430}
-          customStyles={{
-            wrapper: {
-              backgroundColor: 'transparent',
-            },
-            draggableIcon: {
-              backgroundColor: 'transparent',
-            },
-          }}>
+          {...rbSheetProps}
+          customStyles={rbSheetStyle}>
           <Content closeSheet={this.rbsheetClose} />
         </RBSheet>
-      </View>
+        {this.props.minimized ? (
+          <MinimizedView maximize={this.rbSheetOpen} />
+        ) : (
+          <StartOptions
+            handleStart={this.handleStart}
+            handleShuffle={this.handleShuffle}
+            shuffle={shuffle}
+          />
+        )}
+      </SafeAreaView>
     );
   }
 }
@@ -115,53 +180,11 @@ const mapStateToProps = (state, ownProps) => {
   const {bookmarks, contentType, minimized} = state;
   return {
     bookmarks: bookmarks.bookmarks,
+    activeIndex: bookmarks.activeIndex,
+    contents: bookmarks.contents,
     shuffle: bookmarks.shuffle,
     minimized,
     contentType,
   };
 };
 export default connect(mapStateToProps)(Bookmarks);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50,
-  },
-  item: {
-    height: 120,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  itemText: {
-    fontWeight: 'bold',
-    color: colors.primary,
-    fontSize: 12,
-  },
-  buttonHolder: {
-    width: ScreenWidth,
-    backgroundColor: colors.primary,
-    height: 80,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  startButton: {
-    width: ScreenWidth * 0.7,
-    backgroundColor: 'rgb(60,113,222)',
-    height: 50,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  start: {
-    fontFamily: 'Montserrat-SemiBold',
-    color: 'white',
-    fontSize: 14,
-  },
-  shuffle: {
-    height: 28,
-    width: 28,
-  },
-});

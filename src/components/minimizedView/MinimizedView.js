@@ -6,22 +6,40 @@ import closeIcon from '../../../assets/icons/close.png';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
+import {getCategory, getProgress} from '../../helpers/common';
 
 const MinimizedView = ({maximize}) => {
+  let progress, categoryName;
   const contentType = useSelector((state) => state.contentType);
+  const contents = useSelector((state) => state.contents);
   const dispatch = useDispatch();
   const handleClose = () => {
     if (contentType === 'bookmarks') {
       dispatch({type: 'RESET_BOOKMARKS'});
+    } else {
+      dispatch({type: 'RESET_CATEGORIES_CONTENT'});
     }
-    // depending on contentType ==> dispatch action
   };
+  if (contentType === 'regular') {
+    const {activeIndex, allContents} = contents;
+    categoryName = getCategory(activeIndex, allContents);
+    progress = getProgress(activeIndex, allContents);
+  }
   return (
     <View style={styles.miminizedView}>
       <TouchableOpacity
         style={styles.minimizedContentHolder}
         onPress={maximize}>
-        <Text style={styles.minimizeCategory}>Bookmarks</Text>
+        {contentType === 'bookmarks' ? (
+          <Text style={styles.minimizeCategory}>Bookmarks</Text>
+        ) : (
+          <>
+            <Text style={styles.minimizeCategory}>{categoryName}</Text>
+            <Text style={styles.minimizeProgress}>
+              {progress.currentIndex}/{progress.totalInTheSet}
+            </Text>
+          </>
+        )}
       </TouchableOpacity>
       <View style={styles.minimizedIconHolder}>
         <TouchableOpacity onPress={handleClose}>
@@ -60,6 +78,12 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     fontSize: RFValue(20),
     color: '#ffffff',
+  },
+  minimizeProgress: {
+    fontFamily: FontType.SemiBold,
+    fontSize: RFValue(18),
+    color: '#7d7e8d',
+    paddingLeft: 10,
   },
   closeIcon: {
     height: ICON_SIZE,

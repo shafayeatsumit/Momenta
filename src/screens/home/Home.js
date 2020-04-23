@@ -14,12 +14,14 @@ import Content from '../content/Content';
 import {getCategory, getProgress} from '../../helpers/common';
 import Category from './Category';
 import RBSheet from '../../components/rbsheet';
+import MinimizedView from '../../components/minimizedView/MinimizedView';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import styles from './Home.styles';
 import closeIcon from '../../../assets/icons/close.png';
 const Home = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
+  const minimized = useSelector((state) => state.minimized);
   const categories = useSelector((state) => state.categories);
   const contents = useSelector((state) => state.contents);
   const handleCategoryPress = (id) => {
@@ -27,27 +29,33 @@ const Home = () => {
       dispatch(toggleCategory(id));
     } else {
       dispatch(toggleCategory(id));
+      dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
       refRBSheet.current.open();
     }
   };
   const longPressCategory = () => dispatch({type: 'MULTI_SELECT_MODE'});
   const rbsheetClose = () => {
-    dispatch({type: 'MINIMIZE_CONTENT'});
+    dispatch({type: 'SET_MINIMIZE_TRUE'});
     refRBSheet.current.close();
   };
-  const handleClose = () => dispatch({type: 'MINIMIZE_CONTENT'});
-  const minimizeScreenClose = () =>
-    dispatch({type: 'RESET_CATEGORIES_CONTENT'});
+  const handleClose = () => dispatch({type: 'SET_MINIMIZE_TRUE'});
+
   const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
+
+  const handleStart = () => {
+    dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
+    refRBSheet.current.open();
+  };
 
   const rbSheetOpen = () => refRBSheet.current.open();
 
-  const {minimized, activeIndex, allContents} = contents;
+  const {activeIndex, allContents} = contents;
   const itemSelected = categories.selected.length;
   const showStartButton =
     categories.multiselectMode && !minimized && itemSelected > 1;
   const progress = getProgress(activeIndex, allContents);
   const showCancelButton = categories.multiselectMode && !minimized;
+  const minimizedCategory = getCategory(activeIndex, allContents);
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -92,28 +100,10 @@ const Home = () => {
           }}>
           <Content closeSheet={rbsheetClose} />
         </RBSheet>
-        {minimized && (
-          <View style={styles.miminizedView}>
-            <TouchableOpacity
-              style={styles.minimizedContentHolder}
-              onPress={rbSheetOpen}>
-              <Text style={styles.minimizeCategory}>
-                {getCategory(activeIndex, allContents)}
-              </Text>
-              <Text style={styles.minimizeProgress}>
-                {progress.currentIndex}/{progress.totalInTheSet}
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.minimizedIconHolder}>
-              <TouchableOpacity onPress={minimizeScreenClose}>
-                <Image source={closeIcon} style={styles.closeIcon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        {minimized && <MinimizedView maximize={rbSheetOpen} />}
         {showStartButton && (
           <View style={styles.startButtonContainer}>
-            <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
+            <TouchableOpacity style={styles.startButton} onPress={handleStart}>
               <Text style={styles.start}>Start Mix</Text>
             </TouchableOpacity>
           </View>

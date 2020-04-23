@@ -10,7 +10,6 @@ import _ from 'lodash';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Bookmarks.styles';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import BookmarkSet from './BookmarkSet';
 
 class Bookmarks extends Component {

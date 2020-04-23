@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import ProgressBar from './ProgressBar';
 import styles from './Bookmarks.styles';
-import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import MorphView from '../../components/MorphView';
 import DragAndDrop from '../../../assets/icons/drag_and_drop.png';
@@ -10,31 +10,21 @@ import BookMarkIcon from '../../../assets/icons/bookmark_filled.png';
 import {useSelector, useDispatch} from 'react-redux';
 import _ from 'lodash';
 
-const BookmarkSet = ({item, index, drag, isActive}) => {
+const BookmarkSet = ({setId, index, drag, isActive, handleSetPress}) => {
   const bookmarks = useSelector((state) => state.bookmarks).bookmarks;
   const minimized = useSelector((state) => state.minimized);
   const dispatch = useDispatch();
   const groupBookmarksBySet = _.groupBy(bookmarks, (content) => content.setId);
-  const setItems = groupBookmarksBySet[item];
-  const deleteBookmark = (setId) => {
-    dispatch({type: 'DELTE_BOOKMARK', setId});
-  };
+  const setItems = groupBookmarksBySet[setId];
+  const deleteBookmark = () => dispatch({type: 'DELTE_BOOKMARK', setId});
+  const handleSetSelect = () => handleSetPress(setId);
   return (
     <TouchableOpacity
       style={styles.item}
       onLongPress={drag}
+      onPress={handleSetSelect}
       activeOpacity={0.6}>
-      {minimized && (
-        <View style={styles.progressConatiner}>
-          <AnimatedCircularProgress
-            size={20}
-            width={0.5}
-            prefill={100}
-            fill={100}
-            tintColor="rgb(60,113,222)"
-          />
-        </View>
-      )}
+      {minimized && <ProgressBar bookmarks={bookmarks} currentSetId={setId} />}
 
       <MorphView>
         <View
@@ -45,7 +35,7 @@ const BookmarkSet = ({item, index, drag, isActive}) => {
             {!minimized && (
               <TouchableOpacity
                 style={styles.bookmarkHolder}
-                onPress={() => deleteBookmark(item)}>
+                onPress={deleteBookmark}>
                 <Image source={BookMarkIcon} style={styles.bookmarkIcon} />
               </TouchableOpacity>
             )}

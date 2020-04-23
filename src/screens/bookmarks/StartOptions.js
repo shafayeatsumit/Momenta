@@ -7,7 +7,7 @@ import ShuffleIcon from '../../../assets/icons/shuffle.png';
 const StartOptions = ({handleStart, handleShuffle, shuffle}) => (
   <View style={styles.buttonHolder}>
     <TouchableOpacity style={styles.startButton} onPress={handleStart}>
-      <Text style={styles.start}>Start</Text>
+      <Text style={styles.start}>START</Text>
     </TouchableOpacity>
     <TouchableOpacity onPress={handleShuffle}>
       <Image

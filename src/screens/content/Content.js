@@ -145,8 +145,18 @@ class Content extends Component {
     });
   };
 
+  resetContent = () => {
+    this.categoryOpacity.setValue(0);
+    this.contentOpacity.setValue(0);
+    this.fadeIn(true);
+  };
+
   componentDidMount() {
-    const {dispatch, activeIndex, contentType} = this.props;
+    const {dispatch, activeIndex, contentType, resetContent} = this.props;
+    if (resetContent) {
+      this.resetContent();
+      return;
+    }
     if (activeIndex !== null) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
@@ -182,13 +192,13 @@ class Content extends Component {
       : null;
     // TODO: we need to remove this
 
-    const background =
-      contentType === 'bookmarks'
-        ? DEFAULT_IMAGE
-        : categories.items.find(
-            (item) =>
-              item.id === categories.selected[categories.selected.length - 1],
-          ).image;
+    const background = DEFAULT_IMAGE;
+    // contentType === 'bookmarks'
+    //   ? DEFAULT_IMAGE
+    //   : categories.items.find(
+    //       (item) =>
+    //         item.id === categories.selected[categories.selected.length - 1],
+    //     ).image;
 
     return (
       <ImageBackground style={styles.container} source={background}>

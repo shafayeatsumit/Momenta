@@ -17,6 +17,7 @@ class Bookmarks extends Component {
   constructor(props) {
     super(props);
     this.groupBookmarksBySet = {};
+    this.statrtFromSpecificBookmarkSet = false;
   }
 
   componentDidMount() {
@@ -34,9 +35,9 @@ class Bookmarks extends Component {
   handleClose = () => this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
 
   rbsheetClose = () => {
-    // this.props.dispatch({type: 'SET_MINIMIZE_FALSE'});
+    // close rbsheet on button press
     this.RBSheet.close();
-    // this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
+    this.statrtFromSpecificBookmarkSet = false;
   };
 
   handleStart = () => {
@@ -46,16 +47,6 @@ class Bookmarks extends Component {
 
   rbSheetOpen = () => {
     this.RBSheet.open();
-  };
-
-  handleSetPress = (setId) => {
-    const {contents, dispatch} = this.props;
-    const index = contents.findIndex((item) => item.setId === setId);
-    dispatch({type: 'START_FROM_INDEX', updatedActiveIndex: index});
-  };
-
-  deleteBookmark = (setId) => {
-    this.props.dispatch({type: 'DELTE_BOOKMARK', setId});
   };
 
   getSetIdOfActiveCotent = () => {
@@ -91,8 +82,15 @@ class Bookmarks extends Component {
     return updatedBookmarks;
   };
 
+  handleSetPress = (setId) => {
+    this.statrtFromSpecificBookmarkSet = true;
+    const {dispatch} = this.props;
+    dispatch({type: 'START_FROM_SPECIFIC_BOOKMARK_SET', selectedSetId: setId});
+    this.rbSheetOpen();
+  };
+
   handleDrag = ({data}) => {
-    const {shuffle, bookmarks, dispatch} = this.props;
+    const {shuffle, dispatch} = this.props;
     if (shuffle) {
       return;
     }
@@ -133,19 +131,19 @@ class Bookmarks extends Component {
     const {bookmarks, shuffle, minimized} = this.props;
     this.groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
     const bookmarkSets = Object.keys(this.groupBookmarksBySet);
-
     return (
       <SafeAreaView style={styles.safeArea}>
         <DraggableFlatList
           data={bookmarkSets}
           renderItem={({item, index, drag, isActive}) => (
             <BookmarkSet
-              item={item}
+              setId={item}
               index={index}
               drag={drag}
               isActive={isActive}
               minimized={minimized}
               bookmarkItems={this.groupBookmarksBySet}
+              handleSetPress={this.handleSetPress}
             />
           )}
           keyExtractor={(item, index) => `draggable-item-${item}`}
@@ -160,7 +158,10 @@ class Bookmarks extends Component {
           onClose={this.handleClose}
           {...rbSheetProps}
           customStyles={rbSheetStyle}>
-          <Content closeSheet={this.rbsheetClose} />
+          <Content
+            closeSheet={this.rbsheetClose}
+            resetContent={this.statrtFromSpecificBookmarkSet}
+          />
         </RBSheet>
         {this.props.minimized ? (
           <MinimizedView maximize={this.rbSheetOpen} />

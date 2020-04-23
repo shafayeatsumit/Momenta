@@ -96,10 +96,13 @@ const bookmarks = (state = INIT_STATE, action) => {
         bookmarks: action.bookmarks,
         contents: action.bookmarks,
       };
-    case 'START_FROM_INDEX':
+    case 'START_FROM_SPECIFIC_BOOKMARK_SET':
+      updatedIndex = state.contents.findIndex(
+        (item) => item.setId === action.selectedSetId,
+      );
       return {
         ...state,
-        activeIndex: action.updatedActiveIndex,
+        activeIndex: updatedIndex,
       };
     case 'RESET_BOOKMARKS':
       updatedContents = state.contents.map((item) => ({

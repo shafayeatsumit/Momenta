@@ -11,7 +11,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import _ from 'lodash';
 
 const BookmarkSet = ({setId, index, drag, isActive, handleSetPress}) => {
-  const bookmarks = useSelector((state) => state.bookmarks).bookmarks;
+  const bookmarksState = useSelector((state) => state.bookmarks);
+  const {bookmarks, shuffle} = bookmarksState;
   const minimized = useSelector((state) => state.minimized);
   const dispatch = useDispatch();
   const groupBookmarksBySet = _.groupBy(bookmarks, (content) => content.setId);
@@ -22,7 +23,7 @@ const BookmarkSet = ({setId, index, drag, isActive, handleSetPress}) => {
     <TouchableOpacity
       style={styles.item}
       onLongPress={drag}
-      onPress={handleSetSelect}
+      onPress={shuffle ? null : handleSetSelect}
       activeOpacity={0.6}>
       {minimized && <ProgressBar bookmarks={bookmarks} currentSetId={setId} />}
 

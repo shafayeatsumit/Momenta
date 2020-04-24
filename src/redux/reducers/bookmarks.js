@@ -1,5 +1,5 @@
 import {bookmarks as defaultBookmarks} from '../../helpers/constants/tempdata';
-import {shuffleArray, findNextSetIndex} from './helpers';
+import {shuffleArray, shuffleBookmarks, findNextSetIndex} from './helpers';
 import {ActionSheetIOS} from 'react-native';
 
 const INIT_STATE = {
@@ -75,7 +75,7 @@ const bookmarks = (state = INIT_STATE, action) => {
     case 'BOOKMARK_SHUFFLE_ON':
       return {
         ...state,
-        contents: shuffleArray(state.bookmarks.slice()),
+        contents: shuffleBookmarks(state.bookmarks),
         shuffle: true,
       };
     case 'DELTE_BOOKMARK':

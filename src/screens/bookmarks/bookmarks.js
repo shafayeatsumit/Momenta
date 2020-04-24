@@ -15,6 +15,9 @@ import BookmarkSet from './BookmarkSet';
 class Bookmarks extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      shuffleOnBookmarks: null,
+    };
     this.groupBookmarksBySet = {};
     this.statrtFromSpecificBookmarkSet = false;
   }
@@ -91,6 +94,7 @@ class Bookmarks extends Component {
   handleDrag = ({data}) => {
     const {shuffle, dispatch} = this.props;
     if (shuffle) {
+      this.setState({shuffleOnBookmarks: data});
       return;
     }
     const bookmarkSetIds = Object.keys(this.groupBookmarksBySet);
@@ -128,8 +132,13 @@ class Bookmarks extends Component {
 
   render() {
     const {bookmarks, shuffle, minimized} = this.props;
+    const {shuffleOnBookmarks} = this.state;
     this.groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
-    const bookmarkSets = Object.keys(this.groupBookmarksBySet);
+    const bookmarkSets =
+      shuffle && shuffleOnBookmarks
+        ? shuffleOnBookmarks
+        : Object.keys(this.groupBookmarksBySet);
+
     return (
       <SafeAreaView style={styles.safeArea}>
         <DraggableFlatList

@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Shuffles array in place.
  * @param {Array} a items An array containing the items.
@@ -13,6 +15,16 @@ function shuffleArray(a) {
   return a;
 }
 
+const shuffleBookmarks = (bookmarks) => {
+  const groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
+  let bookmarkSets = Object.keys(groupBookmarksBySet);
+  bookmarkSets = shuffleArray(bookmarkSets);
+  const shuffledBookmarks = _.sortBy(bookmarks.slice(), (item) =>
+    bookmarkSets.indexOf(item.setId),
+  );
+  return shuffledBookmarks;
+};
+
 const findNextSetIndex = (activeIndex, allContents) => {
   let nextIndex = null;
   for (let i = activeIndex + 1; i < allContents.length; i++) {
@@ -25,4 +37,4 @@ const findNextSetIndex = (activeIndex, allContents) => {
   return nextIndex;
 };
 
-export {shuffleArray, findNextSetIndex};
+export {shuffleArray, findNextSetIndex, shuffleBookmarks};

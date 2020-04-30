@@ -16,12 +16,14 @@ import MinimizedView from '../../components/minimizedView/MinimizedView';
 import {ScreenHeight} from '../../helpers/constants/common';
 import styles from './Home.styles';
 import {api} from '../../helpers/api';
+import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
 
 const Home = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
   const categories = useSelector((state) => state.categories);
+  const loginInfo = useSelector((state) => state.loginInfo);
 
   const handleCategoryPress = (id) => {
     if (categories.multiselectMode) {
@@ -45,10 +47,15 @@ const Home = () => {
   };
 
   useEffect(() => {
-    api
-      .post('api/auth/anonymoussignup/')
-      .then((resp) => console.log('resp', resp.data))
-      .catch((error) => console.log('error', error));
+    if (!loginInfo.token) {
+      api
+        .post('api/auth/anonymoussignup/')
+        .then((resp) => {
+          const {token, anonymous} = resp.data;
+          dispatch({type: 'UPDATE_TOKEN', token});
+        })
+        .catch((error) => console.log('error', error));
+    }
   }, []);
 
   const rbSheetOpen = () => refRBSheet.current.open();
@@ -85,20 +92,9 @@ const Home = () => {
         </ScrollView>
         <RBSheet
           ref={refRBSheet}
-          closeOnDragDown={true}
           onClose={handleClose}
-          animationType={'fade'}
-          closeOnPressMask={false}
-          height={ScreenHeight}
-          duration={400}
-          customStyles={{
-            wrapper: {
-              backgroundColor: 'transparent',
-            },
-            draggableIcon: {
-              backgroundColor: 'transparent',
-            },
-          }}>
+          {...rbSheetProps}
+          customStyles={rbSheetStyle}>
           <Content closeSheet={rbsheetClose} />
         </RBSheet>
         {minimized && <MinimizedView maximize={rbSheetOpen} />}

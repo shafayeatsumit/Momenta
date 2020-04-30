@@ -1,29 +1,28 @@
-import React, {useRef} from 'react';
+import React, {useRef, useEffect} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   View,
-  Image,
   Text,
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {toggleCategory} from '../../redux/actions/category';
 import Content from '../content/Content';
-import {getCategory, getProgress} from '../../helpers/common';
 import Category from './Category';
 import RBSheet from '../../components/rbsheet';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
+import {ScreenHeight} from '../../helpers/constants/common';
 import styles from './Home.styles';
-import closeIcon from '../../../assets/icons/close.png';
+import {api} from '../../helpers/api';
+
 const Home = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
   const categories = useSelector((state) => state.categories);
-  const contents = useSelector((state) => state.contents);
+
   const handleCategoryPress = (id) => {
     if (categories.multiselectMode) {
       dispatch(toggleCategory(id));
@@ -39,23 +38,25 @@ const Home = () => {
     refRBSheet.current.close();
   };
   const handleClose = () => dispatch({type: 'SET_MINIMIZE_TRUE'});
-
   const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
-
   const handleStart = () => {
     dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
     refRBSheet.current.open();
   };
 
-  const rbSheetOpen = () => refRBSheet.current.open();
+  useEffect(() => {
+    api
+      .post('api/auth/anonymoussignup/')
+      .then((resp) => console.log('resp', resp.data))
+      .catch((error) => console.log('error', error));
+  }, []);
 
-  const {activeIndex, allContents} = contents;
+  const rbSheetOpen = () => refRBSheet.current.open();
   const itemSelected = categories.selected.length;
   const showStartButton =
     categories.multiselectMode && !minimized && itemSelected > 1;
-  const progress = getProgress(activeIndex, allContents);
   const showCancelButton = categories.multiselectMode && !minimized;
-  const minimizedCategory = getCategory(activeIndex, allContents);
+
   return (
     <>
       <StatusBar barStyle="light-content" />

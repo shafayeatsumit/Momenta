@@ -21,6 +21,7 @@ import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {api} from '../../helpers/api';
 
 class Content extends Component {
   constructor(props) {
@@ -151,6 +152,22 @@ class Content extends Component {
     this.fadeIn(true);
   };
 
+  normalizeResponse = (responseData) => {
+    let contents = responseData.map((item) => item.contents);
+    return _.flatten(contents);
+  };
+
+  fetchContent = () => {
+    const url = '/api/contents/?tags=calm';
+    api
+      .get(url)
+      .then((resp) => {
+        const r = this.normalizeResponse(resp.data);
+        console.log('r', r);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
   componentDidMount() {
     const {dispatch, activeIndex, contentType, resetContent} = this.props;
     if (resetContent) {
@@ -168,6 +185,7 @@ class Content extends Component {
       dispatch({type: 'START_BOOKMARKS'});
     } else {
       // TODO: change the name to fetch content
+      this.fetchContent();
       dispatch({type: 'ADD_CONTENT'});
     }
   }

@@ -24,6 +24,12 @@ const categories = (state = initialState, action) => {
         ...state,
         multiselectMode: true,
       };
+    case 'CHOOSE_SINGLE_CATEGORY':
+      return {
+        ...state,
+        multiselectMode: false,
+        selected: [action.id],
+      };
     case 'RESET_CATEGORIES_CONTENT':
     case 'RESET_CATEGORIES':
       return {

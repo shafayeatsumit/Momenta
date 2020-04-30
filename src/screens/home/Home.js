@@ -29,8 +29,10 @@ const Home = () => {
     if (categories.multiselectMode) {
       dispatch(toggleCategory(id));
     } else {
-      dispatch(toggleCategory(id));
-      dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
+      dispatch({
+        type: 'CHOOSE_SINGLE_CATEGORY',
+        id,
+      });
       refRBSheet.current.open();
     }
   };
@@ -63,7 +65,7 @@ const Home = () => {
   const showStartButton =
     categories.multiselectMode && !minimized && itemSelected > 1;
   const showCancelButton = categories.multiselectMode && !minimized;
-
+  console.log('categories', categories.selected);
   return (
     <>
       <StatusBar barStyle="light-content" />

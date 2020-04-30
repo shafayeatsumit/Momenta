@@ -5,6 +5,8 @@ const contentType = (state = null, action) => {
       return 'bookmarks';
     case 'SET_CONTENT_TYPE':
       return action.contentType;
+    case 'CHOOSE_SINGLE_CATEGORY':
+      return 'regular';
     default:
       return state;
   }

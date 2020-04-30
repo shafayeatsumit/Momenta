@@ -87,14 +87,19 @@ const bookmarks = (state = INIT_STATE, action) => {
         bookmarks: updatedContents,
         contents: updatedContents,
       };
-    case 'ADD_NEW_BOOKMARK':
-      return state;
     case 'UPDATE_BOOKMARK_ORDER':
-      // using drag and drop they changed the order
+      // using drag and drop user changed the order
+      // that has no effect the active set
       return {
         ...state,
         bookmarks: action.bookmarks,
         contents: action.bookmarks,
+      };
+    case 'SHUFFLE_ON_START_FROM_SPECIFIC_BOOKMARK_SET':
+      return {
+        ...state,
+        contents: action.updatedContents,
+        activeIndex: action.updatedActiveIndex,
       };
     case 'START_FROM_SPECIFIC_BOOKMARK_SET':
       updatedIndex = state.contents.findIndex(

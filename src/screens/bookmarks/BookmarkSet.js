@@ -10,7 +10,14 @@ import BookMarkIcon from '../../../assets/icons/bookmark_filled.png';
 import {useSelector, useDispatch} from 'react-redux';
 import _ from 'lodash';
 
-const BookmarkSet = ({setId, index, drag, isActive, handleSetPress}) => {
+const BookmarkSet = ({
+  setId,
+  index,
+  drag,
+  isActive,
+  handleSetPress,
+  handleSetPressShuffleOn,
+}) => {
   const bookmarksState = useSelector((state) => state.bookmarks);
   const {bookmarks, shuffle} = bookmarksState;
   const minimized = useSelector((state) => state.minimized);
@@ -19,11 +26,13 @@ const BookmarkSet = ({setId, index, drag, isActive, handleSetPress}) => {
   const setItems = groupBookmarksBySet[setId];
   const deleteBookmark = () => dispatch({type: 'DELTE_BOOKMARK', setId});
   const handleSetSelect = () => handleSetPress(setId);
+  const handleSetSelectShuffleOn = () => handleSetPressShuffleOn(setId);
+
   return (
     <TouchableOpacity
       style={styles.item}
       onLongPress={drag}
-      onPress={shuffle ? null : handleSetSelect}
+      onPress={shuffle ? handleSetSelectShuffleOn : handleSetSelect}
       activeOpacity={0.6}>
       {minimized && <ProgressBar bookmarks={bookmarks} currentSetId={setId} />}
 

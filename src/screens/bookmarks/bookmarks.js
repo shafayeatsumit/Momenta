@@ -84,10 +84,52 @@ class Bookmarks extends Component {
     return updatedBookmarks;
   };
 
+  sortContents = (newOrderOfSetIds) => {
+    const {contents} = this.props;
+    const updatedContents = _.sortBy(contents.slice(), (item) =>
+      newOrderOfSetIds.indexOf(item.setId),
+    );
+    return updatedContents;
+  };
+
   handleSetPress = (setId) => {
     this.statrtFromSpecificBookmarkSet = true;
     const {dispatch} = this.props;
     dispatch({type: 'START_FROM_SPECIFIC_BOOKMARK_SET', selectedSetId: setId});
+    this.rbSheetOpen();
+  };
+
+  handleSetPressShuffleOn = (selectedSetId) => {
+    const {dispatch, contents, activeIndex} = this.props;
+    let updatedContents, updatedActiveIndex;
+    const activeSetId = contents[activeIndex]
+      ? contents[activeIndex].setId
+      : null;
+    let contentSetIds = Object.keys(_.groupBy(contents, (item) => item.setId));
+    // remove the selectedSetId
+    contentSetIds = contentSetIds.filter((item) => item !== selectedSetId);
+
+    if (!activeSetId) {
+      // haven't started playing yet.
+      // bring the selected set at first;
+      contentSetIds = [selectedSetId, ...contentSetIds];
+      updatedContents = this.sortContents(contentSetIds);
+      updatedActiveIndex = null;
+    } else {
+      // minimized , started playing.
+      this.statrtFromSpecificBookmarkSet = true;
+      const insertAtIndex = contentSetIds.indexOf(activeSetId);
+      contentSetIds.splice(insertAtIndex + 1, 0, selectedSetId);
+      updatedContents = this.sortContents(contentSetIds);
+      updatedActiveIndex = updatedContents.findIndex(
+        (item) => item.setId === selectedSetId,
+      );
+    }
+    dispatch({
+      type: 'SHUFFLE_ON_START_FROM_SPECIFIC_BOOKMARK_SET',
+      updatedActiveIndex,
+      updatedContents,
+    });
     this.rbSheetOpen();
   };
 
@@ -152,6 +194,7 @@ class Bookmarks extends Component {
               minimized={minimized}
               bookmarkItems={this.groupBookmarksBySet}
               handleSetPress={this.handleSetPress}
+              handleSetPressShuffleOn={this.handleSetPressShuffleOn}
             />
           )}
           keyExtractor={(item, index) => `draggable-item-${item}`}

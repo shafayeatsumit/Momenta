@@ -1,19 +1,15 @@
 import React from 'react';
-import {createStore, applyMiddleware, compose} from 'redux';
 import {Provider} from 'react-redux';
 import Navigation from './src/navigation/Nav';
-import rootReducer from './src/redux/reducers/index';
-import {composeWithDevTools} from 'redux-devtools-extension';
-import logger from 'redux-logger';
-
-const store = createStore(
-  rootReducer,
-  composeWithDevTools(applyMiddleware(logger)),
-);
-
+import PersistStore from './src/redux/store.js';
+import {PersistGate} from 'redux-persist/integration/react';
+const {store, persistor} = PersistStore();
+console.log('store', store, persistor);
 const App = () => (
   <Provider store={store}>
-    <Navigation />
+    <PersistGate loading={null} persistor={persistor}>
+      <Navigation />
+    </PersistGate>
   </Provider>
 );
 

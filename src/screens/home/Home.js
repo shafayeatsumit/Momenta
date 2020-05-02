@@ -13,7 +13,6 @@ import Content from '../content/Content';
 import Category from './Category';
 import RBSheet from '../../components/rbsheet';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
-import {ScreenHeight} from '../../helpers/constants/common';
 import styles from './Home.styles';
 import {api} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
@@ -22,6 +21,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
+  const contentType = useSelector((state) => state.contentType);
   const categories = useSelector((state) => state.categories);
   const loginInfo = useSelector((state) => state.loginInfo);
 
@@ -60,12 +60,17 @@ const Home = () => {
     }
   }, []);
 
-  const rbSheetOpen = () => refRBSheet.current.open();
+  const rbSheetOpen = () => {
+    if (contentType === 'regular' && categories.selected.length === 0) {
+      return;
+    }
+    refRBSheet.current.open();
+  };
   const itemSelected = categories.selected.length;
   const showStartButton =
     categories.multiselectMode && !minimized && itemSelected > 1;
   const showCancelButton = categories.multiselectMode && !minimized;
-  console.log('categories', categories.selected);
+
   return (
     <>
       <StatusBar barStyle="light-content" />

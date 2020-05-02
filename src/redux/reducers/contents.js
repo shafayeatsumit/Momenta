@@ -26,12 +26,15 @@ const contents = (state = INIT_STATE, action) => {
       updatedIndex = state.activeIndex === null ? 0 : state.activeIndex;
       return {
         ...state,
-        allContents: [...state.allContents, ...data],
+        allContents: [...state.allContents, ...action.data],
         activeIndex: updatedIndex,
         minimized: false,
       };
     case 'NEXT_CONTENT':
-      updatedIndex = state.activeIndex === null ? 0 : state.activeIndex + 1;
+      updatedIndex =
+        state.activeIndex < state.allContents.length
+          ? state.activeIndex + 1
+          : state.activeIndex;
       return {
         ...state,
         activeIndex: updatedIndex,
@@ -54,6 +57,7 @@ const contents = (state = INIT_STATE, action) => {
         minimized: true,
       };
     case 'RESET_CATEGORIES_CONTENT':
+    case 'CHOOSE_SINGLE_CATEGORY':
     case 'RESET_CONTENT':
       return {
         ...state,

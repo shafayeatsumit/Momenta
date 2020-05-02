@@ -13,6 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
+import {arrayToQueryParams, contentParser, uniq} from '../../helpers/common';
 import Swiper from 'react-native-swiper';
 import DEFAULT_IMAGE from '../../../assets/default_background.png';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
@@ -69,15 +70,15 @@ class Content extends Component {
 
   checkSetChange = () => {
     const {allContents, activeIndex} = this.props;
-    const previousSet = _.get(allContents[activeIndex - 1], 'setId');
-    const currentSet = _.get(allContents[activeIndex], 'setId');
+    const previousSet = _.get(allContents[activeIndex - 1], 'set');
+    const currentSet = _.get(allContents[activeIndex], 'set');
     return previousSet !== currentSet;
   };
 
   checkSetChangeForward = () => {
     const {allContents, activeIndex} = this.props;
-    const nextSet = _.get(allContents[activeIndex + 1], 'setId');
-    const currentSet = _.get(allContents[activeIndex], 'setId');
+    const nextSet = _.get(allContents[activeIndex + 1], 'set');
+    const currentSet = _.get(allContents[activeIndex], 'set');
     return nextSet !== currentSet;
   };
 
@@ -131,14 +132,14 @@ class Content extends Component {
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 3000,
-        delay: 1000,
+        duration: 2000,
+        delay: 500,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 2000,
+      duration: 1500,
       delay: 500,
       useNativeDriver: true,
     }).start(() => {
@@ -152,20 +153,27 @@ class Content extends Component {
     this.fadeIn(true);
   };
 
-  normalizeResponse = (responseData) => {
-    let contents = responseData.map((item) => item.contents);
-    return _.flatten(contents);
-  };
-
-  fetchContent = () => {
-    const url = '/api/contents/?tags=calm';
+  fetchContent = (tags = null) => {
+    const {categories, dispatch} = this.props;
+    const selectedTags = categories.selected;
+    let url = '/api/contents/';
+    const queryParams = arrayToQueryParams('tags', selectedTags);
+    url = url + queryParams;
     api
       .get(url)
       .then((resp) => {
-        const r = this.normalizeResponse(resp.data);
-        console.log('r', r);
+        const contents = contentParser(resp.data);
+        dispatch({type: 'ADD_CONTENT', data: contents});
       })
       .catch((error) => console.log('error', error));
+  };
+
+  fetchIfRequired = () => {
+    const {allContents, categories} = this.props;
+    const selectedTags = categories.selected;
+    let contentTags = allContents.map((item) => item.tag);
+    contentTags = uniq(contentTags);
+    const diff = _.difference(contentTags, selectedTags);
   };
 
   componentDidMount() {
@@ -177,16 +185,17 @@ class Content extends Component {
     if (activeIndex !== null) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
+      contentType === 'regular' && this.fetchIfRequired();
       return;
     }
     // depending on the playing mode fetch data or play bookmark
     if (contentType === 'bookmarks') {
       // do nothing
       dispatch({type: 'START_BOOKMARKS'});
-    } else {
-      // TODO: change the name to fetch content
+      return;
+    }
+    if (contentType === 'regular') {
       this.fetchContent();
-      dispatch({type: 'ADD_CONTENT'});
     }
   }
 
@@ -200,26 +209,12 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex, categories, contentType} = this.props;
+    const {allContents, activeIndex} = this.props;
     const contentAvailable = allContents[activeIndex];
-    const contentCategory = contentAvailable
-      ? allContents[activeIndex].category
-      : null;
-    const contentText = contentAvailable
-      ? allContents[activeIndex].content
-      : null;
-    // TODO: we need to remove this
-
-    const background = DEFAULT_IMAGE;
-    // contentType === 'bookmarks'
-    //   ? DEFAULT_IMAGE
-    //   : categories.items.find(
-    //       (item) =>
-    //         item.id === categories.selected[categories.selected.length - 1],
-    //     ).image;
-
+    const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
+    const contentText = contentAvailable ? allContents[activeIndex].text : null;
     return (
-      <ImageBackground style={styles.container} source={background}>
+      <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.topRow}>
             <TouchableOpacity onPress={this.props.closeSheet}>
@@ -246,7 +241,7 @@ class Content extends Component {
                         styles.category,
                         {opacity: this.categoryOpacity},
                       ]}>
-                      {contentCategory}
+                      {contentTag}
                     </Animated.Text>
                   )}
                 </View>

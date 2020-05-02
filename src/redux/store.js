@@ -5,10 +5,12 @@ import rootReducer from './reducers';
 import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
 
+// AsyncStorage.clear();
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  blacklist: ['categories'],
+  whitelist: ['loginInfo'],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

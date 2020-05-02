@@ -22,8 +22,8 @@ const TabColors = {
 const Tab = createBottomTabNavigator();
 const Nav = () => {
   const categories = useSelector((state) => state.categories);
-  const contents = useSelector((state) => state.contents);
-  const hideHomeScreen = categories.multiselectMode && !contents.minimized;
+  const minimized = useSelector((state) => state.minimized);
+  const hideHomeScreen = categories.multiselectMode && !minimized;
   return (
     <NavigationContainer>
       <StatusBar hidden />

@@ -50,6 +50,10 @@ class Content extends Component {
         const maxTappableY = ScreenHeight - ScreenHeight * 0.1;
         const halfScreenWidth = ScreenWidth / 2;
         const {contentType} = this.props;
+        const isSwipe = Math.abs(gestureState.dx) >= 1;
+        if (isSwipe) {
+          return;
+        }
         if (x > halfScreenWidth) {
           // right clickable area
           if (this.tapActive) {
@@ -243,6 +247,8 @@ class Content extends Component {
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
+    let contentSets = allContents.map((item) => item.set);
+    contentSets = uniq(contentSets);
     return (
       <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
         <SafeAreaView style={styles.contentContainer}>
@@ -262,26 +268,19 @@ class Content extends Component {
             {/** Array(4) will be replaced by content/bookmarks sets*/}
             {/** initially we will set content/bookmarks to the state */}
             {/** the moment we scroll rtl we are going to remove that set from from the set */}
-            {[...Array(4).keys()].map((item, itemIndex) => (
+            {contentSets.map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
                 <View style={styles.categoryContainer}>
-                  {item === this.state.scrollIndex && (
-                    <Animated.Text
-                      style={[
-                        styles.category,
-                        {opacity: this.categoryOpacity},
-                      ]}>
-                      {contentTag}
-                    </Animated.Text>
-                  )}
+                  <Animated.Text
+                    style={[styles.category, {opacity: this.categoryOpacity}]}>
+                    {contentTag}
+                  </Animated.Text>
                 </View>
                 <View style={styles.thoughtContainer}>
-                  {item === this.state.scrollIndex && (
-                    <Animated.Text
-                      style={[styles.content, {opacity: this.contentOpacity}]}>
-                      {contentText}
-                    </Animated.Text>
-                  )}
+                  <Animated.Text
+                    style={[styles.content, {opacity: this.contentOpacity}]}>
+                    {contentText}
+                  </Animated.Text>
                 </View>
               </View>
             ))}

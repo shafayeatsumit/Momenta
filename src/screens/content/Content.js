@@ -13,7 +13,12 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
-import {arrayToQueryParams, contentParser, uniq} from '../../helpers/common';
+import {
+  arrayToQueryParams,
+  contentParser,
+  uniq,
+  findNextSetIndex,
+} from '../../helpers/common';
 import Swiper from 'react-native-swiper';
 import DEFAULT_IMAGE from '../../../assets/default_background.png';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
@@ -155,7 +160,7 @@ class Content extends Component {
 
   fetchContent = (tags = null) => {
     const {categories, dispatch} = this.props;
-    const selectedTags = categories.selected;
+    const selectedTags = tags ? tags : categories.selected;
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
     url = url + queryParams;
@@ -168,12 +173,37 @@ class Content extends Component {
       .catch((error) => console.log('error', error));
   };
 
+  removeContents = (removedItems) => {
+    const {allContents, activeIndex, dispatch} = this.props;
+    const nextSetIndex = findNextSetIndex(activeIndex, allContents);
+    const activeContents = allContents.slice(0, nextSetIndex);
+    const upcomingContents = allContents.slice(nextSetIndex);
+    const filteredContents = upcomingContents.filter(
+      (item) => !removedItems.includes(item.tag),
+    );
+    const updatedContents = [...activeContents, ...filteredContents];
+    dispatch({type: 'UPDATE_CONTENT', updatedContents});
+  };
+
   fetchIfRequired = () => {
     const {allContents, categories} = this.props;
     const selectedTags = categories.selected;
     let contentTags = allContents.map((item) => item.tag);
     contentTags = uniq(contentTags);
-    const diff = _.difference(contentTags, selectedTags);
+    const isEqual = _.isEqual(contentTags.sort(), selectedTags.sort());
+    if (isEqual) {
+      // no change
+      return;
+    }
+    if (selectedTags.length > contentTags.length) {
+      // tag added, fetch the added tags.
+      const addedTags = _.difference(selectedTags, contentTags);
+      this.fetchContent(addedTags);
+    } else {
+      // tag removed, remove the contents of removed tags.
+      const removedTags = _.difference(contentTags, selectedTags);
+      this.removeContents(removedTags);
+    }
   };
 
   componentDidMount() {

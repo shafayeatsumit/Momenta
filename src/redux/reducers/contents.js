@@ -5,7 +5,7 @@ const findNextSetIndex = (state) => {
   let nextIndex = null;
   for (let i = activeIndex + 1; i < allContents.length; i++) {
     const elem = allContents[activeIndex];
-    if (elem && elem.setId !== allContents[i].setId) {
+    if (elem && elem.set !== allContents[i].set) {
       nextIndex = i;
       break;
     }
@@ -29,6 +29,11 @@ const contents = (state = INIT_STATE, action) => {
         allContents: [...state.allContents, ...action.data],
         activeIndex: updatedIndex,
         minimized: false,
+      };
+    case 'UPDATE_CONTENT':
+      return {
+        ...state,
+        allContents: action.updatedContents,
       };
     case 'NEXT_CONTENT':
       updatedIndex =

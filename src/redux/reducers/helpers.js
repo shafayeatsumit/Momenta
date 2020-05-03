@@ -16,11 +16,11 @@ function shuffleArray(a) {
 }
 
 const shuffleBookmarks = (bookmarks) => {
-  const groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
+  const groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.set);
   let bookmarkSets = Object.keys(groupBookmarksBySet);
   bookmarkSets = shuffleArray(bookmarkSets);
   const shuffledBookmarks = _.sortBy(bookmarks.slice(), (item) =>
-    bookmarkSets.indexOf(item.setId),
+    bookmarkSets.indexOf(item.set),
   );
   return shuffledBookmarks;
 };
@@ -29,7 +29,7 @@ const findNextSetIndex = (activeIndex, allContents) => {
   let nextIndex = null;
   for (let i = activeIndex + 1; i < allContents.length; i++) {
     const elem = allContents[activeIndex];
-    if (elem && elem.setId !== allContents[i].setId) {
+    if (elem && elem.set !== allContents[i].set) {
       nextIndex = i;
       break;
     }

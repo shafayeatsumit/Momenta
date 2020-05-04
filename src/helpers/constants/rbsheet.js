@@ -10,7 +10,7 @@ export const rbSheetStyle = {
 };
 export const rbSheetProps = {
   closeOnDragDown: true,
-  animationType: 'fade',
+  animationType: 'none',
   closeOnPressMask: false,
   duration: 500,
   height: ScreenHeight,

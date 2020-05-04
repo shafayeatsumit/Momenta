@@ -35,9 +35,11 @@ const MinimizedView = ({maximize}) => {
         ) : (
           <>
             <Text style={styles.minimizeCategory}>{categoryName}</Text>
-            <Text style={styles.minimizeProgress}>
-              {progress.currentIndex}/{progress.totalInTheSet}
-            </Text>
+            {progress && (
+              <Text style={styles.minimizeProgress}>
+                {progress.currentIndex}/{progress.totalInTheSet}
+              </Text>
+            )}
           </>
         )}
       </TouchableOpacity>

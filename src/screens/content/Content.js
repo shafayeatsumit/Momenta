@@ -17,6 +17,7 @@ import {
   arrayToQueryParams,
   contentParser,
   uniq,
+  filterSets,
   findNextSetIndex,
 } from '../../helpers/common';
 import Swiper from 'react-native-swiper';
@@ -28,6 +29,7 @@ import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {api} from '../../helpers/api';
+import {act} from 'react-test-renderer';
 
 class Content extends Component {
   constructor(props) {
@@ -122,34 +124,60 @@ class Content extends Component {
     if (isSetChanged) {
       Animated.timing(this.categoryOpacity, {
         toValue: 1,
-        duration: 3000,
+        duration: 3500,
+        delay: 800,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 3500,
-      delay: 1500,
+      duration: 3000,
+      delay: 2500,
       useNativeDriver: true,
     }).start(this.turnOnInteraction);
   };
 
+  markAsSeen = () => {
+    const {activeIndex, allContents} = this.props;
+    const activeSet = allContents[activeIndex].set;
+    const url = `api/contents/${activeSet}/`;
+    api
+      .put(url)
+      .then((resp) => {})
+      .catch((error) => console.log('error', error));
+  };
+
+  bookmarkItem = () => {
+    const {activeIndex, allContents} = this.props;
+    const activeSet = allContents[activeIndex].set;
+    const url = 'api/bookmarks/';
+    api
+      .post(url, {set_id: activeSet})
+      .then((resp) => {
+        console.log('bookmark', resp.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
   fadeOut = (actionType, ingnoreSetChange = false) => {
-    const {dispatch} = this.props;
+    const {dispatch, contentType} = this.props;
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
+    if (contentType === 'regular' && willSetChange) {
+      this.markAsSeen();
+    }
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 2000,
+        duration: 3000,
         delay: 500,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 1500,
-      delay: 500,
+      duration: 2000,
+      delay: 3000,
       useNativeDriver: true,
     }).start(() => {
       dispatch(actionType);
@@ -234,11 +262,26 @@ class Content extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {activeIndex} = this.props;
+    const {allContents, activeIndex} = this.props;
     // index has changed
     if (prevProps.activeIndex !== activeIndex) {
       const isSetChanged = this.checkSetChange();
       this.fadeIn(isSetChanged);
+    }
+    const previousContent = allContents[prevProps.activeIndex];
+    const currentContent = allContents[activeIndex];
+    if (
+      currentContent &&
+      previousContent &&
+      previousContent.set !== currentContent.set
+    ) {
+      let activeSets = allContents.slice(activeIndex).map((item) => item.set);
+      activeSets = filterSets(activeSets);
+      // TODO: need to change that 2 to 10
+      if (activeSets.length < 2) {
+        console.log('passing the check');
+        this.fetchContent();
+      }
     }
   }
 
@@ -248,7 +291,7 @@ class Content extends Component {
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     let contentSets = allContents.map((item) => item.set);
-    contentSets = uniq(contentSets);
+    contentSets = filterSets(contentSets);
     return (
       <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
         <SafeAreaView style={styles.contentContainer}>
@@ -265,9 +308,6 @@ class Content extends Component {
             onIndexChanged={this.handleScroll}
             scrollEnabled={this.state.scrollActive}
             showsPagination={false}>
-            {/** Array(4) will be replaced by content/bookmarks sets*/}
-            {/** initially we will set content/bookmarks to the state */}
-            {/** the moment we scroll rtl we are going to remove that set from from the set */}
             {contentSets.map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
                 <View style={styles.categoryContainer}>
@@ -287,7 +327,12 @@ class Content extends Component {
           </Swiper>
           <View style={styles.footerContainer}>
             <Animated.Image source={shareIcon} style={styles.icon} />
-            <Animated.Image source={bookmarkIcon} style={styles.bookmarkIcon} />
+            <TouchableOpacity onPress={this.bookmarkItem}>
+              <Animated.Image
+                source={bookmarkIcon}
+                style={styles.bookmarkIcon}
+              />
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </ImageBackground>

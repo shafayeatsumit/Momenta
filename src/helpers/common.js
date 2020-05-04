@@ -5,9 +5,12 @@ export const getProgress = (index, allContents) => {
   }
   const content = allContents[index];
   const filterBySet = allContents.filter((item) => item.set === content.set);
-  const currentIndex = filterBySet.findIndex((item) => item.id === content.id);
+  const uniqueContentIds = uniq(filterBySet.map((item) => item.id));
+  const currentIndex = uniqueContentIds.findIndex(
+    (item) => item === content.id,
+  );
   return {
-    totalInTheSet: filterBySet.length,
+    totalInTheSet: uniqueContentIds.length,
     currentIndex: currentIndex + 1,
   };
 };
@@ -72,4 +75,12 @@ export const findNextSetIndex = (activeIndex, allContents) => {
     }
   }
   return nextIndex;
+};
+
+export const filterSets = (array) => {
+  return array.filter(function (item, pos, arr) {
+    // Always keep the 0th element as there is nothing before it
+    // Then check if each element is different than the one before it
+    return pos === 0 || item !== arr[pos - 1];
+  });
 };

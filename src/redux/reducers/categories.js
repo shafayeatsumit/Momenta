@@ -30,6 +30,7 @@ const categories = (state = initialState, action) => {
         multiselectMode: false,
         selected: [action.id],
       };
+    case 'START_FROM_SPECIFIC_BOOKMARK_SET':
     case 'RESET_CATEGORIES_CONTENT':
     case 'RESET_CATEGORIES':
       return {

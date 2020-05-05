@@ -4,6 +4,7 @@ import {composeWithDevTools} from 'redux-devtools-extension';
 import rootReducer from './reducers';
 import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 
 // AsyncStorage.clear();
 
@@ -12,12 +13,16 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: ['loginInfo'],
 };
+const middleware = [
+  // logger,
+  thunk,
+];
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default () => {
   let store = createStore(
     persistedReducer,
-    // composeWithDevTools(applyMiddleware(logger)),
+    composeWithDevTools(applyMiddleware(...middleware)),
   );
   let persistor = persistStore(store);
   return {store, persistor};

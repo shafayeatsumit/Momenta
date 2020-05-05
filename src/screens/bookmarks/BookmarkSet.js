@@ -24,7 +24,7 @@ const BookmarkSet = ({
   const dispatch = useDispatch();
   const groupBookmarksBySet = _.groupBy(bookmarks, (content) => content.setId);
   const setItems = groupBookmarksBySet[setId];
-  const deleteBookmark = () => dispatch({type: 'DELTE_BOOKMARK', setId});
+  const deleteBookmark = () => dispatch({type: 'DELETE_BOOKMARK', setId});
   const handleSetSelect = () => handleSetPress(setId);
   const handleSetSelectShuffleOn = () => handleSetPressShuffleOn(setId);
 

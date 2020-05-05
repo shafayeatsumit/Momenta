@@ -20,7 +20,7 @@ const INIT_STATE = {
 };
 
 const contents = (state = INIT_STATE, action) => {
-  let updatedIndex;
+  let updatedIndex, updatedContents;
   switch (action.type) {
     case 'ADD_CONTENT':
       updatedIndex = state.activeIndex === null ? 0 : state.activeIndex;
@@ -34,6 +34,22 @@ const contents = (state = INIT_STATE, action) => {
       return {
         ...state,
         allContents: action.updatedContents,
+      };
+    case 'ADD_BOOKMARK':
+      updatedContents = state.allContents.map((item) =>
+        item.set === action.set ? {...item, bookmark: true} : item,
+      );
+      return {
+        ...state,
+        allContents: updatedContents,
+      };
+    case 'DELETE_BOOKMARK':
+      updatedContents = state.allContents.map((item) =>
+        item.set === action.set ? {...item, bookmark: false} : item,
+      );
+      return {
+        ...state,
+        allContents: updatedContents,
       };
     case 'NEXT_CONTENT':
       updatedIndex =

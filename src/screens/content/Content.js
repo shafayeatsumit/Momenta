@@ -11,6 +11,7 @@ import {
   PanResponder,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {bookmarkSet} from '../../redux/actions/contents';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {
@@ -147,17 +148,7 @@ class Content extends Component {
       .catch((error) => console.log('error', error));
   };
 
-  bookmarkItem = () => {
-    const {activeIndex, allContents} = this.props;
-    const activeSet = allContents[activeIndex].set;
-    const url = 'api/bookmarks/';
-    api
-      .post(url, {set_id: activeSet})
-      .then((resp) => {
-        console.log('bookmark', resp.data);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  bookmarkItem = () => this.props.dispatch(bookmarkSet());
 
   fadeOut = (actionType, ingnoreSetChange = false) => {
     const {dispatch, contentType} = this.props;
@@ -287,6 +278,8 @@ class Content extends Component {
 
   render() {
     const {allContents, activeIndex} = this.props;
+    const activeContent = allContents[activeIndex];
+    const isBookmarked = activeContent ? activeContent.bookmark : false;
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
@@ -306,7 +299,7 @@ class Content extends Component {
             showsButtons={false}
             loop={false}
             onIndexChanged={this.handleScroll}
-            scrollEnabled={this.state.scrollActive}
+            scrollEnabled={this.state.scrollActive && !isBookmarked}
             showsPagination={false}>
             {contentSets.map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>
@@ -330,7 +323,10 @@ class Content extends Component {
             <TouchableOpacity onPress={this.bookmarkItem}>
               <Animated.Image
                 source={bookmarkIcon}
-                style={styles.bookmarkIcon}
+                style={[
+                  styles.bookmarkIcon,
+                  isBookmarked && {tintColor: 'rgb(60,113,222)'},
+                ]}
               />
             </TouchableOpacity>
           </View>

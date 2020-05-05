@@ -1,3 +1,5 @@
+import {api} from '../../helpers/api';
+
 export const addContent = () => ({
   type: 'ADD_CONTENT',
 });
@@ -13,3 +15,39 @@ export const previousContent = () => ({
 export const goToNextSet = () => ({
   type: 'GO_TO_NEXT_SET',
 });
+
+const addABookmark = (activeSet, dispatch) => {
+  const url = 'api/bookmarks/';
+  console.log('setId', activeSet);
+  api
+    .post(url, {set_id: activeSet})
+    .then((resp) => {
+      console.log('bookmark added', resp.data);
+      dispatch({type: 'ADD_BOOKMARK', set: activeSet});
+    })
+    .catch((error) => console.log('error', error));
+};
+
+const deleteBookmark = (activeSet, dispatch) => {
+  const url = `api/bookmarks/${activeSet}`;
+  api
+    .delete(url)
+    .then((resp) => {
+      dispatch({type: 'DELETE_BOOKMARK', set: activeSet});
+      console.log('bookmark deleted', resp.data);
+    })
+    .catch((error) => console.log('error', error));
+};
+
+export const bookmarkSet = () => (dispatch, getState) => {
+  const {contents} = getState();
+  const {activeIndex, allContents} = contents;
+  const activeSet = allContents[activeIndex].set;
+  const isBookmarked = allContents[activeIndex].bookmark;
+  console.log('all');
+  if (isBookmarked) {
+    deleteBookmark(activeSet, dispatch);
+  } else {
+    addABookmark(activeSet, dispatch);
+  }
+};

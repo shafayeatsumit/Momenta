@@ -78,7 +78,7 @@ const bookmarks = (state = INIT_STATE, action) => {
         contents: shuffleBookmarks(state.bookmarks),
         shuffle: true,
       };
-    case 'DELTE_BOOKMARK':
+    case 'DELETE_BOOKMARK':
       updatedContents = state.contents.filter(
         (item) => item.setId !== action.setId,
       );

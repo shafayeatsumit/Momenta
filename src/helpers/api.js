@@ -4,8 +4,8 @@ import _ from 'lodash';
 import ReduxStore from '../redux/store';
 const {store} = ReduxStore();
 
-const BASEURL = 'http://localhost:8000/';
-
+// const BASEURL = 'http://localhost:8000/';
+const BASEURL = 'https://threethought.herokuapp.com/';
 const anonymousEndpoints = ['api/auth/anonymoussignup/'];
 
 const transformResponse = (data) => {
@@ -38,8 +38,8 @@ const authInterceptor = async (request) => {
   if (isAnonymous) {
     return request;
   }
-  const {token} = await store.getState();
-  request.headers.Authorization = `Token ${token}`;
+  const {loginInfo} = await store.getState();
+  request.headers.Authorization = `${loginInfo.token}`;
   return request;
 };
 

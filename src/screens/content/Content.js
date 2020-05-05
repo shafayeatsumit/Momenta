@@ -182,7 +182,7 @@ class Content extends Component {
   };
 
   fetchContent = (tags = null) => {
-    const {categories, dispatch} = this.props;
+    const {categories, dispatch, loginInfo} = this.props;
     const selectedTags = tags ? tags : categories.selected;
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
@@ -337,7 +337,7 @@ class Content extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {contents, categories, contentType, bookmarks} = state;
+  const {contents, categories, contentType, bookmarks, loginInfo} = state;
   const allContents =
     contentType === 'bookmarks' ? bookmarks.contents : contents.allContents;
   const activeIndex =
@@ -347,6 +347,7 @@ const mapStateToProps = (state, ownProps) => {
     activeIndex,
     categories,
     contentType,
+    loginInfo,
   };
 };
 

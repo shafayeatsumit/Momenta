@@ -18,11 +18,9 @@ export const goToNextSet = () => ({
 
 const addABookmark = (activeSet, dispatch) => {
   const url = 'api/bookmarks/';
-  console.log('setId', activeSet);
   api
     .post(url, {set_id: activeSet})
     .then((resp) => {
-      console.log('bookmark added', resp.data);
       dispatch({type: 'ADD_BOOKMARK', set: activeSet});
     })
     .catch((error) => console.log('error', error));
@@ -34,7 +32,6 @@ const deleteBookmark = (activeSet, dispatch) => {
     .delete(url)
     .then((resp) => {
       dispatch({type: 'DELETE_BOOKMARK', set: activeSet});
-      console.log('bookmark deleted', resp.data);
     })
     .catch((error) => console.log('error', error));
 };

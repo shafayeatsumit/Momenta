@@ -22,8 +22,14 @@ export const getCategory = (index, allContents) => {
   return _.get(allContents[index], 'tag');
 };
 
+export const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 export const arrayToQueryParams = (key, values) => {
-  let queryString = values.map((item) => key + '=' + item + '&');
+  let queryString = values.map(
+    (item) => key + '=' + capitalizeFirstLetter(item) + '&',
+  );
   queryString = queryString.join('');
   // remove last occurrance of &, and add ? at the beginning
   queryString = '?' + queryString.substring(0, queryString.length - 1);

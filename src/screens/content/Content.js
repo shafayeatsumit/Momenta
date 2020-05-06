@@ -155,20 +155,22 @@ class Content extends Component {
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
     if (contentType === 'regular' && willSetChange) {
+      // TODO: remove fetchContent from here. uncomment the other part
+      this.fetchContent();
       this.markAsSeen();
     }
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 3000,
-        delay: 500,
+        duration: 300,
+        // delay: 500,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 2000,
-      delay: 3000,
+      duration: 200,
+      // delay: 3000,
       useNativeDriver: true,
     }).start(() => {
       dispatch(actionType);
@@ -259,21 +261,20 @@ class Content extends Component {
       const isSetChanged = this.checkSetChange();
       this.fadeIn(isSetChanged);
     }
-    const previousContent = allContents[prevProps.activeIndex];
-    const currentContent = allContents[activeIndex];
-    if (
-      currentContent &&
-      previousContent &&
-      previousContent.set !== currentContent.set
-    ) {
-      let activeSets = allContents.slice(activeIndex).map((item) => item.set);
-      activeSets = filterSets(activeSets);
-      // TODO: need to change that 2 to 10
-      if (activeSets.length < 2) {
-        console.log('passing the check');
-        this.fetchContent();
-      }
-    }
+    // const previousContent = allContents[prevProps.activeIndex];
+    // const currentContent = allContents[activeIndex];
+    // if (
+    //   currentContent &&
+    //   previousContent &&
+    //   previousContent.set !== currentContent.set
+    // ) {
+    //   let activeSets = allContents.slice(activeIndex).map((item) => item.set);
+    //   activeSets = filterSets(activeSets);
+    //   // TODO: need to change that 2 to 10
+    //   if (activeSets.length < 2) {
+    //     this.fetchContent();
+    //   }
+    // }
   }
 
   render() {
@@ -299,7 +300,7 @@ class Content extends Component {
             showsButtons={false}
             loop={false}
             onIndexChanged={this.handleScroll}
-            scrollEnabled={this.state.scrollActive && !isBookmarked}
+            scrollEnabled={this.state.scrollActive}
             showsPagination={false}>
             {contentSets.map((item, itemIndex) => (
               <View {...this.swiperPanResponder.panHandlers} key={item}>

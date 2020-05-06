@@ -27,13 +27,23 @@ export const capitalizeFirstLetter = (string) => {
 };
 
 export const arrayToQueryParams = (key, values) => {
-  let queryString = values.map(
-    (item) => key + '=' + capitalizeFirstLetter(item) + '&',
-  );
+  let queryString = values.map((item) => key + '=' + item + '&');
   queryString = queryString.join('');
   // remove last occurrance of &, and add ? at the beginning
   queryString = '?' + queryString.substring(0, queryString.length - 1);
   return queryString;
+};
+
+export const bookmarkParser = (responseData) => {
+  const sets = responseData.map((item) => {
+    const tagName = item.set.tags[0].name;
+    const contents = item.set.contents;
+    return contents.map((content) => ({
+      ...content,
+      tag: tagName,
+    }));
+  });
+  return _.flatten(sets);
 };
 
 export const contentParser = (responseData) => {

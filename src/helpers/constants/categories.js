@@ -14,7 +14,7 @@ import image_13 from '../../../assets/background_imges/image_13.png';
 
 const categoreis = [
   {
-    id: 'calm',
+    id: 'Calm',
     name: 'Calm',
     selected: false,
     orderId: 0,
@@ -22,14 +22,14 @@ const categoreis = [
     image: image_1,
   },
   {
-    id: 'connection',
+    id: 'Connection',
     name: 'Connection',
     orderId: 0,
     gradientColors: ['#3A89CD', '#3A53B5'],
     image: image_4,
   },
   {
-    id: 'gratitude',
+    id: 'Gratitude',
     name: 'Gratitude',
     orderId: 0,
     gradientColors: ['#DE8465', '#C34A8B'],

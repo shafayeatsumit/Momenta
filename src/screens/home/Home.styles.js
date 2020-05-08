@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   startButtonContainer: {
-    height: ScreenHeight * 0.1,
+    height: ScreenHeight * 0.14,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   startButton: {
     position: 'absolute',
     alignSelf: 'center',
-    height: ScreenHeight * 0.1 - 30,
+    height: ScreenHeight * 0.1 - 20,
     width: ScreenWidth * 0.85,
     borderRadius: ScreenWidth * 0.02,
     backgroundColor: '#3D71DE',

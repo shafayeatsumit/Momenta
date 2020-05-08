@@ -1,12 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {ScreenWidth} from '../../helpers/constants/common';
 import LinearGradient from 'react-native-linear-gradient';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {RFValue} from '../../helpers/responsiveFont';
 
-const Category = ({
+const Tag = ({
   item,
   handlePress,
   handleLongPress,
@@ -33,11 +31,11 @@ const Category = ({
           {multiselectMode && (
             <View
               style={[
-                styles.categoryIndexHolder,
+                styles.tagIndexHolder,
                 isSelected && styles.whiteBackground,
               ]}>
               {isSelected && (
-                <Text style={[styles.categoryIndex, {color: textColor}]}>
+                <Text style={[styles.tagIndex, {color: textColor}]}>
                   {selectedIndex + 1}
                 </Text>
               )}
@@ -45,14 +43,14 @@ const Category = ({
           )}
         </View>
         <View style={styles.nameContainer}>
-          <Text style={styles.categoryName}>{item.name}</Text>
+          <Text style={styles.tagName}>{item.name}</Text>
         </View>
       </LinearGradient>
     </TouchableOpacity>
   );
 };
 
-export default Category;
+export default Tag;
 
 const styles = StyleSheet.create({
   tiles: {
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingTop: 5,
   },
-  categoryIndexHolder: {
+  tagIndexHolder: {
     height: RFValue(28),
     width: RFValue(28),
     borderRadius: RFValue(28) / 2,
@@ -83,12 +81,12 @@ const styles = StyleSheet.create({
   whiteBackground: {
     backgroundColor: 'white',
   },
-  categoryIndex: {
+  tagIndex: {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: RFValue(20),
     textAlign: 'center',
   },
-  categoryName: {
+  tagName: {
     fontFamily: 'Montserrat-SemiBold',
     fontSize: RFValue(18),
     color: 'white',

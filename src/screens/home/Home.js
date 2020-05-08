@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {toggleCategory} from '../../redux/actions/category';
+import {toggleSelectedTag} from '../../redux/actions/tag';
 import Content from '../content/Content';
-import Category from './Category';
+import Tag from './Tag';
 import RBSheet from '../../components/rbsheet';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
@@ -26,18 +26,13 @@ const Home = () => {
   const categories = useSelector((state) => state.categories);
   const loginInfo = useSelector((state) => state.loginInfo);
 
-  const handleCategoryPress = (id) => {
-    if (categories.multiselectMode) {
-      dispatch(toggleCategory(id));
-    } else {
-      dispatch({
-        type: 'CHOOSE_SINGLE_CATEGORY',
-        id,
-      });
+  const handleTagPress = (id) => {
+    dispatch(toggleSelectedTag(id));
+    if (!categories.multiselectMode) {
       refRBSheet.current.open();
     }
   };
-  const longPressCategory = () => dispatch({type: 'MULTI_SELECT_MODE'});
+  const longPressTag = () => dispatch({type: 'MULTI_SELECT_MODE'});
   const rbsheetClose = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     refRBSheet.current.close();
@@ -92,12 +87,12 @@ const Home = () => {
         </View>
         <ScrollView contentContainerStyle={styles.tilesContainer}>
           {categories.items.map((item) => (
-            <Category
+            <Tag
               item={item}
               key={item.id}
-              handlePress={() => handleCategoryPress(item.id)}
+              handlePress={() => handleTagPress(item.id)}
               multiselectMode={categories.multiselectMode}
-              handleLongPress={longPressCategory}
+              handleLongPress={longPressTag}
               selectedItems={categories.selected}
             />
           ))}

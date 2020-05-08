@@ -6,25 +6,18 @@ const initialState = {
   selected: [],
 };
 const categories = (state = initialState, action) => {
-  let updatedSelectedItems;
   switch (action.type) {
-    case 'TOOGLE_CATEGORY':
-      const {id} = action.payload;
-      const isInArray = state.selected.includes(id);
-      updatedSelectedItems = isInArray
-        ? state.selected.filter((item) => item !== id)
-        : [...state.selected, id];
-
+    case 'TOOGLE_SELECTED_TAG':
       return {
         ...state,
-        selected: updatedSelectedItems,
+        selected: action.selectedTags,
       };
     case 'MULTI_SELECT_MODE':
       return {
         ...state,
         multiselectMode: true,
       };
-    case 'CHOOSE_SINGLE_CATEGORY':
+    case 'CHOOSE_SINGLE_TAG':
       return {
         ...state,
         multiselectMode: false,

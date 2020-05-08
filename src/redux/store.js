@@ -13,10 +13,8 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: ['loginInfo'],
 };
-const middleware = [
-  // logger,
-  thunk,
-];
+// const middleware = [logger, thunk];
+const middleware = [thunk];
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default () => {

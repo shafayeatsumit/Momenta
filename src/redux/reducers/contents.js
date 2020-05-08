@@ -1,5 +1,3 @@
-import {data} from '../../helpers/constants/tempdata';
-
 const findNextSetIndex = (state) => {
   const {activeIndex, allContents} = state;
   let nextIndex = null;
@@ -78,7 +76,7 @@ const contents = (state = INIT_STATE, action) => {
         minimized: true,
       };
     case 'RESET_CATEGORIES_CONTENT':
-    case 'CHOOSE_SINGLE_CATEGORY':
+    case 'CHOOSE_SINGLE_TAG':
     case 'RESET_CONTENT':
       return {
         ...state,

@@ -5,7 +5,7 @@ const minimized = (state = false, action) => {
     case 'RESET_CATEGORIES_CONTENT':
     case 'SET_CONTENT_TYPE':
     case 'RESET_BOOKMARKS':
-    case 'CHOOSE_SINGLE_CATEGORY':
+    case 'CHOOSE_SINGLE_TAG':
     case 'SET_MINIMIZE_FALSE':
       return false;
     default:

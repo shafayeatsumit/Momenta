@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.three_thoughts">
+  package="com.momenta">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

@@ -6,6 +6,7 @@ import {
   ImageBackground,
   Animated,
   Image,
+  TouchableOpacity,
   Text,
   SafeAreaView,
   PanResponder,
@@ -28,9 +29,7 @@ import downIcon from '../../../assets/icons/down.png';
 import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {api} from '../../helpers/api';
-import {act} from 'react-test-renderer';
 
 class Content extends Component {
   constructor(props) {
@@ -48,27 +47,27 @@ class Content extends Component {
       onMoveShouldSetPanResponder: () => true,
       onStartShouldSetPanResponder: () => true,
       onPanResponderRelease: (event, gestureState) => {
-        const x = event.nativeEvent.locationX.toFixed(2);
-        const y = gestureState.y0.toFixed(2);
-        const maxTappableY = ScreenHeight - ScreenHeight * 0.1;
+        const x = event.nativeEvent.locationX;
+        const y = event.nativeEvent.pageY;
+        const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
-        const {contentType} = this.props;
-        const isSwipe = Math.abs(gestureState.dx) >= 1;
+        const {contentType, allContents, activeIndex} = this.props;
+        const isSwipe = Math.abs(gestureState.dx) >= 1.3;
         if (isSwipe) {
           return;
         }
+
         if (x > halfScreenWidth) {
           // right clickable area
-          if (this.tapActive) {
+          const hasNextContent = allContents[activeIndex + 1];
+          if (this.tapActive && hasNextContent) {
             contentType === 'bookmarks'
               ? this.fadeOut({type: 'NEXT_BOOKMARK_CONTENT'})
               : this.fadeOut({type: 'NEXT_CONTENT'});
           }
-        } else if (x < halfScreenWidth && y < maxTappableY) {
+        } else if (x < halfScreenWidth && y < maxVerticalTapArea) {
           // left clickable area
-          const hasPreviousContent = this.props.allContents[
-            this.props.activeIndex
-          ];
+          const hasPreviousContent = allContents[activeIndex];
           const isSetChange = this.checkSetChange();
           if (this.tapActive && !isSetChange && hasPreviousContent) {
             contentType === 'bookmarks'
@@ -162,15 +161,15 @@ class Content extends Component {
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 300,
-        // delay: 500,
+        duration: 3000,
+        delay: 500,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 200,
-      // delay: 3000,
+      duration: 2000,
+      delay: 3000,
       useNativeDriver: true,
     }).start(() => {
       dispatch(actionType);
@@ -184,7 +183,7 @@ class Content extends Component {
   };
 
   fetchContent = (tags = null) => {
-    const {categories, dispatch, loginInfo} = this.props;
+    const {categories, dispatch} = this.props;
     const selectedTags = tags ? tags : categories.selected;
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
@@ -280,7 +279,7 @@ class Content extends Component {
   render() {
     const {allContents, activeIndex} = this.props;
     const activeContent = allContents[activeIndex];
-    const isBookmarked = activeContent ? activeContent.bookmark : false;
+    const isBookmarked = activeContent ? activeContent.isBookmark : false;
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
@@ -303,7 +302,7 @@ class Content extends Component {
             scrollEnabled={this.state.scrollActive}
             showsPagination={false}>
             {contentSets.map((item, itemIndex) => (
-              <View {...this.swiperPanResponder.panHandlers} key={item}>
+              <View key={item} {...this.swiperPanResponder.panHandlers}>
                 <View style={styles.categoryContainer}>
                   <Animated.Text
                     style={[styles.category, {opacity: this.categoryOpacity}]}>
@@ -319,7 +318,9 @@ class Content extends Component {
               </View>
             ))}
           </Swiper>
-          <View style={styles.footerContainer}>
+          <View
+            style={styles.footerContainer}
+            {...this.swiperPanResponder.panHandlers}>
             <Animated.Image source={shareIcon} style={styles.icon} />
             <TouchableOpacity onPress={this.bookmarkItem}>
               <Animated.Image

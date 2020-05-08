@@ -41,6 +41,8 @@ export const bookmarkParser = (responseData) => {
     return contents.map((content) => ({
       ...content,
       tag: tagName,
+      isBookmark: true,
+      setId: `${tagName}_${content.set}`,
     }));
   });
   return _.flatten(sets);
@@ -50,6 +52,7 @@ export const contentParser = (responseData) => {
   let contents = responseData.map((set) => {
     return set.contents.map((content) => ({
       ...content,
+      isBookmark: set.isBookmark,
       tag: set.tags[0].name,
     }));
   });

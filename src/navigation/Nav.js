@@ -12,6 +12,8 @@ import BookmarkIcon from '../../assets/icons/bookmark.png';
 import UserIcon from '../../assets/icons/user.png';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector, useDispatch} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
+
 Icon.loadFont();
 const TabColors = {
   activeTint: 'rgb(216,216,216)',
@@ -20,12 +22,36 @@ const TabColors = {
 };
 
 const Tab = createBottomTabNavigator();
+const getActiveRouteName = (state) => {
+  const route = state.routes[state.index];
+
+  if (route.state) {
+    // Dive into nested navigators
+    return getActiveRouteName(route.state);
+  }
+
+  return route.name;
+};
+
 const Nav = () => {
   const categories = useSelector((state) => state.categories);
   const minimized = useSelector((state) => state.minimized);
   const hideHomeScreen = categories.multiselectMode && !minimized;
+  const routeNameRef = React.useRef();
+  const navigationRef = React.useRef();
+
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      onStateChange={(state) => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = getActiveRouteName(state);
+        if (previousRouteName !== currentRouteName) {
+          console.log(currentRouteName);
+          analytics().setCurrentScreen(currentRouteName);
+        }
+        // Save the current route name for later comparision
+        routeNameRef.current = currentRouteName;
+      }}>
       <StatusBar hidden />
       <Tab.Navigator
         tabBarOptions={{

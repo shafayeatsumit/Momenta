@@ -41,7 +41,6 @@ export const bookmarkSet = () => (dispatch, getState) => {
   const {activeIndex, allContents} = contents;
   const activeSet = allContents[activeIndex].set;
   const isBookmarked = allContents[activeIndex].bookmark;
-  console.log('all');
   if (isBookmarked) {
     deleteBookmark(activeSet, dispatch);
   } else {

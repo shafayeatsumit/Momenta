@@ -1,11 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-
-const Profile = () => (
-  <View style={styles.container}>
-    <Text> PROFILE VIEW</Text>
-  </View>
-);
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import analytics from '@react-native-firebase/analytics';
+const Profile = () => <View style={styles.container} />;
 export default Profile;
 
 const styles = StyleSheet.create({
@@ -13,5 +9,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button: {
+    height: 100,
+    width: 100,
+    backgroundColor: 'yellow',
   },
 });

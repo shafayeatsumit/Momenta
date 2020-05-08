@@ -21,27 +21,30 @@ const BookmarkSet = ({
   const bookmarksState = useSelector((state) => state.bookmarks);
   const {bookmarks, shuffle} = bookmarksState;
   const minimized = useSelector((state) => state.minimized);
+  const contentType = useSelector((state) => state.contentType);
   const dispatch = useDispatch();
   const groupBookmarksBySet = _.groupBy(bookmarks, (content) => content.setId);
   const setItems = groupBookmarksBySet[setId];
   const deleteBookmark = () => dispatch({type: 'DELETE_BOOKMARK', setId});
   const handleSetSelect = () => handleSetPress(setId);
   const handleSetSelectShuffleOn = () => handleSetPressShuffleOn(setId);
-
+  const showProgressTracker = contentType === 'bookmarks' && minimized;
   return (
     <TouchableOpacity
       style={styles.item}
       onLongPress={drag}
       onPress={shuffle ? handleSetSelectShuffleOn : handleSetSelect}
       activeOpacity={0.6}>
-      {minimized && <ProgressBar bookmarks={bookmarks} currentSetId={setId} />}
+      {showProgressTracker && (
+        <ProgressBar bookmarks={bookmarks} currentSetId={setId} />
+      )}
 
       <MorphView>
         <View
           style={[styles.morphView, minimized && {width: ScreenWidth - 75}]}>
           <View style={styles.contentTopRow}>
             <Image source={DragAndDrop} style={styles.dragIcon} />
-            <Text style={styles.setCategory}>{setItems[0].category}</Text>
+            <Text style={styles.setCategory}>{setItems[0].tag}</Text>
             {!minimized && (
               <TouchableOpacity
                 style={styles.bookmarkHolder}
@@ -51,7 +54,7 @@ const BookmarkSet = ({
             )}
           </View>
           <View style={styles.contentBottomRow}>
-            <Text style={styles.setContent}>{setItems[0].content}</Text>
+            <Text style={styles.setContent}>{setItems[0].text}</Text>
           </View>
         </View>
       </MorphView>

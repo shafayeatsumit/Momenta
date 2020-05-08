@@ -57,7 +57,7 @@ const ICON_SIZE = RFValue(30);
 const styles = StyleSheet.create({
   miminizedView: {
     width: ScreenWidth,
-    height: ScreenHeight * 0.08,
+    height: ScreenHeight * 0.09,
     backgroundColor: colors.primaryLight,
     borderBottomWidth: 0.3,
     borderBottomColor: 'white',

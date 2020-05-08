@@ -11,6 +11,8 @@ import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Bookmarks.styles';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
 import BookmarkSet from './BookmarkSet';
+import {fetchBookmark} from '../../redux/actions/bookmarks';
+import analytics from '@react-native-firebase/analytics';
 
 class Bookmarks extends Component {
   constructor(props) {
@@ -24,7 +26,7 @@ class Bookmarks extends Component {
 
   componentDidMount() {
     const {dispatch} = this.props;
-    dispatch({type: 'FETCH_BOOKMARKS'});
+    dispatch(fetchBookmark());
   }
 
   handleShuffle = () => {
@@ -79,7 +81,7 @@ class Bookmarks extends Component {
   sortBookmarks = (newOrderOfSetIds) => {
     const {bookmarks} = this.props;
     const updatedBookmarks = _.sortBy(bookmarks.slice(), (item) =>
-      newOrderOfSetIds.indexOf(item.setId),
+      newOrderOfSetIds.indexOf(item.setId.toString()),
     );
     return updatedBookmarks;
   };
@@ -174,13 +176,13 @@ class Bookmarks extends Component {
 
   render() {
     const {bookmarks, shuffle, minimized} = this.props;
+
     const {shuffleOnBookmarks} = this.state;
     this.groupBookmarksBySet = _.groupBy(bookmarks, (item) => item.setId);
     const bookmarkSets =
       shuffle && shuffleOnBookmarks
         ? shuffleOnBookmarks
         : Object.keys(this.groupBookmarksBySet);
-
     return (
       <SafeAreaView style={styles.safeArea}>
         <DraggableFlatList

@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 10,
     shadowOpacity: 1,
+    elevation: -10,
   },
   middleShadow: {
     shadowColor: 'rgba(8, 16, 33, 0.44)',
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 10,
     shadowOpacity: 1,
+    elevation: 10,
   },
   bottomShadow: {
     shadowColor: 'rgba(175,193,213,0.06)',
@@ -46,6 +48,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 5,
     shadowOpacity: 1,
+    elevation: -5,
   },
 });
 

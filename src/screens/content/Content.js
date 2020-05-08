@@ -327,7 +327,7 @@ class Content extends Component {
                 source={bookmarkIcon}
                 style={[
                   styles.bookmarkIcon,
-                  isBookmarked && {tintColor: 'rgb(60,113,222)'},
+                  isBookmarked && styles.bookmarkColor,
                 ]}
               />
             </TouchableOpacity>

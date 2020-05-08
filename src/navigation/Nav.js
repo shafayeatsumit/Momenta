@@ -39,14 +39,19 @@ const Nav = () => {
   const hideHomeScreen = categories.multiselectMode && !minimized;
   const routeNameRef = React.useRef();
   const navigationRef = React.useRef();
+  React.useEffect(() => {
+    const state = navigationRef.current.getRootState();
 
+    // Save the initial route name
+    routeNameRef.current = getActiveRouteName(state);
+  }, []);
   return (
     <NavigationContainer
+      ref={navigationRef}
       onStateChange={(state) => {
         const previousRouteName = routeNameRef.current;
         const currentRouteName = getActiveRouteName(state);
         if (previousRouteName !== currentRouteName) {
-          console.log(currentRouteName);
           analytics().setCurrentScreen(currentRouteName);
         }
         // Save the current route name for later comparision

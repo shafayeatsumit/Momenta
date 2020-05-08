@@ -31,12 +31,21 @@ class Bookmarks extends Component {
 
   handleShuffle = () => {
     const {shuffle, dispatch} = this.props;
-    shuffle
-      ? dispatch({type: 'BOOKMARK_SHUFFLE_OFF'})
-      : dispatch({type: 'BOOKMARK_SHUFFLE_ON'});
+    if (shuffle) {
+      dispatch({type: 'BOOKMARK_SHUFFLE_OFF'});
+      analytics().logEvent('shuffl_off');
+    } else {
+      dispatch({type: 'BOOKMARK_SHUFFLE_ON'});
+      analytics().logEvent('shuffl_on');
+    }
   };
 
-  handleClose = () => this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
+  handleClose = () => {
+    analytics().logEvent('minimize');
+    this.props.dispatch({type: 'SET_MINIMIZE_TRUE'});
+  };
+
+  handleOpen = () => analytics().logEvent('maximize');
 
   rbsheetClose = () => {
     // close rbsheet on button press
@@ -46,11 +55,13 @@ class Bookmarks extends Component {
 
   handleStart = () => {
     this.props.dispatch({type: 'SET_CONTENT_TYPE', contentType: 'bookmarks'});
+    analytics().logEvent('bookmark_start');
     this.RBSheet.open();
   };
 
   rbSheetOpen = () => {
     this.RBSheet.open();
+    analytics().logEvent('bookmark_start');
   };
 
   getSetIdOfActiveCotent = () => {
@@ -98,6 +109,7 @@ class Bookmarks extends Component {
     this.statrtFromSpecificBookmarkSet = true;
     const {dispatch} = this.props;
     dispatch({type: 'START_FROM_SPECIFIC_BOOKMARK_SET', selectedSetId: setId});
+    analytics().logEvent('bookmark_start');
     this.rbSheetOpen();
   };
 
@@ -133,6 +145,7 @@ class Bookmarks extends Component {
       updatedContents,
     });
     this.rbSheetOpen();
+    analytics().logEvent('bookmark_start');
   };
 
   handleDrag = ({data}) => {
@@ -201,7 +214,7 @@ class Bookmarks extends Component {
           )}
           keyExtractor={(item, index) => `draggable-item-${item}`}
           onDragEnd={({data}) => this.handleDrag({data})}
-          contentContainerStyle={{marginTop: 20}}
+          contentContainerStyle={{marginTop: 25}}
         />
 
         <RBSheet
@@ -209,6 +222,7 @@ class Bookmarks extends Component {
             this.RBSheet = ref;
           }}
           onClose={this.handleClose}
+          onOpen={this.handleOpen}
           {...rbSheetProps}
           customStyles={rbSheetStyle}>
           <Content

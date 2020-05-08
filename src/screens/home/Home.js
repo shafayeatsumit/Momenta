@@ -16,6 +16,7 @@ import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
 import {api} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
+import analytics from '@react-native-firebase/analytics';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -41,7 +42,11 @@ const Home = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     refRBSheet.current.close();
   };
-  const handleClose = () => dispatch({type: 'SET_MINIMIZE_TRUE'});
+  const handleClose = () => {
+    analytics().logEvent('minimize');
+    dispatch({type: 'SET_MINIMIZE_TRUE'});
+  };
+  const handleOpen = () => analytics().logEvent('maximize');
   const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
   const handleStart = () => {
     dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
@@ -100,6 +105,7 @@ const Home = () => {
         <RBSheet
           ref={refRBSheet}
           onClose={handleClose}
+          onOpen={handleOpen}
           {...rbSheetProps}
           customStyles={rbSheetStyle}>
           <Content closeSheet={rbsheetClose} />

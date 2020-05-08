@@ -1,4 +1,5 @@
 import {api} from '../../helpers/api';
+import analytics from '@react-native-firebase/analytics';
 
 export const addContent = () => ({
   type: 'ADD_CONTENT',
@@ -17,6 +18,7 @@ export const goToNextSet = () => ({
 });
 
 const addABookmark = (activeSet, dispatch) => {
+  analytics().logEvent('bookmark_added', {set_id: activeSet});
   const url = 'api/bookmarks/';
   api
     .post(url, {set_id: activeSet})
@@ -27,6 +29,7 @@ const addABookmark = (activeSet, dispatch) => {
 };
 
 const deleteBookmark = (activeSet, dispatch) => {
+  analytics().logEvent('bookmark_deleted', {set_id: activeSet});
   const url = `api/bookmarks/${activeSet}`;
   api
     .delete(url)

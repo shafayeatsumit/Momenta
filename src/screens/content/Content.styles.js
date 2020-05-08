@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     tintColor: 'rgba(255,255,255,0.2)',
   },
+  bookmarkColor: {
+    tintColor: 'rgb(60,113,222)',
+  },
   progressText: {
     fontSize: RFValue(12),
     color: 'white',

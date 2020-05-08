@@ -6,7 +6,6 @@ export const fetchBookmark = () => (dispatch, getState) => {
   api
     .get(url)
     .then((resp) => {
-      console.log('resp', resp.data);
       const bookmarks = bookmarkParser(resp.data);
       dispatch({type: 'FETCH_BOOKMARKS', bookmarks});
     })

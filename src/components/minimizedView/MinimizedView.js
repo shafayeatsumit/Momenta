@@ -7,6 +7,7 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
 import {getCategory, getProgress} from '../../helpers/common';
+import analytics from '@react-native-firebase/analytics';
 
 const MinimizedView = ({maximize}) => {
   let progress, categoryName;
@@ -14,6 +15,7 @@ const MinimizedView = ({maximize}) => {
   const contents = useSelector((state) => state.contents);
   const dispatch = useDispatch();
   const handleClose = () => {
+    analytics().logEvent('cancel');
     if (contentType === 'bookmarks') {
       dispatch({type: 'RESET_BOOKMARKS'});
     } else {

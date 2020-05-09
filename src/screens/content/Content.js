@@ -12,6 +12,7 @@ import {
   PanResponder,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import analytics from '@react-native-firebase/analytics';
 import {bookmarkSet} from '../../redux/actions/contents';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
@@ -51,33 +52,44 @@ class Content extends Component {
         const y = event.nativeEvent.pageY;
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
-        const {contentType, allContents, activeIndex} = this.props;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
         if (isSwipe) {
+          //detect swipe
           return;
         }
-
         if (x > halfScreenWidth) {
           // right clickable area
-          const hasNextContent = allContents[activeIndex + 1];
-          if (this.tapActive && hasNextContent) {
-            contentType === 'bookmarks'
-              ? this.fadeOut({type: 'NEXT_BOOKMARK_CONTENT'})
-              : this.fadeOut({type: 'NEXT_CONTENT'});
-          }
+          this.goToNextContent();
         } else if (x < halfScreenWidth && y < maxVerticalTapArea) {
           // left clickable area
-          const hasPreviousContent = allContents[activeIndex];
-          const isSetChange = this.checkSetChange();
-          if (this.tapActive && !isSetChange && hasPreviousContent) {
-            contentType === 'bookmarks'
-              ? this.fadeOut({type: 'PREVIOUS_BOOKMARK_CONTENT'}, true)
-              : this.fadeOut({type: 'PREVIOUS_CONTENT'}, true);
-          }
+          this.goToPreViousContent();
         }
       },
     });
   }
+
+  goToPreViousContent = () => {
+    const {allContents, activeIndex, contentType} = this.props;
+    const hasPreviousContent = allContents[activeIndex];
+    const isSetChange = this.checkSetChange();
+    if (this.tapActive && !isSetChange && hasPreviousContent) {
+      contentType === 'bookmarks'
+        ? this.fadeOut({type: 'PREVIOUS_BOOKMARK_CONTENT'}, true)
+        : this.fadeOut({type: 'PREVIOUS_CONTENT'}, true);
+    }
+  };
+
+  goToNextContent = () => {
+    const {allContents, activeIndex, contentType} = this.props;
+    const hasNextContent = allContents[activeIndex + 1];
+    if (this.tapActive && hasNextContent) {
+      if (contentType === 'bookmarks') {
+        this.fadeOut({type: 'NEXT_BOOKMARK_CONTENT'});
+      } else {
+        this.fadeOut({type: 'NEXT_CONTENT'});
+      }
+    }
+  };
 
   checkSetChange = () => {
     const {allContents, activeIndex} = this.props;
@@ -119,6 +131,13 @@ class Content extends Component {
       : dispatch({type: 'GO_TO_NEXT_SET'});
   };
 
+  contentSeen = () => {
+    this.turnOnInteraction();
+    const {allContents, activeIndex} = this.props;
+    const activeContent = allContents[activeIndex];
+    //const contentId = _.get(activeContent,'id');
+    analytics().logEvent('viewed_content', {content_id: activeContent.id});
+  };
   fadeIn = (isSetChanged) => {
     this.turnOffInteraction();
     if (isSetChanged) {
@@ -134,12 +153,13 @@ class Content extends Component {
       duration: 3000,
       delay: 2500,
       useNativeDriver: true,
-    }).start(this.turnOnInteraction);
+    }).start(this.contentSeen);
   };
 
   markAsSeen = () => {
     const {activeIndex, allContents} = this.props;
     const activeSet = allContents[activeIndex].set;
+    analytics().logEvent('viewed_set', {set_id: activeSet});
     const url = `api/contents/${activeSet}/`;
     api
       .put(url)
@@ -299,10 +319,14 @@ class Content extends Component {
             showsButtons={false}
             loop={false}
             onIndexChanged={this.handleScroll}
-            scrollEnabled={this.state.scrollActive}
-            showsPagination={false}>
-            {contentSets.map((item, itemIndex) => (
-              <View key={item} {...this.swiperPanResponder.panHandlers}>
+            // scrollEnabled={this.state.scrollActive}
+            containerStyle={{alignSelf: 'stretch'}}
+            showsPagination={true}>
+            {[...new Array(10)].map((item, itemIndex) => (
+              <View
+                key={item}
+                {...this.swiperPanResponder.panHandlers}
+                style={{backgroundColor: 'red'}}>
                 <View style={styles.categoryContainer}>
                   <Animated.Text
                     style={[styles.category, {opacity: this.categoryOpacity}]}>

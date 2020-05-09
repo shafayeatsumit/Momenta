@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   footerContainer: {
     height: ScreenHeight * 0.13,
     marginLeft: 20,
-    // backgroundColor: 'red',
     marginTop: 10,
     alignItems: 'flex-start',
     flexDirection: 'row',

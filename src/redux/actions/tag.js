@@ -5,8 +5,8 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
   if (multiselectMode) {
     const isTagExist = categories.selected.includes(id);
     isTagExist
-      ? analytics().logEvent('deselect_tag', {tag: id})
-      : analytics().logEvent('select_tag', {tag: id});
+      ? analytics().logEvent('deselect_tag', {tag_name: id})
+      : analytics().logEvent('select_tag', {tag_name: id});
 
     const selectedTags = isTagExist
       ? selected.filter((item) => item !== id)
@@ -17,7 +17,7 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
     });
   } else {
     //single category selected
-    analytics().logEvent('select_tag', {tag: id});
+    analytics().logEvent('select_tag', {tag_name: id});
     dispatch({
       type: 'CHOOSE_SINGLE_TAG',
       id,

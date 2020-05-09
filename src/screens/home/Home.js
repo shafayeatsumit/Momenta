@@ -25,7 +25,6 @@ const Home = () => {
   const contentType = useSelector((state) => state.contentType);
   const categories = useSelector((state) => state.categories);
   const loginInfo = useSelector((state) => state.loginInfo);
-
   const handleTagPress = (id) => {
     dispatch(toggleSelectedTag(id));
     if (!categories.multiselectMode) {
@@ -49,12 +48,18 @@ const Home = () => {
   };
 
   useEffect(() => {
+    // we need to rip it off after alpha
+    if (loginInfo.userId) {
+      const userId = loginInfo.userId;
+      analytics().setUserId(userId.toString());
+    }
     if (!loginInfo.token) {
       api
         .post('api/auth/anonymoussignup/')
         .then((resp) => {
-          const {token, anonymous} = resp.data;
-          dispatch({type: 'UPDATE_TOKEN', token});
+          const {id} = resp.data;
+          dispatch({type: 'UPDATE_TOKEN', data: resp.data});
+          analytics().setUserId(id.toString());
         })
         .catch((error) => console.log('error', error));
     }

@@ -2,6 +2,8 @@ import {StyleSheet} from 'react-native';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
+import {Platform} from 'react-native';
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -35,6 +37,12 @@ const styles = StyleSheet.create({
     width: ScreenWidth - 50,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
+    ...Platform.select({
+      android: {
+        borderColor: 'rgb(125,126,141)',
+        borderWidth: 0.5,
+      },
+    }),
   },
   contentTopRow: {
     flex: 1.2,

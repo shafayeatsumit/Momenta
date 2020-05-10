@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   footerContainer: {
-    height: ScreenHeight * 0.13,
+    height: ScreenHeight * 0.15,
     marginLeft: 20,
     alignItems: 'center',
     flexDirection: 'row',

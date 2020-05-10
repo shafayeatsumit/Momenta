@@ -261,11 +261,12 @@ class Content extends Component {
   }
 
   handleScrollEnd = (event) => {
+    // this creates an illusion for the user for swiping
+    // actually it just moves between two views.
     let index = event.nativeEvent.contentOffset.x / ScreenWidth;
-    // if user goes back to previous slide don't update scrollIndex in the state.
-    if (this.state.scrollIndex === null || index > this.state.scrollIndex) {
+    if (index === 1) {
+      this.scrollRef.scrollTo({x: 0, y: 0, animated: false});
       this.props.dispatch(rejectSet());
-      this.setState({scrollIndex: index});
       this.fadeOutQucik();
     }
   };
@@ -300,15 +301,8 @@ class Content extends Component {
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
-    const activeSetId = contentAvailable ? allContents[activeIndex].set : null;
-    let contentSets = allContents.map((item) => item.set);
-    contentSets = filterSets(contentSets);
     const scrollEnabled =
       contentType === 'regular' && this.state.scrollActive && !isBookmarked;
-    // console.log('content sets', contentSets);
-    console.log('activeSetId', activeSetId);
-    console.log('active content', contentText);
-    console.log('active tag', contentTag);
 
     return (
       <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
@@ -321,7 +315,7 @@ class Content extends Component {
           </View>
 
           <ScrollView
-            contentContainerStyle={styles.slideContainer}
+            ref={(ref) => (this.scrollRef = ref)}
             onMomentumScrollEnd={this.handleScrollEnd}
             horizontal
             scrollEnabled={scrollEnabled}
@@ -330,32 +324,21 @@ class Content extends Component {
             {...this.swiperPanResponder.panHandlers}
             scrollEventThrottle={16}>
             <TouchableOpacity activeOpacity={1} style={styles.slideContainer}>
-              {contentSets.map((item, itemIndex) => (
-                <View key={item} style={{width: ScreenWidth}}>
-                  <View style={styles.categoryContainer}>
-                    {activeSetId === item && (
-                      <Animated.Text
-                        style={[
-                          styles.category,
-                          {opacity: this.categoryOpacity},
-                        ]}>
-                        {contentTag}
-                      </Animated.Text>
-                    )}
-                  </View>
-                  <View style={styles.thoughtContainer}>
-                    {activeSetId === item && (
-                      <Animated.Text
-                        style={[
-                          styles.content,
-                          {opacity: this.contentOpacity},
-                        ]}>
-                        {contentText}
-                      </Animated.Text>
-                    )}
-                  </View>
+              <View key={0} style={{width: ScreenWidth}}>
+                <View style={styles.categoryContainer}>
+                  <Animated.Text
+                    style={[styles.category, {opacity: this.categoryOpacity}]}>
+                    {contentTag}
+                  </Animated.Text>
                 </View>
-              ))}
+                <View style={styles.thoughtContainer}>
+                  <Animated.Text
+                    style={[styles.content, {opacity: this.contentOpacity}]}>
+                    {contentText}
+                  </Animated.Text>
+                </View>
+              </View>
+              <View key={1} style={{width: ScreenWidth}} />
             </TouchableOpacity>
           </ScrollView>
 

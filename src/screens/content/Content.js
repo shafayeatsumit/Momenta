@@ -53,11 +53,6 @@ class Content extends Component {
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
-        console.log('tap collected');
-        if (isSwipe) {
-          //detect swipe
-          return;
-        }
         if (x > halfScreenWidth) {
           // right clickable area
           this.goToNextContent();

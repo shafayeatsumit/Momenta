@@ -24,12 +24,25 @@ const deleteBookmark = (activeSet, dispatch) => {
     .catch((error) => console.log('error', error));
 };
 
+export const rejectSet = () => (dispatch, getState) => {
+  const {contents} = getState();
+  const {activeIndex, allContents} = contents;
+  const activeSet = allContents[activeIndex].set;
+  analytics().logEvent('reject_set', {set_id: activeSet});
+  const url = `api/rejected_sets/${activeSet}/`;
+  api
+    .put(url)
+    .then((resp) => {
+      console.log('reject set', resp.data);
+    })
+    .catch((error) => console.log('error', error));
+};
+
 export const bookmarkSet = () => (dispatch, getState) => {
   const {contents} = getState();
   const {activeIndex, allContents} = contents;
   const activeSet = allContents[activeIndex].set;
   const isBookmarked = allContents[activeIndex].isBookmark;
-  console.log('bookmark set', isBookmarked);
   if (isBookmarked) {
     deleteBookmark(activeSet, dispatch);
   } else {

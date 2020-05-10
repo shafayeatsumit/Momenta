@@ -35,6 +35,13 @@ const categoreis = [
     gradientColors: ['#DE8465', '#C34A8B'],
     image: image_3,
   },
+  {
+    id: 'Start My Day',
+    name: 'Start My Day',
+    orderId: 0,
+    gradientColors: ['#A577F0', '#553CDC'],
+    image: image_5,
+  },
   // {
   //   id: 'reflection',
   //   name: 'Reflection',

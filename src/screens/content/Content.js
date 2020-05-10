@@ -7,13 +7,14 @@ import {
   Animated,
   Image,
   TouchableOpacity,
+  ScrollView,
   Text,
   SafeAreaView,
   PanResponder,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import analytics from '@react-native-firebase/analytics';
-import {bookmarkSet} from '../../redux/actions/contents';
+import {bookmarkSet, rejectSet} from '../../redux/actions/contents';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {
@@ -23,7 +24,6 @@ import {
   filterSets,
   findNextSetIndex,
 } from '../../helpers/common';
-import Swiper from 'react-native-swiper';
 import DEFAULT_IMAGE from '../../../assets/default_background.png';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
 import downIcon from '../../../assets/icons/down.png';
@@ -53,6 +53,7 @@ class Content extends Component {
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
+        console.log('tap collected');
         if (isSwipe) {
           //detect swipe
           return;
@@ -115,13 +116,6 @@ class Content extends Component {
     this.setState({scrollActive: true});
   };
 
-  handleScroll = (index) => {
-    this.setState({scrollIndex: index});
-    if (index > this.state.scrollIndex) {
-      this.fadeOutQucik();
-    }
-  };
-
   fadeOutQucik = () => {
     const {dispatch, contentType} = this.props;
     this.categoryOpacity.setValue(0);
@@ -174,8 +168,6 @@ class Content extends Component {
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
     if (contentType === 'regular' && willSetChange) {
-      // TODO: remove fetchContent from here. uncomment the other part
-      this.fetchContent();
       this.markAsSeen();
     }
     if (willSetChange && !ingnoreSetChange) {
@@ -273,6 +265,16 @@ class Content extends Component {
     }
   }
 
+  handleScrollEnd = (event) => {
+    let index = event.nativeEvent.contentOffset.x / ScreenWidth;
+    // if user goes back to previous slide don't update scrollIndex in the state.
+    if (this.state.scrollIndex === null || index > this.state.scrollIndex) {
+      this.props.dispatch(rejectSet());
+      this.setState({scrollIndex: index});
+      this.fadeOutQucik();
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const {allContents, activeIndex} = this.props;
     // index has changed
@@ -280,31 +282,39 @@ class Content extends Component {
       const isSetChanged = this.checkSetChange();
       this.fadeIn(isSetChanged);
     }
-    // const previousContent = allContents[prevProps.activeIndex];
-    // const currentContent = allContents[activeIndex];
-    // if (
-    //   currentContent &&
-    //   previousContent &&
-    //   previousContent.set !== currentContent.set
-    // ) {
-    //   let activeSets = allContents.slice(activeIndex).map((item) => item.set);
-    //   activeSets = filterSets(activeSets);
-    //   // TODO: need to change that 2 to 10
-    //   if (activeSets.length < 2) {
-    //     this.fetchContent();
-    //   }
-    // }
+    const previousContent = allContents[prevProps.activeIndex];
+    const currentContent = allContents[activeIndex];
+    if (
+      currentContent &&
+      previousContent &&
+      previousContent.set !== currentContent.set
+    ) {
+      let activeSets = allContents.slice(activeIndex).map((item) => item.set);
+      activeSets = filterSets(activeSets);
+      // TODO: need to change that 3 to some other number.
+      if (activeSets.length < 3) {
+        this.fetchContent();
+      }
+    }
   }
 
   render() {
-    const {allContents, activeIndex} = this.props;
+    const {allContents, activeIndex, contentType} = this.props;
     const activeContent = allContents[activeIndex];
     const isBookmarked = activeContent ? activeContent.isBookmark : false;
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
+    const activeSetId = contentAvailable ? allContents[activeIndex].set : null;
     let contentSets = allContents.map((item) => item.set);
     contentSets = filterSets(contentSets);
+    const scrollEnabled =
+      contentType === 'regular' && this.state.scrollActive && !isBookmarked;
+    // console.log('content sets', contentSets);
+    console.log('activeSetId', activeSetId);
+    console.log('active content', contentText);
+    console.log('active tag', contentTag);
+
     return (
       <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
         <SafeAreaView style={styles.contentContainer}>
@@ -312,36 +322,48 @@ class Content extends Component {
             <TouchableOpacity onPress={this.props.closeSheet}>
               <Animated.Image source={downIcon} style={styles.iconDown} />
             </TouchableOpacity>
-
             <Animated.Image source={moreIcon} style={styles.iconMore} />
           </View>
-          <Swiper
-            showsButtons={false}
-            loop={false}
-            onIndexChanged={this.handleScroll}
-            // scrollEnabled={this.state.scrollActive}
-            containerStyle={{alignSelf: 'stretch'}}
-            showsPagination={true}>
-            {[...new Array(10)].map((item, itemIndex) => (
-              <View
-                key={item}
-                {...this.swiperPanResponder.panHandlers}
-                style={{backgroundColor: 'red'}}>
-                <View style={styles.categoryContainer}>
-                  <Animated.Text
-                    style={[styles.category, {opacity: this.categoryOpacity}]}>
-                    {contentTag}
-                  </Animated.Text>
+
+          <ScrollView
+            contentContainerStyle={styles.slideContainer}
+            onMomentumScrollEnd={this.handleScrollEnd}
+            horizontal
+            scrollEnabled={scrollEnabled}
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled={true}
+            {...this.swiperPanResponder.panHandlers}
+            scrollEventThrottle={16}>
+            <TouchableOpacity activeOpacity={1} style={styles.slideContainer}>
+              {contentSets.map((item, itemIndex) => (
+                <View key={item} style={{width: ScreenWidth}}>
+                  <View style={styles.categoryContainer}>
+                    {activeSetId === item && (
+                      <Animated.Text
+                        style={[
+                          styles.category,
+                          {opacity: this.categoryOpacity},
+                        ]}>
+                        {contentTag}
+                      </Animated.Text>
+                    )}
+                  </View>
+                  <View style={styles.thoughtContainer}>
+                    {activeSetId === item && (
+                      <Animated.Text
+                        style={[
+                          styles.content,
+                          {opacity: this.contentOpacity},
+                        ]}>
+                        {contentText}
+                      </Animated.Text>
+                    )}
+                  </View>
                 </View>
-                <View style={styles.thoughtContainer}>
-                  <Animated.Text
-                    style={[styles.content, {opacity: this.contentOpacity}]}>
-                    {contentText}
-                  </Animated.Text>
-                </View>
-              </View>
-            ))}
-          </Swiper>
+              ))}
+            </TouchableOpacity>
+          </ScrollView>
+
           <View
             style={styles.footerContainer}
             {...this.swiperPanResponder.panHandlers}>

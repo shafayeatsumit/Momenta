@@ -27,7 +27,9 @@ export const capitalizeFirstLetter = (string) => {
 };
 
 export const arrayToQueryParams = (key, values) => {
-  let queryString = values.map((item) => key + '=' + item + '&');
+  let queryString = values.map(
+    (item) => key + '=' + item.replace(/ /g, '%20') + '&',
+  );
   queryString = queryString.join('');
   // remove last occurrance of &, and add ? at the beginning
   queryString = '?' + queryString.substring(0, queryString.length - 1);

@@ -23,6 +23,10 @@ const styles = StyleSheet.create({
   bottomRow: {
     // height: ScreenHeight * 0.6,
   },
+  slideContainer: {
+    flexGrow: 1,
+    flexDirection: 'row',
+  },
   categoryContainer: {
     height: ScreenHeight * 0.1,
     paddingHorizontal: 20,
@@ -36,8 +40,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     height: ScreenHeight * 0.13,
     marginLeft: 20,
-    marginTop: 10,
-    alignItems: 'flex-start',
+    alignItems: 'center',
     flexDirection: 'row',
   },
   category: {

@@ -9,6 +9,7 @@ import DragAndDrop from '../../../assets/icons/drag_and_drop.png';
 import BookMarkIcon from '../../../assets/icons/bookmark_filled.png';
 import {useSelector, useDispatch} from 'react-redux';
 import _ from 'lodash';
+import {deleteBookmark} from '../../redux/actions/bookmarks';
 
 const BookmarkSet = ({
   setId,
@@ -25,10 +26,11 @@ const BookmarkSet = ({
   const dispatch = useDispatch();
   const groupBookmarksBySet = _.groupBy(bookmarks, (content) => content.setId);
   const setItems = groupBookmarksBySet[setId];
-  const deleteBookmark = () => dispatch({type: 'DELETE_BOOKMARK', setId});
+  const handleBookmarkPress = () => dispatch(deleteBookmark(setId, setItems));
   const handleSetSelect = () => handleSetPress(setId);
   const handleSetSelectShuffleOn = () => handleSetPressShuffleOn(setId);
   const showProgressTracker = contentType === 'bookmarks' && minimized;
+  const hideBookmarkIcon = contentType === 'bookmarks' && minimized;
   return (
     <TouchableOpacity
       style={styles.item}
@@ -45,10 +47,10 @@ const BookmarkSet = ({
           <View style={styles.contentTopRow}>
             <Image source={DragAndDrop} style={styles.dragIcon} />
             <Text style={styles.setCategory}>{setItems[0].tag}</Text>
-            {!minimized && (
+            {hideBookmarkIcon ? null : (
               <TouchableOpacity
                 style={styles.bookmarkHolder}
-                onPress={deleteBookmark}>
+                onPress={handleBookmarkPress}>
                 <Image source={BookMarkIcon} style={styles.bookmarkIcon} />
               </TouchableOpacity>
             )}

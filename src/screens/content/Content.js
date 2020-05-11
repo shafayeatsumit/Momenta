@@ -53,7 +53,6 @@ class Content extends Component {
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
-        console.log('pan received');
         if (x > halfScreenWidth) {
           console.log('next content');
           // right clickable area
@@ -126,8 +125,9 @@ class Content extends Component {
     this.turnOnInteraction();
     const {allContents, activeIndex} = this.props;
     const activeContent = allContents[activeIndex];
-    //const contentId = _.get(activeContent,'id');
-    analytics().logEvent('viewed_content', {content_id: activeContent.id});
+    const contentId = _.get(activeContent, 'id');
+    contentId &&
+      analytics().logEvent('viewed_content', {content_id: contentId});
   };
   fadeIn = (isSetChanged) => {
     this.turnOffInteraction();
@@ -197,10 +197,12 @@ class Content extends Component {
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
     url = url + queryParams;
+    console.log('url', url);
     api
       .get(url)
       .then((resp) => {
         const contents = contentParser(resp.data);
+        console.log('fetched data', contents);
         dispatch({type: 'ADD_CONTENT', data: contents});
       })
       .catch((error) => console.log('error', error));

@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 25,
     paddingHorizontal: 10,
-    // backgroundColor: 'yellow',
   },
   dragIcon: {
     height: RFValue(25),

@@ -13,8 +13,14 @@ const bookmarks = (state = INIT_STATE, action) => {
     case 'FETCH_BOOKMARKS':
       return {
         ...state,
-        bookmarks: action.bookmarks,
-        contents: action.bookmarks,
+        bookmarks: [...state.bookmarks, ...action.bookmarks],
+        contents: [...state.contents, ...action.bookmarks],
+      };
+    case 'ADD_BOOKMARK':
+      return {
+        ...state,
+        bookmarks: [...state.bookmarks, ...action.bookmarkedSet],
+        contents: [...state.contents, ...action.bookmarkedSet],
       };
     case 'START_BOOKMARKS':
       return {

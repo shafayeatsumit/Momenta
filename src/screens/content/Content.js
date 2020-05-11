@@ -53,7 +53,9 @@ class Content extends Component {
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
+        console.log('pan received');
         if (x > halfScreenWidth) {
+          console.log('next content');
           // right clickable area
           this.goToNextContent();
         } else if (x < halfScreenWidth && y < maxVerticalTapArea) {
@@ -321,10 +323,12 @@ class Content extends Component {
             scrollEnabled={scrollEnabled}
             showsHorizontalScrollIndicator={false}
             pagingEnabled={true}
-            {...this.swiperPanResponder.panHandlers}
             scrollEventThrottle={16}>
-            <TouchableOpacity activeOpacity={1} style={styles.slideContainer}>
-              <View key={0} style={{width: ScreenWidth}}>
+            <TouchableOpacity activeOpacity={0.7} style={styles.slideContainer}>
+              <View
+                key={0}
+                style={{width: ScreenWidth}}
+                {...this.swiperPanResponder.panHandlers}>
                 <View style={styles.categoryContainer}>
                   <Animated.Text
                     style={[styles.category, {opacity: this.categoryOpacity}]}>

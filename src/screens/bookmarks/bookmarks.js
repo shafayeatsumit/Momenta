@@ -230,15 +230,14 @@ class Bookmarks extends Component {
             resetContent={this.statrtFromSpecificBookmarkSet}
           />
         </RBSheet>
-        {this.props.minimized ? (
-          <MinimizedView maximize={this.rbSheetOpen} />
-        ) : (
+        {minimized && <MinimizedView maximize={this.rbSheetOpen} />}
+        {!minimized && bookmarks.length ? (
           <StartOptions
             handleStart={this.handleStart}
             handleShuffle={this.handleShuffle}
             shuffle={shuffle}
           />
-        )}
+        ) : null}
       </SafeAreaView>
     );
   }

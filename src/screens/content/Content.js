@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
+  Platform,
   SafeAreaView,
   PanResponder,
 } from 'react-native';
@@ -200,12 +201,10 @@ class Content extends Component {
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
     url = url + queryParams;
-    console.log('url', url);
     api
       .get(url)
       .then((resp) => {
         const contents = contentParser(resp.data);
-        console.log('fetched data', contents);
         dispatch({type: 'ADD_CONTENT', data: contents});
       })
       .catch((error) => console.log('error', error));
@@ -327,7 +326,8 @@ class Content extends Component {
             scrollEnabled={scrollEnabled}
             showsHorizontalScrollIndicator={false}
             pagingEnabled={true}
-            scrollEventThrottle={16}>
+            scrollEventThrottle={16}
+            {...this.swiperPanResponder.panHandlers}>
             <TouchableOpacity activeOpacity={0.7} style={styles.slideContainer}>
               <View key={0} style={{width: ScreenWidth}}>
                 <View style={styles.categoryContainer}>

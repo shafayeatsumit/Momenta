@@ -1,4 +1,4 @@
-package com.momenta;
+package org.threethoughtshealthierllc.momenta;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

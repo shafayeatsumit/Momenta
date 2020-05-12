@@ -1,4 +1,4 @@
-package com.momenta;
+package org.threethoughtshealthierllc.momenta;
 
 import android.app.Application;
 import android.content.Context;

@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.momenta"
+        applicationId "org.threethoughtshealthierllc.momenta"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

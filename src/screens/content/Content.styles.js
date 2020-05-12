@@ -3,7 +3,7 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
 
-const ICON_SIZE = RFValue(30);
+const ICON_SIZE = RFValue(35);
 
 const styles = StyleSheet.create({
   container: {

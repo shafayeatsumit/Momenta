@@ -45,14 +45,17 @@ class Content extends Component {
     this.iconOpacity = new Animated.Value(0);
     this.tapActive = true;
     this.swiperPanResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
       onStartShouldSetPanResponder: () => true,
+      onStartShouldSetResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+
       onPanResponderRelease: (event, gestureState) => {
         const x = event.nativeEvent.locationX;
         const y = event.nativeEvent.pageY;
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
+        console.log('panresponder');
         if (x > halfScreenWidth) {
           console.log('next content');
           // right clickable area
@@ -317,7 +320,6 @@ class Content extends Component {
             </TouchableOpacity>
             <Animated.Image source={moreIcon} style={styles.iconMore} />
           </View>
-
           <ScrollView
             ref={(ref) => (this.scrollRef = ref)}
             onMomentumScrollEnd={this.handleScrollEnd}
@@ -327,17 +329,16 @@ class Content extends Component {
             pagingEnabled={true}
             scrollEventThrottle={16}>
             <TouchableOpacity activeOpacity={0.7} style={styles.slideContainer}>
-              <View
-                key={0}
-                style={{width: ScreenWidth}}
-                {...this.swiperPanResponder.panHandlers}>
+              <View key={0} style={{width: ScreenWidth}}>
                 <View style={styles.categoryContainer}>
                   <Animated.Text
                     style={[styles.category, {opacity: this.categoryOpacity}]}>
                     {contentTag}
                   </Animated.Text>
                 </View>
-                <View style={styles.thoughtContainer}>
+                <View
+                  style={styles.thoughtContainer}
+                  {...this.swiperPanResponder.panHandlers}>
                   <Animated.Text
                     style={[styles.content, {opacity: this.contentOpacity}]}>
                     {contentText}
@@ -347,7 +348,6 @@ class Content extends Component {
               <View key={1} style={{width: ScreenWidth}} />
             </TouchableOpacity>
           </ScrollView>
-
           <View
             style={styles.footerContainer}
             {...this.swiperPanResponder.panHandlers}>

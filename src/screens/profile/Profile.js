@@ -1,12 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
+  Modal,
   TouchableOpacity,
   Image,
   ImageBackground,
 } from 'react-native';
+import BrethingGame from '../BreathingGame';
 import LinearGradient from 'react-native-linear-gradient';
 import styles from './Profile.styles.js';
 import analytics from '@react-native-firebase/analytics';
@@ -16,14 +18,18 @@ const BLANK_PROFILE =
   'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
 
 const Profile = () => {
+  const [modalVisible, setModal] = useState(false);
   useFocusEffect(
     React.useCallback(() => {
       // will do the api call here
     }, []),
   );
-
+  const closeModal = () => setModal(false);
   return (
     <View style={styles.container}>
+      <Modal animationType="fade" transparent={true} visible={modalVisible}>
+        <BrethingGame closeModal={closeModal} />
+      </Modal>
       <LinearGradient
         colors={['rgba(27,31,55,0.57)', 'rgb(27,31,56)']}
         style={styles.topRow}>
@@ -58,7 +64,17 @@ const Profile = () => {
           </ImageBackground>
         </View>
       </LinearGradient>
-      <View style={styles.bottomRow} />
+      <View
+        style={[
+          styles.bottomRow,
+          {justifyContent: 'center', alignContent: 'center'},
+        ]}>
+        <TouchableOpacity
+          style={{alignItems: 'center'}}
+          onPress={() => setModal(true)}>
+          <Text style={styles.score}>BREATHING GAME</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

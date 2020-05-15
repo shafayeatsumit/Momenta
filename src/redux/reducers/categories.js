@@ -1,12 +1,17 @@
 import DEFAULT_CATEGORIES from '../../helpers/constants/categories';
 
 const initialState = {
-  items: DEFAULT_CATEGORIES,
+  items: [],
   multiselectMode: false,
   selected: [],
 };
 const categories = (state = initialState, action) => {
   switch (action.type) {
+    case 'UPDATE_TAGS':
+      return {
+        ...state,
+        items: [...state.items, ...action.tags],
+      };
     case 'TOOGLE_SELECTED_TAG':
       return {
         ...state,
@@ -28,7 +33,8 @@ const categories = (state = initialState, action) => {
     case 'RESET_CATEGORIES':
       return {
         ...state,
-        ...initialState,
+        multiselectMode: false,
+        selected: [],
       };
 
     default:

@@ -34,9 +34,9 @@ const getActiveRouteName = (state) => {
 };
 
 const Nav = () => {
-  const categories = useSelector((state) => state.categories);
+  const tags = useSelector((state) => state.categories);
   const minimized = useSelector((state) => state.minimized);
-  const hideHomeScreen = categories.multiselectMode && !minimized;
+  const hideHomeScreen = tags.multiselectMode && !minimized;
   const routeNameRef = React.useRef();
   const navigationRef = React.useRef();
   React.useEffect(() => {

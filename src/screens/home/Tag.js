@@ -14,6 +14,7 @@ const Tag = ({
   const selectedIndex = selectedItems.findIndex(
     (selectedItem) => selectedItem === item.id,
   );
+
   const isSelected = selectedIndex !== -1;
   const textColor = item.gradientColors[0];
   return (

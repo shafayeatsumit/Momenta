@@ -12,6 +12,15 @@ import image_11 from '../../../assets/background_imges/image_11.png';
 import image_12 from '../../../assets/background_imges/image_12.png';
 import image_13 from '../../../assets/background_imges/image_13.png';
 
+const TAG_COlORS = [
+  ['#86B2FF', '#6852FD'],
+  ['#3A89CD', '#3A53B5'],
+  ['#3A89CD', '#3A53B5'],
+  ['#A577F0', '#553CDC'],
+  ['#E081D4', '#7241BF'],
+  ['#86B2FF', '#6852FD'],
+  ['#3EC0A6', '#0B6FA3'],
+];
 const categoreis = [
   {
     id: 'Calm',

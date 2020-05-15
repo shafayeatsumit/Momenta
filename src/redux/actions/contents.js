@@ -23,7 +23,6 @@ const deleteBookmark = (activeSet, dispatch, activeTag) => {
   analytics().logEvent('bookmark_deleted', {set_id: activeSet});
   const url = `api/bookmarks/${activeSet}/`;
   const bookmarkSetId = `${activeTag}_${activeTag}`;
-  console.log('url', url);
   dispatch({type: 'DELETE_BOOKMARK', set: activeSet, setId: bookmarkSetId});
   api
     .delete(url)

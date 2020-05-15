@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {toggleSelectedTag} from '../../redux/actions/tag';
+import {toggleSelectedTag, fetchTags} from '../../redux/actions/tag';
 import Content from '../content/Content';
 import Tag from './Tag';
 import RBSheet from '../../components/rbsheet';
@@ -49,6 +49,7 @@ const Home = () => {
 
   useEffect(() => {
     // we need to rip it off after alpha
+    dispatch(fetchTags());
     if (loginInfo.userId) {
       const userId = loginInfo.userId;
       analytics().setUserId(userId.toString());

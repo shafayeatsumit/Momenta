@@ -197,7 +197,11 @@ class Content extends Component {
 
   fetchContent = (tags = null) => {
     const {categories, dispatch} = this.props;
-    const selectedTags = tags ? tags : categories.selected;
+    const selectedTagIds = tags ? tags : categories.selected;
+    const selectedTags = selectedTagIds.map(
+      (tagId) => categories.items.find((tag) => tag.id === tagId).name,
+    );
+
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
     url = url + queryParams;

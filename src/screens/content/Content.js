@@ -12,8 +12,9 @@ import {
   Platform,
   SafeAreaView,
   PanResponder,
+  Modal,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import BrethingGame from '../BreathingGame';
 import analytics from '@react-native-firebase/analytics';
 import {bookmarkSet, rejectSet} from '../../redux/actions/contents';
 import styles from './Content.styles';
@@ -39,6 +40,7 @@ class Content extends Component {
     this.state = {
       scrollActive: true,
       scrollIndex: 0,
+      modalVisible: true,
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -56,7 +58,9 @@ class Content extends Component {
         const maxVerticalTapArea = ScreenHeight - ScreenHeight * 0.15;
         const halfScreenWidth = ScreenWidth / 2;
         const isSwipe = Math.abs(gestureState.dx) >= 1.3;
-        console.log('panresponder');
+        if (isSwipe) {
+          return;
+        }
         if (x > halfScreenWidth) {
           console.log('next content');
           // right clickable area
@@ -93,6 +97,7 @@ class Content extends Component {
   };
 
   checkSetChange = () => {
+    // compares current set with previousset
     const {allContents, activeIndex} = this.props;
     const previousSet = _.get(allContents[activeIndex - 1], 'set');
     const currentSet = _.get(allContents[activeIndex], 'set');
@@ -100,6 +105,7 @@ class Content extends Component {
   };
 
   checkSetChangeForward = () => {
+    // compares current set with next set
     const {allContents, activeIndex} = this.props;
     const nextSet = _.get(allContents[activeIndex + 1], 'set');
     const currentSet = _.get(allContents[activeIndex], 'set');
@@ -281,12 +287,34 @@ class Content extends Component {
     }
   };
 
+  showContent = (isSetChanged) => {
+    const {contentType} = this.props;
+    const {modalVisible} = this.state;
+    console.log('showContent setChanged', isSetChanged);
+    //TODO: if set is change and contentType==='regular' then show breathing game.
+    if (contentType === 'regular' && isSetChanged) {
+      this.categoryOpacity.setValue(1);
+      !modalVisible && this.setState({modalVisible: true});
+      return;
+    }
+    this.fadeIn();
+  };
+
+  closeModal = () => {
+    this.setState(
+      {
+        modalVisible: false,
+      },
+      this.fadeIn(true),
+    );
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const {allContents, activeIndex} = this.props;
+    const isSetChanged = this.checkSetChange();
     // index has changed
     if (prevProps.activeIndex !== activeIndex) {
-      const isSetChanged = this.checkSetChange();
-      this.fadeIn(isSetChanged);
+      this.showContent(isSetChanged);
     }
     const previousContent = allContents[prevProps.activeIndex];
     const currentContent = allContents[activeIndex];
@@ -295,6 +323,7 @@ class Content extends Component {
       previousContent &&
       previousContent.set !== currentContent.set
     ) {
+      // upcoming and current sets.
       let activeSets = allContents.slice(activeIndex).map((item) => item.set);
       activeSets = filterSets(activeSets);
       // TODO: need to change that 3 to some other number.
@@ -306,6 +335,7 @@ class Content extends Component {
 
   render() {
     const {allContents, activeIndex, contentType} = this.props;
+    const {modalVisible} = this.state;
     const activeContent = allContents[activeIndex];
     const isBookmarked = activeContent ? activeContent.isBookmark : false;
     const contentAvailable = allContents[activeIndex];
@@ -313,10 +343,20 @@ class Content extends Component {
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled =
       contentType === 'regular' && this.state.scrollActive && !isBookmarked;
+    const showBreathingGame =
+      (contentType === 'regular' && !activeContent) || modalVisible;
 
     return (
       <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
+        <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         <SafeAreaView style={styles.contentContainer}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={showBreathingGame}>
+            <BrethingGame closeModal={this.closeModal} />
+          </Modal>
+
           <View style={styles.topRow}>
             <TouchableOpacity onPress={this.props.closeSheet}>
               <Animated.Image source={downIcon} style={styles.iconDown} />
@@ -335,10 +375,10 @@ class Content extends Component {
             <TouchableOpacity activeOpacity={0.7} style={styles.slideContainer}>
               <View key={0} style={{width: ScreenWidth}}>
                 <View style={styles.categoryContainer}>
-                  <Animated.Text
+                  {/* <Animated.Text
                     style={[styles.category, {opacity: this.categoryOpacity}]}>
                     {contentTag}
-                  </Animated.Text>
+                  </Animated.Text> */}
                 </View>
                 <View
                   style={styles.thoughtContainer}

@@ -28,9 +28,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   categoryContainer: {
-    height: ScreenHeight * 0.1,
-    paddingHorizontal: 20,
-    justifyContent: 'flex-end',
+    paddingLeft: 20,
+    // height: ScreenHeight * 0.1,
+    // paddingHorizontal: 20,
+    // justifyContent: 'flex-end',
   },
   thoughtContainer: {
     marginTop: 50,
@@ -44,10 +45,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   category: {
+    // fontFamily: FontType.SemiBold,
+    // color: 'white',
+    // fontSize: RFValue(24),
+    // paddingBottom: 40,
+    position: 'absolute',
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: RFValue(24),
-    paddingBottom: 40,
+    top: ScreenHeight * 0.25,
+    left: 20,
+    zIndex: 4,
   },
   content: {
     fontFamily: FontType.Medium,

@@ -13,6 +13,10 @@ import {
   State,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
+import {colors, FontType} from '../helpers/theme';
+import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
+import {RFValue} from '../helpers/responsiveFont';
+console.log('screen height+++++>', ScreenHeight);
 import DEFAULT_IMAGE from '../../assets/background_imges/image_4.png';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 
@@ -24,7 +28,7 @@ const SvgCircle = ({closeModal}) => {
   const expandCircle = () => {
     Animated.timing(radius, {
       toValue: 7,
-      duration: 10000,
+      duration: 8000,
       useNativeDriver: true,
       easing: Easing.ease,
     }).start();
@@ -32,7 +36,7 @@ const SvgCircle = ({closeModal}) => {
   const shrinkCircle = () => {
     Animated.timing(radius, {
       toValue: 1,
-      duration: 10000,
+      duration: 8000,
       useNativeDriver: true,
       easing: Easing.linear,
     }).start();
@@ -41,22 +45,8 @@ const SvgCircle = ({closeModal}) => {
   const onStateChange = ({nativeEvent}) => {
     console.log('onState Change', nativeEvent.state);
     if (fullSceeen) {
-      Alert.alert(
-        'Done',
-        'Game Finished',
-        [
-          {
-            text: 'Go Back',
-            onPress: closeModal,
-          },
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ],
-        {cancelable: false},
-      );
+      console.log('fullscreen');
+      closeModal();
       return;
     }
     if (nativeEvent.state === State.BEGAN) {
@@ -66,15 +56,21 @@ const SvgCircle = ({closeModal}) => {
     }
   };
   useEffect(() => {
-    const animationId = radius.addListener(({value}) => {
-      value === 7 && setFullScreen(true);
+    radius.addListener(({value}) => {
+      console.log('value', value);
+      if (value === 7) {
+        setFullScreen(true);
+        closeModal();
+      }
     });
-    return () => radius.removeListener(animationId);
-  }, []);
+    console.log('useEffect animation id', animationId);
+    return radius.removeListener(animationId);
+  }, [radius]);
 
   const radiusPercent = radius.interpolate({
     inputRange: [1, 7],
     outputRange: ['10%', '70%'],
+    extrapolate: 'clamp',
   });
 
   return (
@@ -96,7 +92,7 @@ const SvgCircle = ({closeModal}) => {
         <Rect
           height="100%"
           width="100%"
-          fill="rgba(0, 0, 0, 0.8)"
+          fill="rgba(0, 0, 0,0.95)"
           mask="url(#mask)"
           fill-opacity="0"
         />
@@ -108,9 +104,8 @@ const SvgCircle = ({closeModal}) => {
 const Profile = ({closeModal}) => {
   return (
     <View style={styles.container}>
-      <ImageBackground source={DEFAULT_IMAGE} style={styles.image}>
-        <SvgCircle closeModal={closeModal} />
-      </ImageBackground>
+      {/* <Text style={styles.category}>Connection</Text> */}
+      <SvgCircle closeModal={closeModal} />
     </View>
   );
 };
@@ -119,7 +114,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: 'transparent',
   },
+  category: {
+    position: 'absolute',
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: RFValue(24),
+    top: ScreenHeight * 0.25,
+    left: 20,
+    zIndex: 4,
+  },
+
   image: {
     flex: 1,
     resizeMode: 'cover',

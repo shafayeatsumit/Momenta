@@ -40,7 +40,8 @@ class Content extends Component {
     this.state = {
       scrollActive: true,
       scrollIndex: 0,
-      modalVisible: true,
+      modalVisible:
+        props.activeIndex === null && props.contentType !== 'bookmarks',
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -334,7 +335,7 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex, contentType} = this.props;
+    const {allContents, activeIndex, contentType, backgroundImage} = this.props;
     const {modalVisible} = this.state;
     const activeContent = allContents[activeIndex];
     const isBookmarked = activeContent ? activeContent.isBookmark : false;
@@ -343,18 +344,18 @@ class Content extends Component {
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled =
       contentType === 'regular' && this.state.scrollActive && !isBookmarked;
-    const showBreathingGame =
-      (contentType === 'regular' && !activeContent) || modalVisible;
 
     return (
-      <ImageBackground style={styles.container} source={DEFAULT_IMAGE}>
+      <ImageBackground
+        style={styles.container}
+        source={{uri: backgroundImage.image}}>
         <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         <SafeAreaView style={styles.contentContainer}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={showBreathingGame}>
-            <BrethingGame closeModal={this.closeModal} />
+          <Modal animationType="fade" transparent={true} visible={modalVisible}>
+            <BrethingGame
+              closeModal={this.closeModal}
+              contentTag={contentTag}
+            />
           </Modal>
 
           <View style={styles.topRow}>
@@ -374,12 +375,7 @@ class Content extends Component {
             {...this.swiperPanResponder.panHandlers}>
             <TouchableOpacity activeOpacity={0.7} style={styles.slideContainer}>
               <View key={0} style={{width: ScreenWidth}}>
-                <View style={styles.categoryContainer}>
-                  {/* <Animated.Text
-                    style={[styles.category, {opacity: this.categoryOpacity}]}>
-                    {contentTag}
-                  </Animated.Text> */}
-                </View>
+                <View style={styles.categoryContainer} />
                 <View
                   style={styles.thoughtContainer}
                   {...this.swiperPanResponder.panHandlers}>

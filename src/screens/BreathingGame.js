@@ -63,8 +63,6 @@ const SvgCircle = ({closeModal}) => {
         closeModal();
       }
     });
-    console.log('useEffect animation id', animationId);
-    return radius.removeListener(animationId);
   }, [radius]);
 
   const radiusPercent = radius.interpolate({
@@ -101,10 +99,10 @@ const SvgCircle = ({closeModal}) => {
   );
 };
 
-const Profile = ({closeModal}) => {
+const Profile = ({closeModal, contentTag}) => {
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.category}>Connection</Text> */}
+      <Text style={styles.category}>{contentTag}</Text>
       <SvgCircle closeModal={closeModal} />
     </View>
   );

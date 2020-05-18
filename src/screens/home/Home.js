@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -16,9 +16,11 @@ import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
 import {api} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
+import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 
 const Home = () => {
+  const [backgroundImages, setImage] = useState([]);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
@@ -33,6 +35,7 @@ const Home = () => {
   };
   const longPressTag = () => dispatch({type: 'MULTI_SELECT_MODE'});
   const rbsheetClose = () => {
+    console.log('rb sheet close');
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     refRBSheet.current.close();
   };
@@ -40,7 +43,19 @@ const Home = () => {
     analytics().logEvent('minimize');
     dispatch({type: 'SET_MINIMIZE_TRUE'});
   };
-  const handleOpen = () => analytics().logEvent('maximize');
+
+  const fetchBackgroundImage = () => {
+    api
+      .get('api/background_images')
+      .then((resp) => {
+        setImage(resp.data);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
+  const handleOpen = () => {
+    analytics().logEvent('maximize');
+  };
   const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
   const handleStart = () => {
     dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
@@ -50,6 +65,7 @@ const Home = () => {
   useEffect(() => {
     // we need to rip it off after alpha
     dispatch(fetchTags());
+    fetchBackgroundImage();
     if (loginInfo.userId) {
       const userId = loginInfo.userId;
       analytics().setUserId(userId.toString());
@@ -76,7 +92,7 @@ const Home = () => {
   const showStartButton =
     categories.multiselectMode && !minimized && itemSelected > 1;
   const showCancelButton = categories.multiselectMode && !minimized;
-
+  const backgroundImage = _.sample(backgroundImages);
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -109,7 +125,10 @@ const Home = () => {
           onOpen={handleOpen}
           {...rbSheetProps}
           customStyles={rbSheetStyle}>
-          <Content closeSheet={rbsheetClose} />
+          <Content
+            closeSheet={rbsheetClose}
+            backgroundImage={backgroundImage}
+          />
         </RBSheet>
         {minimized && <MinimizedView maximize={rbSheetOpen} />}
         {showStartButton && (

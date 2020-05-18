@@ -28,10 +28,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   categoryContainer: {
-    paddingLeft: 20,
-    // height: ScreenHeight * 0.1,
-    // paddingHorizontal: 20,
-    // justifyContent: 'flex-end',
+    height: ScreenHeight * 0.05,
   },
   thoughtContainer: {
     marginTop: 50,

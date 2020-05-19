@@ -16,7 +16,7 @@ import {
 import {colors, FontType} from '../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
 import {RFValue} from '../helpers/responsiveFont';
-console.log('screen height+++++>', ScreenHeight);
+
 import DEFAULT_IMAGE from '../../assets/background_imges/image_4.png';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 
@@ -26,17 +26,21 @@ const SvgCircle = ({closeModal}) => {
   const radius = new Animated.Value(1);
   const [fullSceeen, setFullScreen] = useState(false);
   const expandCircle = () => {
+    const currentRadius = radius._value;
+    const duration = 8000 - 8000 / (7 - currentRadius);
     Animated.timing(radius, {
       toValue: 7,
-      duration: 8000,
+      duration: duration,
       useNativeDriver: true,
       easing: Easing.ease,
     }).start();
   };
   const shrinkCircle = () => {
+    const currentRadius = radius._value;
+    const duration = 8000 - 8000 / (currentRadius - 1);
     Animated.timing(radius, {
       toValue: 1,
-      duration: 8000,
+      duration: duration,
       useNativeDriver: true,
       easing: Easing.linear,
     }).start();
@@ -57,7 +61,7 @@ const SvgCircle = ({closeModal}) => {
   };
   useEffect(() => {
     radius.addListener(({value}) => {
-      console.log('value', value);
+      // console.log('value', value);
       if (value === 7) {
         setFullScreen(true);
         closeModal();

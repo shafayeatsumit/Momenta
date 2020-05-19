@@ -8,6 +8,7 @@ import {RFValue} from '../helpers/responsiveFont';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const DEFAULT_DURATION = 6000;
+const DURATION_UNIT = DEFAULT_DURATION / 6;
 export default class BreathingGame extends Component {
   constructor(props) {
     super(props);
@@ -16,11 +17,12 @@ export default class BreathingGame extends Component {
     };
     this.radius = new Animated.Value(1);
     this.animationId = null;
+    this.startTime = null;
   }
 
   expandCircle = () => {
     const currentRadius = this.radius._value;
-    const duration = DEFAULT_DURATION - DEFAULT_DURATION / (7 - currentRadius);
+    const duration = (7 - currentRadius) * DURATION_UNIT;
     Animated.timing(this.radius, {
       toValue: 7,
       duration: duration,
@@ -31,7 +33,7 @@ export default class BreathingGame extends Component {
 
   shrinkCircle = () => {
     const currentRadius = this.radius._value;
-    const duration = DEFAULT_DURATION - DEFAULT_DURATION / (currentRadius - 1);
+    const duration = (currentRadius - 1) * DURATION_UNIT;
     Animated.timing(this.radius, {
       toValue: 1,
       duration: duration,
@@ -56,7 +58,7 @@ export default class BreathingGame extends Component {
 
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
-      console.log('value', value);
+      // console.log('value', value);
       if (value === 7) {
         this.setState({fullSceeen: true});
         this.props.closeModal();
@@ -112,9 +114,7 @@ export default class BreathingGame extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'transparent',
+    ...StyleSheet.absoluteFillObject,
   },
   category: {
     position: 'absolute',

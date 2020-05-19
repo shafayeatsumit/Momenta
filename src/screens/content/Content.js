@@ -33,7 +33,8 @@ import moreIcon from '../../../assets/icons/more.png';
 import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {api} from '../../helpers/api';
-
+const image_uri =
+  'https://images.unsplash.com/photo-1571663888706-078ace47c103?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60';
 class Content extends Component {
   constructor(props) {
     super(props);
@@ -344,11 +345,11 @@ class Content extends Component {
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled =
       contentType === 'regular' && this.state.scrollActive && !isBookmarked;
-
+    // const showModal =
+    //   (activeIndex === null && contentType !== 'bookmarks') || modalVisible;
+    // console.log('show modal', showModal);
     return (
-      <ImageBackground
-        style={styles.container}
-        source={{uri: backgroundImage.image}}>
+      <ImageBackground style={styles.container} source={{uri: image_uri}}>
         <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         <SafeAreaView style={styles.contentContainer}>
           <Modal animationType="fade" transparent={true} visible={modalVisible}>

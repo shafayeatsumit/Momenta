@@ -68,13 +68,8 @@ const Profile = () => {
         style={[
           styles.bottomRow,
           {justifyContent: 'center', alignContent: 'center'},
-        ]}>
-        <TouchableOpacity
-          style={{alignItems: 'center'}}
-          onPress={() => setModal(true)}>
-          <Text style={styles.score}>BREATHING GAME</Text>
-        </TouchableOpacity>
-      </View>
+        ]}
+      />
     </View>
   );
 };

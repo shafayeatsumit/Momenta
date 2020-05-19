@@ -1,44 +1,38 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Animated,
-  StyleSheet,
-  Easing,
-  Text,
-  Alert,
-  ImageBackground,
-} from 'react-native';
-import {
-  TapGestureHandler,
-  State,
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
-import {colors, FontType} from '../helpers/theme';
-import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
+import React, {Component} from 'react';
+import {View, Animated, StyleSheet, Easing, Text} from 'react-native';
+import {TapGestureHandler, State} from 'react-native-gesture-handler';
+import {FontType} from '../helpers/theme';
+import {ScreenHeight} from '../helpers/constants/common';
 import {RFValue} from '../helpers/responsiveFont';
 
-import DEFAULT_IMAGE from '../../assets/background_imges/image_4.png';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
-
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const DEFAULT_DURATION = 6000;
+export default class BreathingGame extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fullSceeen: false,
+    };
+    this.radius = new Animated.Value(1);
+    this.animationId = null;
+  }
 
-const SvgCircle = ({closeModal}) => {
-  const radius = new Animated.Value(1);
-  const [fullSceeen, setFullScreen] = useState(false);
-  const expandCircle = () => {
-    const currentRadius = radius._value;
-    const duration = 8000 - 8000 / (7 - currentRadius);
-    Animated.timing(radius, {
+  expandCircle = () => {
+    const currentRadius = this.radius._value;
+    const duration = DEFAULT_DURATION - DEFAULT_DURATION / (7 - currentRadius);
+    Animated.timing(this.radius, {
       toValue: 7,
       duration: duration,
       useNativeDriver: true,
       easing: Easing.ease,
     }).start();
   };
-  const shrinkCircle = () => {
-    const currentRadius = radius._value;
-    const duration = 8000 - 8000 / (currentRadius - 1);
-    Animated.timing(radius, {
+
+  shrinkCircle = () => {
+    const currentRadius = this.radius._value;
+    const duration = DEFAULT_DURATION - DEFAULT_DURATION / (currentRadius - 1);
+    Animated.timing(this.radius, {
       toValue: 1,
       duration: duration,
       useNativeDriver: true,
@@ -46,71 +40,75 @@ const SvgCircle = ({closeModal}) => {
     }).start();
   };
 
-  const onStateChange = ({nativeEvent}) => {
-    console.log('onState Change', nativeEvent.state);
+  onStateChange = ({nativeEvent}) => {
+    const {fullSceeen} = this.state;
+    const {closeModal} = this.props;
     if (fullSceeen) {
-      console.log('fullscreen');
       closeModal();
       return;
     }
     if (nativeEvent.state === State.BEGAN) {
-      expandCircle();
+      this.expandCircle();
     } else if (nativeEvent.state === State.END) {
-      shrinkCircle();
+      this.shrinkCircle();
     }
   };
-  useEffect(() => {
-    radius.addListener(({value}) => {
-      // console.log('value', value);
+
+  componentDidMount() {
+    this.animationId = this.radius.addListener(({value}) => {
+      console.log('value', value);
       if (value === 7) {
-        setFullScreen(true);
-        closeModal();
+        this.setState({fullSceeen: true});
+        this.props.closeModal();
       }
     });
-  }, [radius]);
+  }
 
-  const radiusPercent = radius.interpolate({
-    inputRange: [1, 7],
-    outputRange: ['10%', '70%'],
-    extrapolate: 'clamp',
-  });
+  componentWillUnmount() {
+    if (this.animationId) {
+      this.radius.removeListener(this.animationId);
+    }
+  }
 
-  return (
-    <TapGestureHandler onHandlerStateChange={onStateChange}>
-      <Svg height="100%" width="100%">
-        <Defs>
-          <Mask id="mask" x="0" y="0" height="100%" width="100%">
-            <Rect height="100%" width="100%" fill="#fff" />
-            <AnimatedCircle
-              r={fullSceeen ? '100%' : radiusPercent}
-              cx="50%"
-              cy="50%"
-              stroke="red"
-              strokeWidth="1"
-              fill="black"
+  render() {
+    const {contentTag} = this.props;
+    const {fullSceeen} = this.state;
+    const radiusPercent = this.radius.interpolate({
+      inputRange: [1, 7],
+      outputRange: ['10%', '70%'],
+      extrapolate: 'clamp',
+    });
+    return (
+      <View style={styles.container}>
+        <Text style={styles.category}>{contentTag}</Text>
+        <TapGestureHandler onHandlerStateChange={this.onStateChange}>
+          <Svg height="100%" width="100%">
+            <Defs>
+              <Mask id="mask" x="0" y="0" height="100%" width="100%">
+                <Rect height="100%" width="100%" fill="#fff" />
+                <AnimatedCircle
+                  r={fullSceeen ? '100%' : radiusPercent}
+                  cx="50%"
+                  cy="50%"
+                  stroke="red"
+                  strokeWidth="1"
+                  fill="black"
+                />
+              </Mask>
+            </Defs>
+            <Rect
+              height="100%"
+              width="100%"
+              fill="rgba(0, 0, 0,0.95)"
+              mask="url(#mask)"
+              fill-opacity="0"
             />
-          </Mask>
-        </Defs>
-        <Rect
-          height="100%"
-          width="100%"
-          fill="rgba(0, 0, 0,0.95)"
-          mask="url(#mask)"
-          fill-opacity="0"
-        />
-      </Svg>
-    </TapGestureHandler>
-  );
-};
-
-const Profile = ({closeModal, contentTag}) => {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.category}>{contentTag}</Text>
-      <SvgCircle closeModal={closeModal} />
-    </View>
-  );
-};
+          </Svg>
+        </TapGestureHandler>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -139,4 +137,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-export default Profile;

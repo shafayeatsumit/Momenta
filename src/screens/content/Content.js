@@ -34,7 +34,7 @@ import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {api} from '../../helpers/api';
 const image_uri =
-  'https://images.unsplash.com/photo-1571663888706-078ace47c103?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60';
+  'https://images.unsplash.com/photo-1589016079623-67f48aa74b9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
 class Content extends Component {
   constructor(props) {
     super(props);
@@ -137,9 +137,13 @@ class Content extends Component {
     this.turnOnInteraction();
     const {allContents, activeIndex} = this.props;
     const activeContent = allContents[activeIndex];
+    const setId = _.get(activeContent, 'set');
     const contentId = _.get(activeContent, 'id');
     contentId &&
-      analytics().logEvent('viewed_content', {content_id: contentId});
+      analytics().logEvent('viewed_content', {
+        content_id: contentId,
+        set_id: setId,
+      });
   };
   fadeIn = (isSetChanged) => {
     this.turnOffInteraction();
@@ -162,7 +166,6 @@ class Content extends Component {
   markAsSeen = () => {
     const {activeIndex, allContents} = this.props;
     const activeSet = allContents[activeIndex].set;
-    analytics().logEvent('viewed_set', {set_id: activeSet});
     const url = `api/contents/${activeSet}/`;
     api
       .put(url)
@@ -292,7 +295,6 @@ class Content extends Component {
   showContent = (isSetChanged) => {
     const {contentType} = this.props;
     const {modalVisible} = this.state;
-    console.log('showContent setChanged', isSetChanged);
     //TODO: if set is change and contentType==='regular' then show breathing game.
     if (contentType === 'regular' && isSetChanged) {
       this.categoryOpacity.setValue(1);

@@ -8,6 +8,7 @@ const ICON_SIZE = RFValue(35);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    zIndex: 0,
   },
   contentContainer: {
     flex: 1,
@@ -42,10 +43,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   category: {
-    // fontFamily: FontType.SemiBold,
-    // color: 'white',
-    // fontSize: RFValue(24),
-    // paddingBottom: 40,
     position: 'absolute',
     fontFamily: FontType.SemiBold,
     color: 'white',

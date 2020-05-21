@@ -5,24 +5,23 @@ import {
   StyleSheet,
   Easing,
   Text,
-  Vibration,
-} from 'react-native';
-import {
-  TapGestureHandler,
-  State,
   TouchableOpacity,
-  TouchableHighlight,
-} from 'react-native-gesture-handler';
+  Vibration,
+  Image,
+  Modal,
+} from 'react-native';
+import {TapGestureHandler, State} from 'react-native-gesture-handler';
 import {FontType} from '../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
 import {RFValue} from '../helpers/responsiveFont';
-
+import downIcon from '../../assets/icons/down.png';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const DEFAULT_DURATION = 6000;
 const DURATION_PER_UNIT = DEFAULT_DURATION / 6;
 const EXPAND_DURATION = DURATION_PER_UNIT;
 const SHRINK_DURATION = DURATION_PER_UNIT * 2; // shrinking will take twice as time as expanding
+const ICON_SIZE = RFValue(10);
 export default class BreathingGame extends Component {
   constructor(props) {
     super(props);
@@ -58,30 +57,24 @@ export default class BreathingGame extends Component {
     }).start();
   };
 
-  onStateChange = ({nativeEvent}) => {
-    const {fullSceeen, gameType} = this.state;
-    const {closeModal} = this.props;
-    if (fullSceeen) {
-      closeModal();
-      return;
+  handlePressIn = () => {
+    const {gameType} = this.props;
+    if (gameType === 'exhales') {
+      this.startVibrating();
     }
-    if (nativeEvent.state === State.BEGAN) {
-      if (gameType === 'exhales') {
-        this.startVibrating();
-      }
-      gameType === 'exhales' ? this.shrinkCircle() : this.expandCircle();
-    } else if (nativeEvent.state === State.END) {
-      if (gameType === 'inhales') {
-        this.startVibrating();
-      }
+    gameType === 'exhales' ? this.shrinkCircle() : this.expandCircle();
+  };
 
-      gameType === 'exhales' ? this.expandCircle() : this.shrinkCircle();
+  handlePressOut = () => {
+    const {gameType} = this.props;
+    if (gameType === 'inhales') {
+      this.startVibrating();
     }
+    gameType === 'exhales' ? this.expandCircle() : this.shrinkCircle();
   };
 
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
-      // console.log('value', value);
       const {gameType} = this.state;
       if (value === 7 && gameType === 'inhales') {
         this.setState({fullSceeen: true});
@@ -104,14 +97,15 @@ export default class BreathingGame extends Component {
     this.setState({gameType: 'exhales', longPressEnabled: true});
   };
 
+  startInhale = () => {
+    this.setState({gameType: 'inhales', longPressEnabled: true});
+  };
+
   startVibrating = () => {
     Vibration.vibrate([1, 2, 1]);
   };
   stopVibrating = () => {
     Vibration.cancel();
-  };
-  startInhale = () => {
-    this.setState({gameType: 'inhales', longPressEnabled: true});
   };
 
   render() {
@@ -122,12 +116,17 @@ export default class BreathingGame extends Component {
       outputRange: ['10%', '70%'],
       extrapolate: 'clamp',
     });
-
     return (
       <View style={styles.container}>
         <Text style={styles.category}>{contentTag}</Text>
-        <TapGestureHandler
-          onHandlerStateChange={longPressEnabled ? this.onStateChange : null}>
+        <TouchableOpacity onPress={this.props.minimize} style={styles.iconDown}>
+          <Image source={downIcon} style={styles.iconStyle} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          disabled={!longPressEnabled}
+          activeOpacity={1}
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}>
           <Svg height="100%" width="100%">
             <Defs>
               <Mask id="mask" x="0" y="0" height="100%" width="100%">
@@ -161,7 +160,7 @@ export default class BreathingGame extends Component {
               />
             ) : null}
           </Svg>
-        </TapGestureHandler>
+        </TouchableOpacity>
         {longPressEnabled ? null : (
           <View style={styles.buttonContainer}>
             <View style={styles.button}>
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     fontSize: RFValue(24),
     top: ScreenHeight * 0.25,
     left: 20,
-    zIndex: 4,
+    zIndex: 1,
   },
 
   image: {
@@ -233,5 +232,19 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     color: 'white',
     fontSize: RFValue(18),
+  },
+  iconDown: {
+    height: 20,
+    width: 20,
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    zIndex: 4,
+  },
+  iconStyle: {
+    tintColor: 'white',
+    height: 35,
+    width: 35,
+    resizeMode: 'cover',
   },
 });

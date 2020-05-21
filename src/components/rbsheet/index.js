@@ -66,6 +66,10 @@ class RBSheet extends Component {
     const {pan} = this.state;
     this.panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => closeOnDragDown,
+      onPanResponderTerminationRequest: () => {
+        console.log('pan termination request');
+        return true;
+      },
       onPanResponderMove: (e, gestureState) => {
         if (gestureState.dy > 0) {
           Animated.event([null, {dy: pan.y}])(e, gestureState);

@@ -12,6 +12,7 @@ import {
   Platform,
   SafeAreaView,
   PanResponder,
+  StyleSheet,
   Modal,
 } from 'react-native';
 import BrethingGame from '../BreathingGame';
@@ -26,7 +27,6 @@ import {
   filterSets,
   findNextSetIndex,
 } from '../../helpers/common';
-import DEFAULT_IMAGE from '../../../assets/default_background.png';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
 import downIcon from '../../../assets/icons/down.png';
 import moreIcon from '../../../assets/icons/more.png';
@@ -150,15 +150,15 @@ class Content extends Component {
     if (isSetChanged) {
       Animated.timing(this.categoryOpacity, {
         toValue: 1,
-        duration: 3500,
+        duration: 2500,
         delay: 800,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 3000,
-      delay: 2500,
+      duration: 2000,
+      delay: 1500,
       useNativeDriver: true,
     }).start(this.contentSeen);
   };
@@ -185,15 +185,15 @@ class Content extends Component {
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 3000,
+        duration: 2000,
         delay: 500,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 2000,
-      delay: 3000,
+      duration: 1500,
+      delay: 1500,
       useNativeDriver: true,
     }).start(() => {
       dispatch(actionType);
@@ -313,6 +313,11 @@ class Content extends Component {
     );
   };
 
+  minimizeBreathingGame = () => {
+    this.setState({modalVisible: false});
+    this.props.closeSheet();
+  };
+
   componentDidUpdate(prevProps, prevState) {
     const {allContents, activeIndex} = this.props;
     const isSetChanged = this.checkSetChange();
@@ -347,20 +352,10 @@ class Content extends Component {
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled =
       contentType === 'regular' && this.state.scrollActive && !isBookmarked;
-    // const showModal =
-    //   (activeIndex === null && contentType !== 'bookmarks') || modalVisible;
-    // console.log('show modal', showModal);
     return (
       <ImageBackground style={styles.container} source={{uri: image_uri}}>
         <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         <SafeAreaView style={styles.contentContainer}>
-          <Modal animationType="fade" transparent={true} visible={modalVisible}>
-            <BrethingGame
-              closeModal={this.closeModal}
-              contentTag={contentTag}
-            />
-          </Modal>
-
           <View style={styles.topRow}>
             <TouchableOpacity onPress={this.props.closeSheet}>
               <Animated.Image source={downIcon} style={styles.iconDown} />
@@ -406,6 +401,26 @@ class Content extends Component {
             </TouchableOpacity>
           </View>
         </SafeAreaView>
+        {modalVisible && Platform.OS === 'android' ? (
+          <View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+            }}>
+            <BrethingGame
+              closeModal={this.closeModal}
+              contentTag={contentTag}
+              minimize={this.minimizeBreathingGame}
+            />
+          </View>
+        ) : (
+          <Modal transparent={true} animationType="fade" visible={modalVisible}>
+            <BrethingGame
+              closeModal={this.closeModal}
+              contentTag={contentTag}
+              minimize={this.minimizeBreathingGame}
+            />
+          </Modal>
+        )}
       </ImageBackground>
     );
   }

@@ -1,17 +1,3 @@
-import image_1 from '../../../assets/background_imges/image_1.png';
-import image_2 from '../../../assets/background_imges/image_2.png';
-import image_3 from '../../../assets/background_imges/image_3.png';
-import image_4 from '../../../assets/background_imges/image_4.png';
-import image_5 from '../../../assets/background_imges/image_5.png';
-import image_6 from '../../../assets/background_imges/image_6.png';
-import image_7 from '../../../assets/background_imges/image_7.png';
-import image_8 from '../../../assets/background_imges/image_8.png';
-import image_9 from '../../../assets/background_imges/image_9.png';
-import image_10 from '../../../assets/background_imges/image_10.png';
-import image_11 from '../../../assets/background_imges/image_11.png';
-import image_12 from '../../../assets/background_imges/image_12.png';
-import image_13 from '../../../assets/background_imges/image_13.png';
-
 const TAG_COlORS = [
   ['#86B2FF', '#6852FD'],
   ['#3A89CD', '#3A53B5'],
@@ -28,28 +14,24 @@ const categoreis = [
     selected: false,
     orderId: 0,
     gradientColors: ['#86B2FF', '#6852FD'],
-    image: image_1,
   },
   {
     id: 'Connection',
     name: 'Connection',
     orderId: 0,
     gradientColors: ['#3A89CD', '#3A53B5'],
-    image: image_4,
   },
   {
     id: 'Gratitude',
     name: 'Gratitude',
     orderId: 0,
     gradientColors: ['#DE8465', '#C34A8B'],
-    image: image_3,
   },
   {
     id: 'Start My Day',
     name: 'Start My Day',
     orderId: 0,
     gradientColors: ['#A577F0', '#553CDC'],
-    image: image_5,
   },
   // {
   //   id: 'reflection',

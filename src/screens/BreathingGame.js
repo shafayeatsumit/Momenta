@@ -10,7 +10,6 @@ import {
   Image,
   Modal,
 } from 'react-native';
-import {TapGestureHandler, State} from 'react-native-gesture-handler';
 import {FontType} from '../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
 import {RFValue} from '../helpers/responsiveFont';
@@ -21,14 +20,13 @@ const DEFAULT_DURATION = 6000;
 const DURATION_PER_UNIT = DEFAULT_DURATION / 6;
 const EXPAND_DURATION = DURATION_PER_UNIT;
 const SHRINK_DURATION = DURATION_PER_UNIT * 2; // shrinking will take twice as time as expanding
-const ICON_SIZE = RFValue(10);
 export default class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
       fullSceeen: false,
       longPressEnabled: false,
-      gameType: 'inhales',
+      gameType: 'exhales',
     };
     this.radius = new Animated.Value(1);
     this.animationId = null;
@@ -58,29 +56,29 @@ export default class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    const {gameType} = this.props;
-    if (gameType === 'exhales') {
-      this.startVibrating();
-    }
-    gameType === 'exhales' ? this.shrinkCircle() : this.expandCircle();
-  };
-
-  handlePressOut = () => {
-    const {gameType} = this.props;
+    const {gameType} = this.state;
     if (gameType === 'inhales') {
       this.startVibrating();
     }
     gameType === 'exhales' ? this.expandCircle() : this.shrinkCircle();
   };
 
+  handlePressOut = () => {
+    const {gameType} = this.state;
+    if (gameType === 'exhales') {
+      this.startVibrating();
+    }
+    gameType === 'exhales' ? this.shrinkCircle() : this.expandCircle();
+  };
+
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
       const {gameType} = this.state;
-      if (value === 7 && gameType === 'inhales') {
+      if (value === 7 && gameType === 'exhales') {
         this.setState({fullSceeen: true});
 
         this.props.closeModal();
-      } else if (value === 1 && gameType === 'exhales') {
+      } else if (value === 1 && gameType === 'inhales') {
         this.props.closeModal();
       }
     });
@@ -93,11 +91,11 @@ export default class BreathingGame extends Component {
   }
 
   startExhale = () => {
-    this.radius.setValue(6);
     this.setState({gameType: 'exhales', longPressEnabled: true});
   };
 
   startInhale = () => {
+    this.radius.setValue(6);
     this.setState({gameType: 'inhales', longPressEnabled: true});
   };
 

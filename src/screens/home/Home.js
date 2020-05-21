@@ -29,11 +29,8 @@ const Home = () => {
   const loginInfo = useSelector((state) => state.loginInfo);
   const handleTagPress = (id) => {
     dispatch(toggleSelectedTag(id));
-    if (!categories.multiselectMode) {
-      refRBSheet.current.open();
-    }
   };
-  const longPressTag = () => dispatch({type: 'MULTI_SELECT_MODE'});
+
   const rbsheetClose = () => {
     console.log('rb sheet close');
     dispatch({type: 'SET_MINIMIZE_TRUE'});
@@ -56,7 +53,7 @@ const Home = () => {
   const handleOpen = () => {
     analytics().logEvent('maximize');
   };
-  const cancelMultiselect = () => dispatch({type: 'RESET_CATEGORIES'});
+  const cancelMultiselect = () => dispatch({type: 'RESET_TAGS'});
   const handleStart = () => {
     dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
     refRBSheet.current.open();
@@ -89,9 +86,8 @@ const Home = () => {
     refRBSheet.current.open();
   };
   const itemSelected = categories.selected.length;
-  const showStartButton =
-    categories.multiselectMode && !minimized && itemSelected > 1;
-  const showCancelButton = categories.multiselectMode && !minimized;
+  const showStartButton = !minimized && itemSelected > 0;
+  const showCancelButton = categories.items.length && !minimized;
   const backgroundImage = _.sample(backgroundImages);
   return (
     <>
@@ -99,13 +95,13 @@ const Home = () => {
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.header}>
           <View />
-          {showCancelButton && (
+          {showCancelButton ? (
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={cancelMultiselect}>
               <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-          )}
+          ) : null}
         </View>
         <ScrollView contentContainerStyle={styles.tilesContainer}>
           {categories.items.map((item) => (
@@ -114,7 +110,6 @@ const Home = () => {
               key={item.id}
               handlePress={() => handleTagPress(item.id)}
               multiselectMode={categories.multiselectMode}
-              handleLongPress={longPressTag}
               selectedItems={categories.selected}
             />
           ))}

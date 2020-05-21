@@ -4,13 +4,7 @@ import {ScreenWidth} from '../../helpers/constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from '../../helpers/responsiveFont';
 
-const Tag = ({
-  item,
-  handlePress,
-  handleLongPress,
-  multiselectMode,
-  selectedItems,
-}) => {
+const Tag = ({item, handlePress, selectedItems}) => {
   const selectedIndex = selectedItems.findIndex(
     (selectedItem) => selectedItem === item.id,
   );
@@ -18,10 +12,7 @@ const Tag = ({
   const isSelected = selectedIndex !== -1;
   const textColor = item.gradientColors[0];
   return (
-    <TouchableOpacity
-      activeOpacity={0.5}
-      onPress={handlePress}
-      onLongPress={handleLongPress}>
+    <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
       <LinearGradient
         key={item.id}
         start={{x: 0.2, y: 0}}
@@ -29,19 +20,17 @@ const Tag = ({
         colors={item.gradientColors}
         style={styles.tiles}>
         <View style={styles.iconContainer}>
-          {multiselectMode && (
-            <View
-              style={[
-                styles.tagIndexHolder,
-                isSelected && styles.whiteBackground,
-              ]}>
-              {isSelected && (
-                <Text style={[styles.tagIndex, {color: textColor}]}>
-                  {selectedIndex + 1}
-                </Text>
-              )}
-            </View>
-          )}
+          <View
+            style={[
+              styles.tagIndexHolder,
+              isSelected && styles.whiteBackground,
+            ]}>
+            {isSelected && (
+              <Text style={[styles.tagIndex, {color: textColor}]}>
+                {selectedIndex + 1}
+              </Text>
+            )}
+          </View>
         </View>
         <View style={styles.nameContainer}>
           <Text style={styles.tagName}>{item.name}</Text>

@@ -66,15 +66,15 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   startButtonContainer: {
-    height: ScreenHeight * 0.14,
-    backgroundColor: colors.primary,
+    height: 80,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
   startButton: {
     position: 'absolute',
     alignSelf: 'center',
-    height: ScreenHeight * 0.1 - 20,
+    height: 50,
     width: ScreenWidth * 0.85,
     borderRadius: ScreenWidth * 0.02,
     backgroundColor: '#3D71DE',
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   start: {
     fontFamily: FontType.SemiBold,
-    fontSize: RFValue(20),
+    fontSize: 18,
     color: 'white',
   },
   closeIcon: {

@@ -19,7 +19,7 @@ const MinimizedView = ({maximize}) => {
     if (contentType === 'bookmarks') {
       dispatch({type: 'RESET_BOOKMARKS'});
     } else {
-      dispatch({type: 'RESET_CATEGORIES_CONTENT'});
+      dispatch({type: 'RESET_TAGS_CONTENT'});
     }
   };
   if (contentType === 'regular') {

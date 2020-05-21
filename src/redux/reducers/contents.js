@@ -75,8 +75,7 @@ const contents = (state = INIT_STATE, action) => {
         ...state,
         minimized: true,
       };
-    case 'RESET_CATEGORIES_CONTENT':
-    case 'CHOOSE_SINGLE_TAG':
+    case 'RESET_TAGS_CONTENT':
     case 'RESET_CONTENT':
       return {
         ...state,

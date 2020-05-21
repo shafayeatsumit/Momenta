@@ -30,15 +30,19 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
 };
 
 export const fetchTags = () => (dispatch, getState) => {
+  const {categories} = getState();
+  const currentTagIds = categories.items.map((tag) => tag.id);
   const url = '/api/tags/';
   api
     .get(url)
     .then((resp) => {
-      const tags = resp.data.map((item) => ({
+      let tags = resp.data.map((item) => ({
         ...item,
         gradientColors: _.sample(TAG_COlORS),
         selected: false,
       }));
+      tags = tags.filter((tag) => !currentTagIds.includes(tag.id));
+      console.log('tags', tags);
       dispatch({type: 'UPDATE_TAGS', tags});
     })
     .catch((error) => {

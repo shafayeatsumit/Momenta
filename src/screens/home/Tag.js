@@ -1,16 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {ScreenWidth} from '../../helpers/constants/common';
 import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from '../../helpers/responsiveFont';
+import checkIcon from '../../../assets/icons/check.png';
 
 const Tag = ({item, handlePress, selectedItems}) => {
   const selectedIndex = selectedItems.findIndex(
     (selectedItem) => selectedItem === item.id,
   );
-
   const isSelected = selectedIndex !== -1;
-  const textColor = item.gradientColors[0];
   return (
     <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
       <LinearGradient
@@ -25,11 +24,7 @@ const Tag = ({item, handlePress, selectedItems}) => {
               styles.tagIndexHolder,
               isSelected && styles.whiteBackground,
             ]}>
-            {isSelected && (
-              <Text style={[styles.tagIndex, {color: textColor}]}>
-                {selectedIndex + 1}
-              </Text>
-            )}
+            {isSelected && <Image source={checkIcon} style={styles.tagIndex} />}
           </View>
         </View>
         <View style={styles.nameContainer}>
@@ -72,9 +67,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   tagIndex: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: RFValue(20),
-    textAlign: 'center',
+    height: RFValue(22),
+    width: RFValue(22),
+    borderRadius: RFValue(22) / 2,
   },
   tagName: {
     fontFamily: 'Montserrat-SemiBold',

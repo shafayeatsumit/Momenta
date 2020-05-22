@@ -58,11 +58,13 @@ const styles = StyleSheet.create({
     height: RFValue(28),
     width: RFValue(28),
     borderRadius: RFValue(28) / 2,
+    overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
   whiteBackground: {
     backgroundColor: 'white',
+    overflow: 'hidden',
   },
   tagIndex: {
     height: RFValue(20),

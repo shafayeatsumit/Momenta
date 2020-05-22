@@ -314,6 +314,7 @@ class Content extends Component {
   };
 
   minimizeBreathingGame = () => {
+    console.log('breathing game');
     this.setState({modalVisible: false});
     this.props.closeSheet();
   };
@@ -404,6 +405,8 @@ class Content extends Component {
         {modalVisible && Platform.OS === 'android' ? (
           <View
             style={{
+              height: ScreenHeight,
+              width: ScreenWidth,
               ...StyleSheet.absoluteFillObject,
             }}>
             <BrethingGame

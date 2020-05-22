@@ -42,7 +42,6 @@ export const fetchTags = () => (dispatch, getState) => {
         selected: false,
       }));
       tags = tags.filter((tag) => !currentTagIds.includes(tag.id));
-      console.log('tags', tags);
       dispatch({type: 'UPDATE_TAGS', tags});
     })
     .catch((error) => {

@@ -25,8 +25,8 @@ export default class BreathingGame extends Component {
     super(props);
     this.state = {
       fullSceeen: false,
-      longPressEnabled: false,
-      gameType: 'exhales',
+      gameStarted: false,
+      gameType: 'inhales',
     };
     this.radius = new Animated.Value(1);
     this.animationId = null;
@@ -56,29 +56,23 @@ export default class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    const {gameType} = this.state;
-    if (gameType === 'inhales') {
-      this.startVibrating();
+    const {gameType, gameStarted} = this.state;
+    if (!gameStarted) {
+      this.setState({gameStarted: true});
     }
-    gameType === 'exhales' ? this.expandCircle() : this.shrinkCircle();
+    gameType === 'inhales' ? this.expandCircle() : this.shrinkCircle();
   };
 
   handlePressOut = () => {
-    const {gameType} = this.state;
-    if (gameType === 'exhales') {
-      this.startVibrating();
-    }
-    gameType === 'exhales' ? this.shrinkCircle() : this.expandCircle();
+    Animated.timing(this.radius).stop();
   };
 
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
       const {gameType} = this.state;
-      if (value === 7 && gameType === 'exhales') {
-        this.setState({fullSceeen: true});
-
+      if (value === 7 && gameType === 'inhales') {
         this.props.closeModal();
-      } else if (value === 1 && gameType === 'inhales') {
+      } else if (value === 1 && gameType === 'exhales') {
         this.props.closeModal();
       }
     });
@@ -91,12 +85,12 @@ export default class BreathingGame extends Component {
   }
 
   startExhale = () => {
-    this.setState({gameType: 'exhales', longPressEnabled: true});
+    this.radius.setValue(6);
+    this.setState({gameType: 'exhales', gameStarted: true});
   };
 
   startInhale = () => {
-    this.radius.setValue(6);
-    this.setState({gameType: 'inhales', longPressEnabled: true});
+    this.setState({gameType: 'inhales', gameStarted: true});
   };
 
   startVibrating = () => {
@@ -108,12 +102,22 @@ export default class BreathingGame extends Component {
 
   render() {
     const {contentTag} = this.props;
-    const {fullSceeen, longPressEnabled} = this.state;
-    const radiusPercent = this.radius.interpolate({
+    const {fullSceeen, gameType, gameStarted} = this.state;
+
+    const radiusForExhales = this.radius.interpolate({
+      inputRange: [0, 6],
+      outputRange: ['0%', '60%'],
+      extrapolate: 'clamp',
+    });
+    const radiusForInhales = this.radius.interpolate({
       inputRange: [1, 7],
       outputRange: ['10%', '70%'],
       extrapolate: 'clamp',
     });
+    const radiusPercent =
+      gameType === 'inhales' ? radiusForInhales : radiusForExhales;
+    const reactFillColor = gameType === 'inhales' ? '#fff' : 'black';
+    const circleFillColor = gameType === 'inhales' ? 'black' : '#fff';
     return (
       <View style={styles.container}>
         <Text style={styles.category}>{contentTag}</Text>
@@ -121,21 +125,20 @@ export default class BreathingGame extends Component {
           <Image source={downIcon} style={styles.iconStyle} />
         </TouchableOpacity>
         <TouchableOpacity
-          disabled={!longPressEnabled}
           activeOpacity={1}
           onPressIn={this.handlePressIn}
           onPressOut={this.handlePressOut}>
           <Svg height="100%" width="100%">
             <Defs>
               <Mask id="mask" x="0" y="0" height="100%" width="100%">
-                <Rect height="100%" width="100%" fill="#fff" />
+                <Rect height="100%" width="100%" fill={reactFillColor} />
                 <AnimatedCircle
                   r={fullSceeen ? '100%' : radiusPercent}
                   cx="50%"
                   cy="50%"
                   stroke="red"
                   strokeWidth="1"
-                  fill="black"
+                  fill={circleFillColor}
                 />
               </Mask>
             </Defs>
@@ -147,19 +150,9 @@ export default class BreathingGame extends Component {
               mask="url(#mask)"
               fill-opacity="0"
             />
-            {longPressEnabled ? (
-              <Circle
-                r="25%"
-                cx="50%"
-                cy="50%"
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="2"
-                fill="none"
-              />
-            ) : null}
           </Svg>
         </TouchableOpacity>
-        {longPressEnabled ? null : (
+        {gameStarted ? null : (
           <View style={styles.buttonContainer}>
             <View style={styles.button}>
               <TouchableOpacity
@@ -232,8 +225,8 @@ const styles = StyleSheet.create({
     fontSize: RFValue(18),
   },
   iconDown: {
-    height: 20,
-    width: 20,
+    height: 40,
+    width: 40,
     position: 'absolute',
     top: 15,
     left: 15,
@@ -244,5 +237,6 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     resizeMode: 'cover',
+    zIndex: 2,
   },
 });

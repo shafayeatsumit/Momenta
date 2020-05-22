@@ -157,8 +157,8 @@ class Content extends Component {
     }
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 2000,
-      delay: 1500,
+      duration: 1000,
+      delay: 0,
       useNativeDriver: true,
     }).start(this.contentSeen);
   };
@@ -185,15 +185,15 @@ class Content extends Component {
     if (willSetChange && !ingnoreSetChange) {
       Animated.timing(this.categoryOpacity, {
         toValue: 0,
-        duration: 2000,
-        delay: 500,
+        duration: 1000,
+        delay: 200,
         useNativeDriver: true,
       }).start();
     }
     Animated.timing(this.contentOpacity, {
       toValue: 0,
-      duration: 1500,
-      delay: 1500,
+      duration: 1000,
+      delay: 500,
       useNativeDriver: true,
     }).start(() => {
       dispatch(actionType);

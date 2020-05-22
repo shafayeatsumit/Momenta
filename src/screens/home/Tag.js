@@ -58,8 +58,6 @@ const styles = StyleSheet.create({
     height: RFValue(28),
     width: RFValue(28),
     borderRadius: RFValue(28) / 2,
-    borderColor: 'white',
-    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -67,9 +65,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   tagIndex: {
-    height: RFValue(22),
-    width: RFValue(22),
-    borderRadius: RFValue(22) / 2,
+    height: RFValue(20),
+    width: RFValue(20),
+    borderRadius: RFValue(20) / 2,
   },
   tagName: {
     fontFamily: 'Montserrat-SemiBold',

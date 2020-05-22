@@ -53,7 +53,6 @@ const Home = () => {
   const handleOpen = () => {
     analytics().logEvent('maximize');
   };
-  const cancelMultiselect = () => dispatch({type: 'RESET_TAGS'});
   const handleStart = () => {
     dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
     refRBSheet.current.open();
@@ -87,7 +86,6 @@ const Home = () => {
   };
   const itemSelected = categories.selected.length;
   const showStartButton = !minimized && itemSelected > 0;
-  const showCancelButton = categories.items.length && !minimized;
   const backgroundImage = _.sample(backgroundImages);
   return (
     <>
@@ -95,13 +93,6 @@ const Home = () => {
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.header}>
           <View />
-          {showCancelButton ? (
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={cancelMultiselect}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          ) : null}
         </View>
         <ScrollView contentContainerStyle={styles.tilesContainer}>
           {categories.items.map((item) => (

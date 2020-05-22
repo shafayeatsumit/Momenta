@@ -5,7 +5,9 @@ import ReduxStore from '../redux/store';
 const {store} = ReduxStore();
 
 // const BASEURL = 'http://localhost:8000/';
-const BASEURL = 'https://threethought.herokuapp.com/';
+// const BASEURL = 'https://threethought.herokuapp.com/';
+const BASEURL = 'http://ec2-52-15-117-190.us-east-2.compute.amazonaws.com/';
+
 const anonymousEndpoints = ['api/auth/anonymoussignup/'];
 
 const transformResponse = (data) => {

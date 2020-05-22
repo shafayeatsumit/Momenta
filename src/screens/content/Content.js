@@ -42,7 +42,8 @@ class Content extends Component {
       scrollActive: true,
       scrollIndex: 0,
       modalVisible:
-        props.activeIndex === null && props.contentType !== 'bookmarks',
+        (props.activeIndex === null && props.contentType !== 'bookmarks') ||
+        props.showBreathingGame,
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -259,12 +260,24 @@ class Content extends Component {
   };
 
   componentDidMount() {
-    const {dispatch, activeIndex, contentType, resetContent} = this.props;
+    const {
+      dispatch,
+      activeIndex,
+      contentType,
+      resetContent,
+      showBreathingGame,
+    } = this.props;
     if (resetContent) {
       this.resetContent();
       return;
     }
-    if (activeIndex !== null) {
+
+    if (activeIndex !== null && showBreathingGame) {
+      this.categoryOpacity.setValue(1);
+      return;
+    }
+
+    if (activeIndex !== null && !showBreathingGame) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
       contentType === 'regular' && this.fetchIfRequired();
@@ -314,9 +327,8 @@ class Content extends Component {
   };
 
   minimizeBreathingGame = () => {
-    console.log('breathing game');
     this.setState({modalVisible: false});
-    this.props.closeSheet();
+    this.props.closeBreathingGame();
   };
 
   componentDidUpdate(prevProps, prevState) {

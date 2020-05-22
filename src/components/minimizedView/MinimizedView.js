@@ -1,9 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {useSelector, useDispatch} from 'react-redux';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import closeIcon from '../../../assets/icons/close.png';
-import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
+import {ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
 import {getCategory, getProgress} from '../../helpers/common';
@@ -59,13 +58,13 @@ const ICON_SIZE = RFValue(30);
 const styles = StyleSheet.create({
   miminizedView: {
     width: ScreenWidth,
-    height: ScreenHeight * 0.09,
+    height: 100,
     backgroundColor: colors.primaryLight,
-    borderBottomWidth: 0.3,
-    borderBottomColor: 'white',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
     flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
   },
   minimizedContentHolder: {
     flex: 3,

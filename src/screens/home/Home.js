@@ -21,6 +21,7 @@ import analytics from '@react-native-firebase/analytics';
 
 const Home = () => {
   const [backgroundImages, setImage] = useState([]);
+  const [minimizeBreathingGame, setMinimizeBreathingGame] = useState(false);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
@@ -32,10 +33,17 @@ const Home = () => {
   };
 
   const rbsheetClose = () => {
-    console.log('rb sheet close');
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     refRBSheet.current.close();
+    minimizeBreathingGame && setMinimizeBreathingGame(false);
   };
+
+  const rbsheetCloseBreathingGame = () => {
+    dispatch({type: 'SET_MINIMIZE_TRUE'});
+    setMinimizeBreathingGame(true);
+    refRBSheet.current.close();
+  };
+
   const handleClose = () => {
     analytics().logEvent('minimize');
     dispatch({type: 'SET_MINIMIZE_TRUE'});
@@ -113,7 +121,9 @@ const Home = () => {
           customStyles={rbSheetStyle}>
           <Content
             closeSheet={rbsheetClose}
+            closeBreathingGame={rbsheetCloseBreathingGame}
             backgroundImage={backgroundImage}
+            showBreathingGame={minimizeBreathingGame}
           />
         </RBSheet>
         {minimized && <MinimizedView maximize={rbSheetOpen} />}

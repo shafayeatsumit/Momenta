@@ -1,108 +1,19 @@
 import React from 'react';
 import {StyleSheet, StatusBar, Image} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {RFValue} from '../helpers/responsiveFont';
-import BookmarkScreen from '../screens/bookmarks/Bookmarks';
 import HomeScreen from '../screens/home/Home';
-import ProfileScreen from '../screens/profile/Profile';
 import {colors} from '../helpers/theme';
-import HomeIcon from '../../assets/icons/home.png';
-import BookmarkIcon from '../../assets/icons/bookmark.png';
-import UserIcon from '../../assets/icons/user.png';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector, useDispatch} from 'react-redux';
-import analytics from '@react-native-firebase/analytics';
+import {createStackNavigator} from '@react-navigation/stack';
 
-Icon.loadFont();
-const TabColors = {
-  activeTint: 'rgb(216,216,216)',
-  inactiveTint: '#696E95',
-  inactiveBackgroundColor: '#31396C',
-};
-
-const Tab = createBottomTabNavigator();
-const getActiveRouteName = (state) => {
-  const route = state.routes[state.index];
-
-  if (route.state) {
-    // Dive into nested navigators
-    return getActiveRouteName(route.state);
-  }
-
-  return route.name;
-};
-
+const Stack = createStackNavigator();
 const Nav = () => {
-  const tags = useSelector((state) => state.categories);
-  const minimized = useSelector((state) => state.minimized);
-  const hideHomeScreen = tags.multiselectMode && !minimized;
-  const routeNameRef = React.useRef();
-  const navigationRef = React.useRef();
-  React.useEffect(() => {
-    const state = navigationRef.current.getRootState();
-
-    // Save the initial route name
-    routeNameRef.current = getActiveRouteName(state);
-  }, []);
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      onStateChange={(state) => {
-        const previousRouteName = routeNameRef.current;
-        const currentRouteName = getActiveRouteName(state);
-        if (previousRouteName !== currentRouteName) {
-          analytics().setCurrentScreen(currentRouteName);
-        }
-        // Save the current route name for later comparision
-        routeNameRef.current = currentRouteName;
-      }}>
+    <NavigationContainer>
       <StatusBar hidden />
-      <Tab.Navigator
-        tabBarOptions={{
-          style: styles.container,
-          activeTintColor: TabColors.activeTint,
-          inactiveTintColor: TabColors.inactiveTint,
-          showLabel: false,
-        }}>
-        <Tab.Screen
-          name="home"
-          component={HomeScreen}
-          options={{
-            tabBarVisible: !hideHomeScreen,
-            tabBarIcon: ({color}) => (
-              <Image
-                source={HomeIcon}
-                style={[styles.icon, {tintColor: color}]}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="bookmarks"
-          component={BookmarkScreen}
-          options={{
-            tabBarIcon: ({color}) => (
-              <Image
-                source={BookmarkIcon}
-                style={[styles.icon, {tintColor: color}]}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="profile"
-          component={ProfileScreen}
-          options={{
-            tabBarIcon: ({color}) => (
-              <Image
-                source={UserIcon}
-                style={[styles.icon, {tintColor: color}]}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      <Stack.Navigator headerMode="none">
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

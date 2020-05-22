@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   startButton: {
     position: 'absolute',
     alignSelf: 'center',
-    height: 50,
+    height: 55,
     width: ScreenWidth * 0.85,
     borderRadius: ScreenWidth * 0.02,
     backgroundColor: '#3D71DE',

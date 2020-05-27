@@ -5,7 +5,7 @@ import closeIcon from '../../../assets/icons/close.png';
 import {ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
-import {getCategory, getProgress, getBookmark} from '../../helpers/common';
+import {getCategory, getBookmark} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 
 const MinimizedView = ({maximize}) => {
@@ -18,7 +18,6 @@ const MinimizedView = ({maximize}) => {
 
   const {activeIndex, allContents} = contents;
   const tagName = getCategory(activeIndex, allContents);
-  const progress = getProgress(activeIndex, allContents);
   const isBookmark = getBookmark(activeIndex, allContents);
 
   return (
@@ -29,14 +28,7 @@ const MinimizedView = ({maximize}) => {
         {isBookmark ? (
           <Text style={styles.minimizeCategory}>Bookmarks</Text>
         ) : (
-          <>
-            <Text style={styles.minimizeCategory}>{tagName}</Text>
-            {progress && (
-              <Text style={styles.minimizeProgress}>
-                {progress.currentIndex}/{progress.totalInTheSet}
-              </Text>
-            )}
-          </>
+          <Text style={styles.minimizeCategory}>{tagName}</Text>
         )}
       </TouchableOpacity>
       <View style={styles.minimizedIconHolder}>

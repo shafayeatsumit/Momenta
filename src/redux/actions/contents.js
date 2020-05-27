@@ -5,14 +5,7 @@ import _ from 'lodash';
 const addABookmark = (activeSet, dispatch, allContents) => {
   analytics().logEvent('bookmark_added', {set_id: activeSet});
   const url = 'api/bookmarks/';
-  const bookmarkedSet = allContents
-    .filter((item) => item.set === activeSet)
-    .map((itemSet) => ({
-      ...itemSet,
-      isBookmark: true,
-      setId: `${itemSet.tag}_${itemSet.set}`,
-    }));
-  dispatch({type: 'ADD_BOOKMARK', set: activeSet, bookmarkedSet});
+  dispatch({type: 'ADD_BOOKMARK', set: activeSet});
   api
     .post(url, {set_id: activeSet})
     .then((resp) => {})
@@ -22,8 +15,7 @@ const addABookmark = (activeSet, dispatch, allContents) => {
 const deleteBookmark = (activeSet, dispatch, activeTag) => {
   analytics().logEvent('bookmark_deleted', {set_id: activeSet});
   const url = `api/bookmarks/${activeSet}/`;
-  const bookmarkSetId = `${activeTag}_${activeTag}`;
-  dispatch({type: 'DELETE_BOOKMARK', set: activeSet, setId: bookmarkSetId});
+  dispatch({type: 'DELETE_BOOKMARK', set: activeSet});
   api
     .delete(url)
     .then((resp) => {
@@ -55,7 +47,7 @@ export const bookmarkSet = () => (dispatch, getState) => {
   }
   const activeSet = activeContent.set;
   const activeTag = activeContent.tag;
-  const isBookmarked = activeContent.isBookmark;
+  const isBookmarked = activeContent.isBookmark || activeContent.bookmarkedNow;
   if (isBookmarked) {
     deleteBookmark(activeSet, dispatch, activeTag);
   } else {

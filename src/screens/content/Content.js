@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {
   View,
@@ -8,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Text,
   AppState,
   Platform,
   SafeAreaView,
@@ -30,8 +28,6 @@ import {
 } from '../../helpers/common';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
 import downIcon from '../../../assets/icons/down.png';
-import moreIcon from '../../../assets/icons/more.png';
-import shareIcon from '../../../assets/icons/share.png';
 import _ from 'lodash';
 import {api} from '../../helpers/api';
 const image_uri =
@@ -43,9 +39,7 @@ class Content extends Component {
       scrollActive: true,
       appState: AppState.currentState,
       scrollIndex: 0,
-      modalVisible:
-        (props.activeIndex === null && props.contentType !== 'bookmarks') ||
-        props.showBreathingGame,
+      modalVisible: props.activeIndex === null || props.showBreathingGame,
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -79,25 +73,19 @@ class Content extends Component {
   }
 
   goToPreViousContent = () => {
-    const {allContents, activeIndex, contentType} = this.props;
+    const {allContents, activeIndex} = this.props;
     const hasPreviousContent = allContents[activeIndex];
     const isSetChange = this.checkSetChange();
     if (this.tapActive && !isSetChange && hasPreviousContent) {
-      contentType === 'bookmarks'
-        ? this.fadeOut({type: 'PREVIOUS_BOOKMARK_CONTENT'}, true)
-        : this.fadeOut({type: 'PREVIOUS_CONTENT'}, true);
+      this.fadeOut({type: 'PREVIOUS_CONTENT'}, true);
     }
   };
 
   goToNextContent = () => {
-    const {allContents, activeIndex, contentType} = this.props;
+    const {allContents, activeIndex} = this.props;
     const hasNextContent = allContents[activeIndex + 1];
     if (this.tapActive && hasNextContent) {
-      if (contentType === 'bookmarks') {
-        this.fadeOut({type: 'NEXT_BOOKMARK_CONTENT'});
-      } else {
-        this.fadeOut({type: 'NEXT_CONTENT'});
-      }
+      this.fadeOut({type: 'NEXT_CONTENT'});
     }
   };
 
@@ -174,13 +162,16 @@ class Content extends Component {
       .catch((error) => console.log('error', error));
   };
 
-  bookmarkItem = () => this.props.dispatch(bookmarkSet());
+  handleBookmark = () => {
+    console.log('handle Bookmark');
+    this.props.dispatch(bookmarkSet());
+  };
 
   fadeOut = (actionType, ingnoreSetChange = false) => {
-    const {dispatch, contentType} = this.props;
+    const {dispatch} = this.props;
     this.turnOffInteraction();
     const willSetChange = this.checkSetChangeForward();
-    if (contentType === 'regular' && willSetChange) {
+    if (willSetChange) {
       this.markAsSeen();
     }
     if (willSetChange && !ingnoreSetChange) {
@@ -275,13 +266,7 @@ class Content extends Component {
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
 
-    const {
-      dispatch,
-      activeIndex,
-      contentType,
-      resetContent,
-      showBreathingGame,
-    } = this.props;
+    const {activeIndex, resetContent, showBreathingGame} = this.props;
     if (resetContent) {
       this.resetContent();
       return;
@@ -295,18 +280,11 @@ class Content extends Component {
     if (activeIndex !== null && !showBreathingGame) {
       this.categoryOpacity.setValue(1);
       this.contentOpacity.setValue(1);
-      contentType === 'regular' && this.fetchIfRequired();
+      this.fetchIfRequired();
       return;
     }
-    // depending on the playing mode fetch data or play bookmark
-    if (contentType === 'bookmarks') {
-      // do nothing
-      dispatch({type: 'START_BOOKMARKS'});
-      return;
-    }
-    if (contentType === 'regular') {
-      this.fetchContent();
-    }
+
+    this.fetchContent();
   }
 
   handleScrollEnd = (event) => {
@@ -321,10 +299,8 @@ class Content extends Component {
   };
 
   showContent = (isSetChanged) => {
-    const {contentType} = this.props;
     const {modalVisible} = this.state;
-    //TODO: if set is change and contentType==='regular' then show breathing game.
-    if (contentType === 'regular' && isSetChanged) {
+    if (isSetChanged) {
       this.categoryOpacity.setValue(1);
       !modalVisible && this.setState({modalVisible: true});
       return;
@@ -371,15 +347,17 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex, contentType, backgroundImage} = this.props;
+    const {allContents, activeIndex} = this.props;
     const {modalVisible} = this.state;
     const activeContent = allContents[activeIndex];
-    const isBookmarked = activeContent ? activeContent.isBookmark : false;
+    const isBookmarked = activeContent
+      ? activeContent.isBookmark || activeContent.bookmarkedNow
+      : false;
     const contentAvailable = allContents[activeIndex];
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
-    const scrollEnabled =
-      contentType === 'regular' && this.state.scrollActive && !isBookmarked;
+    const scrollEnabled = this.state.scrollActive && !isBookmarked;
+
     return (
       <ImageBackground style={styles.container} source={{uri: image_uri}}>
         <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
@@ -414,21 +392,17 @@ class Content extends Component {
               <View key={1} style={{width: ScreenWidth}} />
             </TouchableOpacity>
           </ScrollView>
-          <View
-            style={styles.footerContainer}
-            {...this.swiperPanResponder.panHandlers}>
-            <TouchableOpacity
-              style={styles.bookmarkIconContainer}
-              onPress={this.bookmarkItem}>
-              <Animated.Image
-                source={bookmarkIcon}
-                style={[
-                  styles.bookmarkIcon,
-                  isBookmarked && styles.bookmarkColor,
-                ]}
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={this.handleBookmark}
+            style={styles.bookmarkIconContainer}>
+            <Animated.Image
+              source={bookmarkIcon}
+              style={[
+                styles.bookmarkIcon,
+                isBookmarked && styles.bookmarkColor,
+              ]}
+            />
+          </TouchableOpacity>
         </SafeAreaView>
         {modalVisible && Platform.OS === 'android' ? (
           <View
@@ -458,16 +432,11 @@ class Content extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {contents, categories, contentType, bookmarks, loginInfo} = state;
-  const allContents =
-    contentType === 'bookmarks' ? bookmarks.contents : contents.allContents;
-  const activeIndex =
-    contentType === 'bookmarks' ? bookmarks.activeIndex : contents.activeIndex;
+  const {contents, categories, loginInfo} = state;
   return {
-    allContents,
-    activeIndex,
+    allContents: contents.allContents,
+    activeIndex: contents.activeIndex,
     categories,
-    contentType,
     loginInfo,
   };
 };

@@ -82,15 +82,7 @@ const bookmarks = (state = INIT_STATE, action) => {
         contents: shuffleBookmarks(state.bookmarks),
         shuffle: true,
       };
-    case 'DELETE_BOOKMARK':
-      updatedContents = state.contents.filter(
-        (item) => item.setId !== action.setId,
-      );
-      return {
-        ...state,
-        bookmarks: updatedContents,
-        contents: updatedContents,
-      };
+
     case 'UPDATE_BOOKMARK_ORDER':
       // using drag and drop user changed the order
       // that has no effect the active set

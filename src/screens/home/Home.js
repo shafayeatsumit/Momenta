@@ -25,7 +25,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
-  const contentType = useSelector((state) => state.contentType);
   const categories = useSelector((state) => state.categories);
   const loginInfo = useSelector((state) => state.loginInfo);
   const handleTagPress = (id) => {
@@ -62,7 +61,6 @@ const Home = () => {
     analytics().logEvent('maximize');
   };
   const handleStart = () => {
-    dispatch({type: 'SET_CONTENT_TYPE', contentType: 'regular'});
     refRBSheet.current.open();
   };
 
@@ -87,9 +85,6 @@ const Home = () => {
   }, []);
 
   const rbSheetOpen = () => {
-    if (contentType === 'regular' && categories.selected.length === 0) {
-      return;
-    }
     refRBSheet.current.open();
   };
   const itemSelected = categories.selected.length;

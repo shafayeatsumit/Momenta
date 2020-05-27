@@ -9,7 +9,7 @@ export const rbSheetStyle = {
   },
 };
 export const rbSheetProps = {
-  closeOnDragDown: true,
+  closeOnDragDown: false,
   animationType: 'none',
   closeOnPressMask: false,
   duration: 500,

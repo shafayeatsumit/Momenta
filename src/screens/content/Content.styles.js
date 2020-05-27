@@ -85,8 +85,11 @@ const styles = StyleSheet.create({
     tintColor: 'rgba(255,255,255,0.2)',
   },
   bookmarkIconContainer: {
-    height: 45,
-    width: 45,
+    height: 50,
+    width: 50,
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },

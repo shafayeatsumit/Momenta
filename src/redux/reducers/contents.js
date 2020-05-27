@@ -35,7 +35,7 @@ const contents = (state = INIT_STATE, action) => {
       };
     case 'ADD_BOOKMARK':
       updatedContents = state.allContents.map((item) =>
-        item.set === action.set ? {...item, isBookmark: true} : item,
+        item.set === action.set ? {...item, bookmarkedNow: true} : item,
       );
       return {
         ...state,
@@ -43,7 +43,9 @@ const contents = (state = INIT_STATE, action) => {
       };
     case 'DELETE_BOOKMARK':
       updatedContents = state.allContents.map((item) =>
-        item.set === action.set ? {...item, isBookmark: false} : item,
+        item.set === action.set
+          ? {...item, isBookmark: false, bookmarkedNow: false}
+          : item,
       );
       return {
         ...state,

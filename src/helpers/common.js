@@ -22,6 +22,13 @@ export const getCategory = (index, allContents) => {
   return _.get(allContents[index], 'tag');
 };
 
+export const getBookmark = (index, allContents) => {
+  if (index === null || allContents.length === 0) {
+    return;
+  }
+  return _.get(allContents[index], 'isBookmark');
+};
+
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };

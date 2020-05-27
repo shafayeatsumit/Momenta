@@ -67,12 +67,16 @@ const styles = StyleSheet.create({
   },
   startButtonContainer: {
     height: 80,
+    position: 'absolute',
+    bottom: 15,
+    left: 0,
+    right: 0,
     backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
   },
   startButton: {
-    position: 'absolute',
+    // position: 'absolute',
     alignSelf: 'center',
     height: 55,
     width: ScreenWidth * 0.85,

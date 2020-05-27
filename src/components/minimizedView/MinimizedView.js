@@ -5,37 +5,32 @@ import closeIcon from '../../../assets/icons/close.png';
 import {ScreenWidth} from '../../helpers/constants/common';
 import {colors, FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
-import {getCategory, getProgress} from '../../helpers/common';
+import {getCategory, getProgress, getBookmark} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 
 const MinimizedView = ({maximize}) => {
-  let progress, categoryName;
-  const contentType = useSelector((state) => state.contentType);
   const contents = useSelector((state) => state.contents);
   const dispatch = useDispatch();
   const handleClose = () => {
     analytics().logEvent('cancel');
-    if (contentType === 'bookmarks') {
-      dispatch({type: 'RESET_BOOKMARKS'});
-    } else {
-      dispatch({type: 'RESET_TAGS_CONTENT'});
-    }
+    dispatch({type: 'RESET_TAGS_CONTENT'});
   };
-  if (contentType === 'regular') {
-    const {activeIndex, allContents} = contents;
-    categoryName = getCategory(activeIndex, allContents);
-    progress = getProgress(activeIndex, allContents);
-  }
+
+  const {activeIndex, allContents} = contents;
+  const tagName = getCategory(activeIndex, allContents);
+  const progress = getProgress(activeIndex, allContents);
+  const isBookmark = getBookmark(activeIndex, allContents);
+
   return (
     <View style={styles.miminizedView}>
       <TouchableOpacity
         style={styles.minimizedContentHolder}
         onPress={maximize}>
-        {contentType === 'bookmarks' ? (
+        {isBookmark ? (
           <Text style={styles.minimizeCategory}>Bookmarks</Text>
         ) : (
           <>
-            <Text style={styles.minimizeCategory}>{categoryName}</Text>
+            <Text style={styles.minimizeCategory}>{tagName}</Text>
             {progress && (
               <Text style={styles.minimizeProgress}>
                 {progress.currentIndex}/{progress.totalInTheSet}

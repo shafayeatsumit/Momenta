@@ -140,6 +140,14 @@ export default class BreathingGame extends Component {
                   strokeWidth="1"
                   fill={circleFillColor}
                 />
+                <AnimatedCircle
+                  r={'10%'}
+                  cx="50%"
+                  cy="50%"
+                  stroke="red"
+                  strokeWidth="1"
+                  fill={'black'}
+                />
               </Mask>
             </Defs>
 
@@ -224,13 +232,17 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: RFValue(18),
   },
+  iconDownContainer: {
+    zIndex: 1,
+  },
   iconDown: {
-    height: 40,
-    width: 40,
     position: 'absolute',
-    top: 15,
-    left: 15,
-    zIndex: 4,
+    top: 30,
+    left: 20,
+    height: 35,
+    width: 35,
+    tintColor: 'rgba(255,255,255,0.8)',
+    zIndex: 1,
   },
   iconStyle: {
     tintColor: 'white',

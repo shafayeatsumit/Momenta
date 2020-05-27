@@ -38,9 +38,23 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     height: ScreenHeight * 0.15,
+    width: ScreenWidth * 0.25,
     marginLeft: 20,
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  iconDownContainer: {
+    position: 'absolute',
+    top: 30,
+    left: 20,
+    zIndex: 2,
+    height: 35,
+    width: 35,
+  },
+  iconDown: {
+    height: 35,
+    width: 35,
+    tintColor: 'rgba(255,255,255,0.8)',
   },
   category: {
     position: 'absolute',
@@ -70,19 +84,17 @@ const styles = StyleSheet.create({
     marginRight: 20,
     tintColor: 'rgba(255,255,255,0.2)',
   },
-  iconDown: {
-    height: ICON_SIZE,
-    width: ICON_SIZE,
-    marginLeft: 10,
-    paddingHorizontal: 10,
-    tintColor: 'rgba(255,255,255,0.2)',
+  bookmarkIconContainer: {
+    height: 45,
+    width: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bookmarkIcon: {
-    height: ICON_SIZE,
-    width: ICON_SIZE,
+    height: 35,
+    width: 35,
     marginTop: 5,
-    marginLeft: 30,
-    tintColor: 'rgba(255,255,255,0.2)',
+    tintColor: 'rgba(255,255,255,0.8)',
   },
   bookmarkColor: {
     tintColor: 'rgb(60,113,222)',

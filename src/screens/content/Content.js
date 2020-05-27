@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Text,
+  AppState,
   Platform,
   SafeAreaView,
   PanResponder,
@@ -40,6 +41,7 @@ class Content extends Component {
     super(props);
     this.state = {
       scrollActive: true,
+      appState: AppState.currentState,
       scrollIndex: 0,
       modalVisible:
         (props.activeIndex === null && props.contentType !== 'bookmarks') ||
@@ -125,13 +127,11 @@ class Content extends Component {
     this.setState({scrollActive: true});
   };
 
-  fadeOutQucik = () => {
-    const {dispatch, contentType} = this.props;
+  goToNextSet = () => {
+    const {dispatch} = this.props;
     this.categoryOpacity.setValue(0);
     this.contentOpacity.setValue(0);
-    contentType === 'bookmarks'
-      ? dispatch({type: 'GO_TO_NEXT_BOOKMARK_SET'})
-      : dispatch({type: 'GO_TO_NEXT_SET'});
+    dispatch({type: 'GO_TO_NEXT_SET'});
   };
 
   contentSeen = () => {
@@ -217,13 +217,14 @@ class Content extends Component {
     let url = '/api/contents/';
     const queryParams = arrayToQueryParams('tags', selectedTags);
     url = url + queryParams;
+
     api
       .get(url)
       .then((resp) => {
         const contents = contentParser(resp.data);
         dispatch({type: 'ADD_CONTENT', data: contents});
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => console.log(`error in ${url}`, error));
   };
 
   removeContents = (removedItems) => {
@@ -259,7 +260,21 @@ class Content extends Component {
     }
   };
 
+  handleAppStateChange = (nextAppState) => {
+    const {modalVisible} = this.state;
+    if (!modalVisible && nextAppState === 'background') {
+      this.setState({modalVisible: true});
+      this.goToNextSet();
+    }
+  };
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
   componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+
     const {
       dispatch,
       activeIndex,
@@ -301,7 +316,7 @@ class Content extends Component {
     if (index === 1) {
       this.scrollRef.scrollTo({x: 0, y: 0, animated: false});
       this.props.dispatch(rejectSet());
-      this.fadeOutQucik();
+      this.goToNextSet();
     }
   };
 
@@ -368,13 +383,13 @@ class Content extends Component {
     return (
       <ImageBackground style={styles.container} source={{uri: image_uri}}>
         <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
+        <TouchableOpacity
+          onPress={this.props.closeSheet}
+          style={styles.iconDownContainer}>
+          <Animated.Image source={downIcon} style={styles.iconDown} />
+        </TouchableOpacity>
         <SafeAreaView style={styles.contentContainer}>
-          <View style={styles.topRow}>
-            <TouchableOpacity onPress={this.props.closeSheet}>
-              <Animated.Image source={downIcon} style={styles.iconDown} />
-            </TouchableOpacity>
-            <Animated.Image source={moreIcon} style={styles.iconMore} />
-          </View>
+          <View style={styles.topRow} />
           <ScrollView
             ref={(ref) => (this.scrollRef = ref)}
             onMomentumScrollEnd={this.handleScrollEnd}
@@ -402,8 +417,9 @@ class Content extends Component {
           <View
             style={styles.footerContainer}
             {...this.swiperPanResponder.panHandlers}>
-            <Animated.Image source={shareIcon} style={styles.icon} />
-            <TouchableOpacity onPress={this.bookmarkItem}>
+            <TouchableOpacity
+              style={styles.bookmarkIconContainer}
+              onPress={this.bookmarkItem}>
               <Animated.Image
                 source={bookmarkIcon}
                 style={[

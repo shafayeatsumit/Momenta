@@ -130,7 +130,7 @@ const Home = () => {
         {showStartButton && (
           <View style={styles.startButtonContainer}>
             <TouchableOpacity style={styles.startButton} onPress={handleStart}>
-              <Text style={styles.start}>Start Mix</Text>
+              <Text style={styles.start}>Start</Text>
             </TouchableOpacity>
           </View>
         )}

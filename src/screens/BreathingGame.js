@@ -19,7 +19,8 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const DEFAULT_DURATION = 9000;
 const DURATION_PER_UNIT = DEFAULT_DURATION / 6;
 const EXPAND_DURATION = DURATION_PER_UNIT;
-const SHRINK_DURATION = DURATION_PER_UNIT * 2; // shrinking will take twice as time as expanding
+const SHRINK_DURATION = DURATION_PER_UNIT;
+const THREE_SECONDS_AWAY = 3000 / DURATION_PER_UNIT;
 export default class BreathingGame extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +28,7 @@ export default class BreathingGame extends Component {
       fullSceeen: false,
       gameStarted: false,
       pressIn: false,
+      showFirstCircle: true,
       gameType: 'inhales',
     };
     this.radius = new Animated.Value(1);
@@ -66,15 +68,57 @@ export default class BreathingGame extends Component {
     gameType === 'inhales' ? this.expandCircle() : this.shrinkCircle();
   };
 
-  handlePressOut = () => {
+  handlePressOutInhale = () => {
+    const {showSecondCircle} = this.state;
+    const currentRadiusValue = this.radius._value;
+    const roundedValue = (Math.round(currentRadiusValue * 100) / 100).toFixed(
+      2,
+    );
+    if (roundedValue > THREE_SECONDS_AWAY && !showSecondCircle) {
+      const secondCircleRadius = currentRadiusValue + THREE_SECONDS_AWAY;
+      this.setState({
+        pressIn: false,
+        showSecondCircle: true,
+        secondCircleRadius,
+      });
+    } else {
+      this.setState({pressIn: false});
+    }
+    console.log('current value', roundedValue);
+  };
+
+  handlePressOutExhale = () => {
+    const currentRadius = this.radius._value;
     this.setState({pressIn: false});
+  };
+
+  handlePressOut = () => {
+    const {gameType} = this.state;
     Animated.timing(this.radius).stop();
+    gameType === 'inhales'
+      ? this.handlePressOutInhale()
+      : this.handlePressOutExhale();
   };
 
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
-      const {gameType} = this.state;
-      // const roundedValue = (Math.round(value * 100) / 100).toFixed(2);
+      const {
+        gameType,
+        showFirstCircle,
+        showSecondCircle,
+        secondCircleRadius,
+      } = this.state;
+      const roundedValue = (Math.round(value * 100) / 100).toFixed(2);
+
+      // for game typ inhale, hide circles when it hits certain target.
+      if (roundedValue > 2 && showFirstCircle) {
+        this.setState({showFirstCircle: false});
+        this.vibrate();
+      } else if (roundedValue > secondCircleRadius && showSecondCircle) {
+        this.setState({showSecondCircle: false});
+        this.vibrate();
+      }
+
       if (value === 7 && gameType === 'inhales') {
         this.props.closeModal();
       } else if (value === 1 && gameType === 'exhales') {
@@ -99,7 +143,7 @@ export default class BreathingGame extends Component {
   };
 
   vibrate = () => {
-    Vibration.vibrate([1, 2, 1]);
+    Vibration.vibrate();
   };
   stopVibrating = () => {
     Vibration.cancel();
@@ -107,7 +151,14 @@ export default class BreathingGame extends Component {
 
   render() {
     const {contentTag} = this.props;
-    const {fullSceeen, gameType, gameStarted, pressIn} = this.state;
+    const {
+      fullSceeen,
+      gameType,
+      gameStarted,
+      pressIn,
+      showSecondCircle,
+      secondCircleRadius,
+    } = this.state;
     const showHelperText = gameStarted && pressIn === false;
     const helperText = gameType === 'inhales' ? 'Exhale fully' : 'Inhale fully';
 
@@ -125,6 +176,9 @@ export default class BreathingGame extends Component {
       gameType === 'inhales' ? radiusForInhales : radiusForExhales;
     const reactFillColor = gameType === 'inhales' ? '#fff' : '#1b1f37';
     const circleFillColor = gameType === 'inhales' ? '#1b1f37' : '#fff';
+    // times 10 is because the output range is 10 times than the input range.
+    const firstOuterCircleRadius = `${THREE_SECONDS_AWAY * 10}%`;
+    const showFirstCircle = gameStarted && this.state.showFirstCircle;
     return (
       <View style={styles.container}>
         <View style={styles.categoryHolder}>
@@ -165,24 +219,28 @@ export default class BreathingGame extends Component {
               mask="url(#mask)"
               fill-opacity="0"
             />
-            <Circle
-              cx="50%"
-              cy="50%"
-              r="25%"
-              stroke="rgb(120,121,137)"
-              strokeWidth="1"
-              fill="none"
-              strokeDasharray="10,4"
-            />
-            <Circle
-              cx="50%"
-              cy="50%"
-              r="50%"
-              stroke="rgb(120,121,137)"
-              strokeWidth="1"
-              fill="none"
-              strokeDasharray="8,3"
-            />
+            {showFirstCircle && (
+              <Circle
+                cx="50%"
+                cy="50%"
+                r={firstOuterCircleRadius}
+                stroke="rgb(120,121,137)"
+                strokeWidth="1"
+                fill="none"
+                strokeDasharray="10,4"
+              />
+            )}
+            {showSecondCircle && (
+              <Circle
+                cx="50%"
+                cy="50%"
+                r={`${secondCircleRadius * 10}%`}
+                stroke="rgb(120,121,137)"
+                strokeWidth="1"
+                fill="none"
+                strokeDasharray="8,3"
+              />
+            )}
           </Svg>
         </TouchableOpacity>
         {showHelperText ? (

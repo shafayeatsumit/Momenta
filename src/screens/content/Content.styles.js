@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   thoughtContainer: {
     marginTop: 50,
     height: ScreenHeight * 0.4,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
   },
   footerContainer: {
     height: ScreenHeight * 0.15,
@@ -56,20 +56,25 @@ const styles = StyleSheet.create({
     width: 35,
     tintColor: 'rgba(255,255,255,0.8)',
   },
-  category: {
+  categoryHolder: {
     position: 'absolute',
+    top: ScreenHeight * 0.25,
+    left: 0,
+    width: ScreenWidth,
+    zIndex: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  category: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: RFValue(24),
-    top: ScreenHeight * 0.25,
-    left: 20,
-    zIndex: 4,
+    fontSize: 24,
   },
   content: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: RFValue(36),
-    textAlign: 'left',
+    fontSize: 36,
+    textAlign: 'center',
     paddingRight: 20,
     zIndex: 1,
   },

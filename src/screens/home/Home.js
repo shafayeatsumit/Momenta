@@ -5,6 +5,7 @@ import {
   StatusBar,
   View,
   Text,
+  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
@@ -20,7 +21,7 @@ import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 
 const Home = () => {
-  const [backgroundImages, setImage] = useState([]);
+  const [backgroundImage, setImage] = useState([]);
   const [minimizeBreathingGame, setMinimizeBreathingGame] = useState(false);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
@@ -52,6 +53,7 @@ const Home = () => {
     api
       .get('api/background_images')
       .then((resp) => {
+        console.log('bg image', resp.data);
         setImage(resp.data);
       })
       .catch((error) => console.log('error', error));
@@ -89,7 +91,7 @@ const Home = () => {
   };
   const itemSelected = categories.selected.length;
   const showStartButton = !minimized && itemSelected > 0;
-  const backgroundImage = _.sample(backgroundImages);
+  const hasTag = categories.items.length;
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -97,17 +99,23 @@ const Home = () => {
         <View style={styles.header}>
           <View />
         </View>
-        <ScrollView contentContainerStyle={styles.tilesContainer}>
-          {categories.items.map((item) => (
-            <Tag
-              item={item}
-              key={item.id}
-              handlePress={() => handleTagPress(item.id)}
-              multiselectMode={categories.multiselectMode}
-              selectedItems={categories.selected}
-            />
-          ))}
-        </ScrollView>
+        {hasTag ? (
+          <ScrollView contentContainerStyle={styles.tilesContainer}>
+            {categories.items.map((item) => (
+              <Tag
+                item={item}
+                key={item.id}
+                handlePress={() => handleTagPress(item.id)}
+                multiselectMode={categories.multiselectMode}
+                selectedItems={categories.selected}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="rgb(120,121,137)" />
+          </View>
+        )}
         <RBSheet
           ref={refRBSheet}
           onClose={handleClose}

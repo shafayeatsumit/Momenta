@@ -162,10 +162,7 @@ class Content extends Component {
       .catch((error) => console.log('error', error));
   };
 
-  handleBookmark = () => {
-    console.log('handle Bookmark');
-    this.props.dispatch(bookmarkSet());
-  };
+  handleBookmark = () => this.props.dispatch(bookmarkSet());
 
   fadeOut = (actionType, ingnoreSetChange = false) => {
     const {dispatch} = this.props;
@@ -265,12 +262,7 @@ class Content extends Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
-
-    const {activeIndex, resetContent, showBreathingGame} = this.props;
-    if (resetContent) {
-      this.resetContent();
-      return;
-    }
+    const {activeIndex, showBreathingGame} = this.props;
 
     if (activeIndex !== null && showBreathingGame) {
       this.categoryOpacity.setValue(1);
@@ -318,8 +310,9 @@ class Content extends Component {
   };
 
   minimizeBreathingGame = () => {
-    this.setState({modalVisible: false});
     this.props.closeBreathingGame();
+    // setTimeout()
+    // this.setState({modalVisible: false});
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -347,7 +340,7 @@ class Content extends Component {
   }
 
   render() {
-    const {allContents, activeIndex} = this.props;
+    const {allContents, activeIndex, backgroundImage} = this.props;
     const {modalVisible} = this.state;
     const activeContent = allContents[activeIndex];
     const isBookmarked = activeContent
@@ -357,10 +350,13 @@ class Content extends Component {
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled = this.state.scrollActive && !isBookmarked;
-
     return (
-      <ImageBackground style={styles.container} source={{uri: image_uri}}>
-        <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
+      <ImageBackground
+        style={styles.container}
+        source={{uri: backgroundImage.image}}>
+        <View style={styles.categoryHolder}>
+          <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
+        </View>
         <TouchableOpacity
           onPress={this.props.closeSheet}
           style={styles.iconDownContainer}>

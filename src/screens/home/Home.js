@@ -19,6 +19,12 @@ import {api} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
+import axios from 'axios';
+import {Buffer} from 'buffer';
+
+function getURLExtension(url) {
+  return url.split(/[#?]/)[0].split('.').pop().trim();
+}
 
 const Home = () => {
   const [backgroundImage, setImage] = useState([]);
@@ -38,6 +44,19 @@ const Home = () => {
     minimizeBreathingGame && setMinimizeBreathingGame(false);
   };
 
+  const downLoadImage = (image) => {
+    axios
+      .get(image.image, {
+        responseType: 'arraybuffer',
+      })
+      .then((response) => {
+        const base64Str = new Buffer(response.data, 'binary').toString(
+          'base64',
+        );
+        const base64uri = {uri: `data:image/jpeg;base64,${base64Str}`};
+        setImage(base64uri);
+      });
+  };
   const rbsheetCloseBreathingGame = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     setMinimizeBreathingGame(true);
@@ -52,10 +71,7 @@ const Home = () => {
   const fetchBackgroundImage = () => {
     api
       .get('api/background_images')
-      .then((resp) => {
-        console.log('bg image', resp.data);
-        setImage(resp.data);
-      })
+      .then((resp) => downLoadImage(resp.data))
       .catch((error) => console.log('error', error));
   };
 

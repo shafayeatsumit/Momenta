@@ -351,9 +351,7 @@ class Content extends Component {
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled = this.state.scrollActive && !isBookmarked;
     return (
-      <ImageBackground
-        style={styles.container}
-        source={{uri: backgroundImage.image}}>
+      <ImageBackground style={styles.container} source={backgroundImage}>
         <View style={styles.categoryHolder}>
           <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         </View>

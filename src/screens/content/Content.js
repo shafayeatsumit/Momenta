@@ -14,7 +14,7 @@ import {
   StyleSheet,
   Modal,
 } from 'react-native';
-import BrethingGame from '../BreathingGame';
+import BrethingGame from '../breathingGame/BreathingGame';
 import analytics from '@react-native-firebase/analytics';
 import {bookmarkSet, rejectSet} from '../../redux/actions/contents';
 import styles from './Content.styles';

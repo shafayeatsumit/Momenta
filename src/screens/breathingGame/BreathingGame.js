@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   View,
   Animated,
-  StyleSheet,
   Easing,
   Text,
   TouchableOpacity,
@@ -11,16 +10,20 @@ import {
   Modal,
   Platform,
 } from 'react-native';
-import {FontType} from '../helpers/theme';
-import {ScreenHeight, ScreenWidth} from '../helpers/constants/common';
-import {RFValue} from '../helpers/responsiveFont';
-import downIcon from '../../assets/icons/down.png';
+import {ScreenHeight} from '../../helpers/constants/common';
+import downIcon from '../../../assets/icons/down.png';
+import tapIcon from '../../../assets/icons/tapIcon.png';
+
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
+import {connect} from 'react-redux';
+import GameExplainer from './ExplainerModal';
+import styles from './BreathingGame.styles';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const DEFAULT_DURATION = 9000;
 const DURATION_PER_UNIT = DEFAULT_DURATION / 6;
 const EXPAND_DURATION = DURATION_PER_UNIT;
 const SHRINK_DURATION = DURATION_PER_UNIT;
+
 const TWO_SECONDS_EXPAND = (2000 / DURATION_PER_UNIT).toFixed(2);
 const FOUR_SECONDS_EXPAND = (4000 / DURATION_PER_UNIT).toFixed(2);
 const TWO_SECONDS_SHRINK = (7 - 2000 / DURATION_PER_UNIT).toFixed(2);
@@ -29,7 +32,8 @@ const FOUR_SECONDS_SHRINK = (7 - 4000 / DURATION_PER_UNIT).toFixed(2);
 const INHALE_START_MESSAGE = 'Hold as you slowly inhale. Release as you exhale';
 const EXHALE_MESSAGE = 'Exhale and then continue slow inhale when ready';
 const INHALE_MESSAGE = 'Hold as you slowly exhale. Release as you inhale';
-export default class BreathingGame extends Component {
+
+class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -168,6 +172,11 @@ export default class BreathingGame extends Component {
     Vibration.cancel();
   };
 
+  closeExplainer = () => {
+    const {dispatch} = this.props;
+    dispatch({type: 'VIEWED_GAME_EXPLAINER'});
+  };
+
   render() {
     const {contentTag} = this.props;
     const {fullSceeen, gameType, gameStarted, pressIn} = this.state;
@@ -183,9 +192,15 @@ export default class BreathingGame extends Component {
 
     const reactFillColor = gameType === 'inhales' ? 'white' : 'black';
     const circleFillColor = gameType === 'inhales' ? 'black' : 'white';
-
+    const {viewedGameExplainer} = this.props;
     return (
       <View style={styles.container}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={!viewedGameExplainer}>
+          <GameExplainer closeExplainer={this.closeExplainer} />
+        </Modal>
         <View style={styles.categoryHolder}>
           <Text style={styles.category}>{contentTag}</Text>
         </View>
@@ -265,115 +280,23 @@ export default class BreathingGame extends Component {
             </View>
           </View>
         )} */}
+        {gameStarted ? null : (
+          <View style={styles.tapIconHolder} pointerEvents="none">
+            <Image source={tapIcon} style={styles.tapIcon} />
+          </View>
+        )}
       </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  categoryHolder: {
-    position: 'absolute',
-    top: ScreenHeight * 0.25,
-    left: 0,
-    width: ScreenWidth,
-    zIndex: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  category: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 24,
-  },
+const mapStateToProps = (state, ownProps) => {
+  const {firstLaunch} = state;
+  const {breathingGamePlayed, viewedGameExplainer} = firstLaunch;
+  return {
+    playingFirstTime: breathingGamePlayed,
+    viewedGameExplainer,
+  };
+};
 
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-    justifyContent: 'center',
-  },
-  text: {
-    color: 'grey',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  buttonContainer: {
-    position: 'absolute',
-    height: 100,
-    width: ScreenWidth / 2,
-    left: ScreenWidth / 4,
-    top: ScreenHeight / 2 + ScreenHeight * 0.2,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  button: {
-    height: 60,
-    width: '45%',
-  },
-  buttonTouchable: {
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontFamily: FontType.Medium,
-    color: 'white',
-    fontSize: 20,
-  },
-  buttonTextDim: {
-    fontFamily: FontType.Regular,
-    color: 'rgb(120,121,137)',
-    fontSize: 20,
-  },
-  helperTextContainer: {
-    position: 'absolute',
-    width: ScreenWidth,
-    zIndex: 1,
-  },
-  helperText: {
-    textAlign: 'center',
-    fontFamily: FontType.Regular,
-    color: 'rgb(120,121,137)',
-    fontSize: 18,
-    marginHorizontal: 15,
-    // zIndex: 2,
-  },
-  successText: {
-    textAlign: 'center',
-    fontFamily: FontType.Regular,
-    color: 'rgb(120,121,137)',
-    fontSize: 16,
-    marginHorizontal: 15,
-    // zIndex: 2,
-  },
-
-  iconDownContainer: {
-    zIndex: 1,
-  },
-  iconDown: {
-    position: 'absolute',
-    top: 30,
-    left: 20,
-    height: 35,
-    width: 35,
-    tintColor: 'rgba(255,255,255,0.8)',
-    zIndex: 2,
-  },
-  iconStyle: {
-    tintColor: 'white',
-    height: 35,
-    width: 35,
-    resizeMode: 'cover',
-    zIndex: 2,
-  },
-  tapArea: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: ScreenHeight * 0.3,
-  },
-});
+export default connect(mapStateToProps)(BreathingGame);

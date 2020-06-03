@@ -51,7 +51,6 @@ const Home = () => {
   };
   const rbsheetCloseBreathingGame = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
-    console.log('minimizeing the game');
     setMinimizeBreathingGame(true);
     refRBSheet.current.close();
   };
@@ -76,7 +75,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // we need to rip it off after alpha
     dispatch(fetchTags());
     fetchBackgroundImage();
     if (loginInfo.userId) {

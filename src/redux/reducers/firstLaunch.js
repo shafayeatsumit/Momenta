@@ -1,6 +1,7 @@
 const initialState = {
   breathingGamePlayed: false,
   firstContentViewed: false,
+  viewedGameExplainer: false,
 };
 
 const firstLaunch = (state = initialState, action) => {
@@ -14,6 +15,11 @@ const firstLaunch = (state = initialState, action) => {
       return {
         ...state,
         firstContentViewed: true,
+      };
+    case 'VIEWED_GAME_EXPLAINER':
+      return {
+        ...state,
+        viewedGameExplainer: true,
       };
 
     default:

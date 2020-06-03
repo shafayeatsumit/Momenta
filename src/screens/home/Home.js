@@ -9,18 +9,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {toggleSelectedTag, fetchTags} from '../../redux/actions/tag';
+import {
+  toggleSelectedTag,
+  fetchTags,
+  anonymousSignup,
+} from '../../redux/actions/tag';
 import Content from '../content/Content';
 import Tag from './Tag';
 import RBSheet from '../../components/rbsheet';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
-import {api} from '../../helpers/api';
+import {api, imageDownloader} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
-import axios from 'axios';
-import {Buffer} from 'buffer';
 
 function getURLExtension(url) {
   return url.split(/[#?]/)[0].split('.').pop().trim();
@@ -44,18 +46,13 @@ const Home = () => {
     minimizeBreathingGame && setMinimizeBreathingGame(false);
   };
 
-  const downLoadImage = (image) => {
-    axios
-      .get(image.image, {
-        responseType: 'arraybuffer',
-      })
-      .then((response) => {
-        const base64Str = new Buffer(response.data, 'binary').toString(
-          'base64',
-        );
-        const base64uri = {uri: `data:image/jpeg;base64,${base64Str}`};
+  const downLoadImage = (imageObject) => {
+    imageDownloader(imageObject.image)
+      .then((resp) => {
+        const base64uri = {uri: `data:image/jpeg;base64,${resp}`};
         setImage(base64uri);
-      });
+      })
+      .catch((error) => console.log('error here', error));
   };
   const rbsheetCloseBreathingGame = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
@@ -91,14 +88,7 @@ const Home = () => {
       analytics().setUserId(userId.toString());
     }
     if (!loginInfo.token) {
-      api
-        .post('api/auth/anonymoussignup/')
-        .then((resp) => {
-          const {id} = resp.data;
-          dispatch({type: 'UPDATE_TOKEN', data: resp.data});
-          analytics().setUserId(id.toString());
-        })
-        .catch((error) => console.log('error', error));
+      dispatch(anonymousSignup());
     }
   }, []);
 

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import CamelcaseKeys from 'camelcase-keys';
 import _ from 'lodash';
+import {Buffer} from 'buffer';
 import ReduxStore from '../redux/store';
 const {store} = ReduxStore();
 
@@ -43,6 +44,13 @@ const authInterceptor = async (request) => {
   const {loginInfo} = await store.getState();
   request.headers.Authorization = `${loginInfo.token}`;
   return request;
+};
+
+export const imageDownloader = (image) => {
+  return axios
+    .get(image, {responseType: 'arraybuffer'})
+    .then((response) => new Buffer(response.data, 'binary').toString('base64'))
+    .catch((error) => error);
 };
 
 api.interceptors.request.use(authInterceptor);

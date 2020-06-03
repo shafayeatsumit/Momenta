@@ -48,3 +48,14 @@ export const fetchTags = () => (dispatch, getState) => {
       // dispatch({ type: 'FETCHING_TAG_DONE', data: resp.data });
     });
 };
+
+export const anonymousSignup = () => (dispatch, getState) => {
+  api
+    .post('api/auth/anonymoussignup/')
+    .then((resp) => {
+      const {id} = resp.data;
+      dispatch({type: 'UPDATE_TOKEN', data: resp.data});
+      analytics().setUserId(id.toString());
+    })
+    .catch((error) => console.log('error', error));
+};

@@ -21,12 +21,7 @@ import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
 import {api, imageDownloader} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
-import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
-
-function getURLExtension(url) {
-  return url.split(/[#?]/)[0].split('.').pop().trim();
-}
 
 const Home = () => {
   const [backgroundImage, setImage] = useState([]);
@@ -56,6 +51,7 @@ const Home = () => {
   };
   const rbsheetCloseBreathingGame = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
+    console.log('minimizeing the game');
     setMinimizeBreathingGame(true);
     refRBSheet.current.close();
   };

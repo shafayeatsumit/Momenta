@@ -11,7 +11,7 @@ AsyncStorage.clear();
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['loginInfo'],
+  whitelist: ['loginInfo', 'firstLaunch'],
 };
 // const middleware = [logger, thunk];
 const middleware = [thunk];

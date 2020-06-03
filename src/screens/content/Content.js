@@ -39,7 +39,8 @@ class Content extends Component {
       scrollActive: true,
       appState: AppState.currentState,
       scrollIndex: 0,
-      modalVisible: props.activeIndex === null || props.showBreathingGame,
+      breathingGameVisible:
+        props.activeIndex === null || props.showBreathingGame,
     };
 
     this.categoryOpacity = new Animated.Value(0);
@@ -249,9 +250,9 @@ class Content extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
-    const {modalVisible} = this.state;
-    if (!modalVisible && nextAppState === 'background') {
-      this.setState({modalVisible: true});
+    const {breathingGameVisible} = this.state;
+    if (!breathingGameVisible && nextAppState === 'background') {
+      this.setState({breathingGameVisible: true});
       this.goToNextSet();
     }
   };
@@ -291,10 +292,10 @@ class Content extends Component {
   };
 
   showContent = (isSetChanged) => {
-    const {modalVisible} = this.state;
+    const {breathingGameVisible} = this.state;
     if (isSetChanged) {
       this.categoryOpacity.setValue(1);
-      !modalVisible && this.setState({modalVisible: true});
+      !breathingGameVisible && this.setState({breathingGameVisible: true});
       return;
     }
     this.fadeIn();
@@ -303,16 +304,15 @@ class Content extends Component {
   closeModal = () => {
     this.setState(
       {
-        modalVisible: false,
+        breathingGameVisible: false,
       },
       this.fadeIn(true),
     );
   };
 
   minimizeBreathingGame = () => {
+    console.log('breathing game closing 1');
     this.props.closeBreathingGame();
-    // setTimeout()
-    // this.setState({modalVisible: false});
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -341,7 +341,7 @@ class Content extends Component {
 
   render() {
     const {allContents, activeIndex, backgroundImage} = this.props;
-    const {modalVisible} = this.state;
+    const {breathingGameVisible} = this.state;
     const activeContent = allContents[activeIndex];
     const isBookmarked = activeContent
       ? activeContent.isBookmark || activeContent.bookmarkedNow
@@ -350,16 +350,19 @@ class Content extends Component {
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled = this.state.scrollActive && !isBookmarked;
+    console.log('breathing game visible', this.props.showBreathingGame);
     return (
       <ImageBackground style={styles.container} source={backgroundImage}>
         <View style={styles.categoryHolder}>
           <Animated.Text style={styles.category}>{contentTag}</Animated.Text>
         </View>
-        <TouchableOpacity
-          onPress={this.props.closeSheet}
-          style={styles.iconDownContainer}>
-          <Animated.Image source={downIcon} style={styles.iconDown} />
-        </TouchableOpacity>
+        {!breathingGameVisible ? (
+          <TouchableOpacity
+            onPress={this.props.closeSheet}
+            style={styles.iconDownContainer}>
+            <Animated.Image source={downIcon} style={styles.iconDown} />
+          </TouchableOpacity>
+        ) : null}
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.topRow} />
           <ScrollView
@@ -398,7 +401,7 @@ class Content extends Component {
             />
           </TouchableOpacity>
         </SafeAreaView>
-        {modalVisible && Platform.OS === 'android' ? (
+        {breathingGameVisible ? (
           <View
             style={{
               height: ScreenHeight,
@@ -411,15 +414,7 @@ class Content extends Component {
               minimize={this.minimizeBreathingGame}
             />
           </View>
-        ) : (
-          <Modal transparent={true} animationType="fade" visible={modalVisible}>
-            <BrethingGame
-              closeModal={this.closeModal}
-              contentTag={contentTag}
-              minimize={this.minimizeBreathingGame}
-            />
-          </Modal>
-        )}
+        ) : null}
       </ImageBackground>
     );
   }

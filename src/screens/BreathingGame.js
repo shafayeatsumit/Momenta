@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     tintColor: 'rgba(255,255,255,0.8)',
-    zIndex: 1,
+    zIndex: 2,
   },
   iconStyle: {
     tintColor: 'white',

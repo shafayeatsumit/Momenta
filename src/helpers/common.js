@@ -112,3 +112,6 @@ export const filterSets = (array) => {
     return pos === 0 || item !== arr[pos - 1];
   });
 };
+
+export const getURLExtension = (url) =>
+  url.split(/[#?]/)[0].split('.').pop().trim();

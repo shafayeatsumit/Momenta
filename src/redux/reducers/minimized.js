@@ -4,7 +4,6 @@ const minimized = (state = false, action) => {
       return true;
     case 'RESET_TAGS_CONTENT':
     case 'SET_CONTENT_TYPE':
-    case 'RESET_BOOKMARKS':
     case 'SET_MINIMIZE_FALSE':
       return false;
     default:

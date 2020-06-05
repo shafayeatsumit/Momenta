@@ -36,26 +36,25 @@ class InhaleFirstLaunch extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      successMessage: '',
       touchDisabled: true,
       modalVisible: false,
       showHelperIcon: false,
       gameStarted: false,
       firstInhaleCompleted: false,
-      breathCompleted: 0,
       helperMessage: '',
+      successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
     };
     this.radius = new Animated.Value(1);
+    this.pressInTime = null;
     // all the timers
     this.explainerModalId = null;
-    this.firstHlperId = null;
-    this.pressInTime = null;
-    this.helperTextTimerId = null;
-    this.clearSuccessMessageId = null;
-    this.closeModalId = null;
-    this.tryAgainMessageId = null;
+    this.firstHlperMessageId = null;
+    this.helperIconId = null;
+    this.exhaleTimerId = null;
+    this.inhaleTimerId = null;
+    this.startExhaleTimerId = null;
   }
 
   expandCircle = () => {
@@ -69,22 +68,8 @@ class InhaleFirstLaunch extends Component {
     }).start();
   };
 
-  clearRleaseMessage = () => {
-    clearTimeout(this.releaseMessageId);
-    this.setState({helperMessage: SECOND_HELPER_MESSAGE});
-  };
-
-  startInhaleTimer = () => {
-    this.inhaleTimerId = setInterval(() => {
-      this.setState((prevState) => ({
-        inhaleTimer: prevState.inhaleTimer + 1,
-      }));
-    }, 1000);
-  };
-
   shrinkBack = () => {
     this.setState({touchDisabled: true, successMessage: TRY_AGAIN_MESSAGE});
-
     Animated.timing(this.radius, {
       toValue: 1,
       duration: 1000,
@@ -95,91 +80,9 @@ class InhaleFirstLaunch extends Component {
     });
   };
 
-  handlePressIn = () => {
-    const {gameStarted, firstInhaleCompleted} = this.state;
-    this.pressInTime = new Date();
-    if (!firstInhaleCompleted) {
-      this.startInhaleTimer();
-    } else {
-      this.setState({successMessage: 'Inhale'});
-    }
-
-    this.expandCircle();
-    // if (!gameStarted) {
-    //   this.setState({gameStarted: true});
-    //   this.releaseMessageId = setTimeout(() => {
-    //     this.setState({helperMessage: 'release'});
-    //   }, 4000);
-    // }
-  };
-
-  firstInhale = (timeDiff) => {
-    // console.log('time diff', timeDiff);
-    // console.log('time diff less then 3', timeDiff < 3);
-    if (timeDiff < 3) {
-      this.shrinkBack();
-      return;
-    }
-    this.props.dispatch({type: 'PLAYED_BREATHING_GAME'});
-    this.setState({
-      firstInhaleCompleted: true,
-      helperMessage: SECOND_HELPER_MESSAGE,
-    });
-
-    const timeDiffRounded = timeDiff.toFixed(1);
-    let message = '';
-    if (timeDiff > 3 && timeDiff < 4) {
-      message = `Success ${timeDiffRounded}`;
-      console.log('message', message);
-    } else if (timeDiff > 4 && timeDiff < 5) {
-      console.log('message', message);
-      message = `Pefect ${timeDiffRounded}`;
-    } else if (timeDiff > 5) {
-      this.setSuccessMessage(timeDiff);
-      return;
-    }
-    // this.setState({
-    //   successMessage: message,
-    //   touchDisabled: true,
-    // });
-    // setTimeout(
-    //   () =>
-    //     this.setState(
-    //       {
-    //         successMessage: false,
-    //         exhaleTimer: Math.ceil(timeDiff),
-    //       },
-    //       this.startExhaleTimer,
-    //     ),
-    //   1000,
-    // );
-  };
-
-  handlePressOut = () => {
-    const {firstInhaleCompleted} = this.state;
-    // clearing out inhale timer
-    this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    this.state.inhaleTimer && this.setState({inhaleTimer: 0});
-
-    Animated.timing(this.radius).stop();
-
-    // time diff callculation margin of error 0.6
-    const timeDiff = (new Date() - this.pressInTime) / 1000;
-    if (!firstInhaleCompleted) {
-      this.firstInhale(timeDiff);
-    } else {
-      this.setSuccessMessage(timeDiff);
-    }
-    this.releaseMessageId && this.clearRleaseMessage();
-  };
-
-  componentWillUnmount() {
-    if (this.animationId) {
-      this.radius.removeListener(this.animationId);
-    }
-  }
-
   startExhaleTimer = () => {
+    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
+
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 0) {
         clearInterval(this.exhaleTimerId);
@@ -193,74 +96,92 @@ class InhaleFirstLaunch extends Component {
     }, 1000);
   };
 
-  showFullScreen = () => {
-    this.closeModalId = setTimeout(this.props.closeModal, 1500);
+  startInhaleTimer = () => {
+    this.inhaleTimerId = setInterval(() => {
+      this.setState((prevState) => ({
+        inhaleTimer: prevState.inhaleTimer + 1,
+      }));
+    }, 1000);
   };
 
-  setSuccessMessage = (breathingTime) => {
-    const radiusValue = this.radius._value;
-    const fullScreenRevealed = radiusValue === 7;
-    let message = '';
-    let roundedBreathingTime = breathingTime.toFixed(1);
-
-    if (breathingTime < 2 && fullScreenRevealed) {
-      this.setState({touchDisabled: true});
-      this.showFullScreen();
-    } else if (breathingTime > 2 && breathingTime < 3) {
-      message = `Almost ${roundedBreathingTime}`;
-    } else if (breathingTime > 3 && breathingTime < 3.5) {
-      message = `Good ${roundedBreathingTime}`;
-    } else if (breathingTime > 3.5 && breathingTime < 3.8) {
-      message = `Great ${roundedBreathingTime}`;
-    } else if (breathingTime > 3.8 && breathingTime < 4.2) {
-      message = `Perfect ${roundedBreathingTime}`;
-    } else if (breathingTime > 4.2 && breathingTime < 4.5) {
-      message = `Great ${roundedBreathingTime}`;
-    } else if (breathingTime > 4.5 && breathingTime < 5) {
-      message = `Good ${roundedBreathingTime}`;
-    } else {
-      message = `Almost ${roundedBreathingTime}`;
-    }
-
-    if (fullScreenRevealed) {
-      this.setState({successMessage: message, touchDisabled: true});
-      this.showFullScreen();
+  firstInhale = (timeDiff) => {
+    if (timeDiff < 3) {
+      console.log('less than 3', timeDiff);
+      this.shrinkBack();
       return;
     }
-
+    const timeDiffRounded = timeDiff.toFixed(1);
+    let message = '';
+    if (timeDiff > 3 && timeDiff < 4) {
+      message = `Success ${timeDiffRounded}`;
+    } else if (timeDiff > 4 && timeDiff < 5) {
+      message = `Perfect ${timeDiffRounded}`;
+      this.setState({successMessage: message, touchDisabled: true});
+    } else {
+      message = `great ${timeDiffRounded}`;
+      this.setState({
+        successMessage: message,
+        touchDisabled: true,
+      });
+    }
     this.setState({
       successMessage: message,
       touchDisabled: true,
+      firstInhaleCompleted: true,
     });
-    setTimeout(
-      () =>
-        this.setState(
-          {
-            successMessage: false,
-            exhaleTimer: Math.ceil(breathingTime),
-          },
-          this.startExhaleTimer,
-        ),
-      1000,
-    );
+
+    // after 1 sec when cleared success msg we can start exhale timer.
+    this.startExhaleTimerId = setTimeout(() => {
+      this.setState(
+        {successMessage: false, exhaleTimer: Math.ceil(timeDiff)},
+        this.startExhaleTimer,
+      );
+    }, 1000);
+  };
+
+  handlePressOut = () => {
+    const {firstInhaleCompleted} = this.state;
+    Animated.timing(this.radius).stop();
+    const timeDiff = (new Date() - this.pressInTime) / 1000;
+    // clearing inhale timer
+    this.state.inhaleTimer && this.setState({inhaleTimer: 0});
+    this.inhaleTimerId && clearInterval(this.inhaleTimerId);
+
+    if (!firstInhaleCompleted) {
+      clearInterval(this.inhaleTimerId);
+      this.firstInhale(timeDiff);
+    } else {
+    }
+  };
+
+  handlePressIn = () => {
+    const {gameStarted, firstInhaleCompleted} = this.state;
+    this.pressInTime = new Date();
+    if (!firstInhaleCompleted) {
+      this.startInhaleTimer();
+    }
+    this.expandCircle();
+
+    if (!gameStarted) {
+      this.setState({gameStarted: true});
+    }
   };
 
   showExplainerModal = () => {
     this.explainerModalId = setTimeout(
       () => this.setState({modalVisible: true}),
-      1500,
+      1000,
     );
   };
 
   closeExplainer = () => {
-    const {dispatch} = this.props;
     this.setState({modalVisible: false});
-    // dispatch({type: 'PLAYED_BREATHING_GAME_FIRST_TIME'});
-    this.showFirstHelperText();
+    this.showFirstHelperMessage();
+    clearTimeout(this.explainerModalId);
   };
 
-  showFirstHelperText = () => {
-    this.firstHlperId = setTimeout(
+  showFirstHelperMessage = () => {
+    this.firstHlperMessageId = setTimeout(
       () => this.setState({helperMessage: FIRST_HELPER_MESSAGE}),
       600,
     );
@@ -277,6 +198,16 @@ class InhaleFirstLaunch extends Component {
   componentDidMount() {
     this.showExplainerModal();
     this.animationId = this.radius.addListener(({value}) => {});
+  }
+
+  componentWillUnmount() {
+    this.animationId && this.radius.removeListener(this.animationId);
+    this.explainerModalId && clearTimeout(this.explainerModalId);
+    this.firstHlperMessageId && clearTimeout(this.firstHlperMessageId);
+    this.helperIconId && clearTimeout(this.helperIconId);
+    this.exhaleTimerId && clearInterval(this.exhaleTimerId);
+    this.inhaleTimerId && clearInterval(this.inhaleTimerId);
+    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
   }
 
   render() {

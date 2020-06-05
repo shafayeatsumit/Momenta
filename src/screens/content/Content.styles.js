@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
   categoryHolder: {
     position: 'absolute',
-    top: ScreenHeight * 0.25,
+    top: ScreenHeight * 0.15,
     left: 0,
     width: ScreenWidth,
     zIndex: 4,

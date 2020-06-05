@@ -6,6 +6,8 @@ import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
+AsyncStorage.clear();
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,

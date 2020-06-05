@@ -55,6 +55,7 @@ class InhaleFirstLaunch extends Component {
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
     this.startExhaleTimerId = null;
+    this.releaseMessageId = null;
   }
 
   expandCircle = () => {
@@ -91,7 +92,11 @@ class InhaleFirstLaunch extends Component {
       }
       this.setState((prevState) => ({
         exhaleTimer: prevState.exhaleTimer - 1,
-        ...(prevState.exhaleTimer === 1 && {touchDisabled: false}),
+        ...(prevState.exhaleTimer === 1 && {
+          touchDisabled: false,
+          // show the second helper msg when the touch is re-enabled
+          helperMessage: SECOND_HELPER_MESSAGE,
+        }),
       }));
     }, 1000);
   };
@@ -106,7 +111,6 @@ class InhaleFirstLaunch extends Component {
 
   firstInhale = (timeDiff) => {
     if (timeDiff < 3) {
-      console.log('less than 3', timeDiff);
       this.shrinkBack();
       return;
     }
@@ -128,9 +132,11 @@ class InhaleFirstLaunch extends Component {
       successMessage: message,
       touchDisabled: true,
       firstInhaleCompleted: true,
+      // helperMessage: SECOND_HELPER_MESSAGE,
     });
 
-    // after 1 sec when cleared success msg we can start exhale timer.
+    // after 1 sec we cleared success msg, we set timer initial value, we  start exhale timer.
+    // so we make the success message visible for 1s then start exhale countdown.
     this.startExhaleTimerId = setTimeout(() => {
       this.setState(
         {successMessage: false, exhaleTimer: Math.ceil(timeDiff)},
@@ -146,6 +152,8 @@ class InhaleFirstLaunch extends Component {
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
+    // clearing release message
+    this.releaseMessageId && clearTimeout(this.releaseMessageId);
 
     if (!firstInhaleCompleted) {
       clearInterval(this.inhaleTimerId);
@@ -159,6 +167,11 @@ class InhaleFirstLaunch extends Component {
     this.pressInTime = new Date();
     if (!firstInhaleCompleted) {
       this.startInhaleTimer();
+      // if user doesn't release after 4 seconds then show the message `release...`
+      this.releaseMessageId = setTimeout(() => {
+        this.setState({helperMessage: 'release'});
+        clearTimeout(this.releaseMessageId);
+      }, 4000);
     }
     this.expandCircle();
 
@@ -208,6 +221,7 @@ class InhaleFirstLaunch extends Component {
     this.exhaleTimerId && clearInterval(this.exhaleTimerId);
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
+    this.releaseMessageId && clearTimeout(this.releaseMessageId);
   }
 
   render() {
@@ -271,11 +285,12 @@ class InhaleFirstLaunch extends Component {
           <View style={styles.successTextContainer} pointerEvents="none">
             <Text style={styles.successText}>{`Exhale \n ${exhaleTimer}`}</Text>
           </View>
-        ) : (
+        ) : null}
+        {helperMessage && !exhaleTimer ? (
           <View style={styles.helperTextContainer} pointerEvents="none">
             <Text style={styles.helperText}>{helperMessage}</Text>
           </View>
-        )}
+        ) : null}
         {successMessage ? (
           <View style={styles.successTextContainer} pointerEvents="none">
             <Text style={styles.successText}>{successMessage}</Text>

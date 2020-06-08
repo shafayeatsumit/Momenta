@@ -112,7 +112,11 @@ class InhaleFirstLaunch extends Component {
   };
 
   showFullScreen = () => {
-    this.closeModalId = setTimeout(this.props.closeModal, 1000);
+    // this.props.dispatch({ type: 'PLAYED_BREATHING_GAME' });
+    this.closeModalId = setTimeout(() => {
+      this.props.closeModal();
+      this.props.dispatch({type: 'PLAYED_BREATHING_GAME'});
+    }, 1000);
   };
 
   clearTryAgain = () => {
@@ -131,6 +135,7 @@ class InhaleFirstLaunch extends Component {
     // we need to show
     let message = '';
     let roundedtimeDiff = timeDiff.toFixed(1);
+
     if (timeDiff < 2 && fullScreenRevealed) {
       this.setState({touchDisabled: true});
       this.showFullScreen();
@@ -190,6 +195,7 @@ class InhaleFirstLaunch extends Component {
       this.secondInhale(timeDiff);
       return;
     }
+
     this.setState({
       successMessage: message,
       touchDisabled: true,

@@ -11,7 +11,6 @@ class BreathingGame extends Component {
 
   render() {
     const {breathingGameFirstRun} = this.props;
-    console.log('playing first time', breathingGameFirstRun);
     return (
       <>
         {breathingGameFirstRun ? (

@@ -56,6 +56,8 @@ class InhaleFirstLaunch extends Component {
     this.inhaleTimerId = null;
     this.startExhaleTimerId = null;
     this.releaseMessageId = null;
+    this.closeModalId = null;
+    this.tryAgainMessageId = null;
   }
 
   expandCircle = () => {
@@ -109,6 +111,68 @@ class InhaleFirstLaunch extends Component {
     }, 1000);
   };
 
+  showFullScreen = () => {
+    this.closeModalId = setTimeout(this.props.closeModal, 1000);
+  };
+
+  clearTryAgain = () => {
+    this.tryAgainMessageId = setTimeout(
+      () =>
+        this.setState({
+          helperMessage: SECOND_HELPER_MESSAGE,
+        }),
+      2000,
+    );
+  };
+
+  secondInhale = (timeDiff) => {
+    const radiusValue = this.radius._value;
+    const fullScreenRevealed = radiusValue === 7;
+    // we need to show
+    let message = '';
+    let roundedtimeDiff = timeDiff.toFixed(1);
+    if (timeDiff < 2 && fullScreenRevealed) {
+      this.setState({touchDisabled: true});
+      this.showFullScreen();
+    } else if (timeDiff < 2) {
+      message = 'Try again when ready';
+      this.setState({helperMessage: message}, this.clearTryAgain);
+      return;
+    } else if (timeDiff > 2 && timeDiff < 3) {
+      message = `Almost ${roundedtimeDiff}`;
+    } else if (timeDiff > 3 && timeDiff < 3.5) {
+      message = `Good ${roundedtimeDiff}`;
+    } else if (timeDiff > 3.5 && timeDiff < 3.8) {
+      message = `Great ${roundedtimeDiff}`;
+    } else if (timeDiff > 3.8 && timeDiff < 4.2) {
+      message = `Perfect ${roundedtimeDiff}`;
+    } else if (timeDiff > 4.2 && timeDiff < 4.5) {
+      message = `Great ${roundedtimeDiff}`;
+    } else if (timeDiff > 4.5 && timeDiff < 5) {
+      message = `Good ${roundedtimeDiff}`;
+    } else {
+      message = `Almost ${roundedtimeDiff}`;
+    }
+
+    if (fullScreenRevealed) {
+      this.setState({touchDisabled: true});
+      this.showFullScreen();
+      return;
+    }
+    this.setState({
+      successMessage: message,
+      touchDisabled: true,
+    });
+
+    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
+    this.startExhaleTimerId = setTimeout(() => {
+      this.setState(
+        {successMessage: false, exhaleTimer: Math.ceil(timeDiff)},
+        this.startExhaleTimer,
+      );
+    }, 500);
+  };
+
   firstInhale = (timeDiff) => {
     if (timeDiff < 3) {
       this.shrinkBack();
@@ -123,10 +187,8 @@ class InhaleFirstLaunch extends Component {
       this.setState({successMessage: message, touchDisabled: true});
     } else {
       message = `great ${timeDiffRounded}`;
-      this.setState({
-        successMessage: message,
-        touchDisabled: true,
-      });
+      this.secondInhale(timeDiff);
+      return;
     }
     this.setState({
       successMessage: message,
@@ -159,6 +221,7 @@ class InhaleFirstLaunch extends Component {
       clearInterval(this.inhaleTimerId);
       this.firstInhale(timeDiff);
     } else {
+      this.secondInhale(timeDiff);
     }
   };
 
@@ -172,6 +235,8 @@ class InhaleFirstLaunch extends Component {
         this.setState({helperMessage: 'release'});
         clearTimeout(this.releaseMessageId);
       }, 4000);
+    } else {
+      this.setState({successMessage: 'Inhale'});
     }
     this.expandCircle();
 
@@ -222,6 +287,8 @@ class InhaleFirstLaunch extends Component {
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.releaseMessageId && clearTimeout(this.releaseMessageId);
+    this.closeModalId && clearTimeout(this.closeModalId);
+    this.tryAgainMessageId && clearTimeout(this.tryAgainMessageId);
   }
 
   render() {

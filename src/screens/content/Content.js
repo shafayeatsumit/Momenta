@@ -350,7 +350,6 @@ class Content extends Component {
     const contentTag = contentAvailable ? allContents[activeIndex].tag : null;
     const contentText = contentAvailable ? allContents[activeIndex].text : null;
     const scrollEnabled = this.state.scrollActive && !isBookmarked;
-    console.log('breathing game visible', this.props.showBreathingGame);
     return (
       <ImageBackground style={styles.container} source={backgroundImage}>
         <View style={styles.categoryHolder}>

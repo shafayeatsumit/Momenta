@@ -19,21 +19,19 @@ import Tag from './Tag';
 import RBSheet from '../../components/rbsheet';
 import MinimizedView from '../../components/minimizedView/MinimizedView';
 import styles from './Home.styles';
-import {api, imageDownloader} from '../../helpers/api';
 import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
 import analytics from '@react-native-firebase/analytics';
 
 const Home = () => {
-  const [backgroundImage, setImage] = useState([]);
   const [minimizeBreathingGame, setMinimizeBreathingGame] = useState(false);
   const dispatch = useDispatch();
   const refRBSheet = useRef();
   const minimized = useSelector((state) => state.minimized);
-  const categories = useSelector((state) => state.categories);
   const loginInfo = useSelector((state) => state.loginInfo);
-  const handleTagPress = (id) => {
-    dispatch(toggleSelectedTag(id));
-  };
+  const tagNames = useSelector((state) => state.tagNames);
+  const selectedTags = useSelector((state) => state.selectedTags);
+  const backgrounds = useSelector((state) => state.backgrounds);
+  const hasTag = tagNames.length;
 
   const rbsheetClose = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
@@ -41,14 +39,6 @@ const Home = () => {
     minimizeBreathingGame && setMinimizeBreathingGame(false);
   };
 
-  const downLoadImage = (imageObject) => {
-    imageDownloader(imageObject.image)
-      .then((resp) => {
-        const base64uri = {uri: `data:image/jpeg;base64,${resp}`};
-        setImage(base64uri);
-      })
-      .catch((error) => console.log('error here', error));
-  };
   const rbsheetCloseBreathingGame = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
     setMinimizeBreathingGame(true);
@@ -60,38 +50,19 @@ const Home = () => {
     dispatch({type: 'SET_MINIMIZE_TRUE'});
   };
 
-  const fetchBackgroundImage = () => {
-    api
-      .get('api/background_images')
-      .then((resp) => downLoadImage(resp.data))
-      .catch((error) => console.log('error', error));
-  };
-
-  const handleOpen = () => {
-    analytics().logEvent('maximize');
-  };
-  const handleStart = () => {
-    refRBSheet.current.open();
-  };
+  const handleTagPress = (id) => dispatch(toggleSelectedTag(id));
+  const handleOpen = () => analytics().logEvent('maximize');
+  const rbSheetOpen = () => refRBSheet.current.open();
 
   useEffect(() => {
-    dispatch(fetchTags());
-    fetchBackgroundImage();
-    if (loginInfo.userId) {
-      const userId = loginInfo.userId;
-      analytics().setUserId(userId.toString());
-    }
-    if (!loginInfo.token) {
-      dispatch(anonymousSignup());
-    }
+    !hasTag && dispatch(fetchTags());
+    !loginInfo.token && dispatch(anonymousSignup());
+    loginInfo.userId && analytics().setUserId(loginInfo.userId.toString());
   }, []);
 
-  const rbSheetOpen = () => {
-    refRBSheet.current.open();
-  };
-  const itemSelected = categories.selected.length;
-  const showStartButton = !minimized && itemSelected > 0;
-  const hasTag = categories.items.length;
+  const tagSelected = selectedTags.length;
+  const showStartButton = !minimized && tagSelected > 0;
+  const showTags = hasTag && backgrounds.length;
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -99,15 +70,14 @@ const Home = () => {
         <View style={styles.header}>
           <View />
         </View>
-        {hasTag ? (
+        {showTags ? (
           <ScrollView contentContainerStyle={styles.tilesContainer}>
-            {categories.items.map((item) => (
+            {tagNames.map((item) => (
               <Tag
                 item={item}
                 key={item.id}
                 handlePress={() => handleTagPress(item.id)}
-                multiselectMode={categories.multiselectMode}
-                selectedItems={categories.selected}
+                selectedTags={selectedTags}
               />
             ))}
           </ScrollView>
@@ -125,14 +95,13 @@ const Home = () => {
           <Content
             closeSheet={rbsheetClose}
             closeBreathingGame={rbsheetCloseBreathingGame}
-            backgroundImage={backgroundImage}
             showBreathingGame={minimizeBreathingGame}
           />
         </RBSheet>
         {minimized && <MinimizedView maximize={rbSheetOpen} />}
         {showStartButton && (
           <View style={styles.startButtonContainer}>
-            <TouchableOpacity style={styles.startButton} onPress={handleStart}>
+            <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
               <Text style={styles.start}>Start</Text>
             </TouchableOpacity>
           </View>

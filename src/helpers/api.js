@@ -7,9 +7,10 @@ const {store} = ReduxStore();
 
 // const BASEURL = 'http://localhost:8000/';
 // const BASEURL = 'https://threethought.herokuapp.com/';
-const BASEURL = 'http://ec2-52-15-117-190.us-east-2.compute.amazonaws.com/';
+const BASEURL =
+  'http://ec2-52-15-117-190.us-east-2.compute.amazonaws.com/api/v1/';
 
-const anonymousEndpoints = ['api/auth/anonymoussignup/'];
+const anonymousEndpoints = ['auth/anonymoussignup/'];
 
 const transformResponse = (data) => {
   if (_.isObject(data)) {
@@ -50,7 +51,7 @@ export const imageDownloader = (image) => {
   return axios
     .get(image, {responseType: 'arraybuffer'})
     .then((response) => new Buffer(response.data, 'binary').toString('base64'))
-    .catch((error) => error);
+    .catch((error) => `imageDownloader error ${error}`);
 };
 
 api.interceptors.request.use(authInterceptor);

@@ -5,11 +5,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import {RFValue} from '../../helpers/responsiveFont';
 import checkIcon from '../../../assets/icons/check.png';
 
-const Tag = ({item, handlePress, selectedItems}) => {
-  const selectedIndex = selectedItems.findIndex(
+const Tag = ({item, handlePress, selectedTags}) => {
+  const selectedIndex = selectedTags.findIndex(
     (selectedItem) => selectedItem === item.id,
   );
   const isSelected = selectedIndex !== -1;
+
   return (
     <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
       <LinearGradient

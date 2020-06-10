@@ -5,7 +5,11 @@ const tags = (state = {}, action) => {
         ...state,
         ...action.tags,
       };
-
+    case 'UPDATE_CONTENT':
+      return {
+        ...state,
+        ...action.tags,
+      };
     default:
       return state;
   }

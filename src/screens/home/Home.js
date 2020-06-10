@@ -63,6 +63,7 @@ const Home = () => {
   const tagSelected = selectedTags.length;
   const showStartButton = !minimized && tagSelected > 0;
   const showTags = hasTag && backgrounds.length;
+
   return (
     <>
       <StatusBar barStyle="light-content" />

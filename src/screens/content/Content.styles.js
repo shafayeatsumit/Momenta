@@ -112,6 +112,25 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: FontType.Regular,
   },
+  nextButton: {
+    position: 'absolute',
+    height: 40,
+    width: 120,
+    borderRadius: 50,
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nextButtonText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+  },
 });
 
 export default styles;

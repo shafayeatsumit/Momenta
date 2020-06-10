@@ -7,6 +7,7 @@ import firstLaunch from './firstLaunch';
 import {tagNames, tags, selectedTags} from './tags';
 import sets from './sets';
 import backgrounds from './backgrounds';
+import onScreen from './onScreen';
 
 export default combineReducers({
   loginInfo,
@@ -17,4 +18,5 @@ export default combineReducers({
   selectedTags,
   sets,
   backgrounds,
+  onScreen,
 });

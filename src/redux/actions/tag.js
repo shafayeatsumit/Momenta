@@ -27,11 +27,9 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
   const {selectedTags} = getState();
   const isTagExist = selectedTags.includes(id);
   if (isTagExist) {
-    console.log('deselect tag', id);
     dispatch({type: 'DESELECT_TAG', tagId: id});
     analytics().logEvent('deselect_tag', {tag_name: id});
   } else {
-    console.log('select tag', id);
     dispatch({type: 'SELECT_TAG', tagId: id});
     analytics().logEvent('select_tag', {tag_name: id});
   }
@@ -47,8 +45,7 @@ const parseTags = (response) => {
 const parseSets = (response) => {
   let sets = response.result.map((tag) => tag.sets);
   sets = _.flatten(sets);
-  sets = _.groupBy(sets, (item) => item.id); // group the sets in an object
-
+  sets = _.mapKeys(sets, 'id'); // group the sets in an object
   return sets;
 };
 
@@ -82,4 +79,60 @@ export const anonymousSignup = () => (dispatch, getState) => {
       analytics().setUserId(id.toString());
     })
     .catch((error) => console.log('error', error));
+};
+
+export const deleteSet = () => (dispatch, getState) => {
+  const {onScreen, tags, sets} = getState();
+  const currentTagObject = tags[onScreen.tag];
+  const currentTagSets = currentTagObject.sets;
+  const updatedTagSets = currentTagSets.slice(1);
+  const updatedTags = {
+    ...tags,
+    [onScreen.tag]: {
+      ...currentTagObject,
+      sets: updatedTagSets,
+    },
+  };
+
+  const updatedSets = Object.assign({}, sets);
+  delete updatedSets[onScreen.set];
+  dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
+};
+
+const addNewContent = (dispatch, getState, response, tagId) => {
+  const {tags, sets} = getState();
+  const newSet = response.result[0];
+  delete newSet.tags;
+  const newSetId = newSet.id;
+  const currentTag = tags[tagId];
+  const currentTagSets = [...currentTag.sets, newSetId];
+  // updating the set of current tag.
+  const updatedTags = {
+    ...tags,
+    [tagId]: {
+      ...currentTag,
+      sets: currentTagSets,
+    },
+  };
+  // adding the new set.
+  const updatedSets = {
+    ...sets,
+    [newSetId]: newSet,
+  };
+  dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
+};
+
+export const fetchContent = (tag) => (dispatch, getState) => {
+  const tagName = tag.name;
+  const tagId = tag.id;
+  const queryString = '?tags' + '=' + tagName.replace(/ /g, '%20');
+  const contentUrl = 'contents/' + queryString;
+  api
+    .get(contentUrl)
+    .then((response) => {
+      const backgroundImage = [response.data.image];
+      addNewContent(dispatch, getState, response.data, tagId);
+      downLoadImages(backgroundImage, dispatch);
+    })
+    .catch((error) => console.log(`error in ${contentUrl}`, error));
 };

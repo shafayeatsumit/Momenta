@@ -5,6 +5,11 @@ const sets = (state = {}, action) => {
         ...state,
         ...action.sets,
       };
+    case 'UPDATE_CONTENT':
+      return {
+        ...state,
+        ...action.sets,
+      };
 
     default:
       return state;

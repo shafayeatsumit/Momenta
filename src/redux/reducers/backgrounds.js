@@ -3,7 +3,7 @@ const backgrounds = (state = [], action) => {
     case 'ADD_BACKGROUND':
       return [...state, action.image];
     case 'REMOVE_BACKGROUND':
-      return state.slice(0, 1);
+      return state.slice(1);
     default:
       return state;
   }

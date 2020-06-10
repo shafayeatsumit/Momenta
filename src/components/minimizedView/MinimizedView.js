@@ -9,27 +9,19 @@ import {getCategory, getBookmark} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 
 const MinimizedView = ({maximize}) => {
-  const contents = useSelector((state) => state.contents);
+  const onScreen = useSelector((state) => state.onScreen);
   const dispatch = useDispatch();
   const handleClose = () => {
     analytics().logEvent('cancel');
-    dispatch({type: 'RESET_TAGS_CONTENT'});
+    dispatch({type: 'RESET_CONTENT'});
   };
-
-  const {activeIndex, allContents} = contents;
-  const tagName = getCategory(activeIndex, allContents);
-  const isBookmark = getBookmark(activeIndex, allContents);
 
   return (
     <View style={styles.miminizedView}>
       <TouchableOpacity
         style={styles.minimizedContentHolder}
         onPress={maximize}>
-        {isBookmark ? (
-          <Text style={styles.minimizeCategory}>Bookmarks</Text>
-        ) : (
-          <Text style={styles.minimizeCategory}>{tagName}</Text>
-        )}
+        <Text style={styles.minimizeCategory}>{onScreen.tagName}</Text>
       </TouchableOpacity>
       <View style={styles.minimizedIconHolder}>
         <TouchableOpacity onPress={handleClose}>

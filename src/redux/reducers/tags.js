@@ -32,7 +32,8 @@ const selectedTags = (state = [], action) => {
 
     case 'DESELECT_TAG':
       return state.filter((tag) => tag !== action.tagId);
-
+    case 'RESET_CONTENT':
+      return [];
     default:
       return state;
   }

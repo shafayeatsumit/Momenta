@@ -72,7 +72,7 @@ export const fetchTags = () => (dispatch, getState) => {
 
 export const anonymousSignup = () => (dispatch, getState) => {
   api
-    .post('anonymoussignup/')
+    .post('auth/anonymoussignup/')
     .then((resp) => {
       const {id} = resp.data;
       dispatch({type: 'UPDATE_TOKEN', data: resp.data});
@@ -83,19 +83,19 @@ export const anonymousSignup = () => (dispatch, getState) => {
 
 export const deleteSet = () => (dispatch, getState) => {
   const {onScreen, tags, sets} = getState();
-  const currentTagObject = tags[onScreen.tag];
+  const currentTagObject = tags[onScreen.tagId];
   const currentTagSets = currentTagObject.sets;
   const updatedTagSets = currentTagSets.slice(1);
   const updatedTags = {
     ...tags,
-    [onScreen.tag]: {
+    [onScreen.tagId]: {
       ...currentTagObject,
       sets: updatedTagSets,
     },
   };
 
   const updatedSets = Object.assign({}, sets);
-  delete updatedSets[onScreen.set];
+  delete updatedSets[onScreen.setId];
   dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
 };
 

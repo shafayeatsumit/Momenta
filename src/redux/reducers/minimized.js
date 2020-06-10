@@ -2,9 +2,7 @@ const minimized = (state = false, action) => {
   switch (action.type) {
     case 'SET_MINIMIZE_TRUE':
       return true;
-    case 'RESET_TAGS_CONTENT':
-    case 'SET_CONTENT_TYPE':
-    case 'SET_MINIMIZE_FALSE':
+    case 'RESET_CONTENT':
       return false;
     default:
       return state;

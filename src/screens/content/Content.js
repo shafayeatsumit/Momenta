@@ -38,7 +38,7 @@ class Content extends Component {
     super(props);
     this.state = {
       breathingGameVisible:
-        props.onScreen.set === null || props.showBreathingGame,
+        props.onScreen.setId === null || props.showBreathingGame,
     };
     this.tagOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
@@ -78,8 +78,8 @@ class Content extends Component {
     this.fadeOut();
     this.setState({breathingGameVisible: true}, this.changeBackground);
     const {dispatch, tags, selectedTags, onScreen} = this.props;
-    const activeTagIndex = selectedTags.indexOf(onScreen.tag);
-    const currentTag = tags[onScreen.tag];
+    const activeTagIndex = selectedTags.indexOf(onScreen.tagId);
+    const currentTag = tags[onScreen.tagId];
     // if one selected tag , then next tag is the current tag;
     const nextTag =
       selectedTags.length - 1 === activeTagIndex
@@ -88,25 +88,28 @@ class Content extends Component {
     // TODO: for random get a sample _.sample(tags)
     // if next tag is
     const nextTagSets = tags[nextTag].sets;
+    const nextTagName = tags[nextTag].name;
     const nextSet = nextTagSets[0];
     dispatch(deleteSet());
     dispatch(fetchContent(currentTag));
     dispatch({
       type: 'NEXT_SET',
-      tag: nextTag,
-      set: nextSet,
+      tagId: nextTag,
+      setId: nextSet,
+      tagName: nextTagName,
     });
   };
 
   startContent = () => {
     const {dispatch, tags, selectedTags} = this.props;
-    const activeTag = selectedTags[0];
+    const firstTagId = selectedTags[0];
+    const activeTag = tags[firstTagId];
     // TODO: for random get a sample _.sample(tags)
-    const activeTagSets = tags[activeTag];
-    const activeSet = activeTagSets.sets[0];
+    const activeSet = activeTag.sets[0];
     const payload = {
-      tag: activeTag,
-      set: activeSet,
+      tagId: firstTagId,
+      setId: activeSet,
+      tagName: activeTag.name,
     };
 
     dispatch({type: 'UPDATE_ONSCREEN_CONTENT', payload});
@@ -121,19 +124,19 @@ class Content extends Component {
   componentDidMount() {
     const {onScreen} = this.props;
     // if no tag selected
-    !onScreen.tag && this.startContent();
+    !onScreen.tagId && this.startContent();
   }
   render() {
     const {backgrounds, tags, sets, onScreen} = this.props;
     const {breathingGameVisible} = this.state;
     const backgroundImage = backgrounds[0];
-    const hasContent = onScreen.set;
-    const activeSet = hasContent ? sets[onScreen.set] : null;
+    const hasContent = onScreen.setId;
+    const activeSet = hasContent ? sets[onScreen.setId] : null;
     const activeContents = activeSet ? activeSet.contents : null;
     const activeContent =
       activeContents && activeContents.length ? activeContents[0] : null;
     const activeContentText = activeContent ? activeContent.text : null;
-    const contentTag = onScreen.tag ? tags[onScreen.tag].name : null;
+    const contentTag = onScreen.tagId ? tags[onScreen.tagId].name : null;
 
     return (
       <ImageBackground style={styles.container} source={backgroundImage}>

@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
-  tag: null,
-  set: null,
+  tagId: null,
+  setId: null,
+  tagName: null,
 };
 
 const onScreen = (state = INITIAL_STATE, action) => {
@@ -13,8 +14,9 @@ const onScreen = (state = INITIAL_STATE, action) => {
     case 'NEXT_SET':
       return {
         ...state,
-        tag: action.tag,
-        set: action.set,
+        tagId: action.tagId,
+        setId: action.setId,
+        tagName: action.tagName,
       };
     case 'RESET_CONTENT':
       return {

@@ -1,7 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {FontType} from '../../helpers/theme';
 
 const ExplainerModal = ({closeExplainer}) => {

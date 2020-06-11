@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
     borderRadius: RFValue(20) / 2,
   },
   tagName: {
-    fontFamily: 'Montserrat-SemiBold',
-    fontSize: RFValue(18),
+    fontFamily: 'Montserrat-Medium',
+    fontSize: 15,
     color: 'white',
     paddingLeft: 10,
     textAlign: 'left',

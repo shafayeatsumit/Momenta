@@ -1,6 +1,5 @@
 import {api} from '../../helpers/api';
 import analytics from '@react-native-firebase/analytics';
-import _ from 'lodash';
 
 const addABookmark = (activeSet, dispatch, allContents) => {
   analytics().logEvent('bookmark_added', {set_id: activeSet});

@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import BrethingGame from '../breathingGame/BreathingGame';
 import analytics from '@react-native-firebase/analytics';
-import {bookmarkSet, rejectSet} from '../../redux/actions/contents';
+import {handleFavorite} from '../../redux/actions/favorites';
 import {deleteSet, fetchContent} from '../../redux/actions/tag';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
@@ -73,6 +73,11 @@ class Content extends Component {
 
   minimizeBreathingGame = () => this.props.closeBreathingGame();
 
+  handleFavoriteSet = () => {
+    const {onScreen, dispatch} = this.props;
+    dispatch(handleFavorite(onScreen.setId));
+  };
+
   goToNextSet = () => {
     this.fadeOut();
     this.setState({breathingGameVisible: true}, this.changeBackground);
@@ -116,7 +121,7 @@ class Content extends Component {
 
   componentDidMount() {
     const {onScreen} = this.props;
-    // if no tag selected
+    // if no tag is on screen
     !onScreen.tagId && this.startContent();
   }
   render() {
@@ -130,6 +135,7 @@ class Content extends Component {
       activeContents && activeContents.length ? activeContents[0] : null;
     const activeContentText = activeContent ? activeContent.text : null;
     const contentTag = onScreen.tagId ? tags[onScreen.tagId].name : null;
+    const isFavorite = activeSet ? activeSet.isBookmark : false;
 
     return (
       <ImageBackground style={styles.container} source={backgroundImage}>
@@ -152,6 +158,14 @@ class Content extends Component {
             </View>
             <View key={1} style={{width: ScreenWidth}} />
           </View>
+          <TouchableOpacity
+            onPress={this.handleFavoriteSet}
+            style={styles.bookmarkIconContainer}>
+            <Animated.Image
+              source={bookmarkIcon}
+              style={[styles.bookmarkIcon, isFavorite && styles.bookmarkColor]}
+            />
+          </TouchableOpacity>
         </SafeAreaView>
         <TouchableOpacity style={styles.nextButton} onPress={this.goToNextSet}>
           <Text style={styles.nextButtonText}>Next</Text>

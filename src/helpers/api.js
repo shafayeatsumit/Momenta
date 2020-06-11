@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {Buffer} from 'buffer';
 import ReduxStore from '../redux/store';
 const {store} = ReduxStore();
-
+import AsyncStorage from '@react-native-community/async-storage';
 // const BASEURL = 'http://localhost:8000/';
 // const BASEURL = 'https://threethought.herokuapp.com/';
 const BASEURL =
@@ -42,8 +42,8 @@ const authInterceptor = async (request) => {
   if (isAnonymous) {
     return request;
   }
-  const {loginInfo} = await store.getState();
-  request.headers.Authorization = `${loginInfo.token}`;
+  const token = await AsyncStorage.getItem('token');
+  request.headers.Authorization = `${token}`;
   return request;
 };
 

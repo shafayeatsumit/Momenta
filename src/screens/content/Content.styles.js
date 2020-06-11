@@ -114,10 +114,10 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    height: 40,
+    height: 35,
     width: 120,
     borderRadius: 50,
-    bottom: 20,
+    bottom: 25,
     right: 20,
     backgroundColor: 'transparent',
     borderWidth: 1,

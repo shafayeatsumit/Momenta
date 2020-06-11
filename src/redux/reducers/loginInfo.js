@@ -4,7 +4,6 @@ const INIT_STATE = {
   email: null,
   userId: null,
   name: null,
-  sessionCount: 0,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {

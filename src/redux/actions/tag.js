@@ -1,6 +1,7 @@
 import analytics from '@react-native-firebase/analytics';
 import {api, imageDownloader} from '../../helpers/api';
 import _ from 'lodash';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const TAG_COlORS = [
   ['#86B2FF', '#6852FD'],
@@ -77,7 +78,10 @@ export const anonymousSignup = () => (dispatch, getState) => {
       const {id} = resp.data;
       dispatch({type: 'UPDATE_TOKEN', data: resp.data});
       analytics().setUserId(id.toString());
-      dispatch(fetchTags());
+
+      AsyncStorage.setItem('token', resp.data.token)
+        .then(() => dispatch(fetchTags()))
+        .catch((error) => console.log('error in setting async storage', error));
     })
     .catch((error) => console.log('error in auth==>', error));
 };

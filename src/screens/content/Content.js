@@ -66,9 +66,8 @@ class Content extends Component {
     this.contentOpacity.setValue(0);
   };
 
-  closeBreathingGame = () => {
+  closeBreathingGame = () =>
     this.setState({breathingGameVisible: false}, this.fadeIn);
-  };
 
   changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
 
@@ -114,12 +113,6 @@ class Content extends Component {
 
     dispatch({type: 'UPDATE_ONSCREEN_CONTENT', payload});
   };
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   const {breathingGameVisible} = this.state;
-  //   const {onScreen} = this.props;
-  //   const isSetChanged = onScreen.set !== prevProps.onScreen.set;
-  // }
 
   componentDidMount() {
     const {onScreen} = this.props;

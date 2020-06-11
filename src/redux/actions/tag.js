@@ -66,7 +66,7 @@ export const fetchTags = () => (dispatch, getState) => {
       downLoadImages(backgrounds, dispatch);
     })
     .catch((error) => {
-      console.log('error', error);
+      console.log('error in tags', error);
     });
 };
 
@@ -77,8 +77,9 @@ export const anonymousSignup = () => (dispatch, getState) => {
       const {id} = resp.data;
       dispatch({type: 'UPDATE_TOKEN', data: resp.data});
       analytics().setUserId(id.toString());
+      dispatch(fetchTags());
     })
-    .catch((error) => console.log('error', error));
+    .catch((error) => console.log('error in auth==>', error));
 };
 
 export const deleteSet = () => (dispatch, getState) => {

@@ -55,8 +55,11 @@ const Home = () => {
   const rbSheetOpen = () => refRBSheet.current.open();
 
   useEffect(() => {
-    !hasTag && dispatch(fetchTags());
-    !loginInfo.token && dispatch(anonymousSignup());
+    if (!loginInfo.token) {
+      dispatch(anonymousSignup());
+    } else {
+      !hasTag && dispatch(fetchTags());
+    }
     loginInfo.userId && analytics().setUserId(loginInfo.userId.toString());
   }, []);
 

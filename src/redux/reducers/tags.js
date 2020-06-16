@@ -10,6 +10,11 @@ const tags = (state = {}, action) => {
         ...state,
         ...action.tags,
       };
+    case 'UPDATE_FAVORITES':
+      return {
+        ...state,
+        ...action.tags,
+      };
     default:
       return state;
   }

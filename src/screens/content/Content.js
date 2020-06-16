@@ -18,7 +18,12 @@ import {
 import BrethingGame from '../breathingGame/BreathingGame';
 import analytics from '@react-native-firebase/analytics';
 import {handleFavorite} from '../../redux/actions/favorites';
-import {deleteSet, fetchContent} from '../../redux/actions/tag';
+import {
+  deleteSet,
+  fetchContent,
+  fetchBackground,
+  updateFavorites,
+} from '../../redux/actions/tag';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {
@@ -78,42 +83,114 @@ class Content extends Component {
     dispatch(handleFavorite(onScreen.setId));
   };
 
+  getRandomTag = (tags) => {
+    const tagsToRandomize = Object.values(tags).filter(
+      (tag) =>
+        tag.name !== 'Random' &&
+        tag.name !== 'Calm Breathing' &&
+        tag.name !== 'Favorites',
+    );
+    return _.sample(tagsToRandomize);
+  };
+
+  getIdOfRandomTag = (tags) =>
+    Object.values(tags).find((tag) => tag.name === 'Random').id;
+
+  getCurrentTag = () => {
+    const {tags, onScreen} = this.props;
+    const currentTag = tags[onScreen.tagId];
+    return currentTag;
+  };
+
+  getCurrentTagIndex = () => {
+    const {tags, onScreen, selectedTags} = this.props;
+    const currentTagId =
+      onScreen.tagName === 'Random'
+        ? this.getIdOfRandomTag(tags)
+        : onScreen.tagId;
+    const currentTagIndex = selectedTags.indexOf(currentTagId);
+    return currentTagIndex;
+  };
+
+  getUpcomingTag = (currentTagIndex) => {
+    const {tags, selectedTags} = this.props;
+    const upcomingTagId =
+      selectedTags.length - 1 === currentTagIndex
+        ? selectedTags[0]
+        : selectedTags[currentTagIndex + 1];
+    // onScreenTagName can be Random/Favorite it will be used for minimizedview as well.
+    let upcomingTag = tags[upcomingTagId];
+    return upcomingTag;
+  };
+
+  getUpcomingSet = (upcomingTag) => {
+    const {tags} = this.props;
+    const upcomingSets = tags[upcomingTag.id].sets;
+    const upcomingSet = upcomingSets[0];
+    return upcomingSet;
+  };
+
+  contentCleanUp = (currentTag) => {
+    const currentTagName = currentTag.name;
+    const {dispatch} = this.props;
+    if (currentTagName === 'Favorites') {
+      dispatch(updateFavorites());
+    } else if (currentTag === 'Calm Breathing') {
+      // do nothing
+    } else {
+      dispatch(deleteSet());
+      dispatch(fetchContent(currentTag));
+    }
+  };
+
+  moveForward = (upcomingTag) => {
+    const {tags, dispatch} = this.props;
+    const upcomingTagName = upcomingTag.name;
+    if (upcomingTagName === 'Random') {
+      const randomTag = this.getRandomTag(tags);
+      const randomSetId = randomTag.sets[0];
+      dispatch({
+        type: 'NEXT_SET',
+        tagId: randomTag.id,
+        setId: randomSetId,
+        tagName: upcomingTagName,
+      });
+    } else {
+      const upcomingSet = upcomingTag.sets[0];
+      dispatch({
+        type: 'NEXT_SET',
+        tagId: upcomingTag.id,
+        setId: upcomingSet,
+        tagName: upcomingTagName,
+      });
+    }
+  };
+
   goToNextSet = () => {
+    const {dispatch} = this.props;
     this.fadeOut();
     this.setState({breathingGameVisible: true}, this.changeBackground);
-    const {dispatch, tags, selectedTags, onScreen} = this.props;
-    const activeTagIndex = selectedTags.indexOf(onScreen.tagId);
-    const currentTag = tags[onScreen.tagId];
-    // if one selected tag , then next tag is the current tag;
-    const nextTag =
-      selectedTags.length - 1 === activeTagIndex
-        ? selectedTags[0]
-        : selectedTags[activeTagIndex + 1];
-    // TODO: for random get a sample _.sample(tags)
-    // if next tag is
-    const nextTagSets = tags[nextTag].sets;
-    const nextTagName = tags[nextTag].name;
-    const nextSet = nextTagSets[0];
-    dispatch(deleteSet());
-    dispatch(fetchContent(currentTag));
-    dispatch({
-      type: 'NEXT_SET',
-      tagId: nextTag,
-      setId: nextSet,
-      tagName: nextTagName,
-    });
+    dispatch(fetchBackground());
+    const currentTagIndex = this.getCurrentTagIndex();
+    const currentTag = this.getCurrentTag(currentTagIndex);
+    const upcomingTag = this.getUpcomingTag(currentTagIndex);
+    this.contentCleanUp(currentTag);
+    this.moveForward(upcomingTag);
   };
 
   startContent = () => {
     const {dispatch, tags, selectedTags} = this.props;
     const firstTagId = selectedTags[0];
-    const activeTag = tags[firstTagId];
-    // TODO: for random get a sample _.sample(tags)
+    let activeTag = tags[firstTagId];
+    const activeTagName = activeTag.name;
+    if (activeTag.name === 'Random') {
+      activeTag = this.getRandomTag(tags);
+    }
     const activeSet = activeTag.sets[0];
     const payload = {
-      tagId: firstTagId,
+      tagId: activeTag.id,
       setId: activeSet,
-      tagName: activeTag.name,
+      tagName: activeTagName,
     };
 
     dispatch({type: 'UPDATE_ONSCREEN_CONTENT', payload});

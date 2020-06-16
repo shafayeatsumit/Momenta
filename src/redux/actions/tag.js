@@ -39,6 +39,7 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
 const parseTags = (response) => {
   let tags = response.result;
   tags = tags.map((item) => ({...item, sets: item.sets.map((set) => set.id)}));
+
   tags = _.mapKeys(tags, 'id');
   return tags;
 };
@@ -90,18 +91,41 @@ export const deleteSet = () => (dispatch, getState) => {
   const {onScreen, tags, sets} = getState();
   const currentTagObject = tags[onScreen.tagId];
   const currentTagSets = currentTagObject.sets;
-  const updatedTagSets = currentTagSets.slice(1);
-  const updatedTags = {
-    ...tags,
-    [onScreen.tagId]: {
-      ...currentTagObject,
-      sets: updatedTagSets,
-    },
-  };
+  currentTagSets.shift();
+  delete sets[onScreen.setId];
 
+  // intentionally mutating the state
+  // const updatedTagSets = currentTagSets.slice(1);
+
+  // const updatedTags = {
+  //   ...tags,
+  //   [onScreen.tagId]: {
+  //     ...currentTagObject,
+  //     sets: updatedTagSets,
+  //   },
+  // };
   const updatedSets = Object.assign({}, sets);
   delete updatedSets[onScreen.setId];
-  dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
+  dispatch({type: 'UPDATE_CONTENT', sets: updatedSets});
+};
+
+const getFavoritesTagId = (tags) =>
+  Object.values(tags).find((tag) => tag.name === 'Favorites').id;
+
+export const updateFavorites = () => (dispatch, getState) => {
+  const {tags} = getState();
+  const favoriteTagId = getFavoritesTagId(tags);
+  const favoriteSets = tags[favoriteTagId].sets;
+  const firstSet = favoriteSets.shift(); // removed the first element
+  const updatedFavoriteSets = [...favoriteSets, firstSet];
+  const updatedTags = {
+    ...tags,
+    [favoriteTagId]: {
+      ...tags[favoriteTagId],
+      sets: updatedFavoriteSets,
+    },
+  };
+  dispatch({type: 'UPDATE_FAVORITES', tags: updatedTags});
 };
 
 const addNewContent = (dispatch, getState, response, tagId) => {
@@ -135,9 +159,20 @@ export const fetchContent = (tag) => (dispatch, getState) => {
   api
     .get(contentUrl)
     .then((response) => {
-      const backgroundImage = [response.data.image];
+      // const backgroundImage = [response.data.image];
       addNewContent(dispatch, getState, response.data, tagId);
-      downLoadImages(backgroundImage, dispatch);
+      // downLoadImages(backgroundImage, dispatch);
     })
     .catch((error) => console.log(`error in ${contentUrl}`, error));
+};
+
+export const fetchBackground = () => (dispatch, getState) => {
+  const url = 'background_image/';
+  api
+    .get(url)
+    .then((response) => {
+      const backgroundImage = [response.data];
+      downLoadImages(backgroundImage, dispatch);
+    })
+    .catch((error) => console.log(`error in ${url}`, error));
 };

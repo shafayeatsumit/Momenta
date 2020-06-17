@@ -1,116 +1,98 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StatusBar,
   View,
   Text,
+  Animated,
+  StyleSheet,
+  ImageBackground,
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import {
-  toggleSelectedTag,
-  fetchTags,
-  anonymousSignup,
-} from '../../redux/actions/tag';
-import Content from '../content/Content';
-import Tag from './Tag';
-import RBSheet from '../../components/rbsheet';
-import MinimizedView from '../../components/minimizedView/MinimizedView';
+import {connect} from 'react-redux';
+import {fetchTags, anonymousSignup} from '../../redux/actions/tag';
+import BrethingGame from '../breathingGame/BreathingGame';
 import styles from './Home.styles';
-import {rbSheetStyle, rbSheetProps} from '../../helpers/constants/rbsheet';
+import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 
-const Home = () => {
-  const [minimizeBreathingGame, setMinimizeBreathingGame] = useState(false);
-  const dispatch = useDispatch();
-  const refRBSheet = useRef();
-  const minimized = useSelector((state) => state.minimized);
-  const loginInfo = useSelector((state) => state.loginInfo);
-  const tagNames = useSelector((state) => state.tagNames);
-  const selectedTags = useSelector((state) => state.selectedTags);
-  const backgrounds = useSelector((state) => state.backgrounds);
-  const hasTag = tagNames.length;
+class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      breathingGameVisible: true,
+    };
 
-  const rbsheetClose = () => {
-    dispatch({type: 'SET_MINIMIZE_TRUE'});
-    refRBSheet.current.close();
-    minimizeBreathingGame && setMinimizeBreathingGame(false);
+    this.tagOpacity = new Animated.Value(0);
+    this.contentOpacity = new Animated.Value(0);
+    this.iconOpacity = new Animated.Value(0);
+  }
+
+  fadeIn = () => {
+    Animated.timing(this.tagOpacity, {
+      toValue: 1,
+      duration: 2500,
+      delay: 800,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(this.contentOpacity, {
+      toValue: 1,
+      duration: 1000,
+      delay: 0,
+      useNativeDriver: true,
+    }).start(this.contentSeen);
   };
 
-  const rbsheetCloseBreathingGame = () => {
-    dispatch({type: 'SET_MINIMIZE_TRUE'});
-    setMinimizeBreathingGame(true);
-    refRBSheet.current.close();
+  fadeOut = () => {
+    this.tagOpacity.setValue(0);
+    this.contentOpacity.setValue(0);
   };
-
-  const handleClose = () => {
-    analytics().logEvent('minimize');
-    dispatch({type: 'SET_MINIMIZE_TRUE'});
-  };
-
-  const handleTagPress = (id) => dispatch(toggleSelectedTag(id));
-  const handleOpen = () => analytics().logEvent('maximize');
-  const rbSheetOpen = () => refRBSheet.current.open();
-
-  useEffect(() => {
+  closeBreathingGame = () => this.setState({breathingGameVisible: false});
+  componentDidMount() {
+    const {loginInfo, dispatch, sets} = this.props;
+    const hasSets = Object.keys(sets).length;
     if (!loginInfo.token) {
       dispatch(anonymousSignup());
     } else {
-      !hasTag && dispatch(fetchTags());
+      !hasSets && dispatch(fetchTags());
     }
     loginInfo.userId && analytics().setUserId(loginInfo.userId.toString());
-  }, []);
+  }
 
-  const tagSelected = selectedTags.length;
-  const showStartButton = !minimized && tagSelected > 0;
-  const showTags = hasTag && backgrounds.length;
-  return (
-    <>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView style={styles.mainContainer}>
-        <View style={styles.header}>
-          <View />
+  render() {
+    const {backgrounds, tags, sets} = this.props;
+    const {breathingGameVisible} = this.state;
+    const backgroundImage = backgrounds[0];
+    if (!backgroundImage) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="rgb(120,121,137)" />
         </View>
-        {showTags ? (
-          <ScrollView contentContainerStyle={styles.tilesContainer}>
-            {tagNames.map((item) => (
-              <Tag
-                item={item}
-                key={item.id}
-                handlePress={() => handleTagPress(item.id)}
-                selectedTags={selectedTags}
-              />
-            ))}
-          </ScrollView>
-        ) : (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="rgb(120,121,137)" />
+      );
+    }
+    return (
+      <ImageBackground style={styles.container} source={backgroundImage}>
+        {breathingGameVisible ? (
+          <View
+            style={{
+              height: ScreenHeight,
+              width: ScreenWidth,
+              ...StyleSheet.absoluteFillObject,
+            }}>
+            <BrethingGame closeBreathingGame={this.closeBreathingGame} />
           </View>
-        )}
-        <RBSheet
-          ref={refRBSheet}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          {...rbSheetProps}
-          customStyles={rbSheetStyle}>
-          <Content
-            closeSheet={rbsheetClose}
-            closeBreathingGame={rbsheetCloseBreathingGame}
-            showBreathingGame={minimizeBreathingGame}
-          />
-        </RBSheet>
-        {minimized && <MinimizedView maximize={rbSheetOpen} />}
-        {showStartButton && (
-          <View style={styles.startButtonContainer}>
-            <TouchableOpacity style={styles.startButton} onPress={rbSheetOpen}>
-              <Text style={styles.start}>Start</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </SafeAreaView>
-    </>
-  );
+        ) : null}
+      </ImageBackground>
+    );
+  }
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const {sets, tags, selectedTags, backgrounds, onScreen, loginInfo} = state;
+  return {sets, tags, selectedTags, backgrounds, onScreen, loginInfo};
 };
-export default Home;
+
+export default connect(mapStateToProps)(Home);

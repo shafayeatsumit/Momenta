@@ -9,8 +9,8 @@ const ExplainerModal = ({closeExplainer}) => {
       <View style={styles.modal}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>
-            Each Momenta starts with calm breaths and then the positive emotion
-            you want
+            To fully reveal the calming image, you’ll need to take 2 calm
+            breaths
           </Text>
         </View>
 

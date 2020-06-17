@@ -81,9 +81,13 @@ const styles = StyleSheet.create({
   },
   successTextContainer: {
     position: 'absolute',
-    width: ScreenWidth,
     zIndex: 1,
-    bottom: ScreenHeight * 0.45,
+    bottom: 0,
+    left: 0,
+    top: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   helperText: {
     textAlign: 'center',
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 20,
+    fontSize: 24,
     marginHorizontal: 15,
   },
 

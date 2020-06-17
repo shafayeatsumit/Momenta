@@ -1,15 +1,14 @@
 const initialState = {
-  breathingGameFirstRun: true,
-  firstContentViewed: false,
-  viewedGameExplainer: false,
+  brathingCount: 1,
+  tutorialFinished: false,
 };
 
 const firstLaunch = (state = initialState, action) => {
   switch (action.type) {
-    case 'PLAYED_BREATHING_GAME':
+    case 'FINISHED_TUTORIAL':
       return {
         ...state,
-        breathingGameFirstRun: false,
+        tutorialFinished: true,
       };
     default:
       return state;

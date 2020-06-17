@@ -26,24 +26,14 @@ import {
 } from '../../redux/actions/tag';
 import styles from './Content.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
-import {
-  arrayToQueryParams,
-  contentParser,
-  uniq,
-  filterSets,
-  findNextSetIndex,
-} from '../../helpers/common';
 import bookmarkIcon from '../../../assets/icons/bookmark.png';
-import downIcon from '../../../assets/icons/down.png';
 import _ from 'lodash';
-import {api} from '../../helpers/api';
 
 class Content extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      breathingGameVisible:
-        props.onScreen.setId === null || props.showBreathingGame,
+      breathingGameVisible: true,
     };
     this.tagOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
@@ -71,12 +61,9 @@ class Content extends Component {
     this.contentOpacity.setValue(0);
   };
 
-  closeBreathingGame = () =>
-    this.setState({breathingGameVisible: false}, this.fadeIn);
+  closeBreathingGame = () => this.setState({breathingGameVisible: false});
 
   changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
-
-  minimizeBreathingGame = () => this.props.closeBreathingGame();
 
   handleFavoriteSet = () => {
     const {onScreen, dispatch} = this.props;
@@ -254,11 +241,7 @@ class Content extends Component {
               width: ScreenWidth,
               ...StyleSheet.absoluteFillObject,
             }}>
-            <BrethingGame
-              closeModal={this.closeBreathingGame}
-              contentTag={contentTag}
-              minimize={this.minimizeBreathingGame}
-            />
+            <BrethingGame closeBreathingGame={this.closeBreathingGame} />
           </View>
         ) : null}
       </ImageBackground>

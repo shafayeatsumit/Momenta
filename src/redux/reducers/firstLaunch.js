@@ -1,14 +1,20 @@
 const initialState = {
   playCount: 1,
-  tutorialFinished: false,
+  onboardingDone: false,
 };
 
 const firstLaunch = (state = initialState, action) => {
   switch (action.type) {
-    case 'FINISHED_TUTORIAL':
+    case 'ONBOARDING_DONE':
       return {
         ...state,
-        tutorialFinished: true,
+        onboardingDone: true,
+      };
+    case 'INCREASE_PLAY_COUNT':
+      const updatedPlayCount = state.playCount + 1;
+      return {
+        ...state,
+        playCount: updatedPlayCount,
       };
     default:
       return state;

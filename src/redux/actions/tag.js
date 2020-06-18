@@ -62,6 +62,8 @@ export const fetchTags = () => (dispatch, getState) => {
         id: tag.id,
         name: tag.name,
         gradientColors: _.sample(TAG_COlORS),
+        selected: true,
+        active: false,
       }));
       const sets = parseSets(response.data);
       dispatch({type: 'INITIAL_DATA', tags, tagNames, sets});
@@ -93,17 +95,6 @@ export const deleteSet = () => (dispatch, getState) => {
   const currentTagSets = currentTagObject.sets;
   currentTagSets.shift();
   delete sets[onScreen.setId];
-
-  // intentionally mutating the state
-  // const updatedTagSets = currentTagSets.slice(1);
-
-  // const updatedTags = {
-  //   ...tags,
-  //   [onScreen.tagId]: {
-  //     ...currentTagObject,
-  //     sets: updatedTagSets,
-  //   },
-  // };
   const updatedSets = Object.assign({}, sets);
   delete updatedSets[onScreen.setId];
   dispatch({type: 'UPDATE_CONTENT', sets: updatedSets});
@@ -175,4 +166,12 @@ export const fetchBackground = () => (dispatch, getState) => {
       downLoadImages(backgroundImage, dispatch);
     })
     .catch((error) => console.log(`error in ${url}`, error));
+};
+
+export const activateTag = (tagIndex) => (getState, dispatch) => {
+  const {tagNames} = getState();
+  const updatedTags = tagNames.map((tag, index) =>
+    index === tagIndex ? {...tag, active: true} : {...tag, active: false},
+  );
+  dispatch({type: 'UPDATE_ACTIVE_TAG', tags: updatedTags});
 };

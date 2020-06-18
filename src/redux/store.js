@@ -10,11 +10,11 @@ import thunk from 'redux-thunk';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['loginInfo', 'firstLaunch'],
+  whitelist: ['loginInfo'],
 };
 // const middleware = [logger, thunk];
-
 const middleware = [thunk];
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export default () => {

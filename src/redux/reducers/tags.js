@@ -10,7 +10,7 @@ const tags = (state = {}, action) => {
         ...state,
         ...action.tags,
       };
-    case 'UPDATE_FAVORITES':
+    case 'MOVE_FIRST_SET_TO_LAST':
       return {
         ...state,
         ...action.tags,

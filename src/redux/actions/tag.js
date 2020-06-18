@@ -100,23 +100,19 @@ export const deleteSet = () => (dispatch, getState) => {
   dispatch({type: 'UPDATE_CONTENT', sets: updatedSets});
 };
 
-const getFavoritesTagId = (tags) =>
-  Object.values(tags).find((tag) => tag.name === 'Favorites').id;
-
-export const updateFavorites = () => (dispatch, getState) => {
+export const moveFirstSetToLast = (tagId) => (dispatch, getState) => {
   const {tags} = getState();
-  const favoriteTagId = getFavoritesTagId(tags);
-  const favoriteSets = tags[favoriteTagId].sets;
-  const firstSet = favoriteSets.shift(); // removed the first element
-  const updatedFavoriteSets = [...favoriteSets, firstSet];
+  const sets = tags[tagId].sets;
+  const firstSet = sets.shift(); // removed the first element
+  const updatedFavoriteSets = [...sets, firstSet];
   const updatedTags = {
     ...tags,
-    [favoriteTagId]: {
-      ...tags[favoriteTagId],
+    [tagId]: {
+      ...tags[tagId],
       sets: updatedFavoriteSets,
     },
   };
-  dispatch({type: 'UPDATE_FAVORITES', tags: updatedTags});
+  dispatch({type: 'MOVE_FIRST_SET_TO_LAST', tags: updatedTags});
 };
 
 const addNewContent = (dispatch, getState, response, tagId) => {
@@ -168,7 +164,7 @@ export const fetchBackground = () => (dispatch, getState) => {
     .catch((error) => console.log(`error in ${url}`, error));
 };
 
-export const activateTag = (tagIndex) => (getState, dispatch) => {
+export const activateTag = (tagIndex) => (dispatch, getState) => {
   const {tagNames} = getState();
   const updatedTags = tagNames.map((tag, index) =>
     index === tagIndex ? {...tag, active: true} : {...tag, active: false},

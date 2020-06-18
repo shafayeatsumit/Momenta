@@ -13,10 +13,9 @@ import {
   PanResponder,
   StyleSheet,
   Text,
-  Modal,
 } from 'react-native';
 import BrethingGame from '../breathingGame/BreathingGame';
-import analytics from '@react-native-firebase/analytics';
+import Modal from 'react-native-modal';
 import {handleFavorite} from '../../redux/actions/favorites';
 import {
   deleteSet,
@@ -234,7 +233,16 @@ class Content extends Component {
         <TouchableOpacity style={styles.nextButton} onPress={this.goToNextSet}>
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
-        {breathingGameVisible ? (
+        <Modal
+          backdropColor="#B4B3DB"
+          backdropOpacity={0.8}
+          animationIn="zoomInDown"
+          animationOut="zoomOutUp"
+          animationInTiming={600}
+          animationOutTiming={600}
+          backdropTransitionInTiming={600}
+          backdropTransitionOutTiming={600}
+          isVisible={breathingGameVisible}>
           <View
             style={{
               height: ScreenHeight,
@@ -243,7 +251,7 @@ class Content extends Component {
             }}>
             <BrethingGame closeBreathingGame={this.closeBreathingGame} />
           </View>
-        ) : null}
+        </Modal>
       </ImageBackground>
     );
   }

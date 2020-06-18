@@ -193,7 +193,7 @@ class BreathingGame extends Component {
 
   componentDidMount() {
     const {firstLaunch} = this.props;
-    firstLaunch.breathingCount === 1
+    firstLaunch.playCount === 0
       ? this.showGameExplainerModal()
       : this.showHelpers();
 

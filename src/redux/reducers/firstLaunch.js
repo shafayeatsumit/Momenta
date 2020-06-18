@@ -1,5 +1,5 @@
 const initialState = {
-  brathingCount: 1,
+  playCount: 1,
   tutorialFinished: false,
 };
 

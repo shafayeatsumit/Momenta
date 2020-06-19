@@ -8,7 +8,10 @@ const BreathingTipExplainer = ({closeModal}) => {
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
         <View style={styles.textContainer}>
-          <Text style={styles.text}>IT'S A BREATTHING TIP EXPLAINER</Text>
+          <Text style={styles.text}>
+            You can control breathing tips in settings and read more about the
+            health benefits in FAQ
+          </Text>
         </View>
 
         <View style={styles.buttonContainer}>

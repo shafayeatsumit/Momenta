@@ -8,7 +8,10 @@ const MeditationExplainer = ({closeModal}) => {
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
         <View style={styles.textContainer}>
-          <Text style={styles.text}>IT'S MINI MEDITATION EXPLAINER</Text>
+          <Text style={styles.text}>
+            You can also add mini-meditations for positive emotions to follow
+            calm breathing. These are controlled in your settings
+          </Text>
         </View>
 
         <View style={styles.buttonContainer}>

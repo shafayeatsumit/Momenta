@@ -19,6 +19,8 @@ import {
   anonymousSignup,
   moveFirstSetToLast,
   activateTag,
+  fetchContent,
+  removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
 import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
@@ -26,7 +28,6 @@ import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
-import Swiper from 'react-native-swiper';
 
 class Home extends Component {
   constructor(props) {
@@ -53,15 +54,15 @@ class Home extends Component {
   fadeIn = () => {
     Animated.timing(this.tagOpacity, {
       toValue: 1,
-      duration: 2500,
-      delay: 800,
+      duration: 1000,
+      delay: 0,
       useNativeDriver: true,
     }).start();
 
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 1000,
-      delay: 0,
+      duration: 1500,
+      delay: 500,
       useNativeDriver: true,
     }).start(this.showNextButton);
   };
@@ -69,6 +70,7 @@ class Home extends Component {
   fadeOut = () => {
     this.tagOpacity.setValue(0);
     this.contentOpacity.setValue(0);
+    this.setState({});
   };
 
   getActiveTag = (tagIndex) => {
@@ -150,18 +152,17 @@ class Home extends Component {
   showMeditationExplainer = () =>
     this.setState({meditationExplainerVisible: true});
 
-  showBreathingTipContent = () => {
-    const tagName = 'Calm Breathing Tips';
+  showContentByTagName = (tagName) => {
     const tagId = this.getTagIdByName(tagName);
-    const calmSets = this.getSetsByTagId(tagId);
-    const firstCalmSetId = calmSets[0];
-    const content = this.getContentBySetId(firstCalmSetId);
+    const tagSets = this.getSetsByTagId(tagId);
+    const firstSetId = tagSets[0];
+    const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
     this.setState(
       {
         onScreenContent: contentText,
         onScreenTagName: tagName,
-        onScreenSetId: firstCalmSetId,
+        onScreenSetId: firstSetId,
         onScreenTagId: tagId,
       },
       this.fadeIn,
@@ -171,31 +172,31 @@ class Home extends Component {
   newUserAction = () => {
     const {firstLaunch, dispatch} = this.props;
     const {playCount} = firstLaunch;
-    // TODO: change it later
-    this.showMeditationExplainer();
-
-    // if (playCount === 1) {
-    //   this.goToNextBreathing();
-    //   dispatch({type: 'INCREASE_PLAY_COUNT'});
-    // } else if (playCount === 2) {
-    //   console.log('play count is two now');
-    //   this.showBreathingTipExplainer();
-    //   dispatch({type: 'INCREASE_PLAY_COUNT'});
-    // } else {
-    //   dispatch({type: 'ONBOARDING_DONE'});
-    // }
+    if (playCount === 1) {
+      this.goToNextBreathing();
+      dispatch({type: 'INCREASE_PLAY_COUNT'});
+    } else if (playCount === 2) {
+      console.log('play count is two now');
+      this.showBreathingTipExplainer();
+      dispatch({type: 'INCREASE_PLAY_COUNT'});
+    } else {
+      this.showMeditationExplainer();
+      dispatch({type: 'ONBOARDING_DONE'});
+    }
   };
 
   oldUserAction = () => {};
 
   closeBreathingTipExplainer = () => {
     this.setState({breathingTipExplainerVisible: false});
-    this.showBreathingTipContent();
+    const tagName = 'Calm Breathing Tips';
+    this.showContentByTagName(tagName);
   };
 
   closeMeditationExplainer = () => {
     this.setState({meditationExplainerVisible: false});
-    this.showContent();
+    const tagName = 'Gratitude';
+    this.showContentByTagName(tagName);
   };
 
   closeBreathingGame = () => {
@@ -209,23 +210,25 @@ class Home extends Component {
   };
 
   handleNext = () => {
-    const {
-      onScreenTagName,
-      dispatch,
-      onScreenSetId,
-      onScreenTagId,
-    } = this.state;
+    const {onScreenTagName, onScreenSetId, onScreenTagId} = this.state;
+    const {dispatch} = this.props;
     this.fadeOut();
-    this.setState({breathingGameVisible: true}, this.changeBackground);
+    this.setState(
+      {breathingGameVisible: true, nextButtonVisible: false},
+      this.changeBackground,
+    );
     const isFavoriteOrBreathingTip =
       onScreenTagName === 'Favorites' ||
       onScreenTagName === 'Calm Breathing Tips';
 
     if (isFavoriteOrBreathingTip) {
-      dispatch(moveFirstSetToLast(onScreenSetId));
+      dispatch(moveFirstSetToLast(onScreenTagId));
     } else {
+      const favoritesTagId = this.getTagIdByName('Favorites');
+      dispatch(removeContent(onScreenTagId, onScreenSetId, favoritesTagId));
+      dispatch(fetchContent(onScreenTagId));
     }
-    // updateFavoritesOrBreathingTip(tagId)
+    dispatch(fetchBackground());
   };
 
   componentDidMount() {
@@ -264,7 +267,7 @@ class Home extends Component {
     return (
       <ImageBackground style={styles.container} source={backgroundImageOne}>
         <View style={styles.categoryHolder}>
-          <Animated.Text style={styles.category}>
+          <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
           </Animated.Text>
         </View>
@@ -287,7 +290,7 @@ class Home extends Component {
           {nextButtonVisible ? (
             <TouchableOpacity
               style={styles.nextButton}
-              onPress={this.goToNextSet}>
+              onPress={this.handleNext}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           ) : null}

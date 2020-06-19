@@ -89,22 +89,36 @@ export const anonymousSignup = () => (dispatch, getState) => {
     .catch((error) => console.log('error in auth==>', error));
 };
 
-export const deleteSet = () => (dispatch, getState) => {
-  const {onScreen, tags, sets} = getState();
-  const currentTagObject = tags[onScreen.tagId];
+export const removeContent = (tagId, setId, favoritesTagId) => (
+  dispatch,
+  getState,
+) => {
+  const {tags, sets} = getState();
+  const currentTagObject = tags[tagId];
   const currentTagSets = currentTagObject.sets;
-  currentTagSets.shift();
-  delete sets[onScreen.setId];
+  const updatedTagSets = currentTagSets.slice(1);
+  const favoritesSets = tags[favoritesTagId].sets;
+  const updatedTags = {
+    ...tags,
+    [tagId]: {
+      ...currentTagObject,
+      sets: updatedTagSets,
+    },
+  };
   const updatedSets = Object.assign({}, sets);
-  delete updatedSets[onScreen.setId];
-  dispatch({type: 'UPDATE_CONTENT', sets: updatedSets});
+  const notFavoriteSet = !favoritesSets.includes(setId);
+  if (notFavoriteSet) {
+    delete updatedSets[setId];
+  }
+  dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
 };
 
 export const moveFirstSetToLast = (tagId) => (dispatch, getState) => {
   const {tags} = getState();
   const sets = tags[tagId].sets;
-  const firstSet = sets.shift(); // removed the first element
-  const updatedFavoriteSets = [...sets, firstSet];
+  const firstSet = sets[0]; // removed the first element
+  const updatedSets = sets.slice(1);
+  const updatedFavoriteSets = [...updatedSets, firstSet];
   const updatedTags = {
     ...tags,
     [tagId]: {
@@ -138,18 +152,14 @@ const addNewContent = (dispatch, getState, response, tagId) => {
   dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
 };
 
-export const fetchContent = (tag) => (dispatch, getState) => {
-  const tagName = tag.name;
-  const tagId = tag.id;
+export const fetchContent = (tagId) => (dispatch, getState) => {
+  const {tags} = getState();
+  const tagName = tags[tagId].name;
   const queryString = '?tags' + '=' + tagName.replace(/ /g, '%20');
   const contentUrl = 'contents/' + queryString;
   api
     .get(contentUrl)
-    .then((response) => {
-      // const backgroundImage = [response.data.image];
-      addNewContent(dispatch, getState, response.data, tagId);
-      // downLoadImages(backgroundImage, dispatch);
-    })
+    .then((response) => addNewContent(dispatch, getState, response.data, tagId))
     .catch((error) => console.log(`error in ${contentUrl}`, error));
 };
 

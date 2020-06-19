@@ -9,7 +9,6 @@ const firstLaunch = (state = initialState, action) => {
       return {
         ...state,
         onboardingDone: true,
-        playCount: state.playCount + 1,
       };
     case 'INCREASE_PLAY_COUNT':
       const updatedPlayCount = state.playCount + 1;

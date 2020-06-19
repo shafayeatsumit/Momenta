@@ -5,15 +5,16 @@ import rootReducer from './reducers';
 import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
+
 // AsyncStorage.clear();
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['loginInfo'],
+  whitelist: ['userInfo', 'firstLaunch'],
 };
-const middleware = [logger, thunk];
-// const middleware = [thunk];
+// const middleware = [logger, thunk];
+const middleware = [thunk];
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

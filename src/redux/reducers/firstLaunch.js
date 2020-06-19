@@ -5,12 +5,12 @@ const initialState = {
 
 const firstLaunch = (state = initialState, action) => {
   switch (action.type) {
-    case 'ONBOARDING_DONE':
+    case 'NEW_USER_ONBOARDING_DONE':
       return {
         ...state,
         onboardingDone: true,
       };
-    case 'INCREASE_PLAY_COUNT':
+    case 'NEW_USER_INCREASE_PLAY_COUNT':
       const updatedPlayCount = state.playCount + 1;
       return {
         ...state,

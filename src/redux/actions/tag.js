@@ -79,7 +79,7 @@ export const anonymousSignup = () => (dispatch, getState) => {
     .post('auth/anonymoussignup/')
     .then((resp) => {
       const {id} = resp.data;
-      dispatch({type: 'UPDATE_TOKEN', data: resp.data});
+      dispatch({type: 'ADD_USER_DATA', data: resp.data});
       analytics().setUserId(id.toString());
 
       AsyncStorage.setItem('token', resp.data.token)

@@ -41,6 +41,7 @@ class Home extends Component {
       onScreenContent: '',
       onScreenSetId: null,
       onScreenTagId: null,
+      modalType: 'none',
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -80,12 +81,22 @@ class Home extends Component {
   };
 
   getActiveTagIndex = () => {
-    const {tagNames} = this.props;
-    const activeTagIndex = tagNames.findIndex((tags) => tags.active);
+    const {tagNames, tags} = this.props;
+    const selectedTags = tagNames.filter((item) => item.selected);
+    const activeTagIndex = selectedTags.findIndex((item) => item.active);
     const noActiveTag = activeTagIndex === -1;
-    const lastTagIsActive = activeTagIndex === tagNames.length - 1;
+    const lastTagIsActive = activeTagIndex === selectedTags.length - 1;
+
     if (noActiveTag || lastTagIsActive) {
       return 0;
+    }
+    const isNextTagFavorites =
+      selectedTags[activeTagIndex + 1].name === 'Favorites';
+    // if next tag is favorite and no set then skip to 0.
+    if (isNextTagFavorites) {
+      const favoritesTagId = this.getTagIdByName('Favorites');
+      const hasFvoriteSet = tags[favoritesTagId].sets.length;
+      return hasFvoriteSet ? activeTagIndex + 1 : 0;
     } else {
       return activeTagIndex + 1;
     }
@@ -106,6 +117,7 @@ class Home extends Component {
     const activeTagIndex = this.getActiveTagIndex();
     dispatch(activateTag(activeTagIndex));
     const activeTag = this.getActiveTag(activeTagIndex);
+    const tagName = activeTag.name;
     const activeSets = this.getActiveTagSets(activeTagIndex);
     const firstSetId = activeSets[0];
     const content = this.getContentBySetId(firstSetId);
@@ -113,7 +125,7 @@ class Home extends Component {
     this.setState(
       {
         onScreenContent: contentText,
-        onScreenTagName: activeTag.name,
+        onScreenTagName: tagName,
         onScreenSetId: firstSetId,
         onScreenTagId: activeTag.id,
       },
@@ -174,18 +186,26 @@ class Home extends Component {
     const {playCount} = firstLaunch;
     if (playCount === 1) {
       this.goToNextBreathing();
-      dispatch({type: 'INCREASE_PLAY_COUNT'});
+      dispatch({type: 'NEW_USER_INCREASE_PLAY_COUNT'});
     } else if (playCount === 2) {
-      console.log('play count is two now');
       this.showBreathingTipExplainer();
-      dispatch({type: 'INCREASE_PLAY_COUNT'});
+      dispatch({type: 'NEW_USER_INCREASE_PLAY_COUNT'});
     } else {
       this.showMeditationExplainer();
-      dispatch({type: 'ONBOARDING_DONE'});
+      dispatch({type: 'NEW_USER_ONBOARDING_DONE'});
     }
   };
 
-  oldUserAction = () => {};
+  oldUserAction = () => {
+    const {userInfo, dispatch} = this.props;
+    const userSeesContent = userInfo.playCount % 3 === 0;
+    if (userSeesContent) {
+      this.showContent();
+    } else {
+      this.goToNextBreathing();
+    }
+    dispatch({type: 'INCREASE_PLAY_COUNT'});
+  };
 
   closeBreathingTipExplainer = () => {
     this.setState({breathingTipExplainerVisible: false});
@@ -202,6 +222,7 @@ class Home extends Component {
   closeBreathingGame = () => {
     this.setState({breathingGameVisible: false});
     const isFirstTimeUser = this.firstTimeUser();
+
     if (!isFirstTimeUser) {
       this.oldUserAction();
     } else {
@@ -232,21 +253,22 @@ class Home extends Component {
   };
 
   componentDidMount() {
-    const {loginInfo, dispatch, sets} = this.props;
+    const {userInfo, dispatch, sets} = this.props;
     const hasSets = Object.keys(sets).length;
-    if (!loginInfo.token) {
+    if (!userInfo.token) {
       dispatch(anonymousSignup());
     } else {
       !hasSets && dispatch(fetchTags());
     }
-    loginInfo.userId && analytics().setUserId(loginInfo.userId.toString());
+    userInfo.userId && analytics().setUserId(userInfo.userId.toString());
+    this.setState({modalType: 'fade'});
   }
   componentWillUnmount() {
     this.slideTimerId && clearTimeout(this.slideTimerId);
   }
 
   render() {
-    const {backgrounds, tags, sets} = this.props;
+    const {backgrounds} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
@@ -254,6 +276,7 @@ class Home extends Component {
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
+      modalType,
     } = this.state;
     const backgroundImageOne = backgrounds[0];
     if (!backgroundImageOne) {
@@ -298,7 +321,7 @@ class Home extends Component {
         <Modal
           visible={breathingGameVisible}
           transparent={true}
-          animationType="none">
+          animationType={modalType}>
           <View
             style={{
               height: ScreenHeight,
@@ -326,8 +349,8 @@ class Home extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {sets, tags, tagNames, backgrounds, loginInfo, firstLaunch} = state;
-  return {sets, tags, tagNames, backgrounds, loginInfo, firstLaunch};
+  const {sets, tags, tagNames, backgrounds, userInfo, firstLaunch} = state;
+  return {sets, tags, tagNames, backgrounds, userInfo, firstLaunch};
 };
 
 export default connect(mapStateToProps)(Home);

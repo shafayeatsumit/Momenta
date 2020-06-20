@@ -16,9 +16,9 @@ import GameExplainer from './GameExplainerModal';
 import tapIcon from '../../../assets/icons/tapIcon.png';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const DEFAULT_DURATION = 7500;
+const DEFAULT_DURATION = 4000;
 const ExhaleDuration = 4;
-const DURATION_PER_UNIT = DEFAULT_DURATION / 6; // from radius 1 to 7 = 6 unit
+const DURATION_PER_UNIT = DEFAULT_DURATION / 4; // from radius 1 to 7 = 6 unit
 const EXPAND_DURATION = DURATION_PER_UNIT;
 const HELPER_MESSAGE = 'Hold to inhale and release \n after 4 seconds';
 const DELAY_MESSAGE = 'Inhale for 4 seconds';
@@ -33,7 +33,8 @@ class BreathingGame extends Component {
       exhaleTimer: 0,
       inhaleTimer: 0,
     };
-    this.radius = new Animated.Value(1);
+    this.radius = new Animated.Value(3);
+    this.imageOpacity = new Animated.Value(1);
     this.pressInTime = null;
     // all the timers
     this.idleTimerId = null;
@@ -49,12 +50,20 @@ class BreathingGame extends Component {
   expandCircle = () => {
     const currentRadius = this.radius._value;
     const duration = (7 - currentRadius) * EXPAND_DURATION;
-    Animated.timing(this.radius, {
-      toValue: 7,
-      duration: duration,
-      useNativeDriver: true,
-      easing: Easing.ease,
-    }).start();
+    Animated.parallel([
+      Animated.timing(this.radius, {
+        toValue: 7,
+        duration: duration,
+        useNativeDriver: true,
+        easing: Easing.ease,
+      }),
+      Animated.timing(this.imageOpacity, {
+        toValue: 0.4,
+        duration: duration,
+        useNativeDriver: true,        
+      })
+
+    ]).start()
   };
 
   startExhaleTimer = () => {
@@ -232,6 +241,7 @@ class BreathingGame extends Component {
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
+        <Animated.Image source={this.props.backgroundImage} blurRadius={50} style={[styles.container, {opacity:this.imageOpacity}]}/>
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">

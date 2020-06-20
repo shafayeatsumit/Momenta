@@ -278,8 +278,8 @@ class Home extends Component {
       nextButtonVisible,
       modalType,
     } = this.state;
-    const backgroundImageOne = backgrounds[0];
-    if (!backgroundImageOne) {
+    const backgroundImage = backgrounds[0];
+    if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="rgb(120,121,137)" />
@@ -288,7 +288,10 @@ class Home extends Component {
     }
 
     return (
-      <ImageBackground style={styles.container} source={backgroundImageOne}>
+      <ImageBackground         
+        style={styles.container} 
+        source={backgroundImage} 
+      >
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -328,7 +331,7 @@ class Home extends Component {
               width: ScreenWidth,
               ...StyleSheet.absoluteFillObject,
             }}>
-            <BrethingGame closeBreathingGame={this.closeBreathingGame} />
+            <BrethingGame backgroundImage={backgroundImage} closeBreathingGame={this.closeBreathingGame} />
           </View>
         </Modal>
         <Modal

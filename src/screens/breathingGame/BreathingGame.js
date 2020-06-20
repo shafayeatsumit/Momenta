@@ -58,7 +58,7 @@ class BreathingGame extends Component {
         easing: Easing.ease,
       }),
       Animated.timing(this.imageOpacity, {
-        toValue: 0.4,
+        toValue: 0.2,
         duration: duration,
         useNativeDriver: true,        
       })

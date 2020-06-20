@@ -40,8 +40,7 @@ class Home extends Component {
       onScreenTagName: '',
       onScreenContent: '',
       onScreenSetId: null,
-      onScreenTagId: null,
-      modalType: 'none',
+      onScreenTagId: null,      
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -261,7 +260,7 @@ class Home extends Component {
       !hasSets && dispatch(fetchTags());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
-    this.setState({modalType: 'fade'});
+    
   }
   componentWillUnmount() {
     this.slideTimerId && clearTimeout(this.slideTimerId);
@@ -276,7 +275,7 @@ class Home extends Component {
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
-      modalType,
+    
     } = this.state;
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
@@ -324,7 +323,7 @@ class Home extends Component {
         <Modal
           visible={breathingGameVisible}
           transparent={true}
-          animationType={modalType}>
+          animationType={'none'}>
           <View
             style={{
               height: ScreenHeight,

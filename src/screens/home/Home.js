@@ -40,7 +40,8 @@ class Home extends Component {
       onScreenTagName: '',
       onScreenContent: '',
       onScreenSetId: null,
-      onScreenTagId: null,      
+      onScreenTagId: null,
+      backgroundBlurRadius:50,      
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -136,13 +137,13 @@ class Home extends Component {
     const {dispatch} = this.props;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true});
+      this.setState({breathingGameVisible: true, backgroundBlurRadius:50});
       clearTimeout(this.modalTimer);
-    }, 1000);
+    }, 2000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
       clearTimeout(this.imageSwitchTimer);
-    }, 2000);
+    }, 2500);
   };
 
   firstTimeUser = () => {
@@ -234,7 +235,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     this.fadeOut();
     this.setState(
-      {breathingGameVisible: true, nextButtonVisible: false},
+      {breathingGameVisible: true, backgroundBlurRadius:50, nextButtonVisible: false},
       this.changeBackground,
     );
     const isFavoriteOrBreathingTip =
@@ -250,6 +251,8 @@ class Home extends Component {
     }
     dispatch(fetchBackground());
   };
+
+  unblurBackground =()=> this.setState({backgroundBlurRadius:1})
 
   componentDidMount() {
     const {userInfo, dispatch, sets} = this.props;
@@ -275,7 +278,7 @@ class Home extends Component {
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
-    
+      backgroundBlurRadius
     } = this.state;
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
@@ -290,6 +293,7 @@ class Home extends Component {
       <ImageBackground         
         style={styles.container} 
         source={backgroundImage} 
+        blurRadius={backgroundBlurRadius}        
       >
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
@@ -330,7 +334,11 @@ class Home extends Component {
               width: ScreenWidth,
               ...StyleSheet.absoluteFillObject,
             }}>
-            <BrethingGame backgroundImage={backgroundImage} closeBreathingGame={this.closeBreathingGame} />
+            <BrethingGame 
+              unblurBackground={this.unblurBackground}
+              backgroundImage={backgroundImage} 
+              closeBreathingGame={this.closeBreathingGame} 
+            />
           </View>
         </Modal>
         <Modal

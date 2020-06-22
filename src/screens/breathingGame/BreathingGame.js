@@ -45,6 +45,7 @@ class BreathingGame extends Component {
     this.inhaleTimerId = null;
     this.startExhaleTimerId = null;
     this.closeModalId = null;
+    this.fullScreenId =null;
   }
 
   expandCircle = () => {
@@ -66,17 +67,18 @@ class BreathingGame extends Component {
     ]).start()
   };
 
-  startExhaleTimer = () => {
+  startExhaleTimer = (fullScreen) => {
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 0) {
         clearInterval(this.exhaleTimerId);
         this.setState({exhaleTimer: 0});
+        fullScreen && this.props.closeBreathingGame();
         return;
       }
       this.setState((prevState) => ({
         exhaleTimer: prevState.exhaleTimer - 1,
-        ...(prevState.exhaleTimer === 1 && {
+        ...((prevState.exhaleTimer === 1 && !fullScreen) && {
           touchDisabled: false,
           // show the second helper msg when the touch is re-enabled
           successMessage: DELAY_MESSAGE,
@@ -132,11 +134,7 @@ class BreathingGame extends Component {
       message = `Almost ${roundedtimeDiff}`;
     }
 
-    if (fullScreenRevealed) {
-      this.setState({touchDisabled: true});
-      this.showFullScreen(message);
-      return;
-    }
+
     this.setState({
       successMessage: message,
       touchDisabled: true,
@@ -147,14 +145,16 @@ class BreathingGame extends Component {
     this.startExhaleTimerId = setTimeout(() => {
       this.setState(
         {successMessage: false, exhaleTimer: ExhaleDuration},
-        this.startExhaleTimer,
+        ()=>{
+          fullScreenRevealed? this.startExhaleTimer(fullScreen=true):this.startExhaleTimer()
+        },
       );
     }, 1000);
   };
 
   handlePressOut = () => {
     Animated.timing(this.radius).stop();
-    const timeDiff = (new Date() - this.pressInTime) / 1000;
+    const timeDiff = (new Date() - this.pressInTime) / 1000;    
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
@@ -201,7 +201,8 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    const {firstLaunch} = this.props;
+    const {firstLaunch, unblurBackground} = this.props;
+    unblurBackground();
     firstLaunch.playCount === 0
       ? this.showGameExplainerModal()
       : this.showHelpers();
@@ -219,6 +220,7 @@ class BreathingGame extends Component {
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.closeModalId && clearTimeout(this.closeModalId);
+    this.fullScreenId && clearTimeout(this.fullScreenId);
   }
 
   render() {

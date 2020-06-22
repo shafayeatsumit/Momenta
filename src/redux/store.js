@@ -13,8 +13,8 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: ['userInfo', 'firstLaunch'],
 };
-const middleware = [logger, thunk];
-// const middleware = [thunk];
+// const middleware = [logger, thunk];
+const middleware = [thunk];
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

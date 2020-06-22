@@ -209,14 +209,13 @@ class Home extends Component {
 
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
-    const userSeesContent = userInfo.playCount % 3 === 0;
-    this.showContent();
+    const userSeesContent = userInfo.playCount % 3 === 0;    
     // TODO: uncomment the following, comment the upper line.
-    // if (userSeesContent) {
-    //   this.showContent();
-    // } else {
-    //   this.goToNextBreathing();
-    // }
+    if (userSeesContent) {
+      this.showContent();
+    } else {
+      this.goToNextBreathing();
+    }
     dispatch({type: 'INCREASE_PLAY_COUNT'});
   };
 
@@ -234,8 +233,7 @@ class Home extends Component {
 
   closeBreathingGame = () => {
     this.setState({breathingGameVisible: false});
-    const isFirstTimeUser = this.firstTimeUser();
-
+    const isFirstTimeUser = this.firstTimeUser();    
     if (!isFirstTimeUser) {
       this.oldUserAction();
     } else {
@@ -289,11 +287,12 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds,sets} = this.props;
+    const {backgrounds,sets,firstLaunch} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
       meditationExplainerVisible,
+      
       onScreenTagName,
       onScreenContent,
       onScreenSetId,
@@ -303,6 +302,13 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId]
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;    
+    
+    const showStar = (      
+      firstLaunch.onboardingDone 
+      && nextButtonVisible 
+      && onScreenTagName!=='Calm Breathing Tips') 
+      ? true : false;
+
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -345,7 +351,7 @@ class Home extends Component {
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           ) : null}
-          {nextButtonVisible ? (
+          {showStar ? (
             <TouchableOpacity
               onPress={this.handleStar}
               style={styles.bookmarkIconContainer}>

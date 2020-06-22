@@ -26,13 +26,13 @@ const deleteFavorite = (setId) => {
 };
 
 export const handleFavorite = (setId) => (dispatch, getState) => {
-  const {tags, sets} = getState();
+  const {tags, sets} = getState();  
   const favoriteTagId = Object.values(tags).find(
     (tag) => tag.name === 'Favorites',
   ).id;
   const favoriteTag = tags[favoriteTagId];
-  const favoriteSets = favoriteTag.length;
-  if (favoriteSets === 8) {
+  const favoriteSets = favoriteTag.sets;
+  if (favoriteSets.length === 8) {
     return Alert.alert('Opps', 'You can only save 8 favorites for now.');
   }
   const isSetFavorite = favoriteTag.sets.includes(setId);

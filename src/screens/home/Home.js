@@ -23,6 +23,7 @@ import {
   fetchContent,
   removeContent,
 } from '../../redux/actions/tag';
+import {handleFavorite} from '../../redux/actions/favorites';
 import BrethingGame from '../breathingGame/BreathingGame';
 import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
@@ -114,6 +115,13 @@ class Home extends Component {
     return activeSets;
   };
 
+  getFavoriteTagName = (setId) => {
+    const {sets} = this.props;
+    const favoriteSet = sets[setId]
+    const tagName = favoriteSet.tags? favoriteSet.tags[0].name : null;
+    return tagName;
+  }
+
   showContent = () => {
     const {dispatch} = this.props;
     const activeTagIndex = this.getActiveTagIndex();
@@ -124,10 +132,11 @@ class Home extends Component {
     const firstSetId = activeSets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
+    const onScreenTagName = tagName === 'Favorites' ? this.getFavoriteTagName(firstSetId) : tagName;
     this.setState(
       {
         onScreenContent: contentText,
-        onScreenTagName: tagName,
+        onScreenTagName: onScreenTagName,
         onScreenSetId: firstSetId,
         onScreenTagId: activeTag.id,
       },
@@ -201,11 +210,13 @@ class Home extends Component {
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
     const userSeesContent = userInfo.playCount % 3 === 0;
-    if (userSeesContent) {
-      this.showContent();
-    } else {
-      this.goToNextBreathing();
-    }
+    this.showContent();
+    // TODO: uncomment the following, comment the upper line.
+    // if (userSeesContent) {
+    //   this.showContent();
+    // } else {
+    //   this.goToNextBreathing();
+    // }
     dispatch({type: 'INCREASE_PLAY_COUNT'});
   };
 
@@ -231,6 +242,12 @@ class Home extends Component {
       this.newUserAction();
     }
   };
+
+  handleStar = ()=> {
+    const {dispatch} = this.props;
+    const {onScreenSetId} = this.state
+    dispatch(handleFavorite(onScreenSetId));
+  }
 
   handleNext = () => {
     const {onScreenTagName, onScreenSetId, onScreenTagId} = this.state;
@@ -272,17 +289,20 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds} = this.props;
+    const {backgrounds,sets} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
       meditationExplainerVisible,
       onScreenTagName,
       onScreenContent,
+      onScreenSetId,
       nextButtonVisible,
       backgroundBlurRadius
     } = this.state;
     const backgroundImage = backgrounds[0];
+    const onScreenSet = sets[onScreenSetId]
+    const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;    
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -327,11 +347,11 @@ class Home extends Component {
           ) : null}
           {nextButtonVisible ? (
             <TouchableOpacity
-              onPress={()=>console.log('favorite')}
+              onPress={this.handleStar}
               style={styles.bookmarkIconContainer}>
               <Image
                 source={starIcon}
-                style={[styles.bookmarkIcon, true && styles.bookmarkColor]}
+                style={[styles.bookmarkIcon, isFavorite && styles.bookmarkColor]}
               />
             </TouchableOpacity>          
           ):null}

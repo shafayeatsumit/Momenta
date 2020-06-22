@@ -124,22 +124,22 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   tapIconHolder: {
-    height: 80,
-    width: 80,
+    height: 120,
+    width: 120,
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    right: 25,
   },
   tapIcon: {
-    height: 70,
-    width: 70,
+    height: 110,
+    width: 110,
   },
   tapArea: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: ScreenHeight * 0.3,
+    height: ScreenHeight * 0.35,
   },
 });
 export default styles;

@@ -13,7 +13,8 @@ import analytics from '@react-native-firebase/analytics';
 
 import styles from './BreathingGame.styles';
 import GameExplainer from './GameExplainerModal';
-import tapIcon from '../../../assets/icons/tapIcon.png';
+import tapIcon from '../../../assets/icons/inhale_again_helper.png';
+import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const DEFAULT_DURATION = 4000;
@@ -106,8 +107,8 @@ class BreathingGame extends Component {
 
   startExhale = (timeDiff) => {
     const radiusValue = this.radius._value;
-    const fullScreenRevealed = radiusValue === 7;
-    // we need to show
+    // 6.8 instead of 7. because, we don't want user to take  another 4sec breath if the image is almost revealed.
+    const fullScreenRevealed = radiusValue > 6.8;     
     let message = '';
     let roundedtimeDiff = timeDiff.toFixed(1);
     if (timeDiff < 2 && !fullScreenRevealed) {
@@ -196,7 +197,7 @@ class BreathingGame extends Component {
   showHelperIcon = () => {
     this.helperIconId = setTimeout(
       () => this.setState({showHelperIcon: true}),
-      1500,
+      1300,
     );
   };
 
@@ -232,6 +233,7 @@ class BreathingGame extends Component {
       showHelperIcon,
       modalVisible,
     } = this.state;
+    const { firstLaunch } = this.props;
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
       outputRange: ['0%', '70%'],
@@ -239,7 +241,7 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
-
+    const helperIcon = firstLaunch.playCount ? tapIcon : tapIconFirstTimer;
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
@@ -283,8 +285,8 @@ class BreathingGame extends Component {
         ) : null}
 
         {showHelperIcon ? (
-          <View style={styles.tapIconHolder} pointerEvents="none">
-            <Image source={tapIcon} style={styles.tapIcon} />
+          <View style={styles.tapIconHolder} pointerEvents="none">            
+            <Image source={helperIcon} style={styles.tapIcon} />
           </View>
         ) : null}
 

@@ -7,6 +7,7 @@ import {
   Text,
   Animated,
   StyleSheet,
+  Image,
   ImageBackground,
   ActivityIndicator,
   TouchableOpacity,
@@ -26,6 +27,7 @@ import BrethingGame from '../breathingGame/BreathingGame';
 import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
+import starIcon from '../../../assets/icons/star_icon.png';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 
@@ -323,6 +325,16 @@ class Home extends Component {
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           ) : null}
+          {nextButtonVisible ? (
+            <TouchableOpacity
+              onPress={()=>console.log('favorite')}
+              style={styles.bookmarkIconContainer}>
+              <Image
+                source={starIcon}
+                style={[styles.bookmarkIcon, true && styles.bookmarkColor]}
+              />
+            </TouchableOpacity>          
+          ):null}
         </SafeAreaView>
         <Modal
           visible={breathingGameVisible}

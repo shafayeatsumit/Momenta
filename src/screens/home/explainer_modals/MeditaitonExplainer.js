@@ -2,23 +2,36 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
+import Swiper from 'react-native-swiper'
 
 const MeditationExplainer = ({closeModal}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
-        <View style={styles.textContainer}>
+        <Swiper style={styles.wrapper} showsButtons={false} loop={false}>
+          <View style={{flex:1, justifyContent:'center',paddingBottom:40}}>
           <Text style={styles.text}>
-            You can also add mini-meditations for positive emotions to follow
-            calm breathing. These are controlled in your settings
+            You can also add mini-meditations for positive emotions to follow calm breathing. 
+            These are controlled in your settings
           </Text>
-        </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={closeModal}>
-            <Text style={styles.okGotIT}>OK Got it</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+          <View style={{flex:1, justifyContent:'center',alignItems:'center'}}>
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>
+                You can also add mini-meditations for positive emotions to follow
+                calm breathing. These are controlled in your settings
+              </Text>
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={closeModal}>
+                <Text style={styles.okGotIT}>OK Got it</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </Swiper>
       </View>
     </View>
   );
@@ -40,10 +53,10 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: ScreenWidth * 0.9,
-    height: ScreenHeight * 0.4,
+    height: ScreenHeight * 0.40,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     alignItems: 'center',
     borderWidth: 0.5,
     borderColor: '#787989',
@@ -51,7 +64,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: FontType.Regular,
-    fontSize: 22,
+    fontSize: 24,
     color: 'white',
     textAlign: 'center',
     marginHorizontal: 20,
@@ -64,14 +77,15 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     justifyContent: 'center',
+    paddingBottom:30
   },
   button: {
-    height: 60,
+    height: 50,
     width: 300,
     borderRadius: 5,
     backgroundColor: '#3c71de',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center',    
   },
   okGotIT: {
     fontFamily: FontType.Medium,

@@ -229,7 +229,7 @@ class BreathingGame extends Component {
   componentDidMount() {
     const {firstLaunch, unblurBackground} = this.props;
     unblurBackground();
-    firstLaunch.playCount === 0
+    firstLaunch.playCount === 1
       ? this.showGameExplainerModal()
       : this.showHelpers();
 

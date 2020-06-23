@@ -9,15 +9,41 @@ const ExplainerModal = ({closeExplainer}) => {
       <View style={styles.modal}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>
-            To fully reveal the calming image, you’ll need to take 2 calm
-            breaths
+            Pick a number of seconds to inhale for each slow calm breath. 
           </Text>
+          <Text style={styles.smallText}>
+            {'\n'}
+            You can change this later in your settings
+          </Text>          
         </View>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={closeExplainer}>
-            <Text style={styles.okGotIT}>OK Got it</Text>
+            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+              <Text style={styles.timeText}>3</Text>
+              <Text style={styles.timeTextSmall}>s</Text>
+            </View>
+            
           </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
+            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+              <Text style={styles.timeText}>4</Text>
+              <Text style={styles.timeTextSmall}>s</Text>
+            </View>            
+            
+          </TouchableOpacity>          
+          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
+            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+              <Text style={styles.timeText}>5</Text>
+              <Text style={styles.timeTextSmall}>s</Text>
+            </View>                        
+          </TouchableOpacity>  
+          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
+            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+              <Text style={styles.timeText}>6</Text>
+              <Text style={styles.timeTextSmall}>s</Text>
+            </View>                        
+          </TouchableOpacity>                              
         </View>
       </View>
     </View>
@@ -57,28 +83,45 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     lineHeight: 30,
   },
+  smallText: {
+    fontFamily: FontType.Regular,
+    fontSize: 15,
+    color: 'white',
+    textAlign: 'center',
+    marginHorizontal: 20,    
+  },
   textContainer: {
     flex: 2,
     justifyContent: 'center',
   },
   buttonContainer: {
     flex: 1,
-    justifyContent: 'center',
+    width:'100%',
+    justifyContent: 'space-around',
+    flexDirection:'row',
+    alignItems:'center',
   },
   button: {
     height: 60,
-    width: 300,
+    width: 65,
     borderRadius: 5,
     backgroundColor: '#3c71de',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  okGotIT: {
+  timeText: {
     fontFamily: FontType.Medium,
     fontSize: 18,
     color: 'white',
-    textAlign: 'center',
-    marginHorizontal: 20,
+    textAlign: 'center',    
     lineHeight: 30,
+  },
+    timeTextSmall: {
+    fontFamily: FontType.Medium,
+    fontSize: 13,
+    color: 'white',
+    textAlign: 'center',    
+    lineHeight: 27,
+    marginLeft:1,
   },
 });

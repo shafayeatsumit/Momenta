@@ -27,10 +27,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-
-  bottomRow: {
-    // height: ScreenHeight * 0.6,
-  },
   slideContainer: {
     flexGrow: 1,
     flexDirection: 'row',
@@ -76,6 +72,20 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 24,
+  },
+  nextIconContainer: {
+    top:30,
+    right:20,    
+    position:'absolute',
+    height:60,
+    width:60,
+    zIndex:3,    
+    alignItems:'center',
+  },
+  nextIcon: {
+    height:28,
+    width:28,
+    tintColor:'white',
   },
   content: {
     fontFamily: FontType.Medium,

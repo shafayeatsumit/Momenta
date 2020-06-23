@@ -4,13 +4,11 @@ import _ from 'lodash';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const TAG_COlORS = [
-  ['#86B2FF', '#6852FD'],
-  ['#3A89CD', '#3A53B5'],
-  ['#3A89CD', '#3A53B5'],
-  ['#A577F0', '#553CDC'],
-  ['#E081D4', '#7241BF'],
-  ['#86B2FF', '#6852FD'],
-  ['#3EC0A6', '#0B6FA3'],
+  ['rgb(246,162,124)', 'rgb(219,52,137)'],
+  ['rgb(134,178,255)', 'rgb(104,82,253)'],
+  ['rgb(224,129,212)', 'rgb(114,65,191)'],
+  ['rgb(246,162,124)', 'rgb(219,52,137)'],
+  ['rgb(58,137,205)', 'rgb(58,83,181)'],
 ];
 
 const downLoadImages = async (backgrounds, dispatch) => {
@@ -58,10 +56,10 @@ export const fetchTags = () => (dispatch, getState) => {
     .then((response) => {
       const backgrounds = response.data.images;
       const tags = parseTags(response.data);
-      const tagNames = response.data.result.map((tag) => ({
+      const tagNames = response.data.result.map((tag,index) => ({
         id: tag.id,
         name: tag.name,
-        gradientColors: _.sample(TAG_COlORS),
+        gradientColors: TAG_COlORS[index],
         selected: true,
         active: false,
       }));

@@ -23,7 +23,6 @@ const DURATION_PER_UNIT = INHALE_DURATION / 4; // from radius 1 to 7 = 6 unit
 const EXPAND_DURATION = DURATION_PER_UNIT;
 const HELPER_MESSAGE = 'Hold to inhale and release \n after 4 seconds';
 const DELAY_MESSAGE = 'Inhale for 4 seconds';
-const TRY_AGAIN_MESSAGE = 'Try again';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -36,8 +35,7 @@ class BreathingGame extends Component {
       exhaleTimer: 0,
       inhaleTimer: 0,
     };
-    this.radius = new Animated.Value(3);
-    this.imageOpacity = new Animated.Value(1);
+    this.radius = new Animated.Value(3);    
     this.pressInTime = null;
     // all the timers
     this.idleTimerId = null;
@@ -53,40 +51,26 @@ class BreathingGame extends Component {
 
   expandCircle = () => {
     const currentRadius = this.radius._value;
-    const duration = (7 - currentRadius) * EXPAND_DURATION;
-    Animated.parallel([
-      Animated.timing(this.radius, {
-        toValue: 7,
-        duration: duration,
-        useNativeDriver: true,
-        easing: Easing.ease,
-      }),
-      Animated.timing(this.imageOpacity, {
-        toValue: 0.2,
-        duration: duration,
-        useNativeDriver: true,        
-      })
-
-    ]).start()
+    const duration = (7 - currentRadius) * EXPAND_DURATION;    
+    Animated.timing(this.radius, {
+      toValue: 7,
+      duration: duration,
+      useNativeDriver: true,
+      easing: Easing.ease,
+    }).start()
+    
   };
 
   shrinkCircle = () => {
-    this.setState({touchDisabled: true});
-    Animated.parallel([
-      Animated.timing(this.radius, {
-        toValue: 3,
-        duration: 1000,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      Animated.timing(this.imageOpacity, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,        
-      })
-    ]).start(() => {
+    this.setState({touchDisabled: true});    
+    Animated.timing(this.radius, {
+      toValue: 3,
+      duration: 1000,
+      useNativeDriver: true,
+      easing: Easing.linear,
+    }).start(() => {
       this.setState({touchDisabled: false, successMessage: DELAY_MESSAGE,showHelperIcon: true });
-    });
+    })          
   };
 
   startExhaleTimer = (fullScreen) => {    
@@ -227,8 +211,7 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    const {firstLaunch, unblurBackground} = this.props;
-    unblurBackground();
+    const {firstLaunch, } = this.props;    
     firstLaunch.playCount === 1
       ? this.showGameExplainerModal()
       : this.showHelpers();
@@ -269,8 +252,7 @@ class BreathingGame extends Component {
     const helperIcon = firstLaunch.playCount>1 ? tapIcon : tapIconFirstTimer;
     return (
       <View style={styles.container}>
-        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
-        <Animated.Image source={this.props.backgroundImage} blurRadius={50} style={[styles.container, {opacity:this.imageOpacity}]}/>
+        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}        
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">

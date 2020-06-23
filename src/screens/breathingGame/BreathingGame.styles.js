@@ -125,10 +125,10 @@ const styles = StyleSheet.create({
   },
   tapIconHolder: {
     height: 120,
-    width: 120,
+    width: ScreenWidth,
     position: 'absolute',
-    bottom: 20,
-    right: 25,
+    bottom: 25,    
+    alignItems:'center',    
   },
   tapIcon: {
     height: 110,

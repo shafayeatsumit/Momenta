@@ -29,6 +29,7 @@ import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import starIcon from '../../../assets/icons/star_icon.png';
+import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 
@@ -43,8 +44,7 @@ class Home extends Component {
       onScreenTagName: '',
       onScreenContent: '',
       onScreenSetId: null,
-      onScreenTagId: null,
-      backgroundBlurRadius:50,      
+      onScreenTagId: null,        
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -148,7 +148,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true, backgroundBlurRadius:50});
+      this.setState({breathingGameVisible: true, });
       clearTimeout(this.modalTimer);
     }, 2000);
     this.imageSwitchTimer = setTimeout(() => {
@@ -252,7 +252,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     this.fadeOut();
     this.setState(
-      {breathingGameVisible: true, backgroundBlurRadius:50, nextButtonVisible: false},
+      {breathingGameVisible: true, nextButtonVisible: false},
       this.changeBackground,
     );
     const isFavoriteOrBreathingTip =
@@ -269,7 +269,7 @@ class Home extends Component {
     dispatch(fetchBackground());
   };
 
-  unblurBackground =()=> this.setState({backgroundBlurRadius:1})
+  
 
   componentDidMount() {
     const {userInfo, dispatch, sets} = this.props;
@@ -287,22 +287,20 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds,sets,firstLaunch} = this.props;
+    const {backgrounds,sets,firstLaunch, navigation} = this.props;    
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
-      meditationExplainerVisible,
-      
+      meditationExplainerVisible,      
       onScreenTagName,
       onScreenContent,
       onScreenSetId,
-      nextButtonVisible,
-      backgroundBlurRadius
+      nextButtonVisible,      
     } = this.state;
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId]
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;    
-    
+    const showNextIcon = nextButtonVisible ;
     const showStar = (      
       firstLaunch.onboardingDone 
       && nextButtonVisible 
@@ -320,9 +318,15 @@ class Home extends Component {
     return (
       <ImageBackground         
         style={styles.container} 
-        source={backgroundImage} 
-        blurRadius={backgroundBlurRadius}        
+        source={backgroundImage}            
       >
+        {showNextIcon ? 
+          <TouchableOpacity  style={styles.nextIconContainer} onPress={() => navigation.navigate('Settings')}>
+            <Image source={arrowRightIcon} style={styles.nextIcon}/>                      
+          </TouchableOpacity>        
+          :null        
+        }
+        
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}

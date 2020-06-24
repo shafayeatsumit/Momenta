@@ -26,8 +26,6 @@ const tagNames = (state = [], action) => {
       return [...state, ...action.tagNames];
     case 'UPDATE_ACTIVE_TAG':
       return action.tags;
-    case 'TOGGLE_BREATHING_TIPS':
-      return state.map((item)=> item.name === 'Calm Breathing Tips' ? {...item,selected:!item.selected}:item )      
     default:
       return state;
   }

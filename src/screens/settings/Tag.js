@@ -6,8 +6,11 @@ import {RFValue} from '../../helpers/responsiveFont';
 import checkIcon from '../../../assets/icons/check_icon.png';
 import {FontType} from '../../helpers/theme';
 
-const Tag = ({item, handlePress}) => {
-  const isSelected = item.selected;  
+const Tag = ({selectedTags, item, handlePress}) => {
+  const selectedIndex = selectedTags.findIndex(
+    (selectedItem) => selectedItem === item.id,
+  );
+  const isSelected = selectedIndex !== -1;
   return (
     <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
       <LinearGradient
@@ -67,7 +70,7 @@ const styles = StyleSheet.create({
   tagIndex: {
     height: 22,
     width: 22,
-    borderRadius: 22/ 2,
+    borderRadius: 22 / 2,
   },
   tagName: {
     fontFamily: FontType.SemiBold,

@@ -79,7 +79,7 @@ class BreathingGame extends Component {
   shrinkCircle = () => {
     this.setState({touchDisabled: true});
     Animated.timing(this.radius, {
-      toValue: 3,
+      toValue: this.startRadius,
       duration: 1000,
       useNativeDriver: true,
       easing: Easing.linear,

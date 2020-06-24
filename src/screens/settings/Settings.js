@@ -18,6 +18,7 @@ import {
   ScreenWidth,
   PickerPlaceHolder,
 } from '../../helpers/constants/common';
+import {toggleBreathingTips} from '../../redux/actions/settings';
 import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';
@@ -69,23 +70,46 @@ class Settings extends Component {
     }
   };
 
+  getBreathingTipsId = () => {
+    const {tagNames} = this.props;
+    const breathingTipsId = tagNames.find(
+      (tag) => tag.name === 'Calm Breathing Tips',
+    ).id;
+    return breathingTipsId;
+  };
+
+  getBreathingTipsStatus = () => {
+    const {selectedTags} = this.props;
+    const breathingTipsId = this.getBreathingTipsId();
+    const isBreathingTipsOn =
+      selectedTags.findIndex((tagId) => tagId === breathingTipsId) !== -1;
+    return isBreathingTipsOn;
+  };
+
   switchBreathingTips = () => {
     const {dispatch} = this.props;
-    dispatch({type: 'TOGGLE_BREATHING_TIPS'});
+    const breathingTipsId = this.getBreathingTipsId();
+    const isBreathingTipsOn = this.getBreathingTipsStatus();
+    dispatch(toggleBreathingTips(isBreathingTipsOn, breathingTipsId));
   };
 
   goHome = () => this.props.navigation.goBack();
 
   handleTagPress = (tagId) => {
-    const {tagNames, dispatch} = this.props;
-    const updatedTags = tagNames.map((item) =>
-      item.id === tagId ? {...item, selected: !item.selected} : item,
-    );
-    dispatch({type: 'UPDATE_ACTIVE_TAG', tags: updatedTags});
+    const {selectedTags, dispatch} = this.props;
+    const isSelected = selectedTags.includes(tagId);
+    if (isSelected) {
+      const updatedTags = selectedTags.filter((id) => id !== tagId);
+      dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+    } else {
+      const updatedTags = [...selectedTags, tagId];
+      dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+    }
   };
 
   render() {
-    const {inhaleTime, exhaleTime, breathingTipsStatus, tagNames} = this.props;
+    const {inhaleTime, exhaleTime, selectedTags, tagNames} = this.props;
+    const breathingTipsStatus = this.getBreathingTipsStatus();
     const tags = tagNames.filter((tag) => tag.name !== 'Calm Breathing Tips');
     return (
       <View style={styles.container}>
@@ -158,6 +182,7 @@ class Settings extends Component {
               <Tag
                 item={item}
                 key={item.id}
+                selectedTags={selectedTags}
                 handlePress={() => this.handleTagPress(item.id)}
               />
             ))}
@@ -171,12 +196,12 @@ class Settings extends Component {
 const mapStateToProps = (state, ownProps) => {
   const {settings, tagNames} = state;
 
-  const {inhaleTime, exhaleTime, breathingTips: breathingTipsStatus} = settings;
+  const {inhaleTime, exhaleTime, selectedTags} = settings;
   return {
     inhaleTime,
     exhaleTime,
-    breathingTipsStatus,
     tagNames,
+    selectedTags,
   };
 };
 

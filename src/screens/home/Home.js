@@ -78,14 +78,18 @@ class Home extends Component {
   };
 
   getActiveTag = (tagIndex) => {
-    const {tagNames} = this.props;
-    const activeTag = tagNames[tagIndex];
+    const {tagNames, settings} = this.props;
+    const {selectedTags} = settings;
+    const activeTagId = selectedTags[tagIndex];
+    const activeTag = tagNames.find((item) => item.id === activeTagId);
     return activeTag;
   };
 
   getActiveTagIndex = () => {
-    const {tagNames, tags} = this.props;
-    const selectedTags = tagNames.filter((item) => item.selected);
+    const {tagNames, tags, settings} = this.props;
+    const selectedTags = tagNames.filter((item) =>
+      settings.selectedTags.includes(item.id),
+    );
     const activeTagIndex = selectedTags.findIndex((item) => item.active);
     const noActiveTag = activeTagIndex === -1;
     const lastTagIsActive = activeTagIndex === selectedTags.length - 1;
@@ -400,8 +404,16 @@ class Home extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {sets, tags, tagNames, backgrounds, userInfo, firstLaunch} = state;
-  return {sets, tags, tagNames, backgrounds, userInfo, firstLaunch};
+  const {
+    sets,
+    tags,
+    tagNames,
+    backgrounds,
+    userInfo,
+    firstLaunch,
+    settings,
+  } = state;
+  return {sets, tags, tagNames, backgrounds, userInfo, firstLaunch, settings};
 };
 
 export default connect(mapStateToProps)(Home);

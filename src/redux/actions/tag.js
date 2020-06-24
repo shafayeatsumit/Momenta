@@ -4,7 +4,7 @@ import _ from 'lodash';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const TAG_COlORS = [
-  ['rgb(246,162,124)', 'rgb(219,52,137)'],
+  ['rgb(134,178,255)', 'rgb(104,82,253)'],
   ['rgb(134,178,255)', 'rgb(104,82,253)'],
   ['rgb(224,129,212)', 'rgb(114,65,191)'],
   ['rgb(246,162,124)', 'rgb(219,52,137)'],
@@ -56,15 +56,16 @@ export const fetchTags = () => (dispatch, getState) => {
     .then((response) => {
       const backgrounds = response.data.images;
       const tags = parseTags(response.data);
-      const tagNames = response.data.result.map((tag,index) => ({
+      const tagNames = response.data.result.map((tag, index) => ({
         id: tag.id,
         name: tag.name,
         gradientColors: TAG_COlORS[index],
         selected: true,
         active: false,
       }));
+      const selectedTags = tagNames.map((tag) => tag.id);
       const sets = parseSets(response.data);
-      dispatch({type: 'INITIAL_DATA', tags, tagNames, sets});
+      dispatch({type: 'INITIAL_DATA', tags, tagNames, sets, selectedTags});
       downLoadImages(backgrounds, dispatch);
     })
     .catch((error) => {

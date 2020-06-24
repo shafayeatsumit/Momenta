@@ -2,10 +2,21 @@ const initialState = {
   inhaleTime: 4, // 4 seconds.
   exhaleTime: 4, // 4 seconds.
   breathingTips: true,
+  selectedTags: [],
 };
 
 const settings = (state = initialState, action) => {
   switch (action.type) {
+    case 'INITIAL_DATA':
+      return {
+        ...state,
+        selectedTags: [...action.selectedTags],
+      };
+    case 'UPDATE_SELECTED_TAGS':
+      return {
+        ...state,
+        selectedTags: action.selectedTags,
+      };
     case 'UPDATE_EXHALE_TIME':
       return {
         ...state,
@@ -21,11 +32,6 @@ const settings = (state = initialState, action) => {
       return {
         ...state,
         inhaleTime: action.value,
-      };
-    case 'TOGGLE_BREATHING_TIPS':
-      return {
-        ...state,
-        breathingTips: !state.breathingTips,
       };
     default:
       return state;

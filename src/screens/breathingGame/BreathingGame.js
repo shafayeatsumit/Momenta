@@ -17,8 +17,6 @@ import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const HELPER_MESSAGE = 'Hold to inhale and release \n after 4 seconds';
-const DELAY_MESSAGE = 'Inhale for 4 seconds';
 
 const START_RADIUS = {
   3: 4,
@@ -42,6 +40,10 @@ class BreathingGame extends Component {
     this.startRadius = START_RADIUS[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
+    // messages
+    this.helperMessage = `Hold to inhale and release \n after ${props.settings.inhaleTime} seconds`;
+    this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
+
     // all the timers
     this.idleTimerId = null;
     this.explainerModalId = null;
@@ -75,7 +77,7 @@ class BreathingGame extends Component {
     }).start(() => {
       this.setState({
         touchDisabled: false,
-        successMessage: DELAY_MESSAGE,
+        successMessage: this.delayMessage,
         showHelperIcon: true,
         pressIn: false,
       });
@@ -97,7 +99,7 @@ class BreathingGame extends Component {
           !fullScreen && {
             touchDisabled: false,
             // show the second helper msg when the touch is re-enabled
-            successMessage: DELAY_MESSAGE,
+            successMessage: this.delayMessage,
             showHelperIcon: true,
           }),
       }));
@@ -127,7 +129,7 @@ class BreathingGame extends Component {
     let message = '';
     let roundedtimeDiff = timeDiff.toFixed(1);
     if (timeDiff < 2 && !fullScreenRevealed) {
-      this.setState({successMessage: HELPER_MESSAGE, touchDisabled: false});
+      this.setState({successMessage: this.helperMessage, touchDisabled: false});
       return;
     }
 
@@ -205,7 +207,10 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(
       () =>
-        this.setState({successMessage: HELPER_MESSAGE, touchDisabled: false}),
+        this.setState({
+          successMessage: this.helperMessage,
+          touchDisabled: false,
+        }),
       600,
     );
     this.showHelperIcon();

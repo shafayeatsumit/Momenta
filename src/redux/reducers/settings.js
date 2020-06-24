@@ -11,6 +11,12 @@ const settings = (state = initialState, action) => {
         ...state,
         exhaleTime: action.value,
       };
+    case 'UPDATE_INHALE_EXHALE_TIME':
+      return {
+        ...state,
+        inhaleTime: action.inhaleValue,
+        exhaleTime: action.exhaleValue,
+      };
     case 'UPDATE_INHALE_TIME':
       return {
         ...state,

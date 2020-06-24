@@ -7,7 +7,11 @@ import {useDispatch} from 'react-redux';
 const ExplainerModal = ({closeExplainer}) => {
   const dispatch = useDispatch();
   const setInhaleTime = (value) => {
-    dispatch({type: 'UPDATE_INHALE_TIME', value});
+    dispatch({
+      type: 'UPDATE_INHALE_EXHALE_TIME',
+      inhaleTime: value,
+      exhaleTime: value,
+    });
     closeExplainer();
   };
   return (

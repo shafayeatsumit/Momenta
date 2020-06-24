@@ -57,8 +57,8 @@ class Settings extends Component {
   };
 
   setInhaleValue = (value) => {
-    const {inhaleTime, exhaleTime, dispatch} = this.props;
-    if (exhaleTime < inhaleTime) {
+    const {exhaleTime, dispatch} = this.props;
+    if (exhaleTime < value) {
       dispatch({
         type: 'UPDATE_INHALE_EXHALE_TIME',
         inhaleValue: value,

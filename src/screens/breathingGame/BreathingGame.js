@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 import {connect} from 'react-redux';
+import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 
 import styles from './BreathingGame.styles';
@@ -17,7 +18,14 @@ import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-
+const SMOOTH_WORDS = [
+  'Slowly',
+  'Gently',
+  'Softly',
+  'Quietly',
+  'Smoothly',
+  'Lightly',
+];
 const START_RADIUS = {
   3: 4,
   4: 3,
@@ -36,6 +44,7 @@ class BreathingGame extends Component {
       successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
+      smoothWord: null,
     };
     this.startRadius = START_RADIUS[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
@@ -107,6 +116,8 @@ class BreathingGame extends Component {
   };
 
   startInhaleTimer = () => {
+    const smoothWord = _.sample(SMOOTH_WORDS);
+    this.setState({smoothWord});
     this.inhaleTimerId = setInterval(() => {
       this.setState((prevState) => ({
         successMessage: '',
@@ -254,6 +265,7 @@ class BreathingGame extends Component {
       showHelperIcon,
       modalVisible,
       pressIn,
+      smoothWord,
     } = this.state;
     const {firstLaunch} = this.props;
     const radiusPercent = this.radius.interpolate({
@@ -264,6 +276,7 @@ class BreathingGame extends Component {
     const reactFillColor = 'white';
     const circleFillColor = 'black';
     const helperIcon = firstLaunch.playCount > 1 ? tapIcon : tapIconFirstTimer;
+
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
@@ -290,13 +303,19 @@ class BreathingGame extends Component {
         </Svg>
         {inhaleTimer ? (
           <View style={styles.successTextContainer} pointerEvents="none">
-            <Text style={styles.successText}>{`Inhale \n ${inhaleTimer}`}</Text>
+            <Text
+              style={
+                styles.successText
+              }>{`Inhale ${smoothWord} \n ${inhaleTimer}`}</Text>
           </View>
         ) : null}
 
         {exhaleTimer ? (
           <View style={styles.successTextContainer} pointerEvents="none">
-            <Text style={styles.successText}>{`Exhale \n ${exhaleTimer}`}</Text>
+            <Text
+              style={
+                styles.successText
+              }>{`Exhale ${smoothWord} \n ${exhaleTimer}`}</Text>
           </View>
         ) : null}
         {successMessage ? (

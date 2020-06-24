@@ -17,12 +17,15 @@ import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const INHALE_DURATION = 4000;
-const ExhaleDuration = 4;
-const DURATION_PER_UNIT = INHALE_DURATION / 4; // from radius 1 to 7 = 6 unit
-const EXPAND_DURATION = DURATION_PER_UNIT;
 const HELPER_MESSAGE = 'Hold to inhale and release \n after 4 seconds';
 const DELAY_MESSAGE = 'Inhale for 4 seconds';
+
+const START_RADIUS = {
+  3: 4,
+  4: 3,
+  5: 2,
+  6: 1,
+};
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -36,7 +39,8 @@ class BreathingGame extends Component {
       exhaleTimer: 0,
       inhaleTimer: 0,
     };
-    this.radius = new Animated.Value(3);
+    this.startRadius = START_RADIUS[props.settings.inhaleTime];
+    this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
     // all the timers
     this.idleTimerId = null;
@@ -51,8 +55,8 @@ class BreathingGame extends Component {
   }
 
   expandCircle = () => {
-    const currentRadius = this.radius._value;
-    const duration = (7 - currentRadius) * EXPAND_DURATION;
+    const {inhaleTime} = this.props.settings;
+    const duration = inhaleTime * 1000;
     Animated.timing(this.radius, {
       toValue: 7,
       duration: duration,
@@ -73,6 +77,7 @@ class BreathingGame extends Component {
         touchDisabled: false,
         successMessage: DELAY_MESSAGE,
         showHelperIcon: true,
+        pressIn: false,
       });
     });
   };
@@ -149,21 +154,19 @@ class BreathingGame extends Component {
       successMessage: message,
       touchDisabled: true,
     });
-
+    const {exhaleTime} = this.props.settings;
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.startExhaleTimerId = setTimeout(() => {
-      this.setState(
-        {successMessage: false, exhaleTimer: ExhaleDuration},
-        () => {
-          fullScreenRevealed
-            ? this.startExhaleTimer(true)
-            : this.startExhaleTimer();
-        },
-      );
+      this.setState({successMessage: false, exhaleTimer: exhaleTime}, () => {
+        fullScreenRevealed
+          ? this.startExhaleTimer(true)
+          : this.startExhaleTimer();
+      });
     }, 1000);
   };
 
   handlePressOut = () => {
+    const {inhaleTime} = this.props.settings;
     Animated.timing(this.radius).stop();
     const timeDiffInMs = new Date() - this.pressInTime;
     const timeDiff = timeDiffInMs / 1000;
@@ -172,7 +175,7 @@ class BreathingGame extends Component {
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
 
     clearInterval(this.inhaleTimerId);
-    if (timeDiffInMs < INHALE_DURATION) {
+    if (timeDiff < inhaleTime) {
       this.shrinkCircle();
     } else {
       this.startExhale(timeDiff);
@@ -250,7 +253,7 @@ class BreathingGame extends Component {
     const {firstLaunch} = this.props;
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
-      outputRange: ['0%', '70%'],
+      outputRange: ['0%', '72%'],
       extrapolate: 'clamp',
     });
     const reactFillColor = 'white';

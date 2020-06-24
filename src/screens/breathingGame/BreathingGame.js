@@ -215,6 +215,13 @@ class BreathingGame extends Component {
     clearTimeout(this.explainerModalId);
   };
 
+  setStartRadius = (inhaleTime) => {
+    // this.startRadius = START_RADIUS[inhaleTime];
+    // this.radius = new Animated.Value(this.startRadius);
+    this.helperMessage = `Hold to inhale and release \n after ${inhaleTime} seconds`;
+    this.delayMessage = `Inhale for ${inhaleTime} seconds`;
+  };
+
   showHelpers = () => {
     this.hlperMessageId = setTimeout(
       () =>
@@ -279,7 +286,12 @@ class BreathingGame extends Component {
 
     return (
       <View style={styles.container}>
-        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
+        {modalVisible && (
+          <GameExplainer
+            closeExplainer={this.closeExplainer}
+            setStartRadius={this.setStartRadius}
+          />
+        )}
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">

@@ -4,14 +4,15 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
 import {useDispatch} from 'react-redux';
 
-const ExplainerModal = ({closeExplainer}) => {
+const ExplainerModal = ({closeExplainer, setStartRadius}) => {
   const dispatch = useDispatch();
   const setInhaleTime = (value) => {
     dispatch({
       type: 'UPDATE_INHALE_EXHALE_TIME',
-      inhaleTime: value,
-      exhaleTime: value,
+      inhaleValue: value,
+      exhaleValue: value,
     });
+    setStartRadius(value);
     closeExplainer();
   };
   return (
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: ScreenWidth * 0.9,
-    height: ScreenHeight * 0.4,
+    height: 400,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
     justifyContent: 'space-around',

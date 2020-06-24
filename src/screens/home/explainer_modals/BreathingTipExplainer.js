@@ -2,27 +2,28 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper';
 
 const BreathingTipExplainer = ({closeModal}) => {
   return (
-    <View style={styles.mainContainer}>      
+    <View style={styles.mainContainer}>
       <View style={styles.modal}>
         <Swiper style={styles.wrapper} showsButtons={false} loop={false}>
           <View style={styles.main}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
-                  You’ll receive breathing tips based on the latest science and yoga practices to help make you calmer. Eventually, they will become habit.
+                You’ll receive breathing tips based on the latest science and
+                yoga practices to help make you calmer. Eventually, they will
+                become habit.
               </Text>
-            </View>            
+            </View>
           </View>
 
-
-          <View style={{flex:1}}>
+          <View style={{flex: 1}}>
             <View style={[styles.textContainer]}>
               <Text style={styles.text}>
-                You can control breathing tips in settings and read more about the
-                health benefits in FAQ
+                You can control breathing tips in settings and read more about
+                the health benefits in FAQ
               </Text>
             </View>
             <View style={styles.buttonContainer}>
@@ -32,7 +33,7 @@ const BreathingTipExplainer = ({closeModal}) => {
             </View>
           </View>
         </Swiper>
-      </View>      
+      </View>
     </View>
   );
 };
@@ -41,7 +42,7 @@ export default BreathingTipExplainer;
 
 const styles = StyleSheet.create({
   main: {
-    flex:1
+    flex: 1,
   },
   mainContainer: {
     position: 'absolute',
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: ScreenWidth * 0.9,
-    height: ScreenHeight * 0.4,
+    height: 500,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
     justifyContent: 'space-around',
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems:'center',
+    alignItems: 'center',
   },
   button: {
     height: 50,

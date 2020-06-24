@@ -2,48 +2,60 @@ import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
+import {useDispatch} from 'react-redux';
 
 const ExplainerModal = ({closeExplainer}) => {
+  const dispatch = useDispatch();
+  const setInhaleTime = (value) => {
+    dispatch({type: 'UPDATE_INHALE_TIME', value});
+    closeExplainer();
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
         <View style={styles.textContainer}>
           <Text style={styles.text}>
-            Pick a number of seconds to inhale for each slow calm breath. 
+            Pick a number of seconds to inhale for each slow calm breath.
           </Text>
           <Text style={styles.smallText}>
             {'\n'}
             You can change this later in your settings
-          </Text>          
+          </Text>
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setInhaleTime(3)}>
+            <View style={styles.timeTextContainer}>
               <Text style={styles.timeText}>3</Text>
               <Text style={styles.timeTextSmall}>s</Text>
             </View>
-            
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setInhaleTime(4)}>
+            <View style={styles.timeTextContainer}>
               <Text style={styles.timeText}>4</Text>
               <Text style={styles.timeTextSmall}>s</Text>
-            </View>            
-            
-          </TouchableOpacity>          
-          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setInhaleTime(5)}>
+            <View style={styles.timeTextContainer}>
               <Text style={styles.timeText}>5</Text>
               <Text style={styles.timeTextSmall}>s</Text>
-            </View>                        
-          </TouchableOpacity>  
-          <TouchableOpacity style={styles.button} onPress={closeExplainer}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setInhaleTime(6)}>
+            <View style={styles.timeTextContainer}>
               <Text style={styles.timeText}>6</Text>
               <Text style={styles.timeTextSmall}>s</Text>
-            </View>                        
-          </TouchableOpacity>                              
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     textAlign: 'center',
-    marginHorizontal: 20,    
+    marginHorizontal: 20,
   },
   textContainer: {
     flex: 2,
@@ -96,11 +108,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    width:'100%',
+    width: '100%',
     justifyContent: 'space-around',
-    flexDirection:'row',
-    alignItems:'center',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
+
   button: {
     height: 60,
     width: 65,
@@ -109,19 +122,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  timeTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
   timeText: {
     fontFamily: FontType.Medium,
     fontSize: 18,
     color: 'white',
-    textAlign: 'center',    
+    textAlign: 'center',
     lineHeight: 30,
   },
-    timeTextSmall: {
+  timeTextSmall: {
     fontFamily: FontType.Medium,
     fontSize: 13,
     color: 'white',
-    textAlign: 'center',    
+    textAlign: 'center',
     lineHeight: 27,
-    marginLeft:1,
+    marginLeft: 1,
   },
 });

@@ -31,11 +31,12 @@ class BreathingGame extends Component {
       touchDisabled: true,
       modalVisible: false,
       showHelperIcon: false,
+      pressIn: false,
       successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
     };
-    this.radius = new Animated.Value(3);    
+    this.radius = new Animated.Value(3);
     this.pressInTime = null;
     // all the timers
     this.idleTimerId = null;
@@ -46,34 +47,37 @@ class BreathingGame extends Component {
     this.inhaleTimerId = null;
     this.startExhaleTimerId = null;
     this.closeModalId = null;
-    this.fullScreenId =null;
+    this.fullScreenId = null;
   }
 
   expandCircle = () => {
     const currentRadius = this.radius._value;
-    const duration = (7 - currentRadius) * EXPAND_DURATION;    
+    const duration = (7 - currentRadius) * EXPAND_DURATION;
     Animated.timing(this.radius, {
       toValue: 7,
       duration: duration,
       useNativeDriver: true,
       easing: Easing.ease,
-    }).start()
-    
+    }).start();
   };
 
   shrinkCircle = () => {
-    this.setState({touchDisabled: true});    
+    this.setState({touchDisabled: true});
     Animated.timing(this.radius, {
       toValue: 3,
       duration: 1000,
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
-      this.setState({touchDisabled: false, successMessage: DELAY_MESSAGE,showHelperIcon: true });
-    })          
+      this.setState({
+        touchDisabled: false,
+        successMessage: DELAY_MESSAGE,
+        showHelperIcon: true,
+      });
+    });
   };
 
-  startExhaleTimer = (fullScreen) => {    
+  startExhaleTimer = (fullScreen) => {
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 0) {
@@ -84,12 +88,13 @@ class BreathingGame extends Component {
       }
       this.setState((prevState) => ({
         exhaleTimer: prevState.exhaleTimer - 1,
-        ...((prevState.exhaleTimer === 1 && !fullScreen) && {
-          touchDisabled: false,
-          // show the second helper msg when the touch is re-enabled
-          successMessage: DELAY_MESSAGE,
-          showHelperIcon: true,
-        }),
+        ...(prevState.exhaleTimer === 1 &&
+          !fullScreen && {
+            touchDisabled: false,
+            // show the second helper msg when the touch is re-enabled
+            successMessage: DELAY_MESSAGE,
+            showHelperIcon: true,
+          }),
       }));
     }, 1000);
   };
@@ -113,7 +118,7 @@ class BreathingGame extends Component {
   startExhale = (timeDiff) => {
     const radiusValue = this.radius._value;
     // 6.8 instead of 7. because, we don't want user to take  another 4sec breath if the image is almost revealed.
-    const fullScreenRevealed = radiusValue > 6.8;     
+    const fullScreenRevealed = radiusValue > 6.8;
     let message = '';
     let roundedtimeDiff = timeDiff.toFixed(1);
     if (timeDiff < 2 && !fullScreenRevealed) {
@@ -149,8 +154,10 @@ class BreathingGame extends Component {
     this.startExhaleTimerId = setTimeout(() => {
       this.setState(
         {successMessage: false, exhaleTimer: ExhaleDuration},
-        ()=>{
-          fullScreenRevealed? this.startExhaleTimer(fullScreen=true):this.startExhaleTimer()
+        () => {
+          fullScreenRevealed
+            ? this.startExhaleTimer(true)
+            : this.startExhaleTimer();
         },
       );
     }, 1000);
@@ -159,23 +166,21 @@ class BreathingGame extends Component {
   handlePressOut = () => {
     Animated.timing(this.radius).stop();
     const timeDiffInMs = new Date() - this.pressInTime;
-    const timeDiff = (timeDiffInMs) / 1000;    
+    const timeDiff = timeDiffInMs / 1000;
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
 
     clearInterval(this.inhaleTimerId);
-    if(timeDiffInMs<INHALE_DURATION){
-      this.shrinkCircle()
-    }else{
+    if (timeDiffInMs < INHALE_DURATION) {
+      this.shrinkCircle();
+    } else {
       this.startExhale(timeDiff);
     }
-    
   };
 
   handlePressIn = () => {
-    const {showHelperIcon} = this.state;
-    showHelperIcon && this.setState({showHelperIcon: false});
+    this.setState({pressIn: true});
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -211,7 +216,7 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    const {firstLaunch, } = this.props;    
+    const {firstLaunch} = this.props;
     firstLaunch.playCount === 1
       ? this.showGameExplainerModal()
       : this.showHelpers();
@@ -240,8 +245,9 @@ class BreathingGame extends Component {
       inhaleTimer,
       showHelperIcon,
       modalVisible,
+      pressIn,
     } = this.state;
-    const { firstLaunch } = this.props;
+    const {firstLaunch} = this.props;
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
       outputRange: ['0%', '70%'],
@@ -249,10 +255,10 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
-    const helperIcon = firstLaunch.playCount>1 ? tapIcon : tapIconFirstTimer;
+    const helperIcon = firstLaunch.playCount > 1 ? tapIcon : tapIconFirstTimer;
     return (
       <View style={styles.container}>
-        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}        
+        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">
@@ -291,8 +297,8 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {showHelperIcon ? (
-          <View style={styles.tapIconHolder} pointerEvents="none">            
+        {showHelperIcon && !pressIn ? (
+          <View style={styles.tapIconHolder} pointerEvents="none">
             <Image source={helperIcon} style={styles.tapIcon} />
           </View>
         ) : null}

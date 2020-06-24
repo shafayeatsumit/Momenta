@@ -44,7 +44,7 @@ class Home extends Component {
       onScreenTagName: '',
       onScreenContent: '',
       onScreenSetId: null,
-      onScreenTagId: null,        
+      onScreenTagId: null,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -117,10 +117,10 @@ class Home extends Component {
 
   getFavoriteTagName = (setId) => {
     const {sets} = this.props;
-    const favoriteSet = sets[setId]
-    const tagName = favoriteSet.tags? favoriteSet.tags[0].name : null;
+    const favoriteSet = sets[setId];
+    const tagName = favoriteSet.tags ? favoriteSet.tags[0].name : null;
     return tagName;
-  }
+  };
 
   showContent = () => {
     const {dispatch} = this.props;
@@ -132,7 +132,8 @@ class Home extends Component {
     const firstSetId = activeSets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
-    const onScreenTagName = tagName === 'Favorites' ? this.getFavoriteTagName(firstSetId) : tagName;
+    const onScreenTagName =
+      tagName === 'Favorites' ? this.getFavoriteTagName(firstSetId) : tagName;
     this.setState(
       {
         onScreenContent: contentText,
@@ -148,7 +149,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true, });
+      this.setState({breathingGameVisible: true});
       clearTimeout(this.modalTimer);
     }, 2000);
     this.imageSwitchTimer = setTimeout(() => {
@@ -209,8 +210,7 @@ class Home extends Component {
 
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
-    const userSeesContent = userInfo.playCount % 3 === 0;    
-    // TODO: uncomment the following, comment the upper line.
+    const userSeesContent = userInfo.playCount % 3 === 0;
     if (userSeesContent) {
       this.showContent();
     } else {
@@ -233,7 +233,7 @@ class Home extends Component {
 
   closeBreathingGame = () => {
     this.setState({breathingGameVisible: false});
-    const isFirstTimeUser = this.firstTimeUser();    
+    const isFirstTimeUser = this.firstTimeUser();
     if (!isFirstTimeUser) {
       this.oldUserAction();
     } else {
@@ -241,11 +241,11 @@ class Home extends Component {
     }
   };
 
-  handleStar = ()=> {
+  handleStar = () => {
     const {dispatch} = this.props;
-    const {onScreenSetId} = this.state
+    const {onScreenSetId} = this.state;
     dispatch(handleFavorite(onScreenSetId));
-  }
+  };
 
   handleNext = () => {
     const {onScreenTagName, onScreenSetId, onScreenTagId} = this.state;
@@ -269,8 +269,6 @@ class Home extends Component {
     dispatch(fetchBackground());
   };
 
-  
-
   componentDidMount() {
     const {userInfo, dispatch, sets} = this.props;
     const hasSets = Object.keys(sets).length;
@@ -280,32 +278,32 @@ class Home extends Component {
       !hasSets && dispatch(fetchTags());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
-    
   }
   componentWillUnmount() {
     this.slideTimerId && clearTimeout(this.slideTimerId);
   }
 
   render() {
-    const {backgrounds,sets,firstLaunch, navigation} = this.props;    
+    const {backgrounds, sets, firstLaunch, navigation} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
-      meditationExplainerVisible,      
+      meditationExplainerVisible,
       onScreenTagName,
       onScreenContent,
       onScreenSetId,
-      nextButtonVisible,      
+      nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-    const onScreenSet = sets[onScreenSetId]
-    const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;    
-    const showNextIcon = nextButtonVisible ;
-    const showStar = (      
-      firstLaunch.onboardingDone 
-      && nextButtonVisible 
-      && onScreenTagName!=='Calm Breathing Tips') 
-      ? true : false;
+    const onScreenSet = sets[onScreenSetId];
+    const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
+    const showNextIcon = nextButtonVisible;
+    const showStar =
+      firstLaunch.onboardingDone &&
+      nextButtonVisible &&
+      onScreenTagName !== 'Calm Breathing Tips'
+        ? true
+        : false;
 
     if (!backgroundImage) {
       return (
@@ -316,17 +314,15 @@ class Home extends Component {
     }
 
     return (
-      <ImageBackground         
-        style={styles.container} 
-        source={backgroundImage}            
-      >
-        {showNextIcon ? 
-          <TouchableOpacity  style={styles.nextIconContainer} onPress={() => navigation.navigate('Settings')}>
-            <Image source={arrowRightIcon} style={styles.nextIcon}/>                      
-          </TouchableOpacity>        
-          :null        
-        }
-        
+      <ImageBackground style={styles.container} source={backgroundImage}>
+        {showNextIcon ? (
+          <TouchableOpacity
+            style={styles.nextIconContainer}
+            onPress={() => navigation.navigate('Settings')}>
+            <Image source={arrowRightIcon} style={styles.nextIcon} />
+          </TouchableOpacity>
+        ) : null}
+
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -361,10 +357,13 @@ class Home extends Component {
               style={styles.bookmarkIconContainer}>
               <Image
                 source={starIcon}
-                style={[styles.bookmarkIcon, isFavorite && styles.bookmarkColor]}
+                style={[
+                  styles.bookmarkIcon,
+                  isFavorite && styles.bookmarkColor,
+                ]}
               />
-            </TouchableOpacity>          
-          ):null}
+            </TouchableOpacity>
+          ) : null}
         </SafeAreaView>
         <Modal
           visible={breathingGameVisible}
@@ -376,10 +375,10 @@ class Home extends Component {
               width: ScreenWidth,
               ...StyleSheet.absoluteFillObject,
             }}>
-            <BrethingGame 
+            <BrethingGame
               unblurBackground={this.unblurBackground}
-              backgroundImage={backgroundImage} 
-              closeBreathingGame={this.closeBreathingGame} 
+              backgroundImage={backgroundImage}
+              closeBreathingGame={this.closeBreathingGame}
             />
           </View>
         </Modal>

@@ -100,10 +100,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 24,
+    fontSize: 36,
     marginHorizontal: 15,
+    textShadowColor: 'black',
+    textShadowOffset: {height: 1, width: 1},
+    textShadowRadius: 2,
   },
-
   iconDownContainer: {
     zIndex: 1,
   },

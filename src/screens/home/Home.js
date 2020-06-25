@@ -212,17 +212,19 @@ class Home extends Component {
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
     const userSeesContent = (userInfo.breathCount + 1) % 3 === 0;
-    if (userSeesContent) {
-      this.showContent();
-    } else {
-      this.goToNextBreathing();
-    }
+    this.showContent();
+    // TODO: uncomment the following later,
+    // if (userSeesContent) {
+    //   this.showContent();
+    // } else {
+    //   this.goToNextBreathing();
+    // }
     dispatch({type: 'INCREASE_PLAY_COUNT'});
   };
 
   closeBreathingTipExplainer = () => {
     this.setState({breathingTipExplainerVisible: false});
-    const tagName = 'Calm Breathing Tips';
+    const tagName = 'Breathing Tip';
     this.showContentByTagName(tagName);
   };
 
@@ -257,8 +259,7 @@ class Home extends Component {
       this.changeBackground,
     );
     const isFavoriteOrBreathingTip =
-      onScreenTagName === 'Favorites' ||
-      onScreenTagName === 'Calm Breathing Tips';
+      onScreenTagName === 'Favorites' || onScreenTagName === 'Breathing Tip';
 
     if (isFavoriteOrBreathingTip) {
       dispatch(moveFirstSetToLast(onScreenTagId));
@@ -302,7 +303,7 @@ class Home extends Component {
     const showStar =
       firstLaunch.onboardingCompleted &&
       nextButtonVisible &&
-      onScreenTagName !== 'Calm Breathing Tips'
+      onScreenTagName !== 'Breathing Tip'
         ? true
         : false;
 

@@ -51,7 +51,7 @@ class BreathingGame extends Component {
     this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
     // messages
-    this.helperMessage = `Hold to inhale and release \n after ${props.settings.inhaleTime} seconds`;
+    this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
 
     // all the timers
@@ -225,7 +225,7 @@ class BreathingGame extends Component {
   setStartRadius = (inhaleTime) => {
     this.startRadius = START_RADIUS[inhaleTime];
     this.radius.setValue(this.startRadius);
-    this.helperMessage = `Hold to inhale and release \n after ${inhaleTime} seconds`;
+    this.helperMessage = `Hold while you inhale for ${inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${inhaleTime} seconds`;
   };
 
@@ -350,6 +350,7 @@ class BreathingGame extends Component {
               }>{`Exhale ${smoothWord} \n ${exhaleTimer}`}</Text>
           </View>
         ) : null}
+
         {successMessage ? (
           <View style={styles.successTextContainer} pointerEvents="none">
             <Text style={styles.successText}>{successMessage}</Text>

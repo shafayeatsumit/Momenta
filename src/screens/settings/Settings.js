@@ -63,9 +63,8 @@ class Settings extends Component {
 
   getBreathingTipsId = () => {
     const {tagNames} = this.props;
-    const breathingTipsId = tagNames.find(
-      (tag) => tag.name === 'Calm Breathing Tips',
-    ).id;
+    const breathingTipsId = tagNames.find((tag) => tag.name === 'Breathing Tip')
+      .id;
     return breathingTipsId;
   };
 
@@ -101,7 +100,7 @@ class Settings extends Component {
   render() {
     const {inhaleTime, exhaleTime, selectedTags, tagNames} = this.props;
     const breathingTipsStatus = this.getBreathingTipsStatus();
-    const tags = tagNames.filter((tag) => tag.name !== 'Calm Breathing Tips');
+    const tags = tagNames.filter((tag) => tag.name !== 'Breathing Tip');
     return (
       <View style={styles.container}>
         <View style={styles.backButtonContainer}>

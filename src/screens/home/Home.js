@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   View,
   Text,
   Animated,
@@ -29,7 +27,6 @@ import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import starIcon from '../../../assets/icons/star_icon.png';
-import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 

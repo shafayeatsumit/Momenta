@@ -78,10 +78,13 @@ class BreathingGame extends Component {
   };
 
   shrinkCircle = () => {
-    this.setState({touchDisabled: true});
+    this.setState({
+      touchDisabled: true,
+      successMessage: 'Almost, give it another shot',
+    });
     Animated.timing(this.radius, {
       toValue: this.startRadius,
-      duration: 1000,
+      duration: 2000,
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
@@ -134,35 +137,37 @@ class BreathingGame extends Component {
     }, 1500);
   };
 
+  getSuccessMessage = (inhaleTime, target) => {
+    // console.log(`inhale time ${inhaleTime} target ${target}`);
+    if (target - 0.3 > inhaleTime > target - 0.1) {
+      return `Good ${inhaleTime.toFixed(1)}`;
+    } else if (target - 0.1 > inhaleTime > target) {
+      return `Great ${inhaleTime.toFixed(1)}`;
+    } else if (target === inhaleTime) {
+      return `Perfect ${inhaleTime.toFixed(1)}`;
+    } else if (target > inhaleTime > target + 0.1) {
+      return `Great ${inhaleTime.toFixed(1)}`;
+    } else if (target + 0.1 > inhaleTime > target + 0.3) {
+      return `Good ${inhaleTime.toFixed(1)}`;
+    } else if (target + 0.3 > inhaleTime) {
+      return `Almost ${inhaleTime.toFixed(1)}`;
+    } else {
+      return `${inhaleTime.toFixed(1)}`;
+    }
+  };
+
   startExhale = (timeDiff) => {
     const radiusValue = this.radius._value;
-    // 6.8 instead of 7. because, we don't want user to take  another 4sec breath if the image is almost revealed.
-    const fullScreenRevealed = radiusValue > 6.8;
-    let message = '';
-    let roundedtimeDiff = timeDiff.toFixed(1);
+    // if the screen is almost revealed then we should consider it full reveal.
+    const fullScreenRevealed = radiusValue === 7;
     if (timeDiff < 2 && !fullScreenRevealed) {
       this.setState({successMessage: this.helperMessage, touchDisabled: false});
       return;
     }
-
-    if (timeDiff < 2 && fullScreenRevealed) {
-      this.setState({touchDisabled: true});
-      this.showFullScreen();
-    } else if (timeDiff > 2 && timeDiff < 3) {
-      message = `Almost ${roundedtimeDiff}`;
-    } else if (timeDiff > 3 && timeDiff < 3.5) {
-      message = `Good ${roundedtimeDiff}`;
-    } else if (timeDiff > 3.5 && timeDiff < 3.8) {
-      message = `Great ${roundedtimeDiff}`;
-    } else if (timeDiff > 3.8 && timeDiff < 4.2) {
-      message = `Perfect ${roundedtimeDiff}`;
-    } else if (timeDiff > 4.2 && timeDiff < 4.5) {
-      message = `Great ${roundedtimeDiff}`;
-    } else if (timeDiff > 4.5 && timeDiff < 5) {
-      message = `Good ${roundedtimeDiff}`;
-    } else {
-      message = `Almost ${roundedtimeDiff}`;
-    }
+    const inhaleTime = timeDiff;
+    const {settings} = this.props;
+    const target = settings.inhaleTime;
+    const message = this.getSuccessMessage(inhaleTime, target);
 
     this.setState({
       successMessage: message,
@@ -180,16 +185,17 @@ class BreathingGame extends Component {
   };
 
   handlePressOut = () => {
-    const {inhaleTime} = this.props.settings;
+    const radiusValue = this.radius._value;
+    const fullScreenRevealed = radiusValue === 7;
+
     Animated.timing(this.radius).stop();
     const timeDiffInMs = new Date() - this.pressInTime;
     const timeDiff = timeDiffInMs / 1000;
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-
     clearInterval(this.inhaleTimerId);
-    if (timeDiff < inhaleTime) {
+    if (!fullScreenRevealed) {
       this.shrinkCircle();
     } else {
       this.startExhale(timeDiff);
@@ -285,6 +291,7 @@ class BreathingGame extends Component {
       smoothWord,
     } = this.state;
     const {firstLaunch, navigation} = this.props;
+    // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
       outputRange: ['0%', '72%'],

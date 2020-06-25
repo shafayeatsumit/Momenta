@@ -14,6 +14,7 @@ import analytics from '@react-native-firebase/analytics';
 
 import styles from './BreathingGame.styles';
 import GameExplainer from './GameExplainerModal';
+import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 
@@ -274,7 +275,7 @@ class BreathingGame extends Component {
       pressIn,
       smoothWord,
     } = this.state;
-    const {firstLaunch} = this.props;
+    const {firstLaunch, navigation} = this.props;
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
       outputRange: ['0%', '72%'],
@@ -284,7 +285,7 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon =
       firstLaunch.breathCount > 0 ? tapIcon : tapIconFirstTimer;
-
+    const showArrowIcon = firstLaunch.onboardingCompleted;
     return (
       <View style={styles.container}>
         {modalVisible && (
@@ -293,6 +294,13 @@ class BreathingGame extends Component {
             setStartRadius={this.setStartRadius}
           />
         )}
+        {showArrowIcon ? (
+          <TouchableOpacity
+            style={styles.arrowIconContainer}
+            onPress={() => navigation.navigate('Settings')}>
+            <Image source={arrowRightIcon} style={styles.arrowIcon} />
+          </TouchableOpacity>
+        ) : null}
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">

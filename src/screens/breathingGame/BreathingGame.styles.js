@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     height: 120,
     width: ScreenWidth,
     position: 'absolute',
-    bottom: 25,    
-    alignItems:'center',    
+    bottom: 25,
+    alignItems: 'center',
   },
   tapIcon: {
     height: 110,
@@ -140,6 +140,20 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.35,
+  },
+  arrowIconContainer: {
+    top: 30,
+    right: 20,
+    position: 'absolute',
+    height: 60,
+    width: 60,
+    zIndex: 3,
+    alignItems: 'center',
+  },
+  arrowIcon: {
+    height: 28,
+    width: 28,
+    tintColor: 'white',
   },
 });
 export default styles;

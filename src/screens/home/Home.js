@@ -301,7 +301,7 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId];
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
-    const showNextIcon = nextButtonVisible;
+
     const showStar =
       firstLaunch.onboardingCompleted &&
       nextButtonVisible &&
@@ -319,14 +319,6 @@ class Home extends Component {
 
     return (
       <ImageBackground style={styles.container} source={backgroundImage}>
-        {showNextIcon ? (
-          <TouchableOpacity
-            style={styles.nextIconContainer}
-            onPress={() => navigation.navigate('Settings')}>
-            <Image source={arrowRightIcon} style={styles.nextIcon} />
-          </TouchableOpacity>
-        ) : null}
-
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -369,10 +361,7 @@ class Home extends Component {
             </TouchableOpacity>
           ) : null}
         </SafeAreaView>
-        <Modal
-          visible={breathingGameVisible}
-          transparent={true}
-          animationType={'none'}>
+        {breathingGameVisible ? (
           <View
             style={{
               height: ScreenHeight,
@@ -383,9 +372,11 @@ class Home extends Component {
               unblurBackground={this.unblurBackground}
               backgroundImage={backgroundImage}
               closeBreathingGame={this.closeBreathingGame}
+              navigation={navigation}
             />
           </View>
-        </Modal>
+        ) : null}
+
         <Modal
           visible={breathingTipExplainerVisible}
           transparent={true}

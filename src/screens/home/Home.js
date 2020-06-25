@@ -164,7 +164,7 @@ class Home extends Component {
 
   firstTimeUser = () => {
     const {firstLaunch} = this.props;
-    return !firstLaunch.onboardingDone;
+    return !firstLaunch.onboardingCompleted;
   };
 
   getTagIdByName = (tagName) =>
@@ -199,13 +199,13 @@ class Home extends Component {
 
   newUserAction = () => {
     const {firstLaunch, dispatch} = this.props;
-    const {playCount} = firstLaunch;
-    if (playCount === 1) {
+    const {breathCount} = firstLaunch;
+    if (breathCount === 0) {
       this.goToNextBreathing();
-      dispatch({type: 'NEW_USER_INCREASE_PLAY_COUNT'});
-    } else if (playCount === 2) {
+      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
+    } else if (breathCount === 1) {
       this.showBreathingTipExplainer();
-      dispatch({type: 'NEW_USER_INCREASE_PLAY_COUNT'});
+      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
     } else {
       this.showMeditationExplainer();
       dispatch({type: 'NEW_USER_ONBOARDING_DONE'});
@@ -214,7 +214,7 @@ class Home extends Component {
 
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
-    const userSeesContent = userInfo.playCount % 3 === 0;
+    const userSeesContent = (userInfo.breathCount + 1) % 3 === 0;
     if (userSeesContent) {
       this.showContent();
     } else {
@@ -303,7 +303,7 @@ class Home extends Component {
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
     const showNextIcon = nextButtonVisible;
     const showStar =
-      firstLaunch.onboardingDone &&
+      firstLaunch.onboardingCompleted &&
       nextButtonVisible &&
       onScreenTagName !== 'Calm Breathing Tips'
         ? true

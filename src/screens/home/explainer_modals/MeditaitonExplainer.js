@@ -8,7 +8,7 @@ const MeditationExplainer = ({closeModal}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
-        <Swiper style={styles.wrapper} showsButtons={false} loop={false}>
+        <Swiper showsButtons={false} loop={false}>
           <View style={{flex: 1, justifyContent: 'center', paddingBottom: 40}}>
             <Text style={styles.text}>
               You can also add mini-meditations for positive emotions to follow
@@ -52,12 +52,12 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: ScreenWidth * 0.9,
-    height: ScreenHeight * 0.4,
+    height: 500,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
-    // justifyContent: 'space-around',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    borderWidth: 500,
+    borderWidth: 0.5,
     borderColor: '#787989',
     overflow: 'hidden',
   },

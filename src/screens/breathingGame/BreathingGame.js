@@ -216,8 +216,8 @@ class BreathingGame extends Component {
   };
 
   setStartRadius = (inhaleTime) => {
-    // this.startRadius = START_RADIUS[inhaleTime];
-    // this.radius = new Animated.Value(this.startRadius);
+    this.startRadius = START_RADIUS[inhaleTime];
+    this.radius.setValue(this.startRadius);
     this.helperMessage = `Hold to inhale and release \n after ${inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${inhaleTime} seconds`;
   };
@@ -243,7 +243,7 @@ class BreathingGame extends Component {
 
   componentDidMount() {
     const {firstLaunch} = this.props;
-    firstLaunch.playCount === 1
+    firstLaunch.breathCount === 0
       ? this.showGameExplainerModal()
       : this.showHelpers();
 
@@ -282,7 +282,8 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
-    const helperIcon = firstLaunch.playCount > 1 ? tapIcon : tapIconFirstTimer;
+    const helperIcon =
+      firstLaunch.breathCount > 0 ? tapIcon : tapIconFirstTimer;
 
     return (
       <View style={styles.container}>

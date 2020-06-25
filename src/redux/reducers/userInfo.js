@@ -4,7 +4,7 @@ const INIT_STATE = {
   email: null,
   userId: null,
   name: null,
-  playCount: 1,
+  breathCount: 0,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -22,7 +22,7 @@ const loginInfo = (state = INIT_STATE, action) => {
     case 'INCREASE_PLAY_COUNT':
       return {
         ...state,
-        playCount: state.playCount + 1,
+        breathCount: state.breathCount + 1,
       };
     default:
       return state;

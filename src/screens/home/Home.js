@@ -208,7 +208,7 @@ class Home extends Component {
       dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
     } else {
       this.showMeditationExplainer();
-      dispatch({type: 'NEW_USER_ONBOARDING_DONE'});
+      dispatch({type: 'NEW_USER_ONBOARDING_COMPLETED'});
     }
   };
 

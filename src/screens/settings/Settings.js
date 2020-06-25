@@ -53,21 +53,13 @@ const placeHolderStyle = {
 
 class Settings extends Component {
   setExhaleValue = (value) => {
-    const {inhaleTime, dispatch} = this.props;
-    inhaleTime <= value && dispatch({type: 'UPDATE_EXHALE_TIME', value});
+    const {dispatch} = this.props;
+    dispatch({type: 'UPDATE_EXHALE_TIME', value});
   };
 
   setInhaleValue = (value) => {
-    const {exhaleTime, dispatch} = this.props;
-    if (exhaleTime < value) {
-      dispatch({
-        type: 'UPDATE_INHALE_EXHALE_TIME',
-        inhaleValue: value,
-        exhaleValue: value + 1,
-      });
-    } else {
-      dispatch({type: 'UPDATE_INHALE_TIME', value});
-    }
+    const {dispatch} = this.props;
+    dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
   getBreathingTipsId = () => {

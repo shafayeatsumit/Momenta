@@ -223,6 +223,8 @@ class BreathingGame extends Component {
     this.delayMessage = `Inhale for ${inhaleTime} seconds`;
   };
 
+  setExhaleTime = (exhaleTime) => {};
+
   showHelpers = () => {
     this.hlperMessageId = setTimeout(
       () =>
@@ -249,6 +251,13 @@ class BreathingGame extends Component {
       : this.showHelpers();
 
     this.animationId = this.radius.addListener(({value}) => {});
+  }
+
+  componentDidUpdate(prevProps) {
+    const {inhaleTime} = this.props.settings;
+    if (prevProps.settings.inhaleTime !== inhaleTime) {
+      this.setStartRadius(inhaleTime);
+    }
   }
 
   componentWillUnmount() {
@@ -288,12 +297,7 @@ class BreathingGame extends Component {
     const showArrowIcon = firstLaunch.onboardingCompleted;
     return (
       <View style={styles.container}>
-        {modalVisible && (
-          <GameExplainer
-            closeExplainer={this.closeExplainer}
-            setStartRadius={this.setStartRadius}
-          />
-        )}
+        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
         {showArrowIcon ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}

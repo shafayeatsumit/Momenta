@@ -4,7 +4,7 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
 import {useDispatch} from 'react-redux';
 
-const ExplainerModal = ({closeExplainer, setStartRadius}) => {
+const ExplainerModal = ({closeExplainer}) => {
   const dispatch = useDispatch();
   const setInhaleTime = (value) => {
     dispatch({
@@ -12,7 +12,6 @@ const ExplainerModal = ({closeExplainer, setStartRadius}) => {
       inhaleValue: value,
       exhaleValue: value,
     });
-    setStartRadius(value);
     closeExplainer();
   };
   return (

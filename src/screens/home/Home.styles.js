@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
-
+console.log(ScreenWidth);
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Bold,
     color: 'white',
     fontSize: 36,
     textAlign: 'center',
@@ -33,6 +33,16 @@ const styles = StyleSheet.create({
     textShadowOffset: {height: 1, width: 1},
     textShadowRadius: 2,
   },
+  category: {
+    fontFamily: FontType.ExtraBold,
+    color: 'white',
+    fontSize: 40,
+    textShadowColor: 'black',
+    textShadowOffset: {height: 1, width: 1},
+    textShadowRadius: 2,
+    textAlign: 'center',
+  },
+
   categoryHolder: {
     position: 'absolute',
     top: ScreenHeight * 0.15,
@@ -41,15 +51,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  category: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 40,
-    textShadowColor: 'black',
-    textShadowOffset: {height: 1, width: 1},
-    textShadowRadius: 2,
-    textAlign: 'center',
   },
   nextIconContainer: {
     top: 30,

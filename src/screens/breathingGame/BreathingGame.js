@@ -108,6 +108,9 @@ class BreathingGame extends Component {
         this.props.closeBreathingGame();
         return;
       }
+      if (this.state.exhaleTimer === 1) {
+        this.props.showBreathCountInHome();
+      }
       this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
     }, 1000);
   };

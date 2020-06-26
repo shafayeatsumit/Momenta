@@ -162,6 +162,26 @@ const styles = StyleSheet.create({
     textShadowOffset: {height: 1, width: 1},
     textShadowRadius: 2,
   },
+  breathCountContainer: {
+    top: 40,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    height: 60,
+    width: ScreenWidth,
+    alignSelf: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  breathCountText: {
+    textAlign: 'center',
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 25,
+    textShadowColor: 'black',
+    textShadowOffset: {height: 1, width: 1},
+    textShadowRadius: 2,
+  },
 });
 
 export default styles;

@@ -42,6 +42,7 @@ class Home extends Component {
       onScreenContent: '',
       onScreenSetId: null,
       onScreenTagId: null,
+      showBreathCount: false,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -53,6 +54,8 @@ class Home extends Component {
   changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
 
   fadeIn = () => {
+    const {showBreathCount} = this.state;
+    showBreathCount && this.setState({showBreathCount: false});
     Animated.timing(this.tagOpacity, {
       toValue: 1,
       duration: 1000,
@@ -102,6 +105,8 @@ class Home extends Component {
     const activeTag = tagNames.find((item) => item.id === activeTagId);
     return activeTag;
   };
+
+  showBreathCountInHome = () => this.setState({showBreathCount: true});
 
   getActiveTagIndex = () => {
     const {tagNames, tags, settings} = this.props;
@@ -169,6 +174,7 @@ class Home extends Component {
 
   goToNextBreathing = () => {
     const {dispatch} = this.props;
+    const {showBreathCount} = this.state;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
       this.setState({breathingGameVisible: true});
@@ -177,6 +183,7 @@ class Home extends Component {
     }, 1000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
+      showBreathCount && this.setState({showBreathCount: false});
       clearTimeout(this.imageSwitchTimer);
     }, 500);
   };
@@ -220,28 +227,28 @@ class Home extends Component {
     const {firstLaunch, dispatch} = this.props;
     const {breathCount} = firstLaunch;
     if (breathCount === 0) {
-      this.goToNextBreathing();
       dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
+      this.goToNextBreathing();
     } else if (breathCount === 1) {
+      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
       this.imageFadeIn(this.showBreathingTipExplainer);
       // this.showBreathingTipExplainer();
-      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
     } else {
+      dispatch({type: 'NEW_USER_ONBOARDING_COMPLETED'});
       this.imageFadeIn(this.showMeditationExplainer);
       // this.showMeditationExplainer();
-      dispatch({type: 'NEW_USER_ONBOARDING_COMPLETED'});
     }
   };
 
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
     const userSeesContent = (userInfo.breathCount + 1) % 3 === 0;
+    dispatch({type: 'INCREASE_PLAY_COUNT'});
     if (userSeesContent) {
       this.imageFadeIn(this.showContent);
     } else {
       this.goToNextBreathing();
     }
-    dispatch({type: 'INCREASE_PLAY_COUNT'});
   };
 
   closeBreathingTipExplainer = () => {
@@ -270,6 +277,12 @@ class Home extends Component {
     const {dispatch} = this.props;
     const {onScreenSetId} = this.state;
     dispatch(handleFavorite(onScreenSetId));
+  };
+
+  getTotalBreathCount = () => {
+    const {userInfo, firstLaunch} = this.props;
+    const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
+    return totalNumberOfBreaths;
   };
 
   handleNext = () => {
@@ -317,6 +330,7 @@ class Home extends Component {
       onScreenContent,
       onScreenSetId,
       nextButtonVisible,
+      showBreathCount,
     } = this.state;
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId];
@@ -327,7 +341,7 @@ class Home extends Component {
       onScreenTagName !== 'Breathing Tip'
         ? true
         : false;
-    console.log('breathing images', backgrounds.length);
+    console.log('show breath count', showBreathCount);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -342,6 +356,14 @@ class Home extends Component {
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage}
         />
+        {firstLaunch.BreathCount || true ? (
+          <View style={styles.breathCountContainer}>
+            <Text style={styles.breathCountText}>Breath Count</Text>
+            <Text style={styles.breathCountText}>
+              {this.getTotalBreathCount()}
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -350,7 +372,6 @@ class Home extends Component {
 
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.topRow} />
-
           <View activeOpacity={0.7} style={styles.slideContainer}>
             <View key={0} style={{width: ScreenWidth}}>
               <View style={styles.categoryContainer} />
@@ -392,11 +413,11 @@ class Home extends Component {
               ...StyleSheet.absoluteFillObject,
             }}>
             <BrethingGame
-              unblurBackground={this.unblurBackground}
               backgroundImage={backgroundImage}
               closeBreathingGame={this.closeBreathingGame}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
+              showBreathCountInHome={this.showBreathCountInHome}
             />
           </View>
         ) : null}

@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     width: ScreenWidth,
     alignSelf: 'center',
     alignItems: 'center',
-    // backgroundColor: 'red',
     zIndex: 1,
   },
   breathCountText: {

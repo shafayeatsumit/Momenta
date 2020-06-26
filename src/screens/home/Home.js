@@ -284,7 +284,7 @@ class Home extends Component {
   getTotalBreathCount = () => {
     const {userInfo, firstLaunch} = this.props;
     const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
-    return totalNumberOfBreaths;
+    return totalNumberOfBreaths.toLocaleString();
   };
 
   handleNext = () => {
@@ -355,16 +355,15 @@ class Home extends Component {
         </View>
       );
     }
-
     return (
       <View style={styles.container}>
         <Animated.Image
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage}
         />
-        {firstLaunch.BreathCount && breathCountVisible ? (
+        {breathCountVisible ? (
           <View style={styles.breathCountContainer}>
-            <Text style={styles.breathCountText}>Breath Count</Text>
+            <Text style={[styles.breathCountText]}>Calm Breaths</Text>
             <Text style={styles.breathCountText}>
               {this.getTotalBreathCount()}
             </Text>

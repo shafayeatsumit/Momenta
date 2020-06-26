@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 25,
+    fontSize: 20,
     textShadowColor: 'black',
     textShadowOffset: {height: 1, width: 1},
     textShadowRadius: 2,

@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   successText: {
     textAlign: 'center',
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.ExtraBold,
     color: 'white',
     fontSize: 36,
     marginHorizontal: 15,
@@ -174,9 +174,9 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   arrowIcon: {
-    height: 30,
-    width: 30,
-    tintColor: 'white',
+    height: 20,
+    width: 20,
+    tintColor: '#787989',
   },
 });
 export default styles;

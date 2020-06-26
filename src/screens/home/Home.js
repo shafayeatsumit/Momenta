@@ -377,19 +377,11 @@ class Home extends Component {
         </View>
 
         <SafeAreaView style={styles.contentContainer}>
-          <View style={styles.topRow} />
-          <View activeOpacity={0.7} style={styles.slideContainer}>
-            <View key={0} style={{width: ScreenWidth}}>
-              <View style={styles.categoryContainer} />
-              <View style={styles.thoughtContainer}>
-                <Animated.Text
-                  style={[styles.content, {opacity: this.contentOpacity}]}>
-                  {onScreenContent}
-                </Animated.Text>
-              </View>
-            </View>
-            <View key={1} style={{width: ScreenWidth}} />
-          </View>
+          <Animated.Text
+            style={[styles.content, {opacity: this.contentOpacity}]}>
+            {onScreenContent}
+          </Animated.Text>
+
           {nextButtonVisible ? (
             <TouchableOpacity
               style={styles.nextButton}
@@ -400,13 +392,10 @@ class Home extends Component {
           {showStar ? (
             <TouchableOpacity
               onPress={this.handleStar}
-              style={styles.bookmarkIconContainer}>
+              style={styles.starIconContainer}>
               <Image
                 source={starIcon}
-                style={[
-                  styles.bookmarkIcon,
-                  isFavorite && styles.bookmarkColor,
-                ]}
+                style={[styles.starIcon, isFavorite && styles.starColor]}
               />
             </TouchableOpacity>
           ) : null}

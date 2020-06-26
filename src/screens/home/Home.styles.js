@@ -1,9 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
-import {RFValue} from '../../helpers/responsiveFont';
-
-const ICON_SIZE = RFValue(35);
 
 const styles = StyleSheet.create({
   loadingContainer: {
@@ -21,54 +18,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#1b1f37',
   },
   contentContainer: {
-    flex: 1,
-    marginTop: 10,
-  },
-  topRow: {
-    height: ScreenHeight * 0.2,
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  slideContainer: {
-    flexGrow: 1,
-    flexDirection: 'row',
-  },
-  categoryContainer: {
-    height: ScreenHeight * 0.05,
-  },
-  thoughtContainer: {
-    marginTop: 30,
-    height: ScreenHeight * 0.4,
-    paddingHorizontal: 15,
-    justifyContent: 'flex-start',
-  },
-  footerContainer: {
-    height: ScreenHeight * 0.15,
-    width: ScreenWidth * 0.25,
-    marginLeft: 20,
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
-  iconDownContainer: {
-    position: 'absolute',
-    top: 30,
-    left: 20,
+  content: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 36,
+    textAlign: 'center',
+    padding: 15,
     zIndex: 1,
-    height: 35,
-    width: 35,
-  },
-  iconDown: {
-    height: 35,
-    width: 35,
-    tintColor: 'rgba(255,255,255,0.8)',
+    textShadowColor: 'black',
+    textShadowOffset: {height: 1, width: 1},
+    textShadowRadius: 2,
   },
   categoryHolder: {
     position: 'absolute',
     top: ScreenHeight * 0.15,
     left: 0,
     width: ScreenWidth,
-    zIndex: 4,
+    zIndex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -95,29 +65,8 @@ const styles = StyleSheet.create({
     width: 28,
     tintColor: 'white',
   },
-  content: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 36,
-    textAlign: 'center',
-    paddingRight: 10,
-    zIndex: 1,
-    textShadowColor: 'black',
-    textShadowOffset: {height: 1, width: 1},
-    textShadowRadius: 2,
-  },
-  icon: {
-    height: ICON_SIZE,
-    width: ICON_SIZE,
-    tintColor: 'rgba(255,255,255,0.2)',
-  },
-  iconMore: {
-    height: ICON_SIZE,
-    width: ICON_SIZE,
-    marginRight: 20,
-    tintColor: 'rgba(255,255,255,0.2)',
-  },
-  bookmarkIconContainer: {
+
+  starIconContainer: {
     height: 55,
     width: 55,
     position: 'absolute',
@@ -126,19 +75,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bookmarkIcon: {
+  starIcon: {
     height: 35,
     width: 35,
     marginTop: 5,
     tintColor: 'rgba(255,255,255,0.8)',
   },
-  bookmarkColor: {
+  starColor: {
     tintColor: 'rgb(60,113,222)',
-  },
-  progressText: {
-    fontSize: RFValue(12),
-    color: 'white',
-    fontFamily: FontType.Regular,
   },
   nextButton: {
     position: 'absolute',

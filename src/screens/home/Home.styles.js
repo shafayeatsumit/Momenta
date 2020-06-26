@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     width: ScreenWidth,
     alignSelf: 'center',
     alignItems: 'center',
-    zIndex: 1,
+    zIndex: 5,
   },
   breathCountText: {
     textAlign: 'center',

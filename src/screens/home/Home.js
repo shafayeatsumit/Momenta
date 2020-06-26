@@ -42,7 +42,7 @@ class Home extends Component {
       onScreenContent: '',
       onScreenSetId: null,
       onScreenTagId: null,
-      showBreathCount: false,
+      breathCountVisible: true,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -54,8 +54,6 @@ class Home extends Component {
   changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
 
   fadeIn = () => {
-    const {showBreathCount} = this.state;
-    showBreathCount && this.setState({showBreathCount: false});
     Animated.timing(this.tagOpacity, {
       toValue: 1,
       duration: 1000,
@@ -87,6 +85,8 @@ class Home extends Component {
   };
 
   imageFadeIn = (cb) => {
+    const {breathCountVisible} = this.state;
+    breathCountVisible && this.setState({breathCountVisible: false});
     const {settings, dispatch} = this.props;
     const {exhaleTime} = settings;
     this.changeBackground();
@@ -106,7 +106,9 @@ class Home extends Component {
     return activeTag;
   };
 
-  showBreathCountInHome = () => this.setState({showBreathCount: true});
+  showBreathCount = () => this.setState({breathCountVisible: true});
+
+  hideBreathCount = () => this.setState({breathCountVisible: false});
 
   getActiveTagIndex = () => {
     const {tagNames, tags, settings} = this.props;
@@ -174,7 +176,7 @@ class Home extends Component {
 
   goToNextBreathing = () => {
     const {dispatch} = this.props;
-    const {showBreathCount} = this.state;
+    const {breathCountVisible} = this.state;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
       this.setState({breathingGameVisible: true});
@@ -183,7 +185,7 @@ class Home extends Component {
     }, 1000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
-      showBreathCount && this.setState({showBreathCount: false});
+      // breathCountVisible && this.setState({breathCountVisible: false});
       clearTimeout(this.imageSwitchTimer);
     }, 500);
   };
@@ -290,7 +292,11 @@ class Home extends Component {
     const {dispatch} = this.props;
     this.fadeOut();
     this.setState(
-      {breathingGameVisible: true, nextButtonVisible: false},
+      {
+        breathingGameVisible: true,
+        nextButtonVisible: false,
+        breathCountVisible: true,
+      },
       this.changeBackground,
     );
     const isFavoriteOrBreathingTip =
@@ -330,7 +336,7 @@ class Home extends Component {
       onScreenContent,
       onScreenSetId,
       nextButtonVisible,
-      showBreathCount,
+      breathCountVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId];
@@ -341,7 +347,7 @@ class Home extends Component {
       onScreenTagName !== 'Breathing Tip'
         ? true
         : false;
-    console.log('show breath count', showBreathCount);
+    console.log('backgrounds length', backgrounds.length);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -356,7 +362,7 @@ class Home extends Component {
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage}
         />
-        {firstLaunch.BreathCount || true ? (
+        {firstLaunch.BreathCount && breathCountVisible ? (
           <View style={styles.breathCountContainer}>
             <Text style={styles.breathCountText}>Breath Count</Text>
             <Text style={styles.breathCountText}>
@@ -417,7 +423,9 @@ class Home extends Component {
               closeBreathingGame={this.closeBreathingGame}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
-              showBreathCountInHome={this.showBreathCountInHome}
+              showBreathCount={this.showBreathCount}
+              breathCountVisible={breathCountVisible}
+              hideBreathCount={this.hideBreathCount}
             />
           </View>
         ) : null}

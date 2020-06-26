@@ -200,7 +200,7 @@ export default connect(mapStateToProps)(Settings);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#252a43',
+    backgroundColor: '#1b1f37',
   },
   backButtonContainer: {
     height: 100,

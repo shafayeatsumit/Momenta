@@ -46,7 +46,7 @@ class Home extends Component {
 
     this.tagOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
-    this.iconOpacity = new Animated.Value(0);
+    this.imageOpacity = new Animated.Value(1);
     this.modalTimer = null;
     this.imageSwitchTimer = null;
   }
@@ -71,7 +71,28 @@ class Home extends Component {
   fadeOut = () => {
     this.tagOpacity.setValue(0);
     this.contentOpacity.setValue(0);
-    this.setState({});
+  };
+
+  imageFadeOut = () => {
+    const {settings} = this.props;
+    const {exhaleTime} = settings;
+    Animated.timing(this.imageOpacity, {
+      toValue: 0,
+      duration: exhaleTime * 1000,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  imageFadeIn = (cb) => {
+    const {settings, dispatch} = this.props;
+    const {exhaleTime} = settings;
+    this.changeBackground();
+    Animated.timing(this.imageOpacity, {
+      toValue: 1,
+      duration: exhaleTime * 1000,
+      useNativeDriver: true,
+    }).start(cb);
+    dispatch(fetchBackground());
   };
 
   getActiveTag = (tagIndex) => {
@@ -152,11 +173,12 @@ class Home extends Component {
     this.modalTimer = setTimeout(() => {
       this.setState({breathingGameVisible: true});
       clearTimeout(this.modalTimer);
-    }, 2000);
+      this.imageOpacity.setValue(1);
+    }, 1000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
       clearTimeout(this.imageSwitchTimer);
-    }, 2500);
+    }, 500);
   };
 
   firstTimeUser = () => {
@@ -201,10 +223,12 @@ class Home extends Component {
       this.goToNextBreathing();
       dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
     } else if (breathCount === 1) {
-      this.showBreathingTipExplainer();
+      this.imageFadeIn(this.showBreathingTipExplainer);
+      // this.showBreathingTipExplainer();
       dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
     } else {
-      this.showMeditationExplainer();
+      this.imageFadeIn(this.showMeditationExplainer);
+      // this.showMeditationExplainer();
       dispatch({type: 'NEW_USER_ONBOARDING_COMPLETED'});
     }
   };
@@ -212,13 +236,11 @@ class Home extends Component {
   oldUserAction = () => {
     const {userInfo, dispatch} = this.props;
     const userSeesContent = (userInfo.breathCount + 1) % 3 === 0;
-    this.showContent();
-    // TODO: uncomment the following later,
-    // if (userSeesContent) {
-    //   this.showContent();
-    // } else {
-    //   this.goToNextBreathing();
-    // }
+    if (userSeesContent) {
+      this.imageFadeIn(this.showContent);
+    } else {
+      this.goToNextBreathing();
+    }
     dispatch({type: 'INCREASE_PLAY_COUNT'});
   };
 
@@ -299,14 +321,13 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId];
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
-
     const showStar =
       firstLaunch.onboardingCompleted &&
       nextButtonVisible &&
       onScreenTagName !== 'Breathing Tip'
         ? true
         : false;
-
+    console.log('breathing images', backgrounds.length);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -316,7 +337,11 @@ class Home extends Component {
     }
 
     return (
-      <ImageBackground style={styles.container} source={backgroundImage}>
+      <View style={styles.container}>
+        <Animated.Image
+          style={[styles.imageContainer, {opacity: this.imageOpacity}]}
+          source={backgroundImage}
+        />
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -370,6 +395,7 @@ class Home extends Component {
               unblurBackground={this.unblurBackground}
               backgroundImage={backgroundImage}
               closeBreathingGame={this.closeBreathingGame}
+              imageFadeOut={this.imageFadeOut}
               navigation={navigation}
             />
           </View>
@@ -387,7 +413,7 @@ class Home extends Component {
           animationType="fade">
           <MeditaionExplainer closeModal={this.closeMeditationExplainer} />
         </Modal>
-      </ImageBackground>
+      </View>
     );
   }
 }

@@ -27,7 +27,7 @@ const SMOOTH_WORDS = [
   'Smoothly',
   'Lightly',
 ];
-const START_RADIUS = {
+const START_RADIUSES = {
   3: 4,
   4: 3,
   5: 2,
@@ -47,7 +47,7 @@ class BreathingGame extends Component {
       inhaleTimer: 0,
       smoothWord: null,
     };
-    this.startRadius = START_RADIUS[props.settings.inhaleTime];
+    this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
     // messages
@@ -97,25 +97,17 @@ class BreathingGame extends Component {
     });
   };
 
-  startExhaleTimer = (fullScreen) => {
+  startExhaleTimer = () => {
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
+    this.props.imageFadeOut();
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 0) {
         clearInterval(this.exhaleTimerId);
         this.setState({exhaleTimer: 0});
-        fullScreen && this.props.closeBreathingGame();
+        this.props.closeBreathingGame();
         return;
       }
-      this.setState((prevState) => ({
-        exhaleTimer: prevState.exhaleTimer - 1,
-        ...(prevState.exhaleTimer === 1 &&
-          !fullScreen && {
-            touchDisabled: false,
-            // show the second helper msg when the touch is re-enabled
-            successMessage: this.delayMessage,
-            showHelperIcon: true,
-          }),
-      }));
+      this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
     }, 1000);
   };
 
@@ -137,60 +129,21 @@ class BreathingGame extends Component {
     }, 1500);
   };
 
-  getSuccessMessage = (inhaleTime, target) => {
-    // console.log(`inhale time ${inhaleTime} target ${target}`);
-    if (target - 0.3 > inhaleTime > target - 0.1) {
-      return `Good ${inhaleTime.toFixed(1)}`;
-    } else if (target - 0.1 > inhaleTime > target) {
-      return `Great ${inhaleTime.toFixed(1)}`;
-    } else if (target === inhaleTime) {
-      return `Perfect ${inhaleTime.toFixed(1)}`;
-    } else if (target > inhaleTime > target + 0.1) {
-      return `Great ${inhaleTime.toFixed(1)}`;
-    } else if (target + 0.1 > inhaleTime > target + 0.3) {
-      return `Good ${inhaleTime.toFixed(1)}`;
-    } else if (target + 0.3 > inhaleTime) {
-      return `Almost ${inhaleTime.toFixed(1)}`;
-    } else {
-      return `${inhaleTime.toFixed(1)}`;
-    }
-  };
-
-  startExhale = (timeDiff) => {
-    const radiusValue = this.radius._value;
-    // if the screen is almost revealed then we should consider it full reveal.
-    const fullScreenRevealed = radiusValue === 7;
-    if (timeDiff < 2 && !fullScreenRevealed) {
-      this.setState({successMessage: this.helperMessage, touchDisabled: false});
-      return;
-    }
-    const inhaleTime = timeDiff;
-    const {settings} = this.props;
-    const target = settings.inhaleTime;
-    const message = this.getSuccessMessage(inhaleTime, target);
-
-    this.setState({
-      successMessage: message,
-      touchDisabled: true,
-    });
+  startExhale = () => {
+    this.setState({touchDisabled: true});
     const {exhaleTime} = this.props.settings;
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.startExhaleTimerId = setTimeout(() => {
       this.setState({successMessage: false, exhaleTimer: exhaleTime}, () => {
-        fullScreenRevealed
-          ? this.startExhaleTimer(true)
-          : this.startExhaleTimer();
+        this.startExhaleTimer();
       });
-    }, 1000);
+    }, 500);
   };
 
   handlePressOut = () => {
     const radiusValue = this.radius._value;
     const fullScreenRevealed = radiusValue === 7;
-
     Animated.timing(this.radius).stop();
-    const timeDiffInMs = new Date() - this.pressInTime;
-    const timeDiff = timeDiffInMs / 1000;
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
@@ -198,7 +151,7 @@ class BreathingGame extends Component {
     if (!fullScreenRevealed) {
       this.shrinkCircle();
     } else {
-      this.startExhale(timeDiff);
+      this.startExhale();
     }
   };
 
@@ -223,7 +176,7 @@ class BreathingGame extends Component {
   };
 
   setStartRadius = (inhaleTime) => {
-    this.startRadius = START_RADIUS[inhaleTime];
+    this.startRadius = START_RADIUSES[inhaleTime];
     this.radius.setValue(this.startRadius);
     this.helperMessage = `Hold while you inhale for ${inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${inhaleTime} seconds`;

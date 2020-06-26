@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {colors, FontType} from '../../helpers/theme';
+import {FontType} from '../../helpers/theme';
 import {RFValue} from '../../helpers/responsiveFont';
 
 const ICON_SIZE = RFValue(35);
@@ -10,12 +10,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#252a43',
+    backgroundColor: '#1b1f37',
+  },
+  imageContainer: {
+    ...StyleSheet.absoluteFillObject,
   },
   container: {
     flex: 1,
     zIndex: 0,
-    backgroundColor: '#252a43',
+    backgroundColor: '#1b1f37',
   },
   contentContainer: {
     flex: 1,
@@ -38,8 +41,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     height: ScreenHeight * 0.4,
     paddingHorizontal: 15,
-    justifyContent: 'center',
-    // backgroundColor: 'red',
+    justifyContent: 'flex-start',
   },
   footerContainer: {
     height: ScreenHeight * 0.15,
@@ -140,13 +142,13 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     position: 'absolute',
-    height: 35,
+    height: 40,
     width: 120,
     borderRadius: 50,
     bottom: 25,
     right: 20,
     backgroundColor: 'transparent',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
@@ -154,8 +156,11 @@ const styles = StyleSheet.create({
   nextButtonText: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 18,
+    fontSize: 25,
     textAlign: 'center',
+    textShadowColor: 'black',
+    textShadowOffset: {height: 1, width: 1},
+    textShadowRadius: 2,
   },
 });
 

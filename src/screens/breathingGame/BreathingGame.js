@@ -46,6 +46,7 @@ class BreathingGame extends Component {
       exhaleTimer: 0,
       inhaleTimer: 0,
       smoothWord: null,
+      showBreathCount: true,
     };
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
@@ -157,6 +158,12 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     this.setState({pressIn: true});
+    this.setState((prevState) => ({
+      pressIn: true,
+      ...(prevState.showBreathCount && {
+        showBreathCount: false,
+      }),
+    }));
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -218,6 +225,11 @@ class BreathingGame extends Component {
       this.setStartRadius(inhaleTime);
     }
   }
+  getTotalBreathCount = () => {
+    const {userInfo, firstLaunch} = this.props;
+    const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
+    return totalNumberOfBreaths;
+  };
 
   componentWillUnmount() {
     this.animationId && this.radius.removeListener(this.animationId);
@@ -240,6 +252,7 @@ class BreathingGame extends Component {
       inhaleTimer,
       showHelperIcon,
       modalVisible,
+      showBreathCount,
       pressIn,
       smoothWord,
     } = this.state;
@@ -255,9 +268,18 @@ class BreathingGame extends Component {
     const helperIcon =
       firstLaunch.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     const showArrowIcon = firstLaunch.onboardingCompleted;
+    const firstLaunchBreathCount = firstLaunch.breathCount;
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
+        {firstLaunchBreathCount && showBreathCount ? (
+          <View style={styles.breathCountContainer}>
+            <Text style={styles.breathCountText}>Breath Count</Text>
+            <Text style={styles.breathCountText}>
+              {this.getTotalBreathCount()}
+            </Text>
+          </View>
+        ) : null}
         {showArrowIcon ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}
@@ -329,10 +351,11 @@ class BreathingGame extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {firstLaunch, settings} = state;
+  const {firstLaunch, settings, userInfo} = state;
   return {
     firstLaunch,
     settings,
+    userInfo,
   };
 };
 

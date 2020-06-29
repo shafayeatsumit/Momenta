@@ -88,6 +88,7 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
+      this.props.showBreathCount();
       this.setState({
         touchDisabled: false,
         successMessage: this.delayMessage,
@@ -106,9 +107,6 @@ class BreathingGame extends Component {
         this.setState({exhaleTimer: 0});
         this.props.closeBreathingGame();
         return;
-      }
-      if (this.state.exhaleTimer === 1) {
-        this.props.showBreathCount();
       }
       this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
     }, 1000);

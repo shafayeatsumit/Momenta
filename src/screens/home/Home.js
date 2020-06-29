@@ -6,7 +6,6 @@ import {
   Animated,
   StyleSheet,
   Image,
-  ImageBackground,
   ActivityIndicator,
   TouchableOpacity,
   Modal,
@@ -85,8 +84,6 @@ class Home extends Component {
   };
 
   imageFadeIn = (cb) => {
-    const {breathCountVisible} = this.state;
-    breathCountVisible && this.setState({breathCountVisible: false});
     const {settings, dispatch} = this.props;
     const {exhaleTime} = settings;
     this.changeBackground();
@@ -176,16 +173,14 @@ class Home extends Component {
 
   goToNextBreathing = () => {
     const {dispatch} = this.props;
-    const {breathCountVisible} = this.state;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true});
+      this.setState({breathingGameVisible: true, breathCountVisible: true});
       clearTimeout(this.modalTimer);
       this.imageOpacity.setValue(1);
     }, 1000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
-      // breathCountVisible && this.setState({breathCountVisible: false});
       clearTimeout(this.imageSwitchTimer);
     }, 500);
   };
@@ -266,7 +261,7 @@ class Home extends Component {
   };
 
   closeBreathingGame = () => {
-    this.setState({breathingGameVisible: false});
+    this.setState({breathingGameVisible: false, breathCountVisible: false});
     const isFirstTimeUser = this.firstTimeUser();
     if (!isFirstTimeUser) {
       this.oldUserAction();
@@ -294,8 +289,8 @@ class Home extends Component {
     this.setState(
       {
         breathingGameVisible: true,
-        nextButtonVisible: false,
         breathCountVisible: true,
+        nextButtonVisible: false,
       },
       this.changeBackground,
     );
@@ -348,6 +343,7 @@ class Home extends Component {
         ? true
         : false;
     console.log('backgrounds length', backgrounds.length);
+    console.log('breath count', firstLaunch.breathCount, breathCountVisible);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -362,7 +358,7 @@ class Home extends Component {
           source={backgroundImage}
         />
         {firstLaunch.breathCount && breathCountVisible ? (
-          <View style={styles.breathCountContainer}>
+          <View pointerEvents="none" style={styles.breathCountContainer}>
             <Text style={styles.breathCountText}>
               {this.getTotalBreathCount()}
             </Text>

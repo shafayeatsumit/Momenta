@@ -361,9 +361,8 @@ class Home extends Component {
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage}
         />
-        {breathCountVisible ? (
+        {firstLaunch.breathCount && breathCountVisible ? (
           <View style={styles.breathCountContainer}>
-            <Text style={[styles.breathCountText]}>Calm Breaths</Text>
             <Text style={styles.breathCountText}>
               {this.getTotalBreathCount()}
             </Text>

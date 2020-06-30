@@ -41,7 +41,6 @@ class Home extends Component {
       onScreenContent: '',
       onScreenSetId: null,
       onScreenTagId: null,
-      breathCountVisible: true,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -102,10 +101,6 @@ class Home extends Component {
     const activeTag = tagNames.find((item) => item.id === activeTagId);
     return activeTag;
   };
-
-  showBreathCount = () => this.setState({breathCountVisible: true});
-
-  hideBreathCount = () => this.setState({breathCountVisible: false});
 
   getActiveTagIndex = () => {
     const {tagNames, tags, settings} = this.props;
@@ -175,7 +170,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     dispatch(fetchBackground());
     this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true, breathCountVisible: true});
+      this.setState({breathingGameVisible: true});
       clearTimeout(this.modalTimer);
       this.imageOpacity.setValue(1);
     }, 1000);
@@ -261,7 +256,7 @@ class Home extends Component {
   };
 
   closeBreathingGame = () => {
-    this.setState({breathingGameVisible: false, breathCountVisible: false});
+    this.setState({breathingGameVisible: false});
     const isFirstTimeUser = this.firstTimeUser();
     if (!isFirstTimeUser) {
       this.oldUserAction();
@@ -276,12 +271,6 @@ class Home extends Component {
     dispatch(handleFavorite(onScreenSetId));
   };
 
-  getTotalBreathCount = () => {
-    const {userInfo, firstLaunch} = this.props;
-    const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
-    return totalNumberOfBreaths.toLocaleString();
-  };
-
   handleNext = () => {
     const {onScreenTagName, onScreenSetId, onScreenTagId} = this.state;
     const {dispatch} = this.props;
@@ -289,7 +278,6 @@ class Home extends Component {
     this.setState(
       {
         breathingGameVisible: true,
-        breathCountVisible: true,
         nextButtonVisible: false,
       },
       this.changeBackground,
@@ -331,7 +319,6 @@ class Home extends Component {
       onScreenContent,
       onScreenSetId,
       nextButtonVisible,
-      breathCountVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
     const onScreenSet = sets[onScreenSetId];
@@ -343,7 +330,7 @@ class Home extends Component {
         ? true
         : false;
     console.log('backgrounds length', backgrounds.length);
-    // console.log('breath count', firstLaunch.breathCount, breathCountVisible);
+
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -357,13 +344,7 @@ class Home extends Component {
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage}
         />
-        {firstLaunch.breathCount && breathCountVisible ? (
-          <View pointerEvents="none" style={styles.breathCountContainer}>
-            <Text style={styles.breathCountText}>
-              {this.getTotalBreathCount()}
-            </Text>
-          </View>
-        ) : null}
+
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}
@@ -406,9 +387,6 @@ class Home extends Component {
               closeBreathingGame={this.closeBreathingGame}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
-              showBreathCount={this.showBreathCount}
-              breathCountVisible={breathCountVisible}
-              hideBreathCount={this.hideBreathCount}
             />
           </View>
         ) : null}

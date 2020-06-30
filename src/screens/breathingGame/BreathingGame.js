@@ -46,6 +46,7 @@ class BreathingGame extends Component {
       exhaleTimer: 0,
       inhaleTimer: 0,
       smoothWord: null,
+      breathCountVisible: true,
     };
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
@@ -88,12 +89,12 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
-      this.props.showBreathCount();
       this.setState({
         touchDisabled: false,
         successMessage: this.delayMessage,
         showHelperIcon: true,
         pressIn: false,
+        breathCountVisible: true,
       });
     });
   };
@@ -163,9 +164,8 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    this.setState({pressIn: true});
-    const {breathCountVisible, hideBreathCount} = this.props;
-    breathCountVisible && hideBreathCount();
+    this.setState({pressIn: true, breathCountVisible: false});
+
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -210,6 +210,12 @@ class BreathingGame extends Component {
     );
   };
 
+  getTotalBreathCount = () => {
+    const {userInfo, firstLaunch} = this.props;
+    const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
+    return totalNumberOfBreaths.toLocaleString();
+  };
+
   componentDidMount() {
     const {firstLaunch} = this.props;
     firstLaunch.breathCount === 0
@@ -248,6 +254,7 @@ class BreathingGame extends Component {
       showHelperIcon,
       modalVisible,
       pressIn,
+      breathCountVisible,
       smoothWord,
     } = this.state;
     const {firstLaunch, navigation} = this.props;
@@ -272,6 +279,13 @@ class BreathingGame extends Component {
             onPress={() => navigation.navigate('Settings')}>
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
+        ) : null}
+        {firstLaunch.breathCount && breathCountVisible ? (
+          <View pointerEvents="none" style={styles.breathCountContainer}>
+            <Text style={styles.breathCountText}>
+              {this.getTotalBreathCount()}
+            </Text>
+          </View>
         ) : null}
         <Svg height="100%" width="100%">
           <Defs>

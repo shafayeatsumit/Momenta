@@ -52,14 +52,6 @@ const ExplainerModal = ({closeExplainer}) => {
               <Text style={styles.timeTextSmall}>s</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setInhaleTime(6)}>
-            <View style={styles.timeTextContainer}>
-              <Text style={styles.timeText}>6</Text>
-              <Text style={styles.timeTextSmall}>s</Text>
-            </View>
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -116,11 +108,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal: 30,
   },
 
   button: {
     height: 60,
-    width: 65,
+    width: 80,
     borderRadius: 5,
     backgroundColor: '#3c71de',
     justifyContent: 'center',

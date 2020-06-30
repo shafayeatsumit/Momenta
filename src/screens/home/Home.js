@@ -4,7 +4,6 @@ import {
   View,
   Text,
   Animated,
-  StyleSheet,
   Image,
   ActivityIndicator,
   TouchableOpacity,
@@ -26,7 +25,6 @@ import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import starIcon from '../../../assets/icons/star_icon.png';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 
 class Home extends Component {
@@ -412,8 +410,18 @@ const mapStateToProps = (state, ownProps) => {
     userInfo,
     firstLaunch,
     settings,
+    breathingTip,
   } = state;
-  return {sets, tags, tagNames, backgrounds, userInfo, firstLaunch, settings};
+  return {
+    sets,
+    tags,
+    tagNames,
+    backgrounds,
+    userInfo,
+    firstLaunch,
+    settings,
+    breathingTip,
+  };
 };
 
 export default connect(mapStateToProps)(Home);

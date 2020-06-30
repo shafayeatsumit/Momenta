@@ -94,7 +94,7 @@ class Settings extends Component {
       tagNames,
       breathingTipsStatus,
     } = this.props;
-    const tags = tagNames.filter((tag) => tag.name !== 'Breathing Tip');
+
     return (
       <View style={styles.container}>
         <View style={styles.backButtonContainer}>
@@ -162,7 +162,7 @@ class Settings extends Component {
             Mini-meditations
           </Text>
           <ScrollView contentContainerStyle={styles.scrollView}>
-            {tags.map((item) => (
+            {tagNames.map((item) => (
               <Tag
                 item={item}
                 key={item.id}

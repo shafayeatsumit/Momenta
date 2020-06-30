@@ -5,6 +5,7 @@ import {tagNames, tags} from './tags';
 import sets from './sets';
 import settings from './settings';
 import backgrounds from './backgrounds';
+import breathingTip from './breathingTip';
 
 export default combineReducers({
   userInfo,
@@ -14,4 +15,5 @@ export default combineReducers({
   sets,
   backgrounds,
   settings,
+  breathingTip,
 });

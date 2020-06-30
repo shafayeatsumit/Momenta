@@ -50,19 +50,27 @@ const parseSets = (response) => {
 };
 
 const getTagNames = (response) => {
-  return response.result.map((tag, index) => ({
-    id: tag.id,
-    name: tag.name,
-    gradientColors: TAG_COlORS[index],
-  }));
+  return response.result
+    .map((tag, index) => ({
+      id: tag.id,
+      name: tag.name,
+      gradientColors: TAG_COlORS[index],
+    }))
+    .filter((item) => item.name !== 'Breathing Tip');
 };
-const getSelectedTags = (isNewUser, tagNames, settings) => {
-  return isNewUser
-    ? tagNames
-        .filter((tag) => tag.name !== 'Breathing Tip')
-        .map((tag) => tag.id)
-    : settings.selectedTags;
+const getSelectedTags = (isNewUser, tagNames, settings) =>
+  isNewUser ? tagNames.map((tag) => tag.id) : settings.selectedTags;
+
+const parseBreathingTip = (response, tags) => {
+  const bTipId = response.result.find((item) => item.name === 'Breathing Tip')
+    .id;
+  const sets = tags[bTipId].sets;
+  return {
+    id: bTipId,
+    sets,
+  };
 };
+
 export const fetchTags = (isNewUser) => (dispatch, getState) => {
   const {settings} = getState();
   const url = 'tags/';
@@ -72,6 +80,7 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
       const backgrounds = response.data.images;
       const tags = parseTags(response.data);
       const sets = parseSets(response.data);
+      const breathingTip = parseBreathingTip(response.data, tags);
       const tagNames = getTagNames(response.data);
       const selectedTags = getSelectedTags(isNewUser, tagNames, settings);
       dispatch({
@@ -80,6 +89,7 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
         tagNames,
         sets,
         selectedTags,
+        breathingTip,
       });
       downLoadImages(backgrounds, dispatch);
     })

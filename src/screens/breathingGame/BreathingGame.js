@@ -113,12 +113,18 @@ class BreathingGame extends Component {
   };
 
   startInhaleTimer = () => {
+    const {settings} = this.props;
+    console.log(
+      `settings ${settings.inhaleTime} state ${this.state.inhaleTime}`,
+    );
     const smoothWord = _.sample(SMOOTH_WORDS);
     this.setState({smoothWord});
     this.inhaleTimerId = setInterval(() => {
       this.setState((prevState) => ({
         successMessage: '',
-        inhaleTimer: prevState.inhaleTimer + 1,
+        ...(prevState.inhaleTimer < settings.inhaleTime && {
+          inhaleTimer: prevState.inhaleTimer + 1,
+        }),
       }));
     }, 1000);
   };
@@ -255,7 +261,7 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon =
       firstLaunch.breathCount > 0 ? tapIcon : tapIconFirstTimer;
-    const showArrowIcon = firstLaunch.onboardingCompleted;
+    const showArrowIcon = firstLaunch.onboardingCompleted && !pressIn;
 
     return (
       <View style={styles.container}>

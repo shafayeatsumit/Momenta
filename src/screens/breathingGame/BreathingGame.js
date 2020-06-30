@@ -65,6 +65,7 @@ class BreathingGame extends Component {
     this.startExhaleTimerId = null;
     this.closeModalId = null;
     this.fullScreenId = null;
+    this.breathCountId = null;
   }
 
   expandCircle = () => {
@@ -94,7 +95,6 @@ class BreathingGame extends Component {
         successMessage: this.delayMessage,
         showHelperIcon: true,
         pressIn: false,
-        breathCountVisible: true,
       });
     });
   };
@@ -164,7 +164,7 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    this.setState({pressIn: true, breathCountVisible: false});
+    this.setState({pressIn: true});
 
     this.pressInTime = new Date();
     this.startInhaleTimer();
@@ -221,7 +221,10 @@ class BreathingGame extends Component {
     firstLaunch.breathCount === 0
       ? this.showGameExplainerModal()
       : this.showHelpers();
-
+    this.breathCountId = setTimeout(() => {
+      this.setState({breathCountVisible: false});
+      clearTimeout(this.breathCountId);
+    }, 1200);
     this.animationId = this.radius.addListener(({value}) => {});
   }
 
@@ -243,6 +246,7 @@ class BreathingGame extends Component {
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.closeModalId && clearTimeout(this.closeModalId);
     this.fullScreenId && clearTimeout(this.fullScreenId);
+    this.breathCountId && clearTimeout(this.breathCountId);
   }
 
   render() {

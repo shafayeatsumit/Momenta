@@ -115,9 +115,6 @@ class BreathingGame extends Component {
 
   startInhaleTimer = () => {
     const {settings} = this.props;
-    console.log(
-      `settings ${settings.inhaleTime} state ${this.state.inhaleTime}`,
-    );
     const smoothWord = _.sample(SMOOTH_WORDS);
     this.setState({smoothWord});
     this.inhaleTimerId = setInterval(() => {

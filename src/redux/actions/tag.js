@@ -49,7 +49,21 @@ const parseSets = (response) => {
   return sets;
 };
 
-export const fetchTags = (newUser) => (dispatch, getState) => {
+const getTagNames = (response) => {
+  return response.result.map((tag, index) => ({
+    id: tag.id,
+    name: tag.name,
+    gradientColors: TAG_COlORS[index],
+  }));
+};
+const getSelectedTags = (isNewUser, tagNames, settings) => {
+  return isNewUser
+    ? tagNames
+        .filter((tag) => tag.name !== 'Breathing Tip')
+        .map((tag) => tag.id)
+    : settings.selectedTags;
+};
+export const fetchTags = (isNewUser) => (dispatch, getState) => {
   const {settings} = getState();
   const url = 'tags/';
   api
@@ -57,18 +71,9 @@ export const fetchTags = (newUser) => (dispatch, getState) => {
     .then((response) => {
       const backgrounds = response.data.images;
       const tags = parseTags(response.data);
-      const tagNames = response.data.result.map((tag, index) => ({
-        id: tag.id,
-        name: tag.name,
-        gradientColors: TAG_COlORS[index],
-      }));
-      const selectedTags = newUser
-        ? tagNames
-            .filter((tag) => tag.name !== 'Breathing Tip')
-            .map((tag) => tag.id)
-        : settings.selectedTags;
-      console.log(`newuser ${newUser} selected tags ${selectedTags}`);
       const sets = parseSets(response.data);
+      const tagNames = getTagNames(response.data);
+      const selectedTags = getSelectedTags(isNewUser, tagNames, settings);
       dispatch({
         type: 'INITIAL_DATA',
         tags,

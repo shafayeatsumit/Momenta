@@ -376,12 +376,7 @@ class Home extends Component {
           ) : null}
         </SafeAreaView>
         {breathingGameVisible ? (
-          <View
-            style={{
-              height: ScreenHeight,
-              width: ScreenWidth,
-              ...StyleSheet.absoluteFillObject,
-            }}>
+          <View style={styles.breathingGameContainer}>
             <BrethingGame
               backgroundImage={backgroundImage}
               closeBreathingGame={this.closeBreathingGame}

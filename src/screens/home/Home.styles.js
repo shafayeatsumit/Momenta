@@ -1,7 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
-console.log(ScreenWidth);
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
@@ -10,6 +9,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#1b1f37',
   },
   imageContainer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  breathingGameContainer: {
+    height: ScreenHeight,
+    width: ScreenWidth,
     ...StyleSheet.absoluteFillObject,
   },
   container: {

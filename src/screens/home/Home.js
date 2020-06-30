@@ -179,8 +179,8 @@ class Home extends Component {
   };
 
   firstTimeUser = () => {
-    const {firstLaunch} = this.props;
-    return !firstLaunch.onboardingCompleted;
+    const {onboardingCompleted} = this.props;
+    return !onboardingCompleted;
   };
 
   getTagIdByName = (tagName) =>
@@ -214,8 +214,8 @@ class Home extends Component {
   };
 
   newUserAction = () => {
-    const {firstLaunch, dispatch} = this.props;
-    const {breathCount} = firstLaunch;
+    const {userInfo, dispatch} = this.props;
+    const {breathCount} = userInfo;
     if (breathCount === 0) {
       dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
       this.goToNextBreathing();
@@ -308,7 +308,7 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds, sets, firstLaunch, navigation} = this.props;
+    const {backgrounds, sets, onboardingCompleted, navigation} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
@@ -322,7 +322,7 @@ class Home extends Component {
     const onScreenSet = sets[onScreenSetId];
     const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
     const showStar =
-      firstLaunch.onboardingCompleted &&
+      onboardingCompleted &&
       nextButtonVisible &&
       onScreenTagName !== 'Breathing Tip'
         ? true
@@ -408,7 +408,6 @@ const mapStateToProps = (state, ownProps) => {
     tagNames,
     backgrounds,
     userInfo,
-    firstLaunch,
     settings,
     breathingTip,
   } = state;
@@ -418,9 +417,9 @@ const mapStateToProps = (state, ownProps) => {
     tagNames,
     backgrounds,
     userInfo,
-    firstLaunch,
     settings,
     breathingTip,
+    onboardingCompleted,
   };
 };
 

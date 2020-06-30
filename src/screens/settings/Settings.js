@@ -12,11 +12,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Tag from './Tag';
-import {
-  ScreenHeight,
-  ScreenWidth,
-  PickerPlaceHolder,
-} from '../../helpers/constants/common';
+import {ScreenWidth, PickerPlaceHolder} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';

@@ -1,19 +1,21 @@
 import {combineReducers} from 'redux';
 import userInfo from './userInfo';
-import firstLaunch from './firstLaunch';
+import onboardingCompleted from './onboardingCompleted';
 import {tagNames, tags} from './tags';
 import sets from './sets';
 import settings from './settings';
+import currentSession from './currentSession';
 import backgrounds from './backgrounds';
 import breathingTip from './breathingTip';
 
 export default combineReducers({
   userInfo,
-  firstLaunch,
+  onboardingCompleted,
   tagNames,
   tags,
   sets,
   backgrounds,
   settings,
   breathingTip,
+  currentSession,
 });

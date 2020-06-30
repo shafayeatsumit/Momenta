@@ -208,14 +208,13 @@ class BreathingGame extends Component {
   };
 
   getTotalBreathCount = () => {
-    const {userInfo, firstLaunch} = this.props;
-    const totalNumberOfBreaths = userInfo.breathCount + firstLaunch.breathCount;
-    return totalNumberOfBreaths.toLocaleString();
+    const {userInfo} = this.props;
+    return userInfo.breathCount.toLocaleString();
   };
 
   componentDidMount() {
-    const {firstLaunch} = this.props;
-    firstLaunch.breathCount === 0
+    const {userInfo} = this.props;
+    userInfo.breathCount === 0
       ? this.showGameExplainerModal()
       : this.showHelpers();
     this.breathCountId = setTimeout(() => {
@@ -258,7 +257,7 @@ class BreathingGame extends Component {
       breathCountVisible,
       smoothWord,
     } = this.state;
-    const {firstLaunch, navigation} = this.props;
+    const {onboardingCompleted, userInfo, navigation} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
@@ -267,9 +266,8 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
-    const helperIcon =
-      firstLaunch.breathCount > 0 ? tapIcon : tapIconFirstTimer;
-    const showArrowIcon = firstLaunch.onboardingCompleted && !pressIn;
+    const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
+    const showArrowIcon = onboardingCompleted && !pressIn;
 
     return (
       <View style={styles.container}>
@@ -281,7 +279,7 @@ class BreathingGame extends Component {
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}
-        {firstLaunch.breathCount && breathCountVisible ? (
+        {userInfo.breathCount && breathCountVisible ? (
           <View pointerEvents="none" style={styles.breathCountContainer}>
             <Text style={styles.breathCountText}>
               {this.getTotalBreathCount()}
@@ -352,11 +350,11 @@ class BreathingGame extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {firstLaunch, settings, userInfo} = state;
+  const {settings, userInfo, onboardingCompleted} = state;
   return {
-    firstLaunch,
     settings,
     userInfo,
+    onboardingCompleted,
   };
 };
 

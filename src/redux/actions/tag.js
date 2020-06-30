@@ -49,7 +49,8 @@ const parseSets = (response) => {
   return sets;
 };
 
-export const fetchTags = () => (dispatch, getState) => {
+export const fetchTags = (newUser) => (dispatch, getState) => {
+  const {settings} = getState();
   const url = 'tags/';
   api
     .get(url)
@@ -60,12 +61,21 @@ export const fetchTags = () => (dispatch, getState) => {
         id: tag.id,
         name: tag.name,
         gradientColors: TAG_COlORS[index],
-        selected: true,
-        active: false,
       }));
-      const selectedTags = tagNames.map((tag) => tag.id);
+      const selectedTags = newUser
+        ? tagNames
+            .filter((tag) => tag.name !== 'Breathing Tip')
+            .map((tag) => tag.id)
+        : settings.selectedTags;
+      console.log(`newuser ${newUser} selected tags ${selectedTags}`);
       const sets = parseSets(response.data);
-      dispatch({type: 'INITIAL_DATA', tags, tagNames, sets, selectedTags});
+      dispatch({
+        type: 'INITIAL_DATA',
+        tags,
+        tagNames,
+        sets,
+        selectedTags,
+      });
       downLoadImages(backgrounds, dispatch);
     })
     .catch((error) => {
@@ -82,7 +92,7 @@ export const anonymousSignup = () => (dispatch, getState) => {
       analytics().setUserId(id.toString());
 
       AsyncStorage.setItem('token', resp.data.token)
-        .then(() => dispatch(fetchTags()))
+        .then(() => dispatch(fetchTags(true)))
         .catch((error) => console.log('error in setting async storage', error));
     })
     .catch((error) => console.log('error in auth==>', error));

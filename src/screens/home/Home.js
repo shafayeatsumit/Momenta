@@ -343,7 +343,7 @@ class Home extends Component {
         ? true
         : false;
     console.log('backgrounds length', backgrounds.length);
-    console.log('breath count', firstLaunch.breathCount, breathCountVisible);
+    // console.log('breath count', firstLaunch.breathCount, breathCountVisible);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>

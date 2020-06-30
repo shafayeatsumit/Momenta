@@ -17,7 +17,6 @@ import {
   ScreenWidth,
   PickerPlaceHolder,
 } from '../../helpers/constants/common';
-import {toggleBreathingTips} from '../../redux/actions/settings';
 import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';
@@ -61,26 +60,16 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
-  getBreathingTipsId = () => {
+  getBreathingTipId = () => {
     const {tagNames} = this.props;
     const breathingTipsId = tagNames.find((tag) => tag.name === 'Breathing Tip')
       .id;
     return breathingTipsId;
   };
 
-  getBreathingTipsStatus = () => {
-    const {selectedTags} = this.props;
-    const breathingTipsId = this.getBreathingTipsId();
-    const isBreathingTipsOn =
-      selectedTags.findIndex((tagId) => tagId === breathingTipsId) !== -1;
-    return isBreathingTipsOn;
-  };
-
   switchBreathingTips = () => {
     const {dispatch} = this.props;
-    const breathingTipsId = this.getBreathingTipsId();
-    const isBreathingTipsOn = this.getBreathingTipsStatus();
-    dispatch(toggleBreathingTips(isBreathingTipsOn, breathingTipsId));
+    dispatch({type: 'TOGGLE_BREATHING_TIP'});
   };
 
   goHome = () => this.props.navigation.goBack();
@@ -98,8 +87,13 @@ class Settings extends Component {
   };
 
   render() {
-    const {inhaleTime, exhaleTime, selectedTags, tagNames} = this.props;
-    const breathingTipsStatus = this.getBreathingTipsStatus();
+    const {
+      inhaleTime,
+      exhaleTime,
+      selectedTags,
+      tagNames,
+      breathingTipsStatus,
+    } = this.props;
     const tags = tagNames.filter((tag) => tag.name !== 'Breathing Tip');
     return (
       <View style={styles.container}>
@@ -186,12 +180,18 @@ class Settings extends Component {
 const mapStateToProps = (state, ownProps) => {
   const {settings, tagNames} = state;
 
-  const {inhaleTime, exhaleTime, selectedTags} = settings;
+  const {
+    inhaleTime,
+    exhaleTime,
+    selectedTags,
+    breathingTip: breathingTipsStatus,
+  } = settings;
   return {
     inhaleTime,
     exhaleTime,
     tagNames,
     selectedTags,
+    breathingTipsStatus,
   };
 };
 

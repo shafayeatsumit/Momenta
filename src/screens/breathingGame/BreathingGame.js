@@ -99,14 +99,13 @@ class BreathingGame extends Component {
     });
   };
 
-  startExhaleTimer = () => {
+  exhaleCountDown = () => {
     this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.props.imageFadeOut();
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 0) {
         clearInterval(this.exhaleTimerId);
         this.setState({exhaleTimer: 0});
-        this.props.closeBreathingGame();
         return;
       }
       this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
@@ -127,22 +126,41 @@ class BreathingGame extends Component {
     }, 1000);
   };
 
-  showFullScreen = (message) => {
-    this.setState({successMessage: message});
-    this.closeModalId = setTimeout(() => {
-      this.props.closeBreathingGame();
-    }, 1500);
+  newUserAction = () => {
+    const {userInfo, dispatch} = this.props;
+    const {breathCount} = userInfo;
+    const showBreathingTip = breathCount === 2;
+    const showMiniMed = breathCount === 4;
+    if (showBreathingTip) {
+      // showBreathingTip
+    } else if (showMiniMed) {
+      // show mini med
+    } else {
+      this.props.goToNextBreathing();
+      this.startExhaleTimer();
+    }
+  };
+
+  startExhaleTimer = () => {
+    const {exhaleTime} = this.props.settings;
+    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
+    this.startExhaleTimerId = setTimeout(() => {
+      this.setState(
+        {successMessage: false, exhaleTimer: exhaleTime},
+        this.exhaleCountDown,
+      );
+    }, 500);
   };
 
   startExhale = () => {
     this.setState({touchDisabled: true});
-    const {exhaleTime} = this.props.settings;
-    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
-    this.startExhaleTimerId = setTimeout(() => {
-      this.setState({successMessage: false, exhaleTimer: exhaleTime}, () => {
-        this.startExhaleTimer();
-      });
-    }, 500);
+    const {onboardingCompleted} = this.props;
+    if (onboardingCompleted) {
+      // this.oldUserAction();
+    } else {
+      console.log('new user action');
+      this.newUserAction();
+    }
   };
 
   handlePressOut = () => {

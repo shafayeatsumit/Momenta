@@ -19,12 +19,10 @@ import {
   fetchContent,
   removeContent,
 } from '../../redux/actions/tag';
-import {handleFavorite} from '../../redux/actions/favorites';
 import BrethingGame from '../breathingGame/BreathingGame';
 import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
-import starIcon from '../../../assets/icons/star_icon.png';
 import analytics from '@react-native-firebase/analytics';
 
 class Home extends Component {
@@ -164,23 +162,30 @@ class Home extends Component {
     );
   };
 
-  goToNextBreathing = () => {
-    const {dispatch} = this.props;
+  closeBreathingGame = () => {
+    const {dispatch, settings} = this.props;
+    const duration = settings.exhaleTime * 1000;
     dispatch(fetchBackground());
-    this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true});
-      clearTimeout(this.modalTimer);
-      this.imageOpacity.setValue(1);
-    }, 1000);
     this.imageSwitchTimer = setTimeout(() => {
       this.changeBackground();
+      this.setState({breathingGameVisible: false});
       clearTimeout(this.imageSwitchTimer);
-    }, 500);
+    }, duration);
   };
 
-  firstTimeUser = () => {
-    const {onboardingCompleted} = this.props;
-    return !onboardingCompleted;
+  showBreathingGame = () => {
+    const {settings} = this.props;
+    const duration = settings.exhaleTime * 1000;
+    this.modalTimer = setTimeout(() => {
+      this.setState({breathingGameVisible: true});
+      this.imageOpacity.setValue(1);
+      clearTimeout(this.modalTimer);
+    }, duration + 500);
+  };
+
+  goToNextBreathing = () => {
+    this.closeBreathingGame();
+    this.showBreathingGame();
   };
 
   getTagIdByName = (tagName) =>
@@ -206,28 +211,9 @@ class Home extends Component {
       {
         onScreenContent: contentText,
         onScreenTagName: tagName,
-        onScreenSetId: firstSetId,
-        onScreenTagId: tagId,
       },
       this.fadeIn,
     );
-  };
-
-  newUserAction = () => {
-    const {userInfo, dispatch} = this.props;
-    const {breathCount} = userInfo;
-    if (breathCount === 0) {
-      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
-      this.goToNextBreathing();
-    } else if (breathCount === 1) {
-      dispatch({type: 'NEW_USER_INCREASE_BREATH_COUNT'});
-      this.imageFadeIn(this.showBreathingTipExplainer);
-      // this.showBreathingTipExplainer();
-    } else {
-      dispatch({type: 'NEW_USER_ONBOARDING_COMPLETED'});
-      this.imageFadeIn(this.showMeditationExplainer);
-      // this.showMeditationExplainer();
-    }
   };
 
   oldUserAction = () => {
@@ -251,22 +237,6 @@ class Home extends Component {
     this.setState({meditationExplainerVisible: false});
     const tagName = 'Gratitude';
     this.showContentByTagName(tagName);
-  };
-
-  closeBreathingGame = () => {
-    this.setState({breathingGameVisible: false});
-    const isFirstTimeUser = this.firstTimeUser();
-    if (!isFirstTimeUser) {
-      this.oldUserAction();
-    } else {
-      this.newUserAction();
-    }
-  };
-
-  handleStar = () => {
-    const {dispatch} = this.props;
-    const {onScreenSetId} = this.state;
-    dispatch(handleFavorite(onScreenSetId));
   };
 
   handleNext = () => {
@@ -308,27 +278,19 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds, sets, onboardingCompleted, navigation} = this.props;
+    const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,
       breathingTipExplainerVisible,
       meditationExplainerVisible,
       onScreenTagName,
       onScreenContent,
-      onScreenSetId,
       nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-    const onScreenSet = sets[onScreenSetId];
-    const isFavorite = onScreenSet ? onScreenSet.isBookmark : false;
-    const showStar =
-      onboardingCompleted &&
-      nextButtonVisible &&
-      onScreenTagName !== 'Breathing Tip'
-        ? true
-        : false;
-    console.log('backgrounds length', backgrounds.length);
 
+    console.log('backgrounds length', backgrounds.length);
+    console.log('breathing game visible', breathingGameVisible);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -362,24 +324,14 @@ class Home extends Component {
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>
           ) : null}
-          {showStar ? (
-            <TouchableOpacity
-              onPress={this.handleStar}
-              style={styles.starIconContainer}>
-              <Image
-                source={starIcon}
-                style={[styles.starIcon, isFavorite && styles.starColor]}
-              />
-            </TouchableOpacity>
-          ) : null}
         </SafeAreaView>
         {breathingGameVisible ? (
           <View style={styles.breathingGameContainer}>
             <BrethingGame
               backgroundImage={backgroundImage}
-              closeBreathingGame={this.closeBreathingGame}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
+              goToNextBreathing={this.goToNextBreathing}
             />
           </View>
         ) : null}
@@ -409,6 +361,7 @@ const mapStateToProps = (state, ownProps) => {
     backgrounds,
     userInfo,
     settings,
+    onboardingCompleted,
     breathingTip,
   } = state;
   return {

@@ -39,7 +39,7 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       touchDisabled: true,
-      modalVisible: false,
+      gameExplainerVisible: false,
       showHelperIcon: false,
       pressIn: false,
       successMessage: '',
@@ -133,17 +133,35 @@ class BreathingGame extends Component {
     const showBreathingTip = breathCount === 2;
     const showMiniMed = breathCount === 4;
     if (showBreathingTip) {
-      // showBreathingTip
       this.props.imageFadeOut();
       this.props.showBreathingTip();
       dispatch({type: 'ADD_BREATH_COUNT'});
     } else if (showMiniMed) {
-      this.props.showContent();
+      this.props.showMeditationExplainer();
+      dispatch({type: 'ONBOARDING_COMPLETED'});
     } else {
       this.props.goToNextBreathing();
       this.startExhaleTimer();
       dispatch({type: 'ADD_BREATH_COUNT'});
     }
+  };
+
+  oldUserAction = () => {
+    const {dispatch, currentSession, settings} = this.props;
+    const {selectedTags, breathingTip} = settings;
+    const {breathCount} = currentSession;
+    const hasSelectedTags = selectedTags.length;
+    console.log('breath count', breathCount);
+    if (breathCount === 4 && hasSelectedTags) {
+      this.props.showContent();
+    } else if (breathCount === 2 && breathingTip) {
+      this.props.imageFadeOut();
+      this.props.showBreathingTip();
+    } else {
+      this.props.goToNextBreathing();
+      this.startExhaleTimer();
+    }
+    dispatch({type: 'ADD_BREATH_COUNT'});
   };
 
   startExhaleTimer = () => {
@@ -160,11 +178,7 @@ class BreathingGame extends Component {
   startExhale = () => {
     this.setState({touchDisabled: true});
     const {onboardingCompleted} = this.props;
-    if (onboardingCompleted) {
-      // this.oldUserAction();
-    } else {
-      this.newUserAction();
-    }
+    onboardingCompleted ? this.oldUserAction() : this.newUserAction();
   };
 
   handlePressOut = () => {
@@ -192,13 +206,13 @@ class BreathingGame extends Component {
 
   showGameExplainerModal = () => {
     this.explainerModalId = setTimeout(
-      () => this.setState({modalVisible: true}),
+      () => this.setState({gameExplainerVisible: true}),
       1200,
     );
   };
 
   closeExplainer = () => {
-    this.setState({modalVisible: false});
+    this.setState({gameExplainerVisible: false});
     this.showHelpers();
     clearTimeout(this.explainerModalId);
   };
@@ -243,6 +257,7 @@ class BreathingGame extends Component {
   checkForNewUserModal = () => {
     const {userInfo} = this.props;
     if (userInfo.breathCount === 0) {
+      this.showGameExplainerModal();
     } else if (userInfo.breathCount === 3) {
       this.showBreathingTipExplainer();
     }
@@ -293,7 +308,7 @@ class BreathingGame extends Component {
       touchDisabled,
       inhaleTimer,
       showHelperIcon,
-      modalVisible,
+      gameExplainerVisible,
       pressIn,
       breathCountVisible,
       breathingTipExplainerVisible,
@@ -312,7 +327,9 @@ class BreathingGame extends Component {
     const showArrowIcon = onboardingCompleted && !pressIn;
     return (
       <View style={styles.container}>
-        {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
+        {gameExplainerVisible && (
+          <GameExplainer closeExplainer={this.closeExplainer} />
+        )}
         {breathingTipExplainerVisible && (
           <BreathingTipExplainer closeModal={this.closeBreathingTipExplainer} />
         )}
@@ -394,11 +411,12 @@ class BreathingGame extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, userInfo, onboardingCompleted} = state;
+  const {settings, userInfo, onboardingCompleted, currentSession} = state;
   return {
     settings,
     userInfo,
     onboardingCompleted,
+    currentSession,
   };
 };
 

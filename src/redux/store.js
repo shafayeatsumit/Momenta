@@ -6,7 +6,7 @@ import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
-AsyncStorage.clear();
+// AsyncStorage.clear();
 // TODO: need to adjust the whitelist
 const persistConfig = {
   key: 'root',

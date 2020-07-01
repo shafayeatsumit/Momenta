@@ -118,6 +118,7 @@ export const removeContent = (tagId) => (dispatch, getState) => {
   const currentTagObject = tags[tagId];
   const currentTagSets = currentTagObject.sets;
   const updatedTagSets = currentTagSets.slice(1);
+  const firstStId = tags[tagId].sets[0];
   const updatedTags = {
     ...tags,
     [tagId]: {
@@ -126,6 +127,7 @@ export const removeContent = (tagId) => (dispatch, getState) => {
     },
   };
   const updatedSets = Object.assign({}, sets);
+  delete updatedSets[firstStId];
   dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
 };
 

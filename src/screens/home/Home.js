@@ -123,8 +123,6 @@ class Home extends Component {
 
   showContent = () => {
     const tagId = this.findTag();
-    console.log('selected tags', this.props.settings.selectedTags);
-    console.log('last tag', tagId);
     const tagName = this.getTagNameById(tagId);
     const sets = this.getSetsByTagId(tagId);
     const content = this.getContent(sets);
@@ -144,8 +142,7 @@ class Home extends Component {
     const duration = settings.exhaleTime * 1000;
     dispatch(fetchBackground());
     this.imageSwitchTimer = setTimeout(() => {
-      // TODO: need to uncoment this.
-      // this.changeBackground();
+      this.changeBackground();
       this.setState({breathingGameVisible: false});
       clearTimeout(this.imageSwitchTimer);
     }, duration);
@@ -176,8 +173,12 @@ class Home extends Component {
   getTagNameById = (id) =>
     this.props.tagNames.find((tag) => tag.id === id).name;
 
-  showMeditationExplainer = () =>
-    this.setState({meditationExplainerVisible: true});
+  showMeditationExplainer = () => {
+    this.meditationExplainerId = setTimeout(() => {
+      this.setState({meditationExplainerVisible: true});
+      this.meditationExplainerId && clearTimeout(this.meditationExplainerId);
+    }, 500);
+  };
 
   openBreathingGame = () => {
     this.openBreathingGameID = setTimeout(() => {
@@ -214,6 +215,7 @@ class Home extends Component {
 
   closeMeditationExplainer = () => {
     this.setState({meditationExplainerVisible: false});
+    this.showContent();
   };
 
   handleNext = () => {
@@ -226,11 +228,12 @@ class Home extends Component {
         breathingGameVisible: true,
         nextButtonVisible: false,
       },
-      // TODO: uncomment below.
-      // this.changeBackground,
+      this.changeBackground,
     );
+    // TODO: uncomment below.
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
+    dispatch({type: 'RESET_BREATH_COUNT'});
   };
 
   componentDidMount() {
@@ -257,10 +260,7 @@ class Home extends Component {
       nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-
     console.log('backgrounds length', backgrounds.length);
-    // console.log('currentSesion', this.props.currentSession);
-    // console.log('selected tags', this.props.settings);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -301,6 +301,7 @@ class Home extends Component {
               goToNextBreathing={this.goToNextBreathing}
               showBreathingTip={this.showBreathingTip}
               showContent={this.showContent}
+              showMeditationExplainer={this.showMeditationExplainer}
             />
           </View>
         ) : null}

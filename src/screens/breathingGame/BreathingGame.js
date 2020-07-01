@@ -96,6 +96,7 @@ class BreathingGame extends Component {
         successMessage: this.delayMessage,
         showHelperIcon: true,
         pressIn: false,
+        breathCountVisible: true,
       });
     });
   };
@@ -120,8 +121,13 @@ class BreathingGame extends Component {
     this.inhaleTimerId = setInterval(() => {
       this.setState((prevState) => ({
         successMessage: '',
+        // inhale timer doesnt go beyond the time of inhaleTime specified in the settings
         ...(prevState.inhaleTimer < settings.inhaleTime && {
           inhaleTimer: prevState.inhaleTimer + 1,
+        }),
+        // breathCounter goes away after first sec
+        ...(prevState.inhaleTimer === 0 && {
+          breathCountVisible: false,
         }),
       }));
     }, 1000);
@@ -198,7 +204,6 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     this.setState({pressIn: true});
-
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -263,20 +268,12 @@ class BreathingGame extends Component {
     }
   };
 
-  showBreathCount = () => {
-    this.breathCountId = setTimeout(() => {
-      this.setState({breathCountVisible: false});
-      clearTimeout(this.breathCountId);
-    }, 1200);
-  };
-
   componentDidMount() {
     const {onboardingCompleted} = this.props;
     if (!onboardingCompleted) {
       this.checkForNewUserModal();
     }
     this.showHelpers();
-    this.showBreathCount();
     this.animationId = this.radius.addListener(({value}) => {});
   }
 

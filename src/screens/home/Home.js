@@ -4,8 +4,7 @@ import {
   View,
   Text,
   Animated,
-  Image,
-  ActivityIndicator,
+  ImageBackground,
   TouchableOpacity,
   AppState,
   Modal,
@@ -16,12 +15,11 @@ import {
   fetchBackground,
   anonymousSignup,
   rearrangeBreathingTip,
-  activateTag,
   fetchContent,
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
-
+import SplashScreen from '../../../assets/images/splash.png';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
@@ -157,7 +155,7 @@ class Home extends Component {
       this.setState({breathingGameVisible: true});
       this.imageOpacity.setValue(1);
       clearTimeout(this.modalTimer);
-    }, duration + 700);
+    }, duration + 800);
   };
 
   goToNextBreathing = () => {
@@ -205,12 +203,14 @@ class Home extends Component {
   };
 
   showBreathingTip = () => {
-    const {settings} = this.props;
+    const {settings, dispatch} = this.props;
     this.breathingTipFadeIn();
     const fadeOutAfter = settings.exhaleTime * 1000 - 250;
     this.breathingTipTimer = setTimeout(() => {
       this.breathingTipFadeOut();
       this.setState({breathingGameVisible: false}, this.openBreathingGame);
+      this.changeBackground();
+      dispatch(fetchBackground());
       this.breathingTipTimer && clearTimeout(this.breathingTipTimer);
     }, fadeOutAfter);
   };
@@ -278,9 +278,7 @@ class Home extends Component {
     console.log('backgrounds length', backgrounds.length);
     if (!backgroundImage) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="rgb(120,121,137)" />
-        </View>
+        <ImageBackground style={styles.imageContainer} source={SplashScreen} />
       );
     }
     return (

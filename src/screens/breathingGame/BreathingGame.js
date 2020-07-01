@@ -38,7 +38,7 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      touchDisabled: true,
+      touchDisabled: false,
       gameExplainerVisible: false,
       showHelperIcon: false,
       pressIn: false,
@@ -203,7 +203,7 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    this.setState({pressIn: true});
+    this.setState({pressIn: true, successMessage: ''});
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -230,14 +230,11 @@ class BreathingGame extends Component {
   };
 
   showHelpers = () => {
-    this.hlperMessageId = setTimeout(
-      () =>
-        this.setState({
-          successMessage: this.helperMessage,
-          touchDisabled: false,
-        }),
-      600,
-    );
+    this.hlperMessageId = setTimeout(() => {
+      if (!this.state.pressIn) {
+        this.setState({successMessage: this.helperMessage});
+      }
+    }, 400);
     this.showHelperIcon();
   };
 
@@ -250,7 +247,7 @@ class BreathingGame extends Component {
   showHelperIcon = () => {
     this.helperIconId = setTimeout(
       () => this.setState({showHelperIcon: true}),
-      1300,
+      800,
     );
   };
 

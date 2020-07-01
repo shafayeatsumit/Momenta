@@ -11,7 +11,7 @@ import thunk from 'redux-thunk';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userInfo', 'onboardingCompleted', 'backgrounds', 'settings'],
+  whitelist: ['userInfo', 'onboardingCompleted', 'settings'],
 };
 // const middleware = [logger, thunk];
 const middleware = [thunk];

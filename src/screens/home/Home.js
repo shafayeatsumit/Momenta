@@ -7,6 +7,7 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
+  AppState,
   Modal,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -36,6 +37,7 @@ class Home extends Component {
       onScreenContent: '',
       onScreenSetId: null,
       onScreenTagId: null,
+      appState: AppState.currentState,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -155,7 +157,7 @@ class Home extends Component {
       this.setState({breathingGameVisible: true});
       this.imageOpacity.setValue(1);
       clearTimeout(this.modalTimer);
-    }, duration + 500);
+    }, duration + 700);
   };
 
   goToNextBreathing = () => {
@@ -236,6 +238,17 @@ class Home extends Component {
     dispatch({type: 'RESET_BREATH_COUNT'});
   };
 
+  handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.props.dispatch({type: 'RESET_SESSION'});
+      console.log('App has come to the foreground!');
+    }
+    this.setState({appState: nextAppState});
+  };
+
   componentDidMount() {
     const {userInfo, dispatch, sets} = this.props;
     const hasSets = Object.keys(sets).length;
@@ -245,9 +258,11 @@ class Home extends Component {
       !hasSets && dispatch(fetchTags());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
   componentWillUnmount() {
     this.slideTimerId && clearTimeout(this.slideTimerId);
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   render() {

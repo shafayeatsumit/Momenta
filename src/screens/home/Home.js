@@ -14,13 +14,13 @@ import {
   fetchTags,
   fetchBackground,
   anonymousSignup,
-  moveFirstSetToLast,
+  rearrangeBreathingTip,
   activateTag,
   fetchContent,
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
-import BreathingTipExplainer from './explainer_modals/BreathingTipExplainer';
+
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
@@ -30,7 +30,6 @@ class Home extends Component {
     super(props);
     this.state = {
       breathingGameVisible: true,
-      breathingTipExplainerVisible: false,
       meditationExplainerVisible: false,
       nextButtonVisible: false,
       onScreenTagName: '',
@@ -47,23 +46,41 @@ class Home extends Component {
   }
   changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
 
-  fadeIn = () => {
+  fadeInContent = (tagDuration, contentDuration, contentDelay, cb) => {
     Animated.timing(this.tagOpacity, {
       toValue: 1,
-      duration: 1000,
+      duration: tagDuration ? tagDuration : 1000,
       delay: 0,
       useNativeDriver: true,
     }).start();
 
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 1500,
-      delay: 500,
+      duration: contentDuration ? contentDuration : 1500,
+      delay: contentDelay ? contentDelay : 500,
       useNativeDriver: true,
-    }).start(this.showNextButton);
+    }).start(() => {
+      cb && cb();
+    });
   };
 
-  fadeOut = () => {
+  breathingTipFadeOut = () => {
+    const {dispatch} = this.props;
+    Animated.parallel([
+      Animated.timing(this.tagOpacity, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.contentOpacity, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => dispatch(rearrangeBreathingTip()));
+  };
+
+  fadeOutContent = () => {
     this.tagOpacity.setValue(0);
     this.contentOpacity.setValue(0);
   };
@@ -78,95 +95,15 @@ class Home extends Component {
     }).start();
   };
 
-  imageFadeIn = (cb) => {
-    const {settings, dispatch} = this.props;
-    const {exhaleTime} = settings;
-    this.changeBackground();
-    Animated.timing(this.imageOpacity, {
-      toValue: 1,
-      duration: exhaleTime * 1000,
-      useNativeDriver: true,
-    }).start(cb);
-    dispatch(fetchBackground());
-  };
-
-  getActiveTag = (tagIndex) => {
-    const {tagNames, settings} = this.props;
-    const {selectedTags} = settings;
-    const activeTagId = selectedTags[tagIndex];
-    const activeTag = tagNames.find((item) => item.id === activeTagId);
-    return activeTag;
-  };
-
-  getActiveTagIndex = () => {
-    const {tagNames, tags, settings} = this.props;
-    const selectedTags = tagNames.filter((item) =>
-      settings.selectedTags.includes(item.id),
-    );
-    const activeTagIndex = selectedTags.findIndex((item) => item.active);
-    const noActiveTag = activeTagIndex === -1;
-    const lastTagIsActive = activeTagIndex === selectedTags.length - 1;
-
-    if (noActiveTag || lastTagIsActive) {
-      return 0;
-    }
-    const isNextTagFavorites =
-      selectedTags[activeTagIndex + 1].name === 'Favorites';
-    // if next tag is favorite and no set then skip to 0.
-    if (isNextTagFavorites) {
-      const favoritesTagId = this.getTagIdByName('Favorites');
-      const hasFvoriteSet = tags[favoritesTagId].sets.length;
-      return hasFvoriteSet ? activeTagIndex + 1 : 0;
-    } else {
-      return activeTagIndex + 1;
-    }
-  };
-
   hideNextButton = () => this.setState({nextButtonVisible: false});
   showNextButton = () => this.setState({nextButtonVisible: true});
-
-  getActiveTagSets = (activeTagIndex) => {
-    const {tagNames, tags} = this.props;
-    const activeTagId = tagNames[activeTagIndex].id;
-    const activeSets = tags[activeTagId].sets;
-    return activeSets;
-  };
-
-  getFavoriteTagName = (setId) => {
-    const {sets} = this.props;
-    const favoriteSet = sets[setId];
-    const tagName = favoriteSet.tags ? favoriteSet.tags[0].name : null;
-    return tagName;
-  };
-
-  showContent = () => {
-    const {dispatch} = this.props;
-    const activeTagIndex = this.getActiveTagIndex();
-    dispatch(activateTag(activeTagIndex));
-    const activeTag = this.getActiveTag(activeTagIndex);
-    const tagName = activeTag.name;
-    const activeSets = this.getActiveTagSets(activeTagIndex);
-    const firstSetId = activeSets[0];
-    const content = this.getContentBySetId(firstSetId);
-    const contentText = content ? content.text : '';
-    const onScreenTagName =
-      tagName === 'Favorites' ? this.getFavoriteTagName(firstSetId) : tagName;
-    this.setState(
-      {
-        onScreenContent: contentText,
-        onScreenTagName: onScreenTagName,
-        onScreenSetId: firstSetId,
-        onScreenTagId: activeTag.id,
-      },
-      this.fadeIn,
-    );
-  };
 
   closeBreathingGame = () => {
     const {dispatch, settings} = this.props;
     const duration = settings.exhaleTime * 1000;
     dispatch(fetchBackground());
     this.imageSwitchTimer = setTimeout(() => {
+      // TODO: need to uncoment this.
       this.changeBackground();
       this.setState({breathingGameVisible: false});
       clearTimeout(this.imageSwitchTimer);
@@ -195,54 +132,50 @@ class Home extends Component {
 
   getContentBySetId = (setId) => this.props.sets[setId].contents[0];
 
-  showBreathingTipExplainer = () =>
-    this.setState({breathingTipExplainerVisible: true});
-
   showMeditationExplainer = () =>
     this.setState({meditationExplainerVisible: true});
 
-  showContentByTagName = (tagName) => {
-    const tagId = this.getTagIdByName(tagName);
-    const tagSets = this.getSetsByTagId(tagId);
-    const firstSetId = tagSets[0];
+  openBreathingGame = () => {
+    this.openBreathingGameID = setTimeout(() => {
+      this.setState({breathingGameVisible: true});
+      this.imageOpacity.setValue(1);
+      this.openBreathingGameID && clearTimeout(this.openBreathingGameID);
+    }, 500);
+  };
+
+  breathingTipFadeIn = () => {
+    const {breathingTip} = this.props;
+    const firstSetId = breathingTip.sets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
     this.setState(
       {
         onScreenContent: contentText,
-        onScreenTagName: tagName,
+        onScreenTagName: 'Breathing Tip',
       },
-      this.fadeIn,
+      () => this.fadeInContent(800, 800, 300),
     );
   };
 
-  oldUserAction = () => {
-    const {userInfo, dispatch} = this.props;
-    const userSeesContent = (userInfo.breathCount + 1) % 3 === 0;
-    dispatch({type: 'INCREASE_PLAY_COUNT'});
-    if (userSeesContent) {
-      this.imageFadeIn(this.showContent);
-    } else {
-      this.goToNextBreathing();
-    }
-  };
-
-  closeBreathingTipExplainer = () => {
-    this.setState({breathingTipExplainerVisible: false});
-    const tagName = 'Breathing Tip';
-    this.showContentByTagName(tagName);
+  showBreathingTip = () => {
+    const {settings} = this.props;
+    this.breathingTipFadeIn();
+    const fadeOutAfter = settings.exhaleTime * 1000 - 250;
+    this.breathingTipTimer = setTimeout(() => {
+      this.breathingTipFadeOut();
+      this.setState({breathingGameVisible: false}, this.openBreathingGame);
+      this.breathingTipTimer && clearTimeout(this.breathingTipTimer);
+    }, fadeOutAfter);
   };
 
   closeMeditationExplainer = () => {
     this.setState({meditationExplainerVisible: false});
-    const tagName = 'Gratitude';
-    this.showContentByTagName(tagName);
   };
 
   handleNext = () => {
-    const {onScreenTagName, onScreenSetId, onScreenTagId} = this.state;
+    const {onScreenTagId} = this.state;
     const {dispatch} = this.props;
-    this.fadeOut();
+    this.fadeOutContent();
     this.setState(
       {
         breathingGameVisible: true,
@@ -250,16 +183,8 @@ class Home extends Component {
       },
       this.changeBackground,
     );
-    const isFavoriteOrBreathingTip =
-      onScreenTagName === 'Favorites' || onScreenTagName === 'Breathing Tip';
-
-    if (isFavoriteOrBreathingTip) {
-      dispatch(moveFirstSetToLast(onScreenTagId));
-    } else {
-      const favoritesTagId = this.getTagIdByName('Favorites');
-      dispatch(removeContent(onScreenTagId, onScreenSetId, favoritesTagId));
-      dispatch(fetchContent(onScreenTagId));
-    }
+    dispatch(removeContent(onScreenTagId));
+    dispatch(fetchContent(onScreenTagId));
     dispatch(fetchBackground());
   };
 
@@ -281,7 +206,6 @@ class Home extends Component {
     const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,
-      breathingTipExplainerVisible,
       meditationExplainerVisible,
       onScreenTagName,
       onScreenContent,
@@ -290,7 +214,11 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
 
     console.log('backgrounds length', backgrounds.length);
-    console.log('breathing game visible', breathingGameVisible);
+    console.log(
+      'breathing game visible',
+      breathingGameVisible,
+      this.imageOpacity,
+    );
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -332,16 +260,11 @@ class Home extends Component {
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
               goToNextBreathing={this.goToNextBreathing}
+              showBreathingTip={this.showBreathingTip}
             />
           </View>
         ) : null}
 
-        <Modal
-          visible={breathingTipExplainerVisible}
-          transparent={true}
-          animationType="fade">
-          <BreathingTipExplainer closeModal={this.closeBreathingTipExplainer} />
-        </Modal>
         <Modal
           visible={meditationExplainerVisible}
           transparent={true}

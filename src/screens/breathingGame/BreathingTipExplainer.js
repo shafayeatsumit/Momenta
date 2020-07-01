@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
-import {FontType} from '../../../helpers/theme';
+import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
+import {FontType} from '../../helpers/theme';
 import Swiper from 'react-native-swiper';
 
 const BreathingTipExplainer = ({closeModal}) => {

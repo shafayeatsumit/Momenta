@@ -11,7 +11,7 @@ import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
-
+import BreathingTipExplainer from './BreathingTipExplainer';
 import styles from './BreathingGame.styles';
 import GameExplainer from './GameExplainerModal';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
@@ -47,6 +47,7 @@ class BreathingGame extends Component {
       inhaleTimer: 0,
       smoothWord: null,
       breathCountVisible: true,
+      breathingTipExplainerVisible: false,
     };
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
@@ -131,13 +132,19 @@ class BreathingGame extends Component {
     const {breathCount} = userInfo;
     const showBreathingTip = breathCount === 2;
     const showMiniMed = breathCount === 4;
+    console.log('new user Action');
     if (showBreathingTip) {
       // showBreathingTip
+      this.props.imageFadeOut();
+      this.props.showBreathingTip();
+      dispatch({type: 'ADD_BREATH_COUNT'});
     } else if (showMiniMed) {
       // show mini med
+      console.log('show mini med');
     } else {
       this.props.goToNextBreathing();
       this.startExhaleTimer();
+      dispatch({type: 'ADD_BREATH_COUNT'});
     }
   };
 
@@ -158,7 +165,6 @@ class BreathingGame extends Component {
     if (onboardingCompleted) {
       // this.oldUserAction();
     } else {
-      console.log('new user action');
       this.newUserAction();
     }
   };
@@ -218,6 +224,12 @@ class BreathingGame extends Component {
     this.showHelperIcon();
   };
 
+  showBreathingTipExplainer = () =>
+    this.setState({breathingTipExplainerVisible: true});
+
+  closeBreathingTipExplainer = () =>
+    this.setState({breathingTipExplainerVisible: false});
+
   showHelperIcon = () => {
     this.helperIconId = setTimeout(
       () => this.setState({showHelperIcon: true}),
@@ -230,15 +242,28 @@ class BreathingGame extends Component {
     return userInfo.breathCount.toLocaleString();
   };
 
-  componentDidMount() {
+  checkForNewUserModal = () => {
     const {userInfo} = this.props;
-    userInfo.breathCount === 0
-      ? this.showGameExplainerModal()
-      : this.showHelpers();
+    if (userInfo.breathCount === 0) {
+    } else if (userInfo.breathCount === 3) {
+      this.showBreathingTipExplainer();
+    }
+  };
+
+  showBreathCount = () => {
     this.breathCountId = setTimeout(() => {
       this.setState({breathCountVisible: false});
       clearTimeout(this.breathCountId);
     }, 1200);
+  };
+
+  componentDidMount() {
+    const {onboardingCompleted} = this.props;
+    if (!onboardingCompleted) {
+      this.checkForNewUserModal();
+    }
+    this.showHelpers();
+    this.showBreathCount();
     this.animationId = this.radius.addListener(({value}) => {});
   }
 
@@ -273,6 +298,7 @@ class BreathingGame extends Component {
       modalVisible,
       pressIn,
       breathCountVisible,
+      breathingTipExplainerVisible,
       smoothWord,
     } = this.state;
     const {onboardingCompleted, userInfo, navigation} = this.props;
@@ -286,10 +312,13 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     const showArrowIcon = onboardingCompleted && !pressIn;
-
+    console.log('BreathingTipExplainer visible', breathingTipExplainerVisible);
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}
+        {breathingTipExplainerVisible && (
+          <BreathingTipExplainer closeModal={this.closeBreathingTipExplainer} />
+        )}
         {showArrowIcon ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}

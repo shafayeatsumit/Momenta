@@ -113,15 +113,11 @@ export const anonymousSignup = () => (dispatch, getState) => {
     .catch((error) => console.log('error in auth==>', error));
 };
 
-export const removeContent = (tagId, setId, favoritesTagId) => (
-  dispatch,
-  getState,
-) => {
+export const removeContent = (tagId) => (dispatch, getState) => {
   const {tags, sets} = getState();
   const currentTagObject = tags[tagId];
   const currentTagSets = currentTagObject.sets;
   const updatedTagSets = currentTagSets.slice(1);
-  const favoritesSets = tags[favoritesTagId].sets;
   const updatedTags = {
     ...tags,
     [tagId]: {
@@ -130,10 +126,6 @@ export const removeContent = (tagId, setId, favoritesTagId) => (
     },
   };
   const updatedSets = Object.assign({}, sets);
-  const notFavoriteSet = !favoritesSets.includes(setId);
-  if (notFavoriteSet) {
-    delete updatedSets[setId];
-  }
   dispatch({type: 'UPDATE_CONTENT', tags: updatedTags, sets: updatedSets});
 };
 
@@ -151,6 +143,15 @@ export const moveFirstSetToLast = (tagId) => (dispatch, getState) => {
     },
   };
   dispatch({type: 'MOVE_FIRST_SET_TO_LAST', tags: updatedTags});
+};
+
+export const rearrangeBreathingTip = () => (dispatch, getState) => {
+  const {breathingTip} = getState();
+  const {sets} = breathingTip;
+  const firstSet = sets[0]; // removed the first element
+  const updatedSets = sets.slice(1);
+  const updatedBreathingTipSets = [...updatedSets, firstSet];
+  dispatch({type: 'REARRANGE_BREATHING_TIP', sets: updatedBreathingTipSets});
 };
 
 const addNewContent = (dispatch, getState, response, tagId) => {

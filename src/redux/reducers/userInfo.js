@@ -19,7 +19,7 @@ const loginInfo = (state = INIT_STATE, action) => {
         name,
         userId,
       };
-    case 'INCREASE_PLAY_COUNT':
+    case 'ADD_BREATH_COUNT':
       return {
         ...state,
         breathCount: state.breathCount + 1,

@@ -11,7 +11,7 @@ AsyncStorage.clear();
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userInfo', 'onboardingCompleted', 'settings'],
+  whitelist: ['userInfo', 'onboardingCompleted', 'backgrounds', 'settings'],
 };
 // const middleware = [logger, thunk];
 const middleware = [thunk];

@@ -9,7 +9,7 @@ const currentSession = (state = INITIAL_STATE, action) => {
         ...state,
         breathCount: state.breathCount + 1,
       };
-    case 'SEEN_TAG':
+    case 'LAST_SEEN_TAG':
       return {
         ...state,
         lastSeenTag: action.tag,

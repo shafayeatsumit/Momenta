@@ -96,7 +96,48 @@ class Home extends Component {
   };
 
   hideNextButton = () => this.setState({nextButtonVisible: false});
-  showNextButton = () => this.setState({nextButtonVisible: true});
+  showNextButton = () =>
+    this.setState({nextButtonVisible: true, breathingGameVisible: false});
+
+  findTag = () => {
+    const {currentSession, settings} = this.props;
+    const selectedTags = settings.selectedTags;
+    const lastSeenTag = currentSession.lastSeenTag;
+    if (!lastSeenTag) {
+      return selectedTags[0];
+    }
+    const selectedTagIndex = selectedTags.indexOf(lastSeenTag);
+    if (selectedTagIndex + 1 === selectedTags.length) {
+      return selectedTags[0];
+    } else {
+      return selectedTags[selectedTagIndex + 1];
+    }
+  };
+
+  getContent = (sets) => {
+    const firstSetId = sets[0];
+    const content = this.getContentBySetId(firstSetId);
+    const contentText = content ? content.text : '';
+    return contentText;
+  };
+
+  showContent = () => {
+    const tagId = this.findTag();
+    console.log('selected tags', this.props.settings.selectedTags);
+    console.log('last tag', tagId);
+    const tagName = this.getTagNameById(tagId);
+    const sets = this.getSetsByTagId(tagId);
+    const content = this.getContent(sets);
+    this.setState(
+      {
+        onScreenContent: content,
+        onScreenTagName: tagName,
+        onScreenTagId: tagId,
+      },
+      () => this.fadeInContent(null, null, null, this.showNextButton),
+    );
+    this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
+  };
 
   closeBreathingGame = () => {
     const {dispatch, settings} = this.props;
@@ -104,7 +145,7 @@ class Home extends Component {
     dispatch(fetchBackground());
     this.imageSwitchTimer = setTimeout(() => {
       // TODO: need to uncoment this.
-      this.changeBackground();
+      // this.changeBackground();
       this.setState({breathingGameVisible: false});
       clearTimeout(this.imageSwitchTimer);
     }, duration);
@@ -131,6 +172,9 @@ class Home extends Component {
   getSetsByTagId = (tagId) => this.props.tags[tagId].sets;
 
   getContentBySetId = (setId) => this.props.sets[setId].contents[0];
+
+  getTagNameById = (id) =>
+    this.props.tagNames.find((tag) => tag.id === id).name;
 
   showMeditationExplainer = () =>
     this.setState({meditationExplainerVisible: true});
@@ -176,16 +220,17 @@ class Home extends Component {
     const {onScreenTagId} = this.state;
     const {dispatch} = this.props;
     this.fadeOutContent();
+    dispatch(fetchBackground());
     this.setState(
       {
         breathingGameVisible: true,
         nextButtonVisible: false,
       },
-      this.changeBackground,
+      // TODO: uncomment below.
+      // this.changeBackground,
     );
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
-    dispatch(fetchBackground());
   };
 
   componentDidMount() {
@@ -214,11 +259,8 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
 
     console.log('backgrounds length', backgrounds.length);
-    console.log(
-      'breathing game visible',
-      breathingGameVisible,
-      this.imageOpacity,
-    );
+    // console.log('currentSesion', this.props.currentSession);
+    // console.log('selected tags', this.props.settings);
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -244,15 +286,12 @@ class Home extends Component {
             style={[styles.content, {opacity: this.contentOpacity}]}>
             {onScreenContent}
           </Animated.Text>
-
-          {nextButtonVisible ? (
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={this.handleNext}>
-              <Text style={styles.nextButtonText}>Next</Text>
-            </TouchableOpacity>
-          ) : null}
         </SafeAreaView>
+        {nextButtonVisible ? (
+          <TouchableOpacity style={styles.nextButton} onPress={this.handleNext}>
+            <Text style={styles.nextButtonText}>Next</Text>
+          </TouchableOpacity>
+        ) : null}
         {breathingGameVisible ? (
           <View style={styles.breathingGameContainer}>
             <BrethingGame
@@ -261,6 +300,7 @@ class Home extends Component {
               navigation={navigation}
               goToNextBreathing={this.goToNextBreathing}
               showBreathingTip={this.showBreathingTip}
+              showContent={this.showContent}
             />
           </View>
         ) : null}
@@ -286,6 +326,7 @@ const mapStateToProps = (state, ownProps) => {
     settings,
     onboardingCompleted,
     breathingTip,
+    currentSession,
   } = state;
   return {
     sets,
@@ -295,6 +336,7 @@ const mapStateToProps = (state, ownProps) => {
     userInfo,
     settings,
     breathingTip,
+    currentSession,
     onboardingCompleted,
   };
 };

@@ -132,15 +132,13 @@ class BreathingGame extends Component {
     const {breathCount} = userInfo;
     const showBreathingTip = breathCount === 2;
     const showMiniMed = breathCount === 4;
-    console.log('new user Action');
     if (showBreathingTip) {
       // showBreathingTip
       this.props.imageFadeOut();
       this.props.showBreathingTip();
       dispatch({type: 'ADD_BREATH_COUNT'});
     } else if (showMiniMed) {
-      // show mini med
-      console.log('show mini med');
+      this.props.showContent();
     } else {
       this.props.goToNextBreathing();
       this.startExhaleTimer();
@@ -312,7 +310,6 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     const showArrowIcon = onboardingCompleted && !pressIn;
-    console.log('BreathingTipExplainer visible', breathingTipExplainerVisible);
     return (
       <View style={styles.container}>
         {modalVisible && <GameExplainer closeExplainer={this.closeExplainer} />}

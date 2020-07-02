@@ -142,7 +142,6 @@ class Home extends Component {
     const duration = settings.exhaleTime * 1000;
     dispatch(fetchBackground());
     this.imageSwitchTimer = setTimeout(() => {
-      this.changeBackground();
       this.setState({breathingGameVisible: false});
       clearTimeout(this.imageSwitchTimer);
     }, duration);
@@ -153,13 +152,23 @@ class Home extends Component {
     const duration = settings.exhaleTime * 1000;
     this.modalTimer = setTimeout(() => {
       this.setState({breathingGameVisible: true});
+
       this.imageOpacity.setValue(1);
       clearTimeout(this.modalTimer);
-    }, duration + 800);
+    }, duration + 500);
   };
 
+  switchBackgroundImage = () => {
+    const {settings} = this.props;
+    const duration = settings.exhaleTime * 1000;
+    this.backgroundSwitcherId = setTimeout(() => {
+      this.changeBackground();
+      this.backgroundSwitcherId && clearTimeout(this.backgroundSwitcherId);
+    }, duration + 250);
+  };
   goToNextBreathing = () => {
     this.closeBreathingGame();
+    this.switchBackgroundImage();
     this.showBreathingGame();
   };
 

@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 // const BASEURL = 'http://localhost:8000/';
 // const BASEURL = 'https://threethought.herokuapp.com/';
 const BASEURL =
-  'http://ec2-52-15-117-190.us-east-2.compute.amazonaws.com/api/v1/';
+  'http://ec2-3-134-79-98.us-east-2.compute.amazonaws.com/api/v1/';
 
 const anonymousEndpoints = ['auth/anonymoussignup/'];
 

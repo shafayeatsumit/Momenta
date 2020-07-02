@@ -5,6 +5,7 @@ import {
   Easing,
   Text,
   TouchableOpacity,
+  PanResponder,
   Image,
 } from 'react-native';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
@@ -67,6 +68,19 @@ class BreathingGame extends Component {
     this.closeModalId = null;
     this.fullScreenId = null;
     this.breathCountId = null;
+
+    this.touchPanResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: (evt, gestureState) => {
+        this.handlePressIn();
+        console.log('pan grantt+++');
+      },
+      onPanResponderRelease: () => {
+        this.handlePressOut();
+      },
+    });
   }
 
   expandCircle = () => {
@@ -392,12 +406,13 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        <TouchableOpacity
-          disabled={touchDisabled}
+        <View
+          {...this.touchPanResponder.panHandlers}
+          // disabled={touchDisabled}
           style={styles.tapArea}
           activeOpacity={1}
-          onPressIn={this.handlePressIn}
-          onPressOut={this.handlePressOut}
+          // onPressIn={this.handlePressIn}
+          // onPressOut={this.handlePressOut}
         />
       </View>
     );

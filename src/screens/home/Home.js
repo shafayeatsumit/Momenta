@@ -7,7 +7,6 @@ import {
   ImageBackground,
   TouchableOpacity,
   AppState,
-  Modal,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {
@@ -16,12 +15,10 @@ import {
   anonymousSignup,
   removeBackground,
   fetchContent,
-  moveFirstSetToLast,
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
 import SplashScreen from '../../../assets/images/splash.png';
-import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
 
@@ -33,7 +30,6 @@ class Home extends Component {
       nextButtonVisible: false,
       onScreenTagName: '',
       onScreenContent: '',
-      onScreenSetId: null,
       onScreenTagId: null,
       appState: AppState.currentState,
       pressInParent: false,
@@ -42,8 +38,6 @@ class Home extends Component {
     this.tagOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
     this.imageOpacity = new Animated.Value(1);
-    this.modalTimer = null;
-    this.imageSwitchTimer = null;
   }
 
   fadeInContent = () => {
@@ -77,15 +71,20 @@ class Home extends Component {
     }).start();
   };
 
-  hideNextButton = () => this.setState({nextButtonVisible: false});
   showNextButton = () =>
     this.setState({nextButtonVisible: true, breathingGameVisible: false});
+
+  getSetsByTagId = (tagId) => this.props.tags[tagId].sets;
+
+  getContentBySetId = (setId) => this.props.sets[setId].contents[0];
+
+  getTagNameById = (id) =>
+    this.props.tagNames.find((tag) => tag.id === id).name;
 
   findTag = () => {
     const {currentSession, settings} = this.props;
     const selectedTags = settings.selectedTags;
     const lastSeenTag = currentSession.lastSeenTag;
-    console.log('lastSeenTag', lastSeenTag);
     if (!lastSeenTag) {
       return selectedTags[0];
     }
@@ -138,16 +137,6 @@ class Home extends Component {
     });
   };
 
-  getTagIdByName = (tagName) =>
-    this.props.tagNames.find((tag) => tag.name === tagName).id;
-
-  getSetsByTagId = (tagId) => this.props.tags[tagId].sets;
-
-  getContentBySetId = (setId) => this.props.sets[setId].contents[0];
-
-  getTagNameById = (id) =>
-    this.props.tagNames.find((tag) => tag.id === id).name;
-
   openBreathingGame = () => {
     this.openBreathingGameID = setTimeout(() => {
       this.setState({breathingGameVisible: true});
@@ -168,10 +157,15 @@ class Home extends Component {
       },
       () => dispatch(removeBackground()),
     );
-    // TODO: uncomment below.
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
   };
+
+  handlePressIn = () =>
+    this.setState({pressInParent: true, pressOutParent: false});
+
+  handlePressOut = () =>
+    this.setState({pressOutParent: true, pressInParent: false});
 
   handleAppStateChange = (nextAppState) => {
     if (
@@ -209,7 +203,6 @@ class Home extends Component {
     } = this.state;
     const backgroundImage = backgrounds[0];
     console.log('backgrounds', backgrounds.length);
-    console.log('last seen', this.props.currentSession.lastSeenTag);
     if (!backgroundImage) {
       return (
         <ImageBackground style={styles.imageContainer} source={SplashScreen} />
@@ -234,11 +227,6 @@ class Home extends Component {
             {onScreenContent}
           </Animated.Text>
         </SafeAreaView>
-        {nextButtonVisible ? (
-          <TouchableOpacity style={styles.nextButton} onPress={this.handleNext}>
-            <Text style={styles.nextButtonText}>Next</Text>
-          </TouchableOpacity>
-        ) : null}
         {breathingGameVisible ? (
           <View style={styles.breathingGameContainer}>
             <BrethingGame
@@ -252,17 +240,17 @@ class Home extends Component {
             />
           </View>
         ) : null}
-        {!nextButtonVisible ? (
+        {nextButtonVisible ? (
+          <TouchableOpacity style={styles.nextButton} onPress={this.handleNext}>
+            <Text style={styles.nextButtonText}>Next</Text>
+          </TouchableOpacity>
+        ) : (
           <TouchableOpacity
-            onPressIn={() =>
-              this.setState({pressInParent: true, pressOutParent: false})
-            }
-            onPressOut={() =>
-              this.setState({pressOutParent: true, pressInParent: false})
-            }
+            onPressIn={this.handlePressIn}
+            onPressOut={this.handlePressOut}
             style={styles.touchHandler}
           />
-        ) : null}
+        )}
       </View>
     );
   }
@@ -276,7 +264,6 @@ const mapStateToProps = (state, ownProps) => {
     backgrounds,
     userInfo,
     settings,
-    onboardingCompleted,
     currentSession,
   } = state;
   return {
@@ -287,7 +274,6 @@ const mapStateToProps = (state, ownProps) => {
     userInfo,
     settings,
     currentSession,
-    onboardingCompleted,
   };
 };
 

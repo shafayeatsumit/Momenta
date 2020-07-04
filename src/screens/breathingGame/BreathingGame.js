@@ -4,8 +4,8 @@ import {
   Animated,
   Easing,
   Text,
+  Modal,
   TouchableOpacity,
-  PanResponder,
   Image,
 } from 'react-native';
 import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
@@ -27,6 +27,7 @@ const SMOOTH_WORDS = [
   'Smoothly',
   'Lightly',
 ];
+// inhaletime to radius
 const START_RADIUSES = {
   3: 4,
   4: 3,
@@ -51,20 +52,18 @@ class BreathingGame extends Component {
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
+    this.shirnkingCircle = false;
     // messages
     this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
 
     // all the timers
-    this.idleTimerId = null;
     this.explainerModalId = null;
     this.hlperMessageId = null;
     this.helperIconId = null;
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
-    this.closeModalId = null;
-    this.fullScreenId = null;
-    this.breathCountId = null;
+    this.exhaleCountDownDelayId = null;
   }
 
   expandCircle = () => {
@@ -79,6 +78,7 @@ class BreathingGame extends Component {
   };
 
   shrinkCircle = () => {
+    this.shirnkingCircle = true;
     this.setState({
       touchDisabled: true,
       successMessage: 'Almost, give it another shot',
@@ -89,6 +89,7 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
+      this.shirnkingCircle = false;
       this.setState({
         touchDisabled: false,
         successMessage: this.delayMessage,
@@ -134,14 +135,23 @@ class BreathingGame extends Component {
     const {settings} = this.props;
     // .5 sec dealy between inhale and exhale
     // to make it look good.
-    this.exhaleCountDownId = setTimeout(() => {
-      clearTimeout(this.exhaleCountDownId);
+    this.exhaleCountDownDelayId = setTimeout(() => {
+      clearTimeout(this.exhaleCountDownDelayId);
       this.setState({exhaleTimer: settings.exhaleTime}, this.exhaleCountDown);
     }, 500);
   };
 
+  prepareExhale = () => {
+    // before starting exhaleCountdown
+    // we need to clear the onscreen message.
+    this.setState(
+      this.setState({successMessage: ''}),
+      this.startExhaleCountDown,
+    );
+  };
+
   newUserAction = () => {
-    const {userInfo, dispatch, showContent, settings} = this.props;
+    const {userInfo, dispatch, showContent} = this.props;
     const {breathCount} = userInfo;
     if (breathCount === 4) {
       // show breathing tip;
@@ -149,11 +159,7 @@ class BreathingGame extends Component {
       dispatch({type: 'ONBOARDING_COMPLETED'});
       dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
-      this.setState(
-        // reset the success msg to create a gap between inhale and exhale message
-        this.setState({successMessage: ''}),
-        this.startExhaleCountDown,
-      );
+      this.prepareExhale();
       dispatch({type: 'ADD_BREATH_COUNT'});
     }
   };
@@ -163,22 +169,13 @@ class BreathingGame extends Component {
     const {selectedTags} = settings;
     const {breathCount} = currentSession;
     const hasSelectedTags = selectedTags.length;
+    // TODO: change it later
+    console.log('breath count', breathCount);
     if (breathCount === 4) {
-      if (hasSelectedTags) {
-        showContent();
-      } else {
-        this.setState(
-          this.setState({successMessage: ''}),
-          this.startExhaleCountDown,
-        );
-      }
+      hasSelectedTags ? showContent() : this.prepareExhale();
       dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
-      this.setState(
-        // reset the success msg to create a gap between inhale and exhale message
-        this.setState({successMessage: ''}),
-        this.startExhaleCountDown,
-      );
+      this.prepareExhale();
       dispatch({type: 'ADD_BREATH_COUNT'});
     }
   };
@@ -200,7 +197,7 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    if (this.state.exhaleTimer) {
+    if (this.state.exhaleTimer || this.shirnkingCircle) {
       return;
     }
     this.setState({pressIn: true, successMessage: ''});
@@ -254,8 +251,11 @@ class BreathingGame extends Component {
   componentDidMount() {
     this.showHelpers();
     this.animationId = this.radius.addListener(({value}) => {});
-    if (this.props.pressInParent) {
-      this.handlePressIn();
+    const {pressInParent, userInfo} = this.props;
+    pressInParent && this.handlePressIn();
+    // show it for the first time.
+    if (!userInfo.breathCount) {
+      this.showGameExplainerModal();
     }
   }
 
@@ -275,28 +275,23 @@ class BreathingGame extends Component {
 
   componentWillUnmount() {
     this.animationId && this.radius.removeListener(this.animationId);
-    this.idleTimerId && clearTimeout(this.inhaleTimerId);
     this.explainerModalId && clearTimeout(this.explainerModalId);
     this.hlperMessageId && clearTimeout(this.hlperMessageId);
     this.helperIconId && clearTimeout(this.helperIconId);
     this.exhaleTimerId && clearInterval(this.exhaleTimerId);
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    this.closeModalId && clearTimeout(this.closeModalId);
-    this.fullScreenId && clearTimeout(this.fullScreenId);
-    this.breathCountId && clearTimeout(this.breathCountId);
+    this.exhaleCountDownDelayId && clearTimeout(this.exhaleCountDownDelayId);
   }
 
   render() {
     const {
       exhaleTimer,
       successMessage,
-      touchDisabled,
       inhaleTimer,
       showHelperIcon,
       gameExplainerVisible,
       pressIn,
       breathCountVisible,
-
       smoothWord,
     } = this.state;
     const {onboardingCompleted, userInfo, navigation} = this.props;
@@ -313,9 +308,12 @@ class BreathingGame extends Component {
     const showArrowIcon = onboardingCompleted && !pressIn;
     return (
       <View style={styles.container}>
-        {gameExplainerVisible && (
+        <Modal
+          animationType="fade"
+          transparent={gameExplainerVisible}
+          visible={gameExplainerVisible}>
           <GameExplainer closeExplainer={this.closeExplainer} />
-        )}
+        </Modal>
         {showArrowIcon ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}

@@ -68,19 +68,6 @@ class BreathingGame extends Component {
     this.closeModalId = null;
     this.fullScreenId = null;
     this.breathCountId = null;
-
-    this.touchPanResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (evt, gestureState) => {
-        this.handlePressIn();
-        console.log('pan grantt+++');
-      },
-      onPanResponderRelease: () => {
-        this.handlePressOut();
-      },
-    });
   }
 
   expandCircle = () => {
@@ -171,7 +158,6 @@ class BreathingGame extends Component {
     const {selectedTags, breathingTip} = settings;
     const {breathCount} = currentSession;
     const hasSelectedTags = selectedTags.length;
-    console.log('breath count', breathCount);
     if (breathCount === 4 && hasSelectedTags) {
       this.props.showContent();
     } else if (breathCount === 2 && breathingTip) {
@@ -218,6 +204,9 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     this.setState({pressIn: true, successMessage: ''});
+    if (this.state.inhaleTimer) {
+      return;
+    }
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -286,12 +275,22 @@ class BreathingGame extends Component {
     }
     this.showHelpers();
     this.animationId = this.radius.addListener(({value}) => {});
+    if (this.props.pressInParent) {
+      this.handlePressIn();
+    }
   }
 
   componentDidUpdate(prevProps) {
     const {inhaleTime} = this.props.settings;
+    const {pressInParent, pressOutParent} = this.props;
     if (prevProps.settings.inhaleTime !== inhaleTime) {
       this.setStartRadius(inhaleTime);
+    }
+    if (prevProps.pressInParent !== pressInParent) {
+      pressInParent && this.handlePressIn();
+    }
+    if (prevProps.pressOutParent !== pressOutParent) {
+      pressOutParent && this.handlePressOut();
     }
   }
 
@@ -405,15 +404,6 @@ class BreathingGame extends Component {
             <Image source={helperIcon} style={styles.tapIcon} />
           </View>
         ) : null}
-
-        <View
-          {...this.touchPanResponder.panHandlers}
-          // disabled={touchDisabled}
-          style={styles.tapArea}
-          activeOpacity={1}
-          // onPressIn={this.handlePressIn}
-          // onPressOut={this.handlePressOut}
-        />
       </View>
     );
   }

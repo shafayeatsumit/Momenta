@@ -6,9 +6,8 @@ import ReduxStore from '../redux/store';
 const {store} = ReduxStore();
 import AsyncStorage from '@react-native-community/async-storage';
 // const BASEURL = 'http://localhost:8000/';
-// const BASEURL = 'https://threethought.herokuapp.com/';
-const BASEURL =
-  'http://ec2-3-134-79-98.us-east-2.compute.amazonaws.com/api/v1/';
+
+const BASEURL = 'http://backend.getmomenta.co/api/v1/';
 
 const anonymousEndpoints = ['auth/anonymoussignup/'];
 

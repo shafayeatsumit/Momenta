@@ -50,13 +50,11 @@ const parseSets = (response) => {
 };
 
 const getTagNames = (response) => {
-  return response.result
-    .map((tag, index) => ({
-      id: tag.id,
-      name: tag.name,
-      gradientColors: TAG_COlORS[index],
-    }))
-    .filter((item) => item.name !== 'Breathing Tip');
+  return response.result.map((tag, index) => ({
+    id: tag.id,
+    name: tag.name,
+    gradientColors: TAG_COlORS[index],
+  }));
 };
 const getSelectedTags = (isNewUser, tagNames, settings) =>
   isNewUser ? tagNames.map((tag) => tag.id) : settings.selectedTags;
@@ -91,7 +89,8 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
         selectedTags,
         breathingTip,
       });
-      downLoadImages(backgrounds, dispatch);
+      // TODO: need to change it as well.
+      // downLoadImages(backgrounds, dispatch);
     })
     .catch((error) => {
       console.log('error in tags', error);
@@ -105,7 +104,6 @@ export const anonymousSignup = () => (dispatch, getState) => {
       const {id} = resp.data;
       dispatch({type: 'ADD_USER_DATA', data: resp.data});
       analytics().setUserId(id.toString());
-
       AsyncStorage.setItem('token', resp.data.token)
         .then(() => dispatch(fetchTags(true)))
         .catch((error) => console.log('error in setting async storage', error));

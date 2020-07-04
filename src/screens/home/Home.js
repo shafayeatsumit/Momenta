@@ -23,6 +23,7 @@ import SplashScreen from '../../../assets/images/splash.png';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
+import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 
 class Home extends Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class Home extends Component {
       onScreenSetId: null,
       onScreenTagId: null,
       appState: AppState.currentState,
+      pressInParent: false,
     };
 
     this.tagOpacity = new Animated.Value(0);
@@ -44,7 +46,9 @@ class Home extends Component {
     this.modalTimer = null;
     this.imageSwitchTimer = null;
   }
-  changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
+  // TODO: uncomment the following line
+  //changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
+  changeBackground = () => {};
 
   fadeInContent = (tagDuration, contentDuration, contentDelay, cb) => {
     Animated.timing(this.tagOpacity, {
@@ -253,7 +257,6 @@ class Home extends Component {
       nextAppState === 'active'
     ) {
       this.props.dispatch({type: 'RESET_SESSION'});
-      console.log('App has come to the foreground!');
     }
     this.setState({appState: nextAppState});
   };
@@ -284,7 +287,7 @@ class Home extends Component {
       nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-    console.log('backgrounds length', backgrounds.length);
+    console.log('backgrounds', backgrounds.length);
     if (!backgroundImage) {
       return (
         <ImageBackground style={styles.imageContainer} source={SplashScreen} />
@@ -324,10 +327,22 @@ class Home extends Component {
               showBreathingTip={this.showBreathingTip}
               showContent={this.showContent}
               showMeditationExplainer={this.showMeditationExplainer}
+              pressInParent={this.state.pressInParent}
+              pressOutParent={this.state.pressOutParent}
             />
           </View>
         ) : null}
-
+        {!nextButtonVisible ? (
+          <TouchableOpacity
+            onPressIn={() =>
+              this.setState({pressInParent: true, pressOutParent: false})
+            }
+            onPressOut={() =>
+              this.setState({pressOutParent: true, pressInParent: false})
+            }
+            style={styles.touchHandler}
+          />
+        ) : null}
         <Modal
           visible={meditationExplainerVisible}
           transparent={true}

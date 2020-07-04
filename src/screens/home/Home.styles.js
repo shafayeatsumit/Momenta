@@ -111,6 +111,12 @@ const styles = StyleSheet.create({
     textShadowOffset: {height: 1, width: 1},
     textShadowRadius: 2,
   },
+  touchHandler: {
+    position: 'absolute',
+    bottom: 0,
+    width: ScreenWidth,
+    height: ScreenHeight * 0.2,
+  },
 });
 
 export default styles;

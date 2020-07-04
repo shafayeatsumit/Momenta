@@ -6,7 +6,6 @@ import sets from './sets';
 import settings from './settings';
 import currentSession from './currentSession';
 import backgrounds from './backgrounds';
-import breathingTip from './breathingTip';
 
 export default combineReducers({
   userInfo,
@@ -16,6 +15,5 @@ export default combineReducers({
   sets,
   backgrounds,
   settings,
-  breathingTip,
   currentSession,
 });

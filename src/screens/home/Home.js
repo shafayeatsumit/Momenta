@@ -16,6 +16,7 @@ import {
   anonymousSignup,
   removeBackground,
   fetchContent,
+  moveFirstSetToLast,
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
@@ -29,7 +30,6 @@ class Home extends Component {
     super(props);
     this.state = {
       breathingGameVisible: true,
-      meditationExplainerVisible: false,
       nextButtonVisible: false,
       onScreenTagName: '',
       onScreenContent: '',
@@ -45,25 +45,21 @@ class Home extends Component {
     this.modalTimer = null;
     this.imageSwitchTimer = null;
   }
-  // TODO: uncomment the following line
-  //changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
 
-  fadeInContent = (tagDuration, contentDuration, contentDelay, cb) => {
+  fadeInContent = () => {
     Animated.timing(this.tagOpacity, {
       toValue: 1,
-      duration: tagDuration ? tagDuration : 1000,
+      duration: 1000,
       delay: 0,
       useNativeDriver: true,
     }).start();
 
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: contentDuration ? contentDuration : 1500,
-      delay: contentDelay ? contentDelay : 500,
+      duration: 1500,
+      delay: 500,
       useNativeDriver: true,
-    }).start(() => {
-      cb && cb();
-    });
+    }).start(this.showNextButton);
   };
 
   fadeOutContent = () => {
@@ -89,6 +85,7 @@ class Home extends Component {
     const {currentSession, settings} = this.props;
     const selectedTags = settings.selectedTags;
     const lastSeenTag = currentSession.lastSeenTag;
+    console.log('lastSeenTag', lastSeenTag);
     if (!lastSeenTag) {
       return selectedTags[0];
     }
@@ -112,15 +109,17 @@ class Home extends Component {
     const tagName = this.getTagNameById(tagId);
     const sets = this.getSetsByTagId(tagId);
     const content = this.getContent(sets);
+    console.log('show content tagId', tagId);
+    this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
     this.setState(
       {
+        breathingGameVisible: false, // close the breathing game hrere.
         onScreenContent: content,
         onScreenTagName: tagName,
         onScreenTagId: tagId,
       },
-      () => this.fadeInContent(null, null, null, this.showNextButton),
+      () => this.fadeInContent(),
     );
-    this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
   };
 
   closeBreathingGame = () => this.setState({breathingGameVisible: false});
@@ -149,24 +148,12 @@ class Home extends Component {
   getTagNameById = (id) =>
     this.props.tagNames.find((tag) => tag.id === id).name;
 
-  showMeditationExplainer = () => {
-    this.meditationExplainerId = setTimeout(() => {
-      this.setState({meditationExplainerVisible: true});
-      this.meditationExplainerId && clearTimeout(this.meditationExplainerId);
-    }, 500);
-  };
-
   openBreathingGame = () => {
     this.openBreathingGameID = setTimeout(() => {
       this.setState({breathingGameVisible: true});
       this.imageOpacity.setValue(1);
       this.openBreathingGameID && clearTimeout(this.openBreathingGameID);
     }, 500);
-  };
-
-  closeMeditationExplainer = () => {
-    this.setState({meditationExplainerVisible: false});
-    this.showContent();
   };
 
   handleNext = () => {
@@ -179,12 +166,11 @@ class Home extends Component {
         breathingGameVisible: true,
         nextButtonVisible: false,
       },
-      this.changeBackground,
+      () => dispatch(removeBackground()),
     );
     // TODO: uncomment below.
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
-    dispatch({type: 'RESET_BREATH_COUNT'});
   };
 
   handleAppStateChange = (nextAppState) => {
@@ -217,13 +203,13 @@ class Home extends Component {
     const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,
-      meditationExplainerVisible,
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
     console.log('backgrounds', backgrounds.length);
+    console.log('last seen', this.props.currentSession.lastSeenTag);
     if (!backgroundImage) {
       return (
         <ImageBackground style={styles.imageContainer} source={SplashScreen} />
@@ -261,7 +247,6 @@ class Home extends Component {
               navigation={navigation}
               goToNextBreathing={this.goToNextBreathing}
               showContent={this.showContent}
-              showMeditationExplainer={this.showMeditationExplainer}
               pressInParent={this.state.pressInParent}
               pressOutParent={this.state.pressOutParent}
             />
@@ -278,12 +263,6 @@ class Home extends Component {
             style={styles.touchHandler}
           />
         ) : null}
-        <Modal
-          visible={meditationExplainerVisible}
-          transparent={true}
-          animationType="fade">
-          <MeditaionExplainer closeModal={this.closeMeditationExplainer} />
-        </Modal>
       </View>
     );
   }
@@ -298,7 +277,6 @@ const mapStateToProps = (state, ownProps) => {
     userInfo,
     settings,
     onboardingCompleted,
-    breathingTip,
     currentSession,
   } = state;
   return {
@@ -308,7 +286,6 @@ const mapStateToProps = (state, ownProps) => {
     backgrounds,
     userInfo,
     settings,
-    breathingTip,
     currentSession,
     onboardingCompleted,
   };

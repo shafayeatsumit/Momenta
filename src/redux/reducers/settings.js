@@ -1,7 +1,6 @@
 const initialState = {
   inhaleTime: 4, // 4 seconds.
   exhaleTime: 4, // 4 seconds.
-  breathingTip: true,
   selectedTags: [],
 };
 
@@ -27,11 +26,6 @@ const settings = (state = initialState, action) => {
         ...state,
         inhaleTime: action.inhaleValue,
         exhaleTime: action.exhaleValue,
-      };
-    case 'TOGGLE_BREATHING_TIP':
-      return {
-        ...state,
-        breathingTip: !state.breathingTip,
       };
     case 'UPDATE_INHALE_TIME':
       return {

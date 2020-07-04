@@ -63,11 +63,6 @@ class Settings extends Component {
     return breathingTipsId;
   };
 
-  switchBreathingTips = () => {
-    const {dispatch} = this.props;
-    dispatch({type: 'TOGGLE_BREATHING_TIP'});
-  };
-
   goHome = () => this.props.navigation.goBack();
 
   handleTagPress = (tagId) => {
@@ -83,13 +78,7 @@ class Settings extends Component {
   };
 
   render() {
-    const {
-      inhaleTime,
-      exhaleTime,
-      selectedTags,
-      tagNames,
-      breathingTipsStatus,
-    } = this.props;
+    const {inhaleTime, exhaleTime, selectedTags, tagNames} = this.props;
 
     return (
       <View style={styles.container}>
@@ -138,21 +127,7 @@ class Settings extends Component {
               />
             </View>
           </View>
-          <View style={styles.dropDownContainer}>
-            <Text style={styles.subTitle}>Tips</Text>
-            <View style={styles.switchHolder}>
-              <Switch
-                trackColor={{false: '#787989', true: '#3c71de'}}
-                thumbColor={'white'}
-                style={styles.switchStyle}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={this.switchBreathingTips}
-                value={breathingTipsStatus}
-              />
-            </View>
-          </View>
         </View>
-
         <View style={styles.tilesContainer}>
           <Text style={[styles.title, {paddingLeft: 25}]}>
             Mini-meditations
@@ -176,18 +151,12 @@ class Settings extends Component {
 const mapStateToProps = (state, ownProps) => {
   const {settings, tagNames} = state;
 
-  const {
-    inhaleTime,
-    exhaleTime,
-    selectedTags,
-    breathingTip: breathingTipsStatus,
-  } = settings;
+  const {inhaleTime, exhaleTime, selectedTags} = settings;
   return {
     inhaleTime,
     exhaleTime,
     tagNames,
     selectedTags,
-    breathingTipsStatus,
   };
 };
 

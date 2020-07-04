@@ -59,16 +59,6 @@ const getTagNames = (response) => {
 const getSelectedTags = (isNewUser, tagNames, settings) =>
   isNewUser ? tagNames.map((tag) => tag.id) : settings.selectedTags;
 
-const parseBreathingTip = (response, tags) => {
-  const bTipId = response.result.find((item) => item.name === 'Breathing Tip')
-    .id;
-  const sets = tags[bTipId].sets;
-  return {
-    id: bTipId,
-    sets,
-  };
-};
-
 export const fetchTags = (isNewUser) => (dispatch, getState) => {
   const {settings} = getState();
   const url = 'tags/';
@@ -78,7 +68,6 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
       const backgrounds = response.data.images;
       const tags = parseTags(response.data);
       const sets = parseSets(response.data);
-      const breathingTip = parseBreathingTip(response.data, tags);
       const tagNames = getTagNames(response.data);
       const selectedTags = getSelectedTags(isNewUser, tagNames, settings);
       dispatch({
@@ -87,7 +76,6 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
         tagNames,
         sets,
         selectedTags,
-        breathingTip,
       });
       downLoadImages(backgrounds, dispatch);
     })
@@ -144,18 +132,9 @@ export const moveFirstSetToLast = (tagId) => (dispatch, getState) => {
   dispatch({type: 'MOVE_FIRST_SET_TO_LAST', tags: updatedTags});
 };
 
-export const rearrangeBreathingTip = () => (dispatch, getState) => {
-  const {breathingTip} = getState();
-  const {sets} = breathingTip;
-  const firstSet = sets[0]; // removed the first element
-  const updatedSets = sets.slice(1);
-  const updatedBreathingTipSets = [...updatedSets, firstSet];
-  dispatch({type: 'REARRANGE_BREATHING_TIP', sets: updatedBreathingTipSets});
-};
-
 const addNewContent = (dispatch, getState, response, tagId) => {
   const {tags, sets} = getState();
-  const newSet = response.result[0];
+  const newSet = response;
   delete newSet.tags;
   const newSetId = newSet.id;
   const currentTag = tags[tagId];
@@ -181,6 +160,7 @@ export const fetchContent = (tagId) => (dispatch, getState) => {
   const tagName = tags[tagId].name;
   const queryString = '?tags' + '=' + tagName.replace(/ /g, '%20');
   const contentUrl = 'contents/' + queryString;
+  console.log('contentUrl', contentUrl);
   api
     .get(contentUrl)
     .then((response) => addNewContent(dispatch, getState, response.data, tagId))

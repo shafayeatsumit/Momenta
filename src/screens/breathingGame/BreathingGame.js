@@ -12,7 +12,6 @@ import {Svg, Defs, Rect, Mask, Circle} from 'react-native-svg';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
-import BreathingTipExplainer from './BreathingTipExplainer';
 import styles from './BreathingGame.styles';
 import GameExplainer from './GameExplainerModal';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
@@ -63,7 +62,6 @@ class BreathingGame extends Component {
     this.helperIconId = null;
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
-    this.startExhaleTimerId = null;
     this.closeModalId = null;
     this.fullScreenId = null;
     this.breathCountId = null;
@@ -102,13 +100,10 @@ class BreathingGame extends Component {
   };
 
   exhaleCountDown = () => {
-    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.props.imageFadeOut();
     this.exhaleTimerId = setInterval(() => {
-      console.log('exhale timer', this.state.exhaleTimer);
-      if (this.state.exhaleTimer === 0) {
+      if (this.state.exhaleTimer === 1) {
         clearInterval(this.exhaleTimerId);
-
         this.props.goToNextBreathing();
         return;
       }
@@ -146,11 +141,13 @@ class BreathingGame extends Component {
   };
 
   newUserAction = () => {
-    const {userInfo, dispatch, settings} = this.props;
+    const {userInfo, dispatch, showContent, settings} = this.props;
     const {breathCount} = userInfo;
     if (breathCount === 4) {
       // show breathing tip;
-      // dispatch({ type: 'ONBOARDING_COMPLETED' });
+      showContent();
+      dispatch({type: 'ONBOARDING_COMPLETED'});
+      dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
       this.setState(
         // reset the success msg to create a gap between inhale and exhale message
@@ -162,26 +159,31 @@ class BreathingGame extends Component {
   };
 
   oldUserAction = () => {
-    const {dispatch, currentSession, settings} = this.props;
-    const {selectedTags, breathingTip} = settings;
+    const {dispatch, showContent, currentSession, settings} = this.props;
+    const {selectedTags} = settings;
     const {breathCount} = currentSession;
     const hasSelectedTags = selectedTags.length;
-    if (breathCount === 4 && hasSelectedTags) {
-      this.props.showContent();
-    } else if (breathCount === 2 && breathingTip) {
-      this.props.imageFadeOut();
-      this.props.showBreathingTip();
+    if (breathCount === 4) {
+      if (hasSelectedTags) {
+        showContent();
+      } else {
+        this.setState(
+          this.setState({successMessage: ''}),
+          this.startExhaleCountDown,
+        );
+      }
+      dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
-      this.props.goToNextBreathing();
-      this.startExhaleTimer();
+      this.setState(
+        // reset the success msg to create a gap between inhale and exhale message
+        this.setState({successMessage: ''}),
+        this.startExhaleCountDown,
+      );
+      dispatch({type: 'ADD_BREATH_COUNT'});
     }
-    dispatch({type: 'ADD_BREATH_COUNT'});
   };
 
-  startExhaleTimer = () => {};
-
   startExhale = () => {
-    console.log('start exhale');
     this.setState({touchDisabled: true});
     const {onboardingCompleted} = this.props;
     onboardingCompleted ? this.oldUserAction() : this.newUserAction();
@@ -198,6 +200,9 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
+    if (this.state.exhaleTimer) {
+      return;
+    }
     this.setState({pressIn: true, successMessage: ''});
     this.pressInTime = new Date();
     this.startInhaleTimer();
@@ -222,6 +227,7 @@ class BreathingGame extends Component {
     this.radius.setValue(this.startRadius);
     this.helperMessage = `Hold while you inhale for ${inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${inhaleTime} seconds`;
+    this.setState({successMessage: this.helperMessage});
   };
 
   showHelpers = () => {
@@ -275,7 +281,6 @@ class BreathingGame extends Component {
     this.helperIconId && clearTimeout(this.helperIconId);
     this.exhaleTimerId && clearInterval(this.exhaleTimerId);
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    this.startExhaleTimerId && clearTimeout(this.startExhaleTimerId);
     this.closeModalId && clearTimeout(this.closeModalId);
     this.fullScreenId && clearTimeout(this.fullScreenId);
     this.breathCountId && clearTimeout(this.breathCountId);
@@ -304,6 +309,7 @@ class BreathingGame extends Component {
     const reactFillColor = 'white';
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
+    // TODO: uncomment this later
     const showArrowIcon = onboardingCompleted && !pressIn;
     return (
       <View style={styles.container}>

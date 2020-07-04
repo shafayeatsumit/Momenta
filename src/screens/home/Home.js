@@ -14,7 +14,7 @@ import {
   fetchTags,
   fetchBackground,
   anonymousSignup,
-  rearrangeBreathingTip,
+  removeBackground,
   fetchContent,
   removeContent,
 } from '../../redux/actions/tag';
@@ -23,7 +23,6 @@ import SplashScreen from '../../../assets/images/splash.png';
 import MeditaionExplainer from './explainer_modals/MeditaitonExplainer';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 
 class Home extends Component {
   constructor(props) {
@@ -48,7 +47,6 @@ class Home extends Component {
   }
   // TODO: uncomment the following line
   //changeBackground = () => this.props.dispatch({type: 'REMOVE_BACKGROUND'});
-  changeBackground = () => {};
 
   fadeInContent = (tagDuration, contentDuration, contentDelay, cb) => {
     Animated.timing(this.tagOpacity, {
@@ -66,22 +64,6 @@ class Home extends Component {
     }).start(() => {
       cb && cb();
     });
-  };
-
-  breathingTipFadeOut = () => {
-    const {dispatch} = this.props;
-    Animated.parallel([
-      Animated.timing(this.tagOpacity, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-      Animated.timing(this.contentOpacity, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-    ]).start(() => dispatch(rearrangeBreathingTip()));
   };
 
   fadeOutContent = () => {
@@ -141,39 +123,20 @@ class Home extends Component {
     this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
   };
 
-  closeBreathingGame = () => {
-    const {dispatch, settings} = this.props;
-    const duration = settings.exhaleTime * 1000;
-    dispatch(fetchBackground());
-    this.imageSwitchTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: false});
-      clearTimeout(this.imageSwitchTimer);
-    }, duration);
-  };
+  closeBreathingGame = () => this.setState({breathingGameVisible: false});
 
   showBreathingGame = () => {
-    const {settings} = this.props;
-    const duration = settings.exhaleTime * 1000;
-    this.modalTimer = setTimeout(() => {
-      this.setState({breathingGameVisible: true});
-
-      this.imageOpacity.setValue(1);
-      clearTimeout(this.modalTimer);
-    }, duration + 500);
+    this.setState({breathingGameVisible: true});
+    this.imageOpacity.setValue(1);
   };
 
-  switchBackgroundImage = () => {
-    const {settings} = this.props;
-    const duration = settings.exhaleTime * 1000;
-    this.backgroundSwitcherId = setTimeout(() => {
-      this.changeBackground();
-      this.backgroundSwitcherId && clearTimeout(this.backgroundSwitcherId);
-    }, duration + 250);
-  };
   goToNextBreathing = () => {
+    const {dispatch} = this.props;
     this.closeBreathingGame();
-    this.switchBackgroundImage();
-    this.showBreathingGame();
+    dispatch(fetchBackground());
+    dispatch(removeBackground()).then(() => {
+      this.showBreathingGame();
+    });
   };
 
   getTagIdByName = (tagName) =>
@@ -199,33 +162,6 @@ class Home extends Component {
       this.imageOpacity.setValue(1);
       this.openBreathingGameID && clearTimeout(this.openBreathingGameID);
     }, 500);
-  };
-
-  breathingTipFadeIn = () => {
-    const {breathingTip} = this.props;
-    const firstSetId = breathingTip.sets[0];
-    const content = this.getContentBySetId(firstSetId);
-    const contentText = content ? content.text : '';
-    this.setState(
-      {
-        onScreenContent: contentText,
-        onScreenTagName: 'Breathing Tip',
-      },
-      () => this.fadeInContent(800, 800, 300),
-    );
-  };
-
-  showBreathingTip = () => {
-    const {settings, dispatch} = this.props;
-    this.breathingTipFadeIn();
-    const fadeOutAfter = settings.exhaleTime * 1000 - 250;
-    this.breathingTipTimer = setTimeout(() => {
-      this.breathingTipFadeOut();
-      this.setState({breathingGameVisible: false}, this.openBreathingGame);
-      this.changeBackground();
-      dispatch(fetchBackground());
-      this.breathingTipTimer && clearTimeout(this.breathingTipTimer);
-    }, fadeOutAfter);
   };
 
   closeMeditationExplainer = () => {
@@ -324,7 +260,6 @@ class Home extends Component {
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
               goToNextBreathing={this.goToNextBreathing}
-              showBreathingTip={this.showBreathingTip}
               showContent={this.showContent}
               showMeditationExplainer={this.showMeditationExplainer}
               pressInParent={this.state.pressInParent}

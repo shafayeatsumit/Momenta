@@ -89,8 +89,7 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
         selectedTags,
         breathingTip,
       });
-      // TODO: need to change it as well.
-      // downLoadImages(backgrounds, dispatch);
+      downLoadImages(backgrounds, dispatch);
     })
     .catch((error) => {
       console.log('error in tags', error);
@@ -197,6 +196,11 @@ export const fetchBackground = () => (dispatch, getState) => {
       downLoadImages(backgroundImage, dispatch);
     })
     .catch((error) => console.log(`error in ${url}`, error));
+};
+
+export const removeBackground = () => (dispatch, getState) => {
+  dispatch({type: 'REMOVE_BACKGROUND'});
+  return Promise.resolve();
 };
 
 export const activateTag = (tagIndex) => (dispatch, getState) => {

@@ -206,7 +206,7 @@ class BreathingGame extends Component {
   showIntroSlidesModal = () => {
     this.explainerModalId = setTimeout(
       () => this.setState({IntroSlidesVisible: true}),
-      1000,
+      800,
     );
   };
 
@@ -309,7 +309,10 @@ class BreathingGame extends Component {
       onboardingCompleted && !pressInParent && showArrowIcon;
     return (
       <View style={styles.container}>
-        <Modal animationType="fade" visible={IntroSlidesVisible} visible={true}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={IntroSlidesVisible}>
           <IntroSlides closeExplainer={this.closeExplainer} />
         </Modal>
         {canGoToSettings ? (

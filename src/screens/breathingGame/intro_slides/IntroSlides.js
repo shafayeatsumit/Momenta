@@ -19,7 +19,7 @@ const ExplainerModal = ({closeExplainer}) => {
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
         <Swiper showsButtons={false} loop={false}>
-          <View style={{flexGrow: 1}}>
+          <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
                 The goal is to get into a slow breathing rhythm that produces
@@ -27,7 +27,7 @@ const ExplainerModal = ({closeExplainer}) => {
               </Text>
             </View>
           </View>
-          <View style={{flexGrow: 1}}>
+          <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
                 You’ll get breathing tips based on the latest science and yoga
@@ -36,7 +36,7 @@ const ExplainerModal = ({closeExplainer}) => {
               </Text>
             </View>
           </View>
-          <View style={{flexGrow: 1}}>
+          <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
                 Each breath should be normal-sized, slow and increasingly
@@ -102,6 +102,9 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#787989',
     overflow: 'hidden',
+  },
+  slide: {
+    flexGrow: 1,
   },
   text: {
     fontFamily: FontType.Regular,

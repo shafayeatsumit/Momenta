@@ -107,25 +107,6 @@ const styles = StyleSheet.create({
     textShadowOffset: {height: 1, width: 1},
     textShadowRadius: 2,
   },
-  iconDownContainer: {
-    zIndex: 1,
-  },
-  iconDown: {
-    position: 'absolute',
-    top: 30,
-    left: 20,
-    height: 35,
-    width: 35,
-    tintColor: 'rgba(255,255,255,0.8)',
-    zIndex: 2,
-  },
-  iconStyle: {
-    tintColor: 'white',
-    height: 35,
-    width: 35,
-    resizeMode: 'cover',
-    zIndex: 2,
-  },
   tapIconHolder: {
     height: RFValue(130),
     width: ScreenWidth,
@@ -167,7 +148,7 @@ const styles = StyleSheet.create({
   },
   arrowIconContainer: {
     top: 32,
-    right: 0,
+    right: 3,
     position: 'absolute',
     height: 50,
     width: 60,

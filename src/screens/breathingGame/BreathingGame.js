@@ -117,7 +117,11 @@ class BreathingGame extends Component {
     // before starting exhaleCountdown
     // we need to clear the onscreen message.
     this.setState(
-      this.setState({successMessage: '', showHelperIcon: false}),
+      this.setState({
+        successMessage: '',
+        showHelperIcon: false,
+        showArrowIcon: false,
+      }),
       this.startExhaleCountDown,
     );
   };
@@ -202,13 +206,12 @@ class BreathingGame extends Component {
   showGameExplainerModal = () => {
     this.explainerModalId = setTimeout(
       () => this.setState({gameExplainerVisible: true}),
-      1200,
+      1000,
     );
   };
 
   closeExplainer = () => {
-    this.setState({gameExplainerVisible: false});
-    this.showHelpers();
+    this.setState({gameExplainerVisible: false}, this.showHelpers);
     clearTimeout(this.explainerModalId);
   };
 
@@ -222,8 +225,8 @@ class BreathingGame extends Component {
 
   showHelperIcon = () => {
     this.helperIconId = setTimeout(
-      () => this.setState({showHelperIcon: true}),
-      1000,
+      () => this.setState({showHelperIcon: true, showArrowIcon: true}),
+      1500,
     );
   };
 
@@ -232,7 +235,7 @@ class BreathingGame extends Component {
       if (!this.props.pressInParent) {
         this.setState({successMessage: this.helperMessage});
       }
-    }, 500);
+    }, 1000);
     this.showHelperIcon();
   };
 
@@ -242,12 +245,13 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    this.showHelpers();
     this.animationId = this.radius.addListener(({value}) => {});
     const {pressInParent, userInfo} = this.props;
     pressInParent && this.handlePressIn();
     // show it for the first time.
-    if (!userInfo.breathCount) {
+    if (userInfo.breathCount) {
+      this.showHelpers();
+    } else {
       this.showGameExplainerModal();
     }
   }
@@ -284,6 +288,7 @@ class BreathingGame extends Component {
       showHelperIcon,
       gameExplainerVisible,
       smoothWord,
+      showArrowIcon,
     } = this.state;
     const {
       onboardingCompleted,
@@ -301,8 +306,8 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     // TODO: uncomment this later
-    const showArrowIcon =
-      onboardingCompleted && !pressInParent && showHelperIcon;
+    const canGoToSettings =
+      onboardingCompleted && !pressInParent && showArrowIcon;
     return (
       <View style={styles.container}>
         <Modal
@@ -311,7 +316,7 @@ class BreathingGame extends Component {
           visible={gameExplainerVisible}>
           <GameExplainer closeExplainer={this.closeExplainer} />
         </Modal>
-        {showArrowIcon ? (
+        {canGoToSettings ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}
             onPress={() => navigation.navigate('Settings')}>

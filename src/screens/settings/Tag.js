@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   tagIndex: {
-    height: 22,
-    width: 22,
-    borderRadius: 22 / 2,
+    height: 20,
+    width: 20,
+    borderRadius: 20 / 2,
   },
   tagName: {
     fontFamily: FontType.SemiBold,
-    fontSize: 20,
+    fontSize: 15,
     color: 'white',
     paddingLeft: 10,
     textAlign: 'left',

@@ -1,6 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
+import {RFValue} from '../../helpers/responsiveFont';
 
 const styles = StyleSheet.create({
   container: {
@@ -126,15 +127,16 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   tapIconHolder: {
-    height: 80,
+    height: RFValue(130),
     width: ScreenWidth,
     position: 'absolute',
-    bottom: 20,
+    bottom: 25,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   tapIcon: {
-    height: 80,
-    width: 90,
+    height: RFValue(100),
+    width: RFValue(100),
   },
   tapArea: {
     position: 'absolute',

@@ -24,7 +24,6 @@ const InhaleValues = [
   {label: '3s', value: 3},
   {label: '4s', value: 4},
   {label: '5s', value: 5},
-  {label: '6s', value: 6},
 ];
 
 const ExhaleValues = [
@@ -32,8 +31,6 @@ const ExhaleValues = [
   {label: '4s', value: 4},
   {label: '5s', value: 5},
   {label: '6s', value: 6},
-  {label: '7s', value: 7},
-  {label: '8s', value: 8},
 ];
 
 const placeHolderStyle = {

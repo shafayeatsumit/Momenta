@@ -39,10 +39,8 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      touchDisabled: false,
       gameExplainerVisible: false,
       showHelperIcon: false,
-      pressIn: false,
       successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
@@ -80,7 +78,6 @@ class BreathingGame extends Component {
   shrinkCircle = () => {
     this.shirnkingCircle = true;
     this.setState({
-      touchDisabled: true,
       successMessage: 'Almost, give it another shot',
     });
     Animated.timing(this.radius, {
@@ -91,10 +88,8 @@ class BreathingGame extends Component {
     }).start(() => {
       this.shirnkingCircle = false;
       this.setState({
-        touchDisabled: false,
         successMessage: this.delayMessage,
         showHelperIcon: true,
-        pressIn: false,
         breathCountVisible: true,
       });
     });
@@ -105,11 +100,29 @@ class BreathingGame extends Component {
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 1) {
         clearInterval(this.exhaleTimerId);
-        this.props.goToNextBreathing();
         return;
       }
       this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
     }, 1000);
+  };
+
+  startExhaleCountDown = () => {
+    const {settings} = this.props;
+    // .5 sec dealy between inhale and exhale
+    // to make it look good.
+    this.exhaleCountDownDelayId = setTimeout(() => {
+      clearTimeout(this.exhaleCountDownDelayId);
+      this.setState({exhaleTimer: settings.exhaleTime}, this.exhaleCountDown);
+    }, 500);
+  };
+
+  prepareExhale = () => {
+    // before starting exhaleCountdown
+    // we need to clear the onscreen message.
+    this.setState(
+      this.setState({successMessage: '', showHelperIcon: false}),
+      this.startExhaleCountDown,
+    );
   };
 
   startInhaleTimer = () => {
@@ -129,25 +142,6 @@ class BreathingGame extends Component {
         }),
       }));
     }, 1000);
-  };
-
-  startExhaleCountDown = () => {
-    const {settings} = this.props;
-    // .5 sec dealy between inhale and exhale
-    // to make it look good.
-    this.exhaleCountDownDelayId = setTimeout(() => {
-      clearTimeout(this.exhaleCountDownDelayId);
-      this.setState({exhaleTimer: settings.exhaleTime}, this.exhaleCountDown);
-    }, 500);
-  };
-
-  prepareExhale = () => {
-    // before starting exhaleCountdown
-    // we need to clear the onscreen message.
-    this.setState(
-      this.setState({successMessage: ''}),
-      this.startExhaleCountDown,
-    );
   };
 
   newUserAction = () => {
@@ -181,7 +175,6 @@ class BreathingGame extends Component {
   };
 
   startExhale = () => {
-    this.setState({touchDisabled: true});
     const {onboardingCompleted} = this.props;
     onboardingCompleted ? this.oldUserAction() : this.newUserAction();
   };
@@ -198,9 +191,10 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     if (this.state.exhaleTimer || this.shirnkingCircle) {
+      console.log('exhale timer');
       return;
     }
-    this.setState({pressIn: true, successMessage: ''});
+    this.setState({successMessage: ''});
     this.pressInTime = new Date();
     this.startInhaleTimer();
     this.expandCircle();
@@ -227,20 +221,20 @@ class BreathingGame extends Component {
     this.setState({successMessage: this.helperMessage});
   };
 
-  showHelpers = () => {
-    this.hlperMessageId = setTimeout(() => {
-      if (!this.state.pressIn) {
-        this.setState({successMessage: this.helperMessage});
-      }
-    }, 400);
-    this.showHelperIcon();
-  };
-
   showHelperIcon = () => {
     this.helperIconId = setTimeout(
       () => this.setState({showHelperIcon: true}),
-      800,
+      1000,
     );
+  };
+
+  showHelpers = () => {
+    this.hlperMessageId = setTimeout(() => {
+      if (!this.props.pressInParent) {
+        this.setState({successMessage: this.helperMessage});
+      }
+    }, 500);
+    this.showHelperIcon();
   };
 
   getTotalBreathCount = () => {
@@ -290,11 +284,15 @@ class BreathingGame extends Component {
       inhaleTimer,
       showHelperIcon,
       gameExplainerVisible,
-      pressIn,
       breathCountVisible,
       smoothWord,
     } = this.state;
-    const {onboardingCompleted, userInfo, navigation} = this.props;
+    const {
+      onboardingCompleted,
+      userInfo,
+      navigation,
+      pressInParent,
+    } = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
@@ -305,7 +303,7 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     // TODO: uncomment this later
-    const showArrowIcon = onboardingCompleted && !pressIn;
+    const showArrowIcon = onboardingCompleted && !pressInParent;
     return (
       <View style={styles.container}>
         <Modal
@@ -373,7 +371,7 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {showHelperIcon && !pressIn ? (
+        {showHelperIcon && !pressInParent ? (
           <View style={styles.tapIconHolder} pointerEvents="none">
             <Image source={helperIcon} style={styles.tapIcon} />
           </View>

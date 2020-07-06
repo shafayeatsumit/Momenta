@@ -68,7 +68,7 @@ class Home extends Component {
       toValue: 0,
       duration: exhaleTime * 1000,
       useNativeDriver: true,
-    }).start();
+    }).start(this.goToNextBreathing);
   };
 
   showNextButton = () =>
@@ -128,12 +128,19 @@ class Home extends Component {
     this.imageOpacity.setValue(1);
   };
 
+  showBreathingGameWithDelay = () => {
+    this.breathingDelayId = setTimeout(() => {
+      this.showBreathingGame();
+      clearTimeout(this.breathingDelayId);
+    }, 300);
+  };
+
   goToNextBreathing = () => {
     const {dispatch} = this.props;
     this.closeBreathingGame();
     dispatch(fetchBackground());
     dispatch(removeBackground()).then(() => {
-      this.showBreathingGame();
+      this.showBreathingGameWithDelay();
     });
   };
 
@@ -233,7 +240,6 @@ class Home extends Component {
               backgroundImage={backgroundImage}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
-              goToNextBreathing={this.goToNextBreathing}
               showContent={this.showContent}
               pressInParent={this.state.pressInParent}
               pressOutParent={this.state.pressOutParent}

@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
-import GameExplainer from './GameExplainerModal';
+import IntroSlides from './intro_slides/IntroSlides';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
@@ -41,7 +41,7 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       touchDisabled: false,
-      gameExplainerVisible: false,
+      IntroSlidesVisible: false,
       showHelperIcon: false,
       successMessage: '',
       exhaleTimer: 0,
@@ -203,15 +203,15 @@ class BreathingGame extends Component {
     this.expandCircle();
   };
 
-  showGameExplainerModal = () => {
+  showIntroSlidesModal = () => {
     this.explainerModalId = setTimeout(
-      () => this.setState({gameExplainerVisible: true}),
+      () => this.setState({IntroSlidesVisible: true}),
       1000,
     );
   };
 
   closeExplainer = () => {
-    this.setState({gameExplainerVisible: false}, this.showHelpers);
+    this.setState({IntroSlidesVisible: false}, this.showHelpers);
     clearTimeout(this.explainerModalId);
   };
 
@@ -252,7 +252,7 @@ class BreathingGame extends Component {
     if (userInfo.breathCount) {
       this.showHelpers();
     } else {
-      this.showGameExplainerModal();
+      this.showIntroSlidesModal();
     }
   }
 
@@ -286,7 +286,7 @@ class BreathingGame extends Component {
       successMessage,
       inhaleTimer,
       showHelperIcon,
-      gameExplainerVisible,
+      IntroSlidesVisible,
       smoothWord,
       showArrowIcon,
     } = this.state;
@@ -305,16 +305,12 @@ class BreathingGame extends Component {
     const reactFillColor = 'white';
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
-    // TODO: uncomment this later
     const canGoToSettings =
       onboardingCompleted && !pressInParent && showArrowIcon;
     return (
       <View style={styles.container}>
-        <Modal
-          animationType="fade"
-          transparent={gameExplainerVisible}
-          visible={gameExplainerVisible}>
-          <GameExplainer closeExplainer={this.closeExplainer} />
+        <Modal animationType="fade" visible={IntroSlidesVisible} visible={true}>
+          <IntroSlides closeExplainer={this.closeExplainer} />
         </Modal>
         {canGoToSettings ? (
           <TouchableOpacity

@@ -54,7 +54,7 @@ class BreathingGame extends Component {
     // messages
     this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
-
+    this.breathCountOpacity=new Animated.Value(1);
     // all the timers
     this.explainerModalId = null;
     this.hlperMessageId = null;
@@ -62,6 +62,7 @@ class BreathingGame extends Component {
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
     this.exhaleCountDownDelayId = null;
+
   }
 
   expandCircle = () => {
@@ -75,25 +76,35 @@ class BreathingGame extends Component {
     }).start();
   };
 
+
   shrinkCircle = () => {
     this.setState({
-      successMessage: 'Almost, give it another shot',
+      successMessage: 'Almost, give it another shot',            
     });
     Animated.timing(this.radius, {
       toValue: this.startRadius,
       duration: 2000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(() => {
-      this.setState({
-        successMessage: this.delayMessage,
-        showHelperIcon: true,
-      });
+    }).start(()=>{
+      this.setState({successMessage:this.delayMessage,showHelperIcon: true})
     });
   };
+  breathCountFadeOut = ()=> {
+    const {settings} = this.props;
+    const {exhaleTime} = settings;
+    Animated.timing(this.breathCountOpacity, {
+      toValue: 0,
+      duration: exhaleTime*1000,
+      delay: 0,
+      useNativeDriver: true,
+    }).start();
+
+  }
 
   exhaleCountDown = () => {
     this.props.imageFadeOut();
+    this.breathCountFadeOut();
     this.exhaleTimerId = setInterval(() => {
       if (this.state.exhaleTimer === 1) {
         clearInterval(this.exhaleTimerId);
@@ -223,9 +234,9 @@ class BreathingGame extends Component {
     this.setState({successMessage: this.helperMessage});
   };
 
-  showHelperIcon = () => {
+  showArrowIcon = () => {
     this.helperIconId = setTimeout(
-      () => this.setState({showHelperIcon: true, showArrowIcon: true}),
+      () => this.setState({ showArrowIcon: true}),
       1500,
     );
   };
@@ -233,10 +244,10 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
-        this.setState({successMessage: this.helperMessage});
+        this.setState({successMessage: this.helperMessage, showHelperIcon: true});
       }
-    }, 1000);
-    this.showHelperIcon();
+    }, 800);
+    this.showArrowIcon();
   };
 
   getTotalBreathCount = () => {
@@ -324,9 +335,9 @@ class BreathingGame extends Component {
         ) : null}
         {userInfo.breathCount ? (
           <View pointerEvents="none" style={styles.breathCountContainer}>
-            <Text style={styles.breathCountText}>
+            <Animated.Text style={[styles.breathCountText,{opacity:this.breathCountOpacity}]}>
               {this.getTotalBreathCount()}
-            </Text>
+            </Animated.Text>
           </View>
         ) : null}
         <Svg height="100%" width="100%">

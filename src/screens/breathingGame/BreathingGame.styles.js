@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.35,
+    backgroundColor:'yellow',    
   },
   breathCountContainer: {
     top: 40,

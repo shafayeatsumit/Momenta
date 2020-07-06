@@ -53,12 +53,6 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
-  getBreathingTipId = () => {
-    const {tagNames} = this.props;
-    const breathingTipsId = tagNames.find((tag) => tag.name === 'Breathing Tip')
-      .id;
-    return breathingTipsId;
-  };
 
   goHome = () => this.props.navigation.goBack();
 

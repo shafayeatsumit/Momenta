@@ -17,6 +17,7 @@ import GameExplainer from './GameExplainerModal';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import tapIcon from '../../../assets/icons/inhale_again_helper.png';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
+import {ScreenWidth} from '../../helpers/constants/common';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const SMOOTH_WORDS = [
@@ -39,18 +40,17 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      touchDisabled: false,
       gameExplainerVisible: false,
       showHelperIcon: false,
       successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
       smoothWord: null,
-      breathCountVisible: true,
     };
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
     this.pressInTime = null;
-    this.shirnkingCircle = false;
     // messages
     this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
@@ -76,7 +76,6 @@ class BreathingGame extends Component {
   };
 
   shrinkCircle = () => {
-    this.shirnkingCircle = true;
     this.setState({
       successMessage: 'Almost, give it another shot',
     });
@@ -86,11 +85,9 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(() => {
-      this.shirnkingCircle = false;
       this.setState({
         successMessage: this.delayMessage,
         showHelperIcon: true,
-        breathCountVisible: true,
       });
     });
   };
@@ -136,10 +133,6 @@ class BreathingGame extends Component {
         ...(prevState.inhaleTimer < settings.inhaleTime && {
           inhaleTimer: prevState.inhaleTimer + 1,
         }),
-        // breathCounter goes away after first sec
-        ...(prevState.inhaleTimer === 0 && {
-          breathCountVisible: false,
-        }),
       }));
     }, 1000);
   };
@@ -167,6 +160,7 @@ class BreathingGame extends Component {
     console.log('breath count', breathCount);
     if (breathCount === 4) {
       hasSelectedTags ? showContent() : this.prepareExhale();
+      dispatch({type: 'ADD_BREATH_COUNT'});
       dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
       this.prepareExhale();
@@ -176,10 +170,15 @@ class BreathingGame extends Component {
 
   startExhale = () => {
     const {onboardingCompleted} = this.props;
+    this.setState({touchDisabled: true});
     onboardingCompleted ? this.oldUserAction() : this.newUserAction();
   };
 
   handlePressOut = () => {
+    if (this.state.touchDisabled) {
+      return;
+    }
+
     const radiusValue = this.radius._value;
     const fullScreenRevealed = radiusValue === 7;
     Animated.timing(this.radius).stop();
@@ -190,7 +189,7 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    if (this.state.exhaleTimer || this.shirnkingCircle) {
+    if (this.state.touchDisabled) {
       console.log('exhale timer');
       return;
     }
@@ -284,7 +283,6 @@ class BreathingGame extends Component {
       inhaleTimer,
       showHelperIcon,
       gameExplainerVisible,
-      breathCountVisible,
       smoothWord,
     } = this.state;
     const {
@@ -303,7 +301,8 @@ class BreathingGame extends Component {
     const circleFillColor = 'black';
     const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     // TODO: uncomment this later
-    const showArrowIcon = onboardingCompleted && !pressInParent;
+    const showArrowIcon =
+      onboardingCompleted && !pressInParent && showHelperIcon;
     return (
       <View style={styles.container}>
         <Modal
@@ -319,7 +318,7 @@ class BreathingGame extends Component {
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}
-        {userInfo.breathCount && breathCountVisible ? (
+        {userInfo.breathCount ? (
           <View pointerEvents="none" style={styles.breathCountContainer}>
             <Text style={styles.breathCountText}>
               {this.getTotalBreathCount()}
@@ -339,6 +338,7 @@ class BreathingGame extends Component {
               />
             </Mask>
           </Defs>
+
           <Rect
             height="100%"
             width="100%"

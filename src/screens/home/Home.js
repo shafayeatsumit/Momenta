@@ -21,6 +21,7 @@ import BrethingGame from '../breathingGame/BreathingGame';
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 class Home extends Component {
   constructor(props) {
@@ -38,6 +39,9 @@ class Home extends Component {
     this.tagOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
     this.imageOpacity = new Animated.Value(1);
+    // time
+    this.pressInTime = null;
+    this.pressOutTime = null;
   }
 
   fadeInContent = () => {
@@ -100,6 +104,10 @@ class Home extends Component {
     const firstSetId = sets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
+    analytics().logEvent('viewed_content', {
+      content_id: content.id,
+      set_id: firstSetId,
+    });
     return contentText;
   };
 
@@ -166,13 +174,34 @@ class Home extends Component {
     );
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
+    analytics().logEvent('pressed_next');
   };
 
-  handlePressIn = () =>
+  handlePressIn = () => {
+    const {settings} = this.props;
+    this.pressInTime = new Date();
+    if (this.pressOutTime) {
+      const timeTakenExhale = ((new Date() - this.pressOutTime) / 1000).toFixed(
+        1,
+      );
+      analytics().logEvent('exhale', {
+        time_taken: Number(timeTakenExhale),
+        exhale_time: settings.exhaleTime,
+      });
+    }
     this.setState({pressInParent: true, pressOutParent: false});
+  };
 
-  handlePressOut = () =>
+  handlePressOut = () => {
+    const {settings} = this.props;
+    this.pressOutTime = new Date();
+    const timeTakeInhale = ((new Date() - this.pressInTime) / 1000).toFixed(1);
+    analytics().logEvent('inhale', {
+      time_taken: Number(timeTakeInhale),
+      inhale_time: settings.inhale_time,
+    });
     this.setState({pressOutParent: true, pressInParent: false});
+  };
 
   handleAppStateChange = (nextAppState) => {
     if (

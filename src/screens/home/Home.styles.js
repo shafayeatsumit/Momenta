@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: ScreenWidth,
-    height: ScreenHeight * 0.2,    
+    height: ScreenHeight * 0.25,    
   },
 });
 

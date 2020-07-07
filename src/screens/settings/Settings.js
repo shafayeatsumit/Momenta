@@ -17,6 +17,7 @@ import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';
 import RNPickerSelect from 'react-native-picker-select';
+import analytics from '@react-native-firebase/analytics';
 
 const defaultPlaceHolder = {};
 
@@ -53,7 +54,6 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
-
   goHome = () => this.props.navigation.goBack();
 
   handleTagPress = (tagId) => {
@@ -62,9 +62,11 @@ class Settings extends Component {
     if (isSelected) {
       const updatedTags = selectedTags.filter((id) => id !== tagId);
       dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+      analytics().logEvent('deselect_tag', {tag_id: tagId});
     } else {
       const updatedTags = [...selectedTags, tagId];
       dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+      analytics().logEvent('select_tag', {tag_id: tagId});
     }
   };
 

@@ -55,7 +55,7 @@ class BreathingGame extends Component {
     // messages
     this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
-    this.breathCountOpacity=new Animated.Value(1);
+    this.breathCountOpacity = new Animated.Value(1);
     // all the timers
     this.explainerModalId = null;
     this.hlperMessageId = null;
@@ -63,7 +63,6 @@ class BreathingGame extends Component {
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
     this.exhaleCountDownDelayId = null;
-
   }
 
   expandCircle = () => {
@@ -77,33 +76,38 @@ class BreathingGame extends Component {
     }).start();
   };
 
-
   shrinkCircle = () => {
     this.setState({
-      successMessage: 'Almost, give it another shot',    
+      successMessage: 'Almost, give it another shot',
       showHelperIcon: false,
-      showArrowIcon:false,        
+      showArrowIcon: false,
     });
     Animated.timing(this.radius, {
       toValue: this.startRadius,
       duration: 2000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(()=>{
-      this.setState({successMessage:this.delayMessage,showHelperIcon: true,breathCountVisible: true},this.showArrowIcon)
+    }).start(() => {
+      this.setState(
+        {
+          successMessage: this.delayMessage,
+          showHelperIcon: true,
+          breathCountVisible: true,
+        },
+        this.showArrowIcon,
+      );
     });
   };
-  breathCountFadeOut = ()=> {
+  breathCountFadeOut = () => {
     const {settings} = this.props;
     const {exhaleTime} = settings;
     Animated.timing(this.breathCountOpacity, {
       toValue: 0,
-      duration: exhaleTime*1000,
+      duration: exhaleTime * 1000,
       delay: 0,
       useNativeDriver: true,
     }).start();
-
-  }
+  };
 
   exhaleCountDown = () => {
     this.props.imageFadeOut();
@@ -154,7 +158,7 @@ class BreathingGame extends Component {
         // breathCounter goes away after first sec
         ...(prevState.inhaleTimer === 0 && {
           breathCountVisible: false,
-        }),        
+        }),
       }));
     }, 1000);
   };
@@ -207,13 +211,12 @@ class BreathingGame extends Component {
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    if(fullScreenRevealed){
-      this.startExhale()
-      this.setState({showArrowIcon:false})
-    }else{
-      this.shrinkCircle()
+    if (fullScreenRevealed) {
+      this.startExhale();
+      this.setState({showArrowIcon: false});
+    } else {
+      this.shrinkCircle();
     }
-    
   };
 
   handlePressIn = () => {
@@ -249,7 +252,7 @@ class BreathingGame extends Component {
 
   showArrowIcon = () => {
     this.helperIconId = setTimeout(
-      () => this.setState({ showArrowIcon: true}),
+      () => this.setState({showArrowIcon: true}),
       1500,
     );
   };
@@ -257,7 +260,10 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
-        this.setState({successMessage: this.helperMessage, showHelperIcon: true});
+        this.setState({
+          successMessage: this.helperMessage,
+          showHelperIcon: true,
+        });
       }
     }, 800);
     this.showArrowIcon();
@@ -266,6 +272,12 @@ class BreathingGame extends Component {
   getTotalBreathCount = () => {
     const {userInfo} = this.props;
     return userInfo.breathCount.toLocaleString();
+  };
+
+  handleArroPress = () => {
+    const {navigation} = this.props;
+    navigation.navigate('Settings');
+    analytics().logEvent('viewed_settings');
   };
 
   componentDidMount() {
@@ -349,7 +361,11 @@ class BreathingGame extends Component {
         ) : null}
         {userInfo.breathCount && breathCountVisible ? (
           <View pointerEvents="none" style={styles.breathCountContainer}>
-            <Animated.Text style={[styles.breathCountText,{opacity:this.breathCountOpacity}]}>
+            <Animated.Text
+              style={[
+                styles.breathCountText,
+                {opacity: this.breathCountOpacity},
+              ]}>
               {this.getTotalBreathCount()}
             </Animated.Text>
           </View>

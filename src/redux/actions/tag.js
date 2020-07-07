@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const TAG_COlORS = [
   ['rgb(134,178,255)', 'rgb(104,82,253)'],
-  ['rgb(134,178,255)', 'rgb(104,82,253)'],
   ['rgb(224,129,212)', 'rgb(114,65,191)'],
   ['rgb(246,162,124)', 'rgb(219,52,137)'],
   ['rgb(58,137,205)', 'rgb(58,83,181)'],

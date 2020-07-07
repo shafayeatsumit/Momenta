@@ -120,6 +120,7 @@ class Settings extends Component {
               />
             </View>
           </View>
+          <View style={{height: 50}} />
         </View>
         <View style={styles.tilesContainer}>
           <Text style={[styles.title, {paddingLeft: 25}]}>

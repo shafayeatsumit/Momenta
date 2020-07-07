@@ -19,6 +19,9 @@ const Tag = ({selectedTags, item, handlePress}) => {
         end={{x: 1, y: 0}}
         colors={item.gradientColors}
         style={styles.tiles}>
+        <View style={styles.nameContainer}>
+          <Text style={styles.tagName}>{item.name}</Text>
+        </View>
         <View style={styles.iconContainer}>
           <View
             style={[
@@ -27,9 +30,6 @@ const Tag = ({selectedTags, item, handlePress}) => {
             ]}>
             {isSelected && <Image source={checkIcon} style={styles.tagIndex} />}
           </View>
-        </View>
-        <View style={styles.nameContainer}>
-          <Text style={styles.tagName}>{item.name}</Text>
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -52,8 +52,9 @@ const styles = StyleSheet.create({
   iconContainer: {
     flex: 1,
     justifyContent: 'center',
-    paddingLeft: 10,
-    paddingTop: 5,
+    alignItems: 'flex-end',
+    paddingRight: 20,
+    paddingBottom: 10,
   },
   tagIndexHolder: {
     height: 30,

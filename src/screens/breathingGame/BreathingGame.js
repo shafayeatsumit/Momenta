@@ -79,7 +79,9 @@ class BreathingGame extends Component {
 
   shrinkCircle = () => {
     this.setState({
-      successMessage: 'Almost, give it another shot',            
+      successMessage: 'Almost, give it another shot',    
+      showHelperIcon: false,
+      showArrowIcon:false,        
     });
     Animated.timing(this.radius, {
       toValue: this.startRadius,
@@ -87,7 +89,7 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(()=>{
-      this.setState({successMessage:this.delayMessage,showHelperIcon: true})
+      this.setState({successMessage:this.delayMessage,showHelperIcon: true},this.showArrowIcon)
     });
   };
   breathCountFadeOut = ()=> {
@@ -200,7 +202,13 @@ class BreathingGame extends Component {
     // clearing inhale timer
     this.state.inhaleTimer && this.setState({inhaleTimer: 0});
     this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    !fullScreenRevealed ? this.shrinkCircle() : this.startExhale();
+    if(fullScreenRevealed){
+      this.startExhale()
+      this.setState({showArrowIcon:false})
+    }else{
+      this.shrinkCircle()
+    }
+    
   };
 
   handlePressIn = () => {

@@ -322,8 +322,14 @@ PODS:
     - React
   - RNScreens (2.4.0):
     - React
+  - RNSentry (1.6.1):
+    - React
+    - Sentry (~> 5.1.8)
   - RNSVG (12.1.0):
     - React
+  - Sentry (5.1.8):
+    - Sentry/Core (= 5.1.8)
+  - Sentry/Core (5.1.8)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -364,6 +370,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -384,6 +391,7 @@ SPEC REPOS:
     - GoogleUtilities
     - nanopb
     - PromisesObjC
+    - Sentry
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -454,6 +462,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -509,7 +519,9 @@ SPEC CHECKSUMS:
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNReanimated: 4e102df74a9674fa943e05f97f3362b6e44d0b48
   RNScreens: b5c0e1b2b04512919e78bd3898e144a157ce2363
+  RNSentry: 57824da1293d03966605d682d5868b11aa1b6e5a
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
+  Sentry: 795e8ffe1c45d9d20b3aa398774d7ea6a443fb05
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: ae67823024520c8611a6cf524d32c0cd20d04210

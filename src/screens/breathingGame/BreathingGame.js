@@ -43,6 +43,7 @@ class BreathingGame extends Component {
       touchDisabled: false,
       IntroSlidesVisible: false,
       showHelperIcon: false,
+      breathCountVisible: true,
       successMessage: '',
       exhaleTimer: 0,
       inhaleTimer: 0,
@@ -89,7 +90,7 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.linear,
     }).start(()=>{
-      this.setState({successMessage:this.delayMessage,showHelperIcon: true},this.showArrowIcon)
+      this.setState({successMessage:this.delayMessage,showHelperIcon: true,breathCountVisible: true},this.showArrowIcon)
     });
   };
   breathCountFadeOut = ()=> {
@@ -150,6 +151,10 @@ class BreathingGame extends Component {
         ...(prevState.inhaleTimer < settings.inhaleTime && {
           inhaleTimer: prevState.inhaleTimer + 1,
         }),
+        // breathCounter goes away after first sec
+        ...(prevState.inhaleTimer === 0 && {
+          breathCountVisible: false,
+        }),        
       }));
     }, 1000);
   };
@@ -307,6 +312,7 @@ class BreathingGame extends Component {
       showHelperIcon,
       IntroSlidesVisible,
       smoothWord,
+      breathCountVisible,
       showArrowIcon,
     } = this.state;
     const {
@@ -341,7 +347,7 @@ class BreathingGame extends Component {
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}
-        {userInfo.breathCount ? (
+        {userInfo.breathCount && breathCountVisible ? (
           <View pointerEvents="none" style={styles.breathCountContainer}>
             <Animated.Text style={[styles.breathCountText,{opacity:this.breathCountOpacity}]}>
               {this.getTotalBreathCount()}

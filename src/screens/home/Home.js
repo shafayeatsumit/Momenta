@@ -257,12 +257,12 @@ class Home extends Component {
           </Animated.Text>
         </View>
 
-        <SafeAreaView style={styles.contentContainer}>
+        <View style={styles.contentContainer}>
           <Animated.Text
             style={[styles.content, {opacity: this.contentOpacity}]}>
             {onScreenContent}
           </Animated.Text>
-        </SafeAreaView>
+        </View>
         {breathingGameVisible ? (
           <View style={styles.breathingGameContainer}>
             <BrethingGame

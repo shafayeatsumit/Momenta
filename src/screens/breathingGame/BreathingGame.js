@@ -183,7 +183,6 @@ class BreathingGame extends Component {
     const {breathCount} = currentSession;
     const hasSelectedTags = selectedTags.length;
     // TODO: change it later
-    console.log('breath count', breathCount);
     if (breathCount === 4) {
       hasSelectedTags ? showContent() : this.prepareExhale();
       dispatch({type: 'ADD_BREATH_COUNT'});

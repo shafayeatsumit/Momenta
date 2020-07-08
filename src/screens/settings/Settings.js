@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -7,7 +6,6 @@ import {
   TouchableOpacity,
   Platform,
   ScrollView,
-  Switch,
   StyleSheet,
 } from 'react-native';
 import {connect} from 'react-redux';

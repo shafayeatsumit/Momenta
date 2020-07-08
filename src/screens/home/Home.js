@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   Animated,
@@ -21,7 +20,6 @@ import BrethingGame from '../breathingGame/BreathingGame';
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
-import crashlytics from '@react-native-firebase/crashlytics';
 
 class Home extends Component {
   constructor(props) {

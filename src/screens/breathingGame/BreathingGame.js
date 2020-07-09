@@ -127,8 +127,11 @@ class BreathingGame extends Component {
     // to make it look good.
     this.exhaleCountDownDelayId = setTimeout(() => {
       clearTimeout(this.exhaleCountDownDelayId);
-      this.setState({exhaleTimer: settings.exhaleTime}, this.exhaleCountDown);
-    }, 500);
+      this.setState(
+        {successMessage: '', exhaleTimer: settings.exhaleTime},
+        this.exhaleCountDown,
+      );
+    }, 1000);
   };
 
   prepareExhale = () => {
@@ -136,7 +139,7 @@ class BreathingGame extends Component {
     // we need to clear the onscreen message.
     this.setState(
       this.setState({
-        successMessage: '',
+        successMessage: 'Release',
         showHelperIcon: false,
         showArrowIcon: false,
       }),

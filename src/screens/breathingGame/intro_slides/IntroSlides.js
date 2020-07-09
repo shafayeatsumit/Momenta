@@ -18,7 +18,7 @@ const ExplainerModal = ({closeExplainer}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
-        <Swiper showsButtons={false} loop={false}>
+        <Swiper showsButtons={false} loop={false} dotColor={'#7882b4'}>
           <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>

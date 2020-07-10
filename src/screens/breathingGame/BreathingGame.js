@@ -53,7 +53,7 @@ class BreathingGame extends Component {
     this.radius = new Animated.Value(this.startRadius);
     this.breathCountOpacity = new Animated.Value(1);
     this.pressInTime = null;
-
+    this.releaseMsg = 'You can release the screen when image is revealed';
     // all the timers
     this.explainerModalId = null;
     this.hlperMessageId = null;
@@ -136,7 +136,7 @@ class BreathingGame extends Component {
     // we need to clear the onscreen message.
     this.setState(
       this.setState({
-        successMessage: 'Release',
+        successMessage: '',
         showHelperIcon: false,
         showArrowIcon: false,
       }),
@@ -269,14 +269,28 @@ class BreathingGame extends Component {
     return userInfo.breathCount.toLocaleString();
   };
 
-  handleArroPress = () => {
+  handleArroPresss = () => {
     const {navigation} = this.props;
     navigation.navigate('Settings');
     analytics().logEvent('viewed_settings');
   };
 
+  showReleaseMessage = () => {
+    this.releaseMsgId = setTimeout(() => {
+      this.props.pressInParent &&
+        this.setState({successMessage: this.releaseMsg});
+      clearTimeout(this.releaseMsgId);
+    }, 1500);
+  };
   componentDidMount() {
-    this.animationId = this.radius.addListener(({value}) => {});
+    this.animationId = this.radius.addListener(({value}) => {
+      const fullScreenRevealed = value === 7;
+      if (fullScreenRevealed) {
+        clearInterval(this.inhaleTimerId);
+        this.setState({inhaleTimer: 0});
+        this.showReleaseMessage();
+      }
+    });
     const {pressInParent, userInfo} = this.props;
     pressInParent && this.handlePressIn();
     // show it for the first time.
@@ -350,7 +364,7 @@ class BreathingGame extends Component {
         {canGoToSettings ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}
-            onPress={() => navigation.navigate('Settings')}>
+            onPress={this.handleArroPresss}>
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}

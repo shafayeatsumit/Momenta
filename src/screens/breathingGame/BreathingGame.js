@@ -51,12 +51,9 @@ class BreathingGame extends Component {
     };
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    this.pressInTime = null;
-    // messages
-    this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
-    this.firstBreathHelperMessage = `Hold as you inhale gently for ${props.settings.inhaleTime} seconds to reveal calming image\n\nAnd then release the screen to exhale`;
-    this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
     this.breathCountOpacity = new Animated.Value(1);
+    this.pressInTime = null;
+
     // all the timers
     this.explainerModalId = null;
     this.hlperMessageId = null;
@@ -91,7 +88,6 @@ class BreathingGame extends Component {
     }).start(() => {
       this.setState(
         {
-          successMessage: this.delayMessage,
           showHelperIcon: true,
           breathCountVisible: true,
         },
@@ -248,9 +244,6 @@ class BreathingGame extends Component {
   setStartRadius = (inhaleTime) => {
     this.startRadius = START_RADIUSES[inhaleTime];
     this.radius.setValue(this.startRadius);
-    this.helperMessage = `Hold while you inhale for ${inhaleTime} seconds`;
-    this.delayMessage = `Inhale for ${inhaleTime} seconds`;
-    this.setState({successMessage: this.helperMessage});
   };
 
   showArrowIcon = () => {
@@ -261,15 +254,9 @@ class BreathingGame extends Component {
   };
 
   showHelpers = () => {
-    const {userInfo} = this.props;
-    const message =
-      userInfo.breathCount === 0
-        ? this.firstBreathHelperMessage
-        : this.helperMessage;
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
         this.setState({
-          successMessage: message,
           showHelperIcon: true,
         });
       }
@@ -402,19 +389,13 @@ class BreathingGame extends Component {
         </Svg>
         {inhaleTimer ? (
           <View style={styles.successTextContainer} pointerEvents="none">
-            <Text
-              style={
-                styles.successText
-              }>{`Inhale ${smoothWord} \n ${inhaleTimer}`}</Text>
+            <Text style={styles.successText}>{`Inhale ${smoothWord}`}</Text>
           </View>
         ) : null}
 
         {exhaleTimer ? (
           <View style={styles.successTextContainer} pointerEvents="none">
-            <Text
-              style={
-                styles.successText
-              }>{`Exhale ${smoothWord} \n ${exhaleTimer}`}</Text>
+            <Text style={styles.successText}>{`Exhale ${smoothWord}`}</Text>
           </View>
         ) : null}
 

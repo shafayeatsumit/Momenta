@@ -6,15 +6,6 @@ import {useDispatch} from 'react-redux';
 import Swiper from 'react-native-swiper';
 
 const ExplainerModal = ({closeExplainer}) => {
-  const dispatch = useDispatch();
-  const setInhaleTime = (value) => {
-    dispatch({
-      type: 'UPDATE_INHALE_EXHALE_TIME',
-      inhaleValue: value,
-      exhaleValue: value,
-    });
-    closeExplainer();
-  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
@@ -22,52 +13,29 @@ const ExplainerModal = ({closeExplainer}) => {
           <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
-                Just breathe and you'll find your own breathing rhythm that
-                produces calm
+                Each calm breath has {'\n'} two steps
               </Text>
             </View>
           </View>
           <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
-                Along the way, you'll also get calm breathing tips based on the
-                latest science and yoga practices and mini-meditations for
-                positive emotions
+                First, tap and hold the screen while you gently inhale to fully
+                reveal a calming image
               </Text>
             </View>
           </View>
           <View style={styles.slide}>
             <View style={styles.textContainer}>
               <Text style={styles.text}>
-                You want normal-sized breaths that are increasingly slow and
-                gentle. Choose an inhale time you think is comfortable:
+                Then release the screen to exhale and complete one calm breath
               </Text>
-              <Text style={styles.smallText}>You can change this later</Text>
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setInhaleTime(3)}>
+              <TouchableOpacity style={styles.button} onPress={closeExplainer}>
                 <View style={styles.timeTextContainer}>
-                  <Text style={styles.timeText}>3</Text>
-                  <Text style={styles.timeTextSmall}>s</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setInhaleTime(4)}>
-                <View style={styles.timeTextContainer}>
-                  <Text style={styles.timeText}>4</Text>
-                  <Text style={styles.timeTextSmall}>s</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => setInhaleTime(5)}>
-                <View style={styles.timeTextContainer}>
-                  <Text style={styles.timeText}>5</Text>
-                  <Text style={styles.timeTextSmall}>s</Text>
+                  <Text style={styles.timeText}>Ok got it</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -107,8 +75,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   text: {
-    fontFamily: FontType.Regular,
-    fontSize: 22,
+    fontFamily: FontType.SemiBold,
+    fontSize: 24,
     color: 'white',
     textAlign: 'center',
     marginHorizontal: 20,
@@ -135,7 +103,7 @@ const styles = StyleSheet.create({
 
   button: {
     height: 60,
-    width: 80,
+    width: ScreenWidth * 0.75,
     borderRadius: 5,
     backgroundColor: '#3c71de',
     justifyContent: 'center',

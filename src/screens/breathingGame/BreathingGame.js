@@ -54,6 +54,7 @@ class BreathingGame extends Component {
     this.pressInTime = null;
     // messages
     this.helperMessage = `Hold while you inhale for ${props.settings.inhaleTime} seconds`;
+    this.firstBreathHelperMessage = `Hold as you inhale gently for ${props.settings.inhaleTime} seconds to reveal calming image\n\nAnd then release the screen to exhale`;
     this.delayMessage = `Inhale for ${props.settings.inhaleTime} seconds`;
     this.breathCountOpacity = new Animated.Value(1);
     // all the timers
@@ -260,10 +261,15 @@ class BreathingGame extends Component {
   };
 
   showHelpers = () => {
+    const {userInfo} = this.props;
+    const message =
+      userInfo.breathCount === 0
+        ? this.firstBreathHelperMessage
+        : this.helperMessage;
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
         this.setState({
-          successMessage: this.helperMessage,
+          successMessage: message,
           showHelperIcon: true,
         });
       }

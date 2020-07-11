@@ -176,7 +176,8 @@ class Home extends Component {
   };
 
   handlePressIn = () => {
-    const {settings} = this.props;
+    const {settings, backgrounds} = this.props;
+    const backgroundId = backgrounds[0] ? backgrounds[0].id : null;
     this.pressInTime = new Date();
     if (this.pressOutTime) {
       const timeTakenExhale = ((new Date() - this.pressOutTime) / 1000).toFixed(
@@ -185,18 +186,21 @@ class Home extends Component {
       analytics().logEvent('exhale', {
         time_taken: Number(timeTakenExhale),
         exhale_time: settings.exhaleTime,
+        background_id: backgroundId,
       });
     }
     this.setState({pressInParent: true, pressOutParent: false});
   };
 
   handlePressOut = () => {
-    const {settings} = this.props;
+    const {settings, backgrounds} = this.props;
+    const backgroundId = backgrounds[0] ? backgrounds[0].id : null;
     this.pressOutTime = new Date();
     const timeTakeInhale = ((new Date() - this.pressInTime) / 1000).toFixed(1);
     analytics().logEvent('inhale', {
       time_taken: Number(timeTakeInhale),
       inhale_time: settings.inhale_time,
+      background_id: backgroundId,
     });
     this.setState({pressOutParent: true, pressInParent: false});
   };
@@ -246,7 +250,7 @@ class Home extends Component {
       <View style={styles.container}>
         <Animated.Image
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
-          source={backgroundImage}
+          source={backgroundImage.uri}
         />
 
         <View style={styles.categoryHolder}>

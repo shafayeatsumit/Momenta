@@ -90,6 +90,7 @@ class BreathingGame extends Component {
         {
           showHelperIcon: true,
           breathCountVisible: true,
+          successMessage: '',
         },
         this.showArrowIcon,
       );

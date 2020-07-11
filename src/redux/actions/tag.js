@@ -15,7 +15,10 @@ const downLoadImages = async (backgrounds, dispatch) => {
     imageDownloader(imageObject.image)
       .then((response) => {
         const imageURI = {uri: `data:image/jpeg;base64,${response}`};
-        dispatch({type: 'ADD_BACKGROUND', image: imageURI});
+        dispatch({
+          type: 'ADD_BACKGROUND',
+          image: {uri: imageURI, id: imageObject.id},
+        });
       })
       .catch((error) => console.log('error image download', error));
   });

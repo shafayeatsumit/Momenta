@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   tapIconHolder: {
-    height: RFValue(130),
+    height: RFValue(150),
     width: ScreenWidth,
     position: 'absolute',
-    bottom: 25,
     alignItems: 'center',
     justifyContent: 'center',
+    bottom: 5,
   },
   tapIcon: {
     height: RFValue(100),
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.35,
-    backgroundColor:'yellow',    
+    backgroundColor: 'yellow',
   },
   breathCountContainer: {
     top: 40,

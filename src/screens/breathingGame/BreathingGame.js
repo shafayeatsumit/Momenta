@@ -16,8 +16,10 @@ import styles from './BreathingGame.styles';
 import IntroSlides from './intro_slides/IntroSlides';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import tapIcon from '../../../assets/icons/inhale_again_helper.png';
+import tagAndHOld from '../../../assets/anims/tap_and_hold.json';
 import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
 import {ScreenWidth} from '../../helpers/constants/common';
+import LottieView from 'lottie-react-native';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const SMOOTH_WORDS = [
@@ -61,6 +63,7 @@ class BreathingGame extends Component {
     this.exhaleTimerId = null;
     this.inhaleTimerId = null;
     this.exhaleCountDownDelayId = null;
+    this.tapAnimation = new Animated.Value(0);
   }
 
   expandCircle = () => {
@@ -72,6 +75,17 @@ class BreathingGame extends Component {
       useNativeDriver: true,
       easing: Easing.ease,
     }).start();
+  };
+
+  helperAnimate = () => {
+    Animated.timing(this.tapAnimation, {
+      toValue: 1,
+      duration: 2000,
+      easing: Easing.linear,
+    }).start(() => {
+      this.tapAnimation.setValue(0);
+      this.helperAnimate();
+    });
   };
 
   shrinkCircle = () => {
@@ -257,6 +271,7 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
+        this.helperAnimate();
         this.setState({
           showHelperIcon: true,
         });
@@ -300,6 +315,7 @@ class BreathingGame extends Component {
     } else {
       this.showIntroSlidesModal();
     }
+    // this.tapAnimation.play();
   }
 
   componentDidUpdate(prevProps) {
@@ -337,12 +353,7 @@ class BreathingGame extends Component {
       breathCountVisible,
       showArrowIcon,
     } = this.state;
-    const {
-      onboardingCompleted,
-      userInfo,
-      navigation,
-      pressInParent,
-    } = this.props;
+    const {onboardingCompleted, userInfo, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
@@ -421,9 +432,22 @@ class BreathingGame extends Component {
         ) : null}
 
         {showHelperIcon && !pressInParent ? (
-          <View style={styles.tapIconHolder} pointerEvents="none">
-            <Image source={helperIcon} style={styles.tapIcon} />
-          </View>
+          <LottieView
+            progress={this.tapAnimation}
+            autoSize
+            style={styles.tapIconHolder}
+            colorFilters={[
+              {
+                keypath: 'hand 2',
+                color: '#FFFFFF',
+              },
+              {
+                keypath: 'line',
+                color: '#3c71de',
+              },
+            ]}
+            source={require('../../../assets/anims/tap_and_hold.json')}
+          />
         ) : null}
       </View>
     );

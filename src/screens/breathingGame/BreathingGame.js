@@ -15,10 +15,6 @@ import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
 import IntroSlides from './intro_slides/IntroSlides';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
-import tapIcon from '../../../assets/icons/inhale_again_helper.png';
-import tagAndHOld from '../../../assets/anims/tap_and_hold.json';
-import tapIconFirstTimer from '../../../assets/icons/inhale_helper_first_timer.png';
-import {ScreenWidth} from '../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -43,27 +39,19 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       touchDisabled: false,
-      IntroSlidesVisible: false,
+      focusModalvisible: false,
       showHelperIcon: false,
-      breathCountVisible: true,
       successMessage: '',
-      exhaleTimer: 0,
-      inhaleTimer: 0,
-      smoothWord: null,
     };
+
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    this.breathCountOpacity = new Animated.Value(1);
-    this.pressInTime = null;
-    this.releaseMsg = 'You can release the screen when image is revealed';
+    this.tapAnimation = new Animated.Value(0);
     // all the timers
-    this.explainerModalId = null;
+    this.focusModalId = null;
     this.hlperMessageId = null;
     this.helperIconId = null;
-    this.exhaleTimerId = null;
     this.inhaleTimerId = null;
-    this.exhaleCountDownDelayId = null;
-    this.tapAnimation = new Animated.Value(0);
   }
 
   expandCircle = () => {
@@ -77,15 +65,24 @@ class BreathingGame extends Component {
     }).start();
   };
 
-  helperAnimate = () => {
+  helperAnimatePressIn = () => {
+    this.setState({showHelperIcon: true});
     Animated.timing(this.tapAnimation, {
       toValue: 1,
       duration: 2000,
       easing: Easing.linear,
-    }).start(() => {
-      this.tapAnimation.setValue(0);
-      this.helperAnimate();
-    });
+    }).start();
+  };
+
+  shrinkCircleCb = () => {
+    this.setState(
+      {
+        showHelperIcon: true,
+        breathCountVisible: true,
+        successMessage: '',
+      },
+      this.showArrowIcon,
+    );
   };
 
   shrinkCircle = () => {
@@ -99,119 +96,24 @@ class BreathingGame extends Component {
       duration: 2000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(() => {
-      this.setState(
-        {
-          showHelperIcon: true,
-          breathCountVisible: true,
-          successMessage: '',
-        },
-        this.showArrowIcon,
-      );
-    });
-  };
-  breathCountFadeOut = () => {
-    const {settings} = this.props;
-    const {exhaleTime} = settings;
-    Animated.timing(this.breathCountOpacity, {
-      toValue: 0,
-      duration: exhaleTime * 1000,
-      delay: 0,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  exhaleCountDown = () => {
-    this.props.imageFadeOut();
-    this.breathCountFadeOut();
-    this.exhaleTimerId = setInterval(() => {
-      if (this.state.exhaleTimer === 1) {
-        clearInterval(this.exhaleTimerId);
-        return;
-      }
-      this.setState((prevState) => ({exhaleTimer: prevState.exhaleTimer - 1}));
-    }, 1000);
-  };
-
-  startExhaleCountDown = () => {
-    const {settings} = this.props;
-    // .5 sec dealy between inhale and exhale
-    // to make it look good.
-    this.exhaleCountDownDelayId = setTimeout(() => {
-      clearTimeout(this.exhaleCountDownDelayId);
-      this.setState(
-        {successMessage: '', exhaleTimer: settings.exhaleTime},
-        this.exhaleCountDown,
-      );
-    }, 1000);
-  };
-
-  prepareExhale = () => {
-    // before starting exhaleCountdown
-    // we need to clear the onscreen message.
-    this.setState(
-      this.setState({
-        successMessage: '',
-        showHelperIcon: false,
-        showArrowIcon: false,
-      }),
-      this.startExhaleCountDown,
-    );
-  };
-
-  startInhaleTimer = () => {
-    const {settings} = this.props;
-    const smoothWord = _.sample(SMOOTH_WORDS);
-    this.setState({smoothWord});
-    this.inhaleTimerId = setInterval(() => {
-      this.setState((prevState) => ({
-        successMessage: '',
-        // inhale timer doesnt go beyond the time of inhaleTime specified in the settings
-        ...(prevState.inhaleTimer < settings.inhaleTime && {
-          inhaleTimer: prevState.inhaleTimer + 1,
-        }),
-        // breathCounter goes away after first sec
-        ...(prevState.inhaleTimer === 0 && {
-          breathCountVisible: false,
-        }),
-      }));
-    }, 1000);
-  };
-
-  newUserAction = () => {
-    const {userInfo, dispatch, showContent} = this.props;
-    const {breathCount} = userInfo;
-    if (breathCount === 4) {
-      // show breathing tip;
-      showContent();
-      dispatch({type: 'ONBOARDING_COMPLETED'});
-      dispatch({type: 'RESET_BREATH_COUNT'});
-    } else {
-      this.prepareExhale();
-      dispatch({type: 'ADD_BREATH_COUNT'});
-    }
-  };
-
-  oldUserAction = () => {
-    const {dispatch, showContent, currentSession, settings} = this.props;
-    const {selectedTags} = settings;
-    const {breathCount} = currentSession;
-    const hasSelectedTags = selectedTags.length;
-    // TODO: change it later
-    if (breathCount === 4) {
-      hasSelectedTags ? showContent() : this.prepareExhale();
-      dispatch({type: 'ADD_BREATH_COUNT'});
-      dispatch({type: 'RESET_BREATH_COUNT'});
-    } else {
-      this.prepareExhale();
-      dispatch({type: 'ADD_BREATH_COUNT'});
-    }
+    }).start(this.shrinkCircleCb);
   };
 
   startExhale = () => {
-    const {onboardingCompleted} = this.props;
-    this.setState({touchDisabled: true});
-    onboardingCompleted ? this.oldUserAction() : this.newUserAction();
+    this.props.imageFadeOut();
+    const smoothWord = _.sample(SMOOTH_WORDS);
+    this.setState({successMessage: `Exhale ${smoothWord}`});
+  };
+
+  startInhale = () => {
+    const {settings} = this.props;
+    const smoothWord = _.sample(SMOOTH_WORDS);
+    this.setState({successMessage: `Inhale ${smoothWord}`});
+    const duration = settings.inhaleTime * 1000;
+    this.clearInhaleId = setTimeout(() => {
+      this.setState({successMessage: ''});
+      clearTimeout(this.clearInhaleId);
+    }, duration);
   };
 
   handlePressOut = () => {
@@ -223,8 +125,7 @@ class BreathingGame extends Component {
     const fullScreenRevealed = radiusValue === 7;
     Animated.timing(this.radius).stop();
     // clearing inhale timer
-    this.state.inhaleTimer && this.setState({inhaleTimer: 0});
-    this.inhaleTimerId && clearInterval(this.inhaleTimerId);
+    this.inhaleTimerId && clearTimeout(this.inhaleTimerId);
     if (fullScreenRevealed) {
       this.startExhale();
       this.setState({showArrowIcon: false});
@@ -238,23 +139,12 @@ class BreathingGame extends Component {
       console.log('exhale timer');
       return;
     }
-    this.setState({successMessage: ''});
-    this.pressInTime = new Date();
-    this.startInhaleTimer();
+    this.startInhale();
     this.expandCircle();
   };
 
-  showIntroSlidesModal = () => {
-    this.explainerModalId = setTimeout(
-      () => this.setState({IntroSlidesVisible: true}),
-      800,
-    );
-  };
-
-  closeExplainer = () => {
-    this.setState({IntroSlidesVisible: false}, this.showHelpers);
-    clearTimeout(this.explainerModalId);
-  };
+  closeFocusModal = () =>
+    this.setState({focusModalvisible: false}, this.showHelpers);
 
   setStartRadius = (inhaleTime) => {
     this.startRadius = START_RADIUSES[inhaleTime];
@@ -271,7 +161,7 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
-        this.helperAnimate();
+        this.helperAnimatePressIn();
         this.setState({
           showHelperIcon: true,
         });
@@ -280,42 +170,32 @@ class BreathingGame extends Component {
     this.showArrowIcon();
   };
 
-  getTotalBreathCount = () => {
-    const {userInfo} = this.props;
-    return userInfo.breathCount.toLocaleString();
-  };
-
-  handleArroPresss = () => {
+  handleArrowPresss = () => {
     const {navigation} = this.props;
     navigation.navigate('Settings');
     analytics().logEvent('viewed_settings');
   };
 
-  showReleaseMessage = () => {
-    this.releaseMsgId = setTimeout(() => {
-      this.props.pressInParent &&
-        this.setState({successMessage: this.releaseMsg});
-      clearTimeout(this.releaseMsgId);
-    }, 1500);
+  showPressOutHelper = () => {
+    const {pressInParent} = this.props;
+    this.pressOutHelperId = setTimeout(() => {
+      !pressInParent && this.setState({successMessage: 'press out helper'});
+      clearTimeout(this.pressOutHelperId);
+    }, 1000);
   };
+
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
       const fullScreenRevealed = value === 7;
       if (fullScreenRevealed) {
-        clearInterval(this.inhaleTimerId);
-        this.setState({inhaleTimer: 0});
-        this.showReleaseMessage();
+        // showPressOutAnimation helper
+        this.showPressOutHelper();
       }
     });
-    const {pressInParent, userInfo} = this.props;
+    const {pressInParent} = this.props;
     pressInParent && this.handlePressIn();
     // show it for the first time.
-    if (userInfo.breathCount) {
-      this.showHelpers();
-    } else {
-      this.showIntroSlidesModal();
-    }
-    // this.tapAnimation.play();
+    this.showHelpers();
   }
 
   componentDidUpdate(prevProps) {
@@ -334,26 +214,22 @@ class BreathingGame extends Component {
 
   componentWillUnmount() {
     this.animationId && this.radius.removeListener(this.animationId);
-    this.explainerModalId && clearTimeout(this.explainerModalId);
+    this.focusModalId && clearTimeout(this.focusModalId);
     this.hlperMessageId && clearTimeout(this.hlperMessageId);
     this.helperIconId && clearTimeout(this.helperIconId);
-    this.exhaleTimerId && clearInterval(this.exhaleTimerId);
-    this.inhaleTimerId && clearInterval(this.inhaleTimerId);
-    this.exhaleCountDownDelayId && clearTimeout(this.exhaleCountDownDelayId);
+    this.inhaleTimerId && clearTimeout(this.inhaleTimerId);
+    this.hideHelperId && clearTimeout(this.hideHelperId);
+    this.showHelperId && clearTimeout(this.showHelperId);
   }
 
   render() {
     const {
-      exhaleTimer,
       successMessage,
-      inhaleTimer,
       showHelperIcon,
-      IntroSlidesVisible,
-      smoothWord,
-      breathCountVisible,
+      focusModalvisible,
       showArrowIcon,
     } = this.state;
-    const {onboardingCompleted, userInfo, pressInParent} = this.props;
+    const {onboardingCompleted, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
@@ -362,7 +238,6 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
-    const helperIcon = userInfo.breathCount > 0 ? tapIcon : tapIconFirstTimer;
     const canGoToSettings =
       onboardingCompleted && !pressInParent && showArrowIcon;
     return (
@@ -370,27 +245,17 @@ class BreathingGame extends Component {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={IntroSlidesVisible}>
-          <IntroSlides closeExplainer={this.closeExplainer} />
+          visible={focusModalvisible}>
+          <IntroSlides closeModal={this.closeFocusModal} />
         </Modal>
         {canGoToSettings ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}
-            onPress={this.handleArroPresss}>
+            onPress={this.handleArrowPresss}>
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}
-        {userInfo.breathCount && breathCountVisible ? (
-          <View pointerEvents="none" style={styles.breathCountContainer}>
-            <Animated.Text
-              style={[
-                styles.breathCountText,
-                {opacity: this.breathCountOpacity},
-              ]}>
-              {this.getTotalBreathCount()}
-            </Animated.Text>
-          </View>
-        ) : null}
+
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">
@@ -413,17 +278,6 @@ class BreathingGame extends Component {
             fill-opacity="0"
           />
         </Svg>
-        {inhaleTimer ? (
-          <View style={styles.successTextContainer} pointerEvents="none">
-            <Text style={styles.successText}>{`Inhale ${smoothWord}`}</Text>
-          </View>
-        ) : null}
-
-        {exhaleTimer ? (
-          <View style={styles.successTextContainer} pointerEvents="none">
-            <Text style={styles.successText}>{`Exhale ${smoothWord}`}</Text>
-          </View>
-        ) : null}
 
         {successMessage ? (
           <View style={styles.successTextContainer} pointerEvents="none">
@@ -431,7 +285,7 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {showHelperIcon && !pressInParent ? (
+        {showHelperIcon && !pressInParent && (
           <LottieView
             progress={this.tapAnimation}
             autoSize
@@ -448,7 +302,7 @@ class BreathingGame extends Component {
             ]}
             source={require('../../../assets/anims/tap_and_hold.json')}
           />
-        ) : null}
+        )}
       </View>
     );
   }

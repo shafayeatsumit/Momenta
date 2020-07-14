@@ -226,6 +226,7 @@ class Home extends Component {
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     AppState.addEventListener('change', this.handleAppStateChange);
   }
+
   componentWillUnmount() {
     this.slideTimerId && clearTimeout(this.slideTimerId);
     AppState.removeEventListener('change', this.handleAppStateChange);

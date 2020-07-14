@@ -6,10 +6,12 @@ import {PersistGate} from 'redux-persist/integration/react';
 
 import * as Sentry from '@sentry/react-native';
 
-Sentry.init({
-  dsn:
-    'https://f27128cba4cd43c9b168302811ec8a3d@o414961.ingest.sentry.io/5305328',
-});
+if (!__DEV__) {
+  Sentry.init({
+    dsn:
+      'https://f27128cba4cd43c9b168302811ec8a3d@o414961.ingest.sentry.io/5305328',
+  });
+}
 
 const {store, persistor} = PersistStore();
 const App = () => (

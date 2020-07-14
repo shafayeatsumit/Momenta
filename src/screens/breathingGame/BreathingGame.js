@@ -179,7 +179,7 @@ class BreathingGame extends Component {
   showPressOutHelper = () => {
     const {pressInParent} = this.props;
     this.pressOutHelperId = setTimeout(() => {
-      !pressInParent && this.setState({successMessage: 'press out helper'});
+      !pressInParent && this.setState({successMessage: 'show release helper'});
       clearTimeout(this.pressOutHelperId);
     }, 1000);
   };

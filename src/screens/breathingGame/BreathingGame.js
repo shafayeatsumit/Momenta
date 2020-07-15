@@ -33,6 +33,9 @@ const START_RADIUSES = {
   5: 2,
   6: 1,
 };
+const FIRST_ONBOARDING_MSG =
+  'Tap and hold as you inhale slowly to reveal the calming image';
+const SECOND_ONBOARDING_MSG = 'Release just after image is revealed';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -163,6 +166,16 @@ class BreathingGame extends Component {
     );
   };
 
+  showOnboardingSuccessMsg = () => {
+    const {onboarding} = this.props;
+    if (onboarding.breathCount === 0) {
+      this.setState({successMessage: FIRST_ONBOARDING_MSG});
+    } else if (onboarding.breathCount === 1) {
+      // if required
+      this.setState({successMessage: SECOND_ONBOARDING_MSG});
+    }
+  };
+
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
@@ -173,6 +186,8 @@ class BreathingGame extends Component {
       }
     }, 800);
     this.showArrowIcon();
+    const {onboarding} = this.props;
+    onboarding.breathingTutorial && this.showOnboardingSuccessMsg();
   };
 
   handleArrowPresss = () => {
@@ -182,9 +197,13 @@ class BreathingGame extends Component {
   };
 
   showPressOutHelper = () => {
-    const {pressInParent} = this.props;
     this.pressOutHelperId = setTimeout(() => {
-      !pressInParent && this.setState({successMessage: 'show release helper'});
+      const {pressInParent, dispatch, onboarding} = this.props;
+      pressInParent && this.setState({successMessage: 'show release helper'});
+      if (pressInParent && onboarding.breathCount === 0) {
+        dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
+      }
+
       clearTimeout(this.pressOutHelperId);
     }, 1000);
   };
@@ -192,9 +211,15 @@ class BreathingGame extends Component {
   componentDidMount() {
     this.animationId = this.radius.addListener(({value}) => {
       const fullScreenRevealed = value === 7;
+      const {onboarding, dispatch} = this.props;
       if (fullScreenRevealed) {
         // showPressOutAnimation helper
         this.showPressOutHelper();
+        if (!onboarding.breathingTutorial) {
+          dispatch({type: 'ADD_BREATH_COUNT'});
+        } else if (onboarding.breathCount === 1) {
+          dispatch({type: 'FINISH_TUTORIAL'});
+        }
       }
     });
     const {pressInParent} = this.props;
@@ -234,7 +259,7 @@ class BreathingGame extends Component {
       focusModalvisible,
       showArrowIcon,
     } = this.state;
-    const {onboardingCompleted, pressInParent} = this.props;
+    const {onboarding, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
       inputRange: [0, 7],
@@ -244,7 +269,7 @@ class BreathingGame extends Component {
     const reactFillColor = 'white';
     const circleFillColor = 'black';
     const canGoToSettings =
-      onboardingCompleted && !pressInParent && showArrowIcon;
+      onboarding.completed && !pressInParent && showArrowIcon;
     return (
       <View style={styles.container}>
         <Modal
@@ -314,12 +339,13 @@ class BreathingGame extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, userInfo, onboardingCompleted, currentSession} = state;
+  const {settings, userInfo, onboarding, currentSession, breathing} = state;
   return {
     settings,
     userInfo,
-    onboardingCompleted,
+    onboarding,
     currentSession,
+    breathing,
   };
 };
 

@@ -63,6 +63,18 @@ class Home extends Component {
     this.contentOpacity.setValue(0);
   };
 
+  nextBreathing = () => {
+    const {onboarding, dispatch} = this.props;
+    if (onboarding.completed) {
+    } else {
+      const {breathCount} = onboarding;
+      breathCount === 0 && dispatch({type: 'FINISH_TUTORIAL'});
+      // checkModal
+    }
+
+    this.goToNextBreathing();
+  };
+
   imageFadeOut = () => {
     const {settings} = this.props;
     const {exhaleTime} = settings;
@@ -70,7 +82,7 @@ class Home extends Component {
       toValue: 0,
       duration: exhaleTime * 1000,
       useNativeDriver: true,
-    }).start(this.goToNextBreathing);
+    }).start(this.nextBreathing);
   };
 
   showNextButton = () =>
@@ -241,7 +253,6 @@ class Home extends Component {
       nextButtonVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-    console.log('backgrounds', backgrounds.length);
     if (!backgroundImage) {
       return (
         <ImageBackground style={styles.imageContainer} source={SplashScreen} />
@@ -302,6 +313,7 @@ const mapStateToProps = (state, ownProps) => {
     backgrounds,
     userInfo,
     settings,
+    onboarding,
     currentSession,
   } = state;
   return {
@@ -311,6 +323,7 @@ const mapStateToProps = (state, ownProps) => {
     backgrounds,
     userInfo,
     settings,
+    onboarding,
     currentSession,
   };
 };

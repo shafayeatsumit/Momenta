@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 import userInfo from './userInfo';
-import onboardingCompleted from './onboardingCompleted';
+import onboarding from './onboarding';
 import {tagNames, tags} from './tags';
 import sets from './sets';
 import settings from './settings';
@@ -9,7 +9,7 @@ import backgrounds from './backgrounds';
 
 export default combineReducers({
   userInfo,
-  onboardingCompleted,
+  onboarding,
   tagNames,
   tags,
   sets,

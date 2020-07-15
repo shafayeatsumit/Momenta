@@ -80,8 +80,12 @@ class BreathingGame extends Component {
         showHelperIcon: true,
         breathCountVisible: true,
         successMessage: '',
+        touchDisabled: false,
       },
-      this.showArrowIcon,
+      () => {
+        this.showArrowIcon();
+        this.props.pressInParent && this.handlePressIn();
+      },
     );
   };
 
@@ -90,6 +94,7 @@ class BreathingGame extends Component {
       successMessage: 'Almost, give it another shot',
       showHelperIcon: false,
       showArrowIcon: false,
+      touchDisabled: true,
     });
     Animated.timing(this.radius, {
       toValue: this.startRadius,

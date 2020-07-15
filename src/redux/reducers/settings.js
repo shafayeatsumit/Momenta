@@ -6,11 +6,6 @@ const initialState = {
 
 const settings = (state = initialState, action) => {
   switch (action.type) {
-    case 'INITIAL_DATA':
-      return {
-        ...state,
-        selectedTags: [...action.selectedTags],
-      };
     case 'UPDATE_SELECTED_TAGS':
       return {
         ...state,

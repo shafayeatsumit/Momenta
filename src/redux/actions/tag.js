@@ -37,47 +37,60 @@ export const toggleSelectedTag = (id) => (dispatch, getState) => {
 };
 
 const parseTags = (response) => {
-  let tags = response.result;
-  tags = tags.map((item) => ({...item, sets: item.sets.map((set) => set.id)}));
+  let tags = response.map((item) => ({
+    ...item,
+    sets: item.sets.map((set) => set.id),
+  }));
 
   tags = _.mapKeys(tags, 'id');
   return tags;
 };
 
 const parseSets = (response) => {
-  let sets = response.result.map((tag) => tag.sets);
+  let sets = response.map((tag) => tag.sets);
   sets = _.flatten(sets);
   sets = _.mapKeys(sets, 'id'); // group the sets in an object
   return sets;
 };
 
 const getTagNames = (response) => {
-  return response.result.map((tag, index) => ({
+  return response.map((tag, index) => ({
     id: tag.id,
     name: tag.name,
     gradientColors: TAG_COlORS[index],
   }));
 };
-const getSelectedTags = (isNewUser, tagNames, settings) =>
-  isNewUser ? tagNames.map((tag) => tag.id) : settings.selectedTags;
+
+const parseBreathingTips = (tagsData) => {
+  let breathingTips = tagsData.find((item) => item.name === 'Breathing Tips');
+  breathingTips = breathingTips.sets.map((tip) => ({
+    tip: tip.contents[0].text,
+    id: tip.contents[0].id,
+  }));
+  return breathingTips;
+};
 
 export const fetchTags = (isNewUser) => (dispatch, getState) => {
-  const {settings} = getState();
   const url = 'tags/';
   api
     .get(url)
     .then((response) => {
       const backgrounds = response.data.images;
-      const tags = parseTags(response.data);
-      const sets = parseSets(response.data);
-      const tagNames = getTagNames(response.data);
-      const selectedTags = getSelectedTags(isNewUser, tagNames, settings);
+      const tagsData = response.data.result;
+      const breathingTips = parseBreathingTips(tagsData);
+      const tagsResponse = tagsData.filter(
+        (item) => item.name !== 'Breathing Tips',
+      );
+      const tags = parseTags(tagsResponse);
+      const sets = parseSets(tagsResponse);
+      const tagNames = getTagNames(tagsResponse);
+
       dispatch({
         type: 'INITIAL_DATA',
         tags,
         tagNames,
         sets,
-        selectedTags,
+        breathingTips,
       });
       downLoadImages(backgrounds, dispatch);
     })

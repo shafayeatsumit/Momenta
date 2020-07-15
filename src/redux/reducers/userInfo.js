@@ -19,16 +19,6 @@ const loginInfo = (state = INIT_STATE, action) => {
         name,
         userId,
       };
-    case 'ADD_BREATH_COUNT':
-      return {
-        ...state,
-        breathCount: state.breathCount + 1,
-      };
-    case 'ONBOARDING_COMPLETED':
-      return {
-        ...state,
-        breathCount: state.breathCount + 1,
-      };
     default:
       return state;
   }

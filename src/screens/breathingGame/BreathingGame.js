@@ -42,7 +42,6 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       touchDisabled: false,
-      focusModalvisible: false,
       showHelperIcon: false,
       successMessage: '',
     };
@@ -69,7 +68,6 @@ class BreathingGame extends Component {
   };
 
   helperAnimatePressIn = () => {
-    this.setState({showHelperIcon: true});
     Animated.timing(this.tapAnimation, {
       toValue: 1,
       duration: 2000,
@@ -151,9 +149,6 @@ class BreathingGame extends Component {
     this.expandCircle();
   };
 
-  closeFocusModal = () =>
-    this.setState({focusModalvisible: false}, this.showHelpers);
-
   setStartRadius = (inhaleTime) => {
     this.startRadius = START_RADIUSES[inhaleTime];
     this.radius.setValue(this.startRadius);
@@ -200,6 +195,7 @@ class BreathingGame extends Component {
     this.pressOutHelperId = setTimeout(() => {
       const {pressInParent, dispatch, onboarding} = this.props;
       pressInParent && this.setState({successMessage: 'show release helper'});
+      // user needs another breath.
       if (pressInParent && onboarding.breathCount === 0) {
         dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
       }
@@ -218,7 +214,8 @@ class BreathingGame extends Component {
         if (!onboarding.breathingTutorial) {
           dispatch({type: 'ADD_BREATH_COUNT'});
         } else if (onboarding.breathCount === 1) {
-          dispatch({type: 'FINISH_TUTORIAL'});
+          // new user took second breath now finish breathing tutorial
+          dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
         }
       }
     });
@@ -253,12 +250,7 @@ class BreathingGame extends Component {
   }
 
   render() {
-    const {
-      successMessage,
-      showHelperIcon,
-      focusModalvisible,
-      showArrowIcon,
-    } = this.state;
+    const {successMessage, showHelperIcon, showArrowIcon} = this.state;
     const {onboarding, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
@@ -272,12 +264,6 @@ class BreathingGame extends Component {
       onboarding.completed && !pressInParent && showArrowIcon;
     return (
       <View style={styles.container}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={focusModalvisible}>
-          <IntroSlides closeModal={this.closeFocusModal} />
-        </Modal>
         {canGoToSettings ? (
           <TouchableOpacity
             style={styles.arrowIconContainer}
@@ -326,11 +312,15 @@ class BreathingGame extends Component {
                 color: '#FFFFFF',
               },
               {
+                keypath: 'fill',
+                color: 'red',
+              },
+              {
                 keypath: 'line',
                 color: '#3c71de',
               },
             ]}
-            source={require('../../../assets/anims/tap_and_hold.json')}
+            source={require('../../../assets/anims/tap.json')}
           />
         )}
       </View>

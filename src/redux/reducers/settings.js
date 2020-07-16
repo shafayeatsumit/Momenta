@@ -1,6 +1,7 @@
 const initialState = {
   inhaleTime: 4, // 4 seconds.
   exhaleTime: 4, // 4 seconds.
+  breathPerSession: 5,
   selectedTags: [],
 };
 
@@ -15,6 +16,11 @@ const settings = (state = initialState, action) => {
       return {
         ...state,
         exhaleTime: action.value,
+      };
+    case 'UPDATE_BREATH_PER_SESSION':
+      return {
+        ...state,
+        breathPerSession: action.breathCount,
       };
     case 'UPDATE_INHALE_EXHALE_TIME':
       return {

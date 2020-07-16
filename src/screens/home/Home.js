@@ -5,6 +5,7 @@ import {
   Animated,
   ImageBackground,
   TouchableOpacity,
+  Modal,
   AppState,
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -17,6 +18,7 @@ import {
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
+import PersonalizedExperienceModal from './explainer_modals/PersonalizedExperience';
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
@@ -27,6 +29,11 @@ class Home extends Component {
     this.state = {
       breathingGameVisible: true,
       nextButtonVisible: false,
+      focusExpainerVisible: false,
+      todaysFocusVisible: false,
+      personalizedModalVisible: false,
+      meditationExplainerVisible: false,
+      meditationVisible: false,
       onScreenTagName: '',
       onScreenContent: '',
       onScreenTagId: null,
@@ -63,13 +70,27 @@ class Home extends Component {
     this.contentOpacity.setValue(0);
   };
 
+  checkOnboardingModal = () => {
+    const {currentSession} = this.props;
+    if (currentSession.breathCount > 1) {
+      console.log('personalized modal');
+      this.setState({personalizedModalVisible: true});
+    } else if (currentSession.breathCount === 5) {
+    }
+  };
+
+  closePersonalizedModal = () =>
+    this.setState({personalizedModalVisible: false});
+
   nextBreathing = () => {
     const {onboarding, dispatch} = this.props;
     if (onboarding.completed) {
     } else {
       const {breathCount} = onboarding;
-      breathCount === 0 && dispatch({type: 'FINISH_TUTORIAL'});
-      // checkModal
+      // breathCount zero means, user doesn't need a second breath
+      // so finish the tutorial.
+      breathCount === 0 && dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
+      this.checkOnboardingModal();
     }
 
     this.goToNextBreathing();
@@ -251,7 +272,9 @@ class Home extends Component {
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
+      personalizedModalVisible,
     } = this.state;
+    console.log('settings', this.props.settings);
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
       return (
@@ -264,7 +287,14 @@ class Home extends Component {
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage.uri}
         />
-
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={personalizedModalVisible}>
+          <PersonalizedExperienceModal
+            closeModal={this.closePersonalizedModal}
+          />
+        </Modal>
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}

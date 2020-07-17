@@ -18,7 +18,8 @@ import {
   removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
-import PersonalizedExperienceModal from './explainer_modals/PersonalizedExperience';
+import OnboardingIntro from './modals/OnboardingIntro';
+import TodaysFocusModal from './modals/TodaysFocus';
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import analytics from '@react-native-firebase/analytics';
@@ -29,9 +30,8 @@ class Home extends Component {
     this.state = {
       breathingGameVisible: true,
       nextButtonVisible: false,
-      focusExpainerVisible: false,
+      onboardingIntroVisible: false,
       todaysFocusVisible: false,
-      personalizedModalVisible: false,
       meditationExplainerVisible: false,
       meditationVisible: false,
       onScreenTagName: '',
@@ -71,16 +71,15 @@ class Home extends Component {
   };
 
   checkOnboardingModal = () => {
-    const {currentSession} = this.props;
-    if (currentSession.breathCount > 1) {
-      console.log('personalized modal');
-      this.setState({personalizedModalVisible: true});
+    const {currentSession, onboarding} = this.props;
+    console.log('onboarding', onboarding);
+    if (!onboarding.breathingTutorial && currentSession.breathCount === 0) {
+      this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
     } else if (currentSession.breathCount === 5) {
+    } else {
+      this.goToNextBreathing();
     }
   };
-
-  closePersonalizedModal = () =>
-    this.setState({personalizedModalVisible: false});
 
   nextBreathing = () => {
     const {onboarding, dispatch} = this.props;
@@ -92,9 +91,14 @@ class Home extends Component {
       breathCount === 0 && dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
       this.checkOnboardingModal();
     }
-
-    this.goToNextBreathing();
   };
+
+  closeIntroModal = () =>
+    this.setState({onboardingIntroVisible: false}, this.showBreathingGame);
+
+  closeTodaysFocus = () => this.setState({todaysFocusVisible: false});
+
+  showTodaysFocus = () => this.setState({todaysFocusVisible: true});
 
   imageFadeOut = () => {
     const {settings} = this.props;
@@ -147,7 +151,6 @@ class Home extends Component {
     const tagName = this.getTagNameById(tagId);
     const sets = this.getSetsByTagId(tagId);
     const content = this.getContent(sets);
-    console.log('show content tagId', tagId);
     this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
     this.setState(
       {
@@ -156,7 +159,7 @@ class Home extends Component {
         onScreenTagName: tagName,
         onScreenTagId: tagId,
       },
-      () => this.fadeInContent(),
+      this.fadeInContent,
     );
   };
 
@@ -272,9 +275,9 @@ class Home extends Component {
       onScreenTagName,
       onScreenContent,
       nextButtonVisible,
-      personalizedModalVisible,
+      onboardingIntroVisible,
+      todaysFocusVisible,
     } = this.state;
-    console.log('settings', this.props.settings);
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
       return (
@@ -290,11 +293,16 @@ class Home extends Component {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={personalizedModalVisible}>
-          <PersonalizedExperienceModal
-            closeModal={this.closePersonalizedModal}
-          />
+          visible={onboardingIntroVisible}>
+          <OnboardingIntro closeModal={this.closeIntroModal} />
         </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={todaysFocusVisible}>
+          <TodaysFocusModal closeModal={this.closeTodaysFocus} />
+        </Modal>
+
         <View style={styles.categoryHolder}>
           <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
             {onScreenTagName}

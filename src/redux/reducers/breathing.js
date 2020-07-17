@@ -1,6 +1,7 @@
 const initialState = {
   breathCountToday: 0,
   lastBreathTaken: null,
+  lastBreathingTipSeen: null,
   breathingTips: [],
   showTips: true,
 };
@@ -13,9 +14,14 @@ const getTodaysDate = () => {
 };
 
 const breathing = (state = initialState, action) => {
+  const date = getTodaysDate();
   switch (action.type) {
+    case 'INITIAL_DATA':
+      return {
+        ...state,
+        breathingTips: action.breathingTips,
+      };
     case 'ADD_BREATH_COUNT':
-      const date = getTodaysDate();
       const breathCount =
         state.lastBreathTaken !== date && state.lastBreathTaken !== null
           ? 0
@@ -24,6 +30,14 @@ const breathing = (state = initialState, action) => {
         ...state,
         breathCountToday: breathCount,
         lastBreathTaken: date,
+      };
+    case 'SEEN_BREATHING_TIP':
+      const tips = state.breathingTips.map((tip) =>
+        tip.id === action.tipId ? {...tip, lastSeen: date} : tip,
+      );
+      return {
+        ...state,
+        breathingTips: tips,
       };
     default:
       return state;

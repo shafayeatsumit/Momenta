@@ -22,6 +22,7 @@ import OnboardingIntro from './modals/OnboardingIntro';
 import TodaysFocusModal from './modals/TodaysFocus';
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
+import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 
 class Home extends Component {
@@ -71,19 +72,28 @@ class Home extends Component {
   };
 
   checkOnboardingModal = () => {
-    const {currentSession, onboarding} = this.props;
-    console.log('onboarding', onboarding);
+    const {currentSession, onboarding, settings} = this.props;
     if (!onboarding.breathingTutorial && currentSession.breathCount === 0) {
       this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
-    } else if (currentSession.breathCount === 5) {
+    } else if (currentSession.breathCount === settings.breathPersSession) {
+      // show the modal, mini med
+      // reset the current session
     } else {
       this.goToNextBreathing();
     }
   };
 
   nextBreathing = () => {
-    const {onboarding, dispatch} = this.props;
+    const {onboarding, dispatch, settings} = this.props;
     if (onboarding.completed) {
+      const {currentSession} = this.props;
+      if (settings.breathPerSession === currentSession.breathCount) {
+        dispatch({type: 'RESET_SESSION'});
+        this.goToNextBreathing();
+      } else {
+        this.goToNextBreathing();
+      }
+      // currentSession === breathPerSession. and meditation selected
     } else {
       const {breathCount} = onboarding;
       // breathCount zero means, user doesn't need a second breath
@@ -96,9 +106,9 @@ class Home extends Component {
   closeIntroModal = () =>
     this.setState({onboardingIntroVisible: false}, this.showBreathingGame);
 
-  closeTodaysFocus = () => this.setState({todaysFocusVisible: false});
-
-  showTodaysFocus = () => this.setState({todaysFocusVisible: true});
+  closeTodaysFocus = () => {
+    this.setState({todaysFocusVisible: false, breathingGameVisible: true});
+  };
 
   imageFadeOut = () => {
     const {settings} = this.props;
@@ -168,6 +178,17 @@ class Home extends Component {
   showBreathingGame = () => {
     this.setState({breathingGameVisible: true});
     this.imageOpacity.setValue(1);
+  };
+
+  showTodaysFocus = () => this.setState({todaysFocusVisible: true});
+
+  checkTodaysFocus = () => {
+    const {breathing, settings} = this.props;
+    const today = getTodaysDate();
+    const itsANewDay = breathing.lastBreathTaken !== today;
+    const todayWithFocusOn =
+      breathing.lastBreathTaken === today && settings.todaysFocusOn;
+    return itsANewDay || todayWithFocusOn;
   };
 
   showBreathingGameWithDelay = () => {
@@ -247,12 +268,14 @@ class Home extends Component {
       nextAppState === 'active'
     ) {
       this.props.dispatch({type: 'RESET_SESSION'});
+      const showFocus = this.checkTodaysFocus();
+      showFocus && this.showTodaysFocus();
     }
     this.setState({appState: nextAppState});
   };
 
   componentDidMount() {
-    const {userInfo, dispatch, sets} = this.props;
+    const {userInfo, dispatch, sets, settings} = this.props;
     const hasSets = Object.keys(sets).length;
     if (!userInfo.token) {
       dispatch(anonymousSignup());
@@ -261,6 +284,8 @@ class Home extends Component {
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     AppState.addEventListener('change', this.handleAppStateChange);
+    const showFocus = this.checkTodaysFocus();
+    showFocus && this.showTodaysFocus();
   }
 
   componentWillUnmount() {
@@ -269,7 +294,7 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds, navigation} = this.props;
+    const {backgrounds, navigation, settings, onboarding} = this.props;
     const {
       breathingGameVisible,
       onScreenTagName,
@@ -352,12 +377,14 @@ const mapStateToProps = (state, ownProps) => {
     userInfo,
     settings,
     onboarding,
+    breathing,
     currentSession,
   } = state;
   return {
     sets,
     tags,
     tagNames,
+    breathing,
     backgrounds,
     userInfo,
     settings,

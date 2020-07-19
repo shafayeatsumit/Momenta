@@ -3,7 +3,6 @@ const initialState = {
   lastBreathTaken: null,
   lastBreathingTipSeen: null,
   breathingTips: [],
-  showTips: true,
 };
 
 const getTodaysDate = () => {

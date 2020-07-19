@@ -3,6 +3,7 @@ const initialState = {
   exhaleTime: 4, // 4 seconds.
   breathPerSession: 5,
   selectedTags: [],
+  todaysFocusOn: true,
 };
 
 const settings = (state = initialState, action) => {

@@ -3,6 +3,7 @@ import {StyleSheet, View, Modal, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
 import MeditationExplainer from './MeditaitonExplainer';
+import MiniMeditation from './MiniMeditation';
 
 import {connect} from 'react-redux';
 
@@ -11,10 +12,16 @@ class OnboardingEnd extends Component {
     super(props);
     this.state = {
       medExplainerVisible: true,
+      minimeditationVisible: false,
+      successModalVisible: false,
     };
   }
   closeMedExplainer = () => {
-    this.setState({medExplainerVisible: false});
+    this.setState({medExplainerVisible: false, minimeditationVisible: true});
+  };
+
+  closeMiniMed = () => {
+    this.setState({minimeditationVisible: false, successModalVisible: true});
   };
 
   componentDidMount() {
@@ -22,7 +29,7 @@ class OnboardingEnd extends Component {
   }
 
   render() {
-    const {medExplainerVisible} = this.state;
+    const {medExplainerVisible, minimeditationVisible} = this.state;
     return (
       <View style={styles.mainContainer}>
         <Modal
@@ -30,6 +37,12 @@ class OnboardingEnd extends Component {
           transparent={true}
           visible={medExplainerVisible}>
           <MeditationExplainer closeModal={this.closeMedExplainer} />
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={minimeditationVisible}>
+          <MiniMeditation closeModal={this.closeMiniMed} />
         </Modal>
       </View>
     );

@@ -14,8 +14,6 @@ import {
   fetchBackground,
   anonymousSignup,
   removeBackground,
-  fetchContent,
-  removeContent,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
 import OnboardingIntro from './modals/OnboardingIntro';
@@ -32,47 +30,19 @@ class Home extends Component {
     super(props);
     this.state = {
       breathingGameVisible: true,
-      nextButtonVisible: false,
       onboardingIntroVisible: false,
       onboardingEndVisible: false,
       todaysFocusVisible: false,
       meditationExplainerVisible: false,
       meditationVisible: false,
-      onScreenTagName: '',
-      onScreenContent: '',
-      onScreenTagId: null,
       appState: AppState.currentState,
       pressInParent: false,
     };
-
-    this.tagOpacity = new Animated.Value(0);
-    this.contentOpacity = new Animated.Value(0);
     this.imageOpacity = new Animated.Value(1);
     // time
     this.pressInTime = null;
     this.pressOutTime = null;
   }
-
-  fadeInContent = () => {
-    Animated.timing(this.tagOpacity, {
-      toValue: 1,
-      duration: 1000,
-      delay: 0,
-      useNativeDriver: true,
-    }).start();
-
-    Animated.timing(this.contentOpacity, {
-      toValue: 1,
-      duration: 1500,
-      delay: 500,
-      useNativeDriver: true,
-    }).start(this.showNextButton);
-  };
-
-  fadeOutContent = () => {
-    this.tagOpacity.setValue(0);
-    this.contentOpacity.setValue(0);
-  };
 
   checkOnboardingModal = () => {
     const {currentSession, onboarding, settings, dispatch} = this.props;
@@ -130,59 +100,6 @@ class Home extends Component {
     }).start(this.nextBreathing);
   };
 
-  showNextButton = () =>
-    this.setState({nextButtonVisible: true, breathingGameVisible: false});
-
-  getSetsByTagId = (tagId) => this.props.tags[tagId].sets;
-
-  getContentBySetId = (setId) => this.props.sets[setId].contents[0];
-
-  getTagNameById = (id) =>
-    this.props.tagNames.find((tag) => tag.id === id).name;
-
-  findTag = () => {
-    const {currentSession, settings} = this.props;
-    const selectedTags = settings.selectedTags;
-    const lastSeenTag = currentSession.lastSeenTag;
-    if (!lastSeenTag) {
-      return selectedTags[0];
-    }
-    const selectedTagIndex = selectedTags.indexOf(lastSeenTag);
-    if (selectedTagIndex + 1 === selectedTags.length) {
-      return selectedTags[0];
-    } else {
-      return selectedTags[selectedTagIndex + 1];
-    }
-  };
-
-  getContent = (sets) => {
-    const firstSetId = sets[0];
-    const content = this.getContentBySetId(firstSetId);
-    const contentText = content ? content.text : '';
-    analytics().logEvent('viewed_content', {
-      content_id: content.id,
-      set_id: firstSetId,
-    });
-    return contentText;
-  };
-
-  showContent = () => {
-    const tagId = this.findTag();
-    const tagName = this.getTagNameById(tagId);
-    const sets = this.getSetsByTagId(tagId);
-    const content = this.getContent(sets);
-    this.props.dispatch({type: 'LAST_SEEN_TAG', tag: tagId});
-    this.setState(
-      {
-        breathingGameVisible: false, // close the breathing game hrere.
-        onScreenContent: content,
-        onScreenTagName: tagName,
-        onScreenTagId: tagId,
-      },
-      this.fadeInContent,
-    );
-  };
-
   closeBreathingGame = () => this.setState({breathingGameVisible: false});
 
   showBreathingGame = () => {
@@ -223,23 +140,6 @@ class Home extends Component {
       this.imageOpacity.setValue(1);
       this.openBreathingGameID && clearTimeout(this.openBreathingGameID);
     }, 500);
-  };
-
-  handleNext = () => {
-    const {onScreenTagId} = this.state;
-    const {dispatch} = this.props;
-    this.fadeOutContent();
-    dispatch(fetchBackground());
-    this.setState(
-      {
-        breathingGameVisible: true,
-        nextButtonVisible: false,
-      },
-      () => dispatch(removeBackground()),
-    );
-    dispatch(removeContent(onScreenTagId));
-    dispatch(fetchContent(onScreenTagId));
-    analytics().logEvent('pressed_next');
   };
 
   handlePressIn = () => {
@@ -307,9 +207,6 @@ class Home extends Component {
     const {backgrounds, navigation, settings, onboarding} = this.props;
     const {
       breathingGameVisible,
-      onScreenTagName,
-      onScreenContent,
-      nextButtonVisible,
       onboardingIntroVisible,
       todaysFocusVisible,
       onboardingEndVisible,
@@ -345,42 +242,23 @@ class Home extends Component {
           visible={todaysFocusVisible}>
           <TodaysFocusModal closeModal={this.closeTodaysFocus} />
         </Modal>
-
-        <View style={styles.categoryHolder}>
-          <Animated.Text style={[styles.category, {opacity: this.tagOpacity}]}>
-            {onScreenTagName}
-          </Animated.Text>
-        </View>
-
-        <View style={styles.contentContainer}>
-          <Animated.Text
-            style={[styles.content, {opacity: this.contentOpacity}]}>
-            {onScreenContent}
-          </Animated.Text>
-        </View>
         {breathingGameVisible ? (
           <View style={styles.breathingGameContainer}>
             <BrethingGame
               backgroundImage={backgroundImage}
               imageFadeOut={this.imageFadeOut}
               navigation={navigation}
-              showContent={this.showContent}
               pressInParent={this.state.pressInParent}
               pressOutParent={this.state.pressOutParent}
             />
           </View>
         ) : null}
-        {nextButtonVisible ? (
-          <TouchableOpacity style={styles.nextButton} onPress={this.handleNext}>
-            <Text style={styles.nextButtonText}>Next</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPressIn={this.handlePressIn}
-            onPressOut={this.handlePressOut}
-            style={styles.touchHandler}
-          />
-        )}
+
+        <TouchableOpacity
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}
+          style={styles.touchHandler}
+        />
       </View>
     );
   }

@@ -3,8 +3,6 @@ import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
-import {useDispatch} from 'react-redux';
-import Swiper from 'react-native-swiper';
 
 class TodaysFocus extends Component {
   constructor(props) {

@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {handleTagSelect} from '../../../redux/actions/tag';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
-import Swiper from 'react-native-swiper';
 import Tag from '../../settings/Tag';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -45,10 +38,7 @@ const MeditationExplainer = ({closeModal}) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             disabled={isDisabledButton}
-            style={[
-              styles.button,
-              isDisabledButton && {backgroundColor: '#a6a6a6'},
-            ]}
+            style={[styles.button, isDisabledButton && styles.disabledButton]}
             onPress={closeModal}>
             <Text style={styles.continue}>Continue</Text>
           </TouchableOpacity>
@@ -105,6 +95,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#3c71de',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#a6a6a6',
   },
   continue: {
     fontFamily: FontType.Medium,

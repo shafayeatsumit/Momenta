@@ -1,36 +1,58 @@
 import React from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import {handleTagSelect} from '../../../redux/actions/tag';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
 import Swiper from 'react-native-swiper';
+import Tag from '../../settings/Tag';
+import {useSelector, useDispatch} from 'react-redux';
 
 const MeditationExplainer = ({closeModal}) => {
+  const tagNames = useSelector((state) => state.tagNames);
+  const dispatch = useDispatch();
+  const selectedTags = useSelector((state) => state.settings).selectedTags;
+  const isDisabledButton = selectedTags.length < 1;
+  const handleTagPress = (tagId) => {
+    dispatch(handleTagSelect(tagId));
+  };
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
-        <Swiper showsButtons={false} loop={false}>
-          <View style={{flex: 1, justifyContent: 'center', paddingBottom: 40}}>
-            <Text style={styles.text}>
-              You can also add mini-meditations for positive emotions to follow
-              calm breathing. These are controlled in your settings
-            </Text>
-          </View>
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>
-                You can also add mini-meditations for positive emotions to
-                follow calm breathing. These are controlled in your settings
-              </Text>
-            </View>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={closeModal}>
-                <Text style={styles.okGotIT}>OK Got it</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Swiper>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>
+            You can end with a short meditation {'\n'}
+          </Text>
+          <Text style={styles.text}>
+            Pick positive emotions you’d want to enjoy after calm breathing
+          </Text>
+        </View>
+        <View style={styles.tagsContainer}>
+          {tagNames.map((item) => (
+            <Tag
+              item={item}
+              key={item.id}
+              selectedTags={selectedTags}
+              handlePress={() => handleTagPress(item.id)}
+            />
+          ))}
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            disabled={isDisabledButton}
+            style={[
+              styles.button,
+              isDisabledButton && {backgroundColor: '#a6a6a6'},
+            ]}
+            onPress={closeModal}>
+            <Text style={styles.continue}>Continue</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -40,19 +62,13 @@ export default MeditationExplainer;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 2,
-    backgroundColor: 'rgba(27,31,55,0.4)',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modal: {
     width: ScreenWidth * 0.9,
-    height: 500,
+    height: 650,
     borderRadius: 10,
     backgroundColor: '#1b1f37',
     justifyContent: 'space-around',
@@ -60,6 +76,10 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#787989',
     overflow: 'hidden',
+  },
+  textContainer: {
+    flex: 2,
+    justifyContent: 'center',
   },
   text: {
     fontFamily: FontType.Regular,
@@ -69,24 +89,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     lineHeight: 30,
   },
-  textContainer: {
-    flex: 2,
-    justifyContent: 'center',
+
+  tagsContainer: {
+    flex: 3,
+    alignItems: 'center',
   },
   buttonContainer: {
     flex: 1,
     justifyContent: 'center',
-    paddingBottom: 30,
   },
   button: {
     height: 50,
-    width: 300,
+    width: 250,
     borderRadius: 5,
     backgroundColor: '#3c71de',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  okGotIT: {
+  continue: {
     fontFamily: FontType.Medium,
     fontSize: 18,
     color: 'white',

@@ -19,7 +19,9 @@ import {
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
 import OnboardingIntro from './modals/OnboardingIntro';
+import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
+
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
@@ -32,6 +34,7 @@ class Home extends Component {
       breathingGameVisible: true,
       nextButtonVisible: false,
       onboardingIntroVisible: false,
+      onboardingEndVisible: false,
       todaysFocusVisible: false,
       meditationExplainerVisible: false,
       meditationVisible: false,
@@ -72,12 +75,14 @@ class Home extends Component {
   };
 
   checkOnboardingModal = () => {
-    const {currentSession, onboarding, settings} = this.props;
+    const {currentSession, onboarding, settings, dispatch} = this.props;
     if (!onboarding.breathingTutorial && currentSession.breathCount === 0) {
       this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
     } else if (currentSession.breathCount === settings.breathPersSession) {
       // show the modal, mini med
       // reset the current session
+      dispatch({type: 'RESET_SESSION'});
+      this.goToNextBreathing();
     } else {
       this.goToNextBreathing();
     }
@@ -105,6 +110,11 @@ class Home extends Component {
 
   closeIntroModal = () =>
     this.setState({onboardingIntroVisible: false}, this.showBreathingGame);
+
+  closeOnboardingEndModal = () => {
+    this.openBreathingGame();
+    this.setState({onboardingEndVisible: false});
+  };
 
   closeTodaysFocus = () => {
     this.setState({todaysFocusVisible: false, breathingGameVisible: true});
@@ -285,7 +295,7 @@ class Home extends Component {
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     AppState.addEventListener('change', this.handleAppStateChange);
     const showFocus = this.checkTodaysFocus();
-    showFocus && this.showTodaysFocus();
+    // showFocus && this.showTodaysFocus();
   }
 
   componentWillUnmount() {
@@ -302,6 +312,7 @@ class Home extends Component {
       nextButtonVisible,
       onboardingIntroVisible,
       todaysFocusVisible,
+      onboardingEndVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
@@ -309,6 +320,7 @@ class Home extends Component {
         <ImageBackground style={styles.imageContainer} source={SplashScreen} />
       );
     }
+
     return (
       <View style={styles.container}>
         <Animated.Image
@@ -320,6 +332,12 @@ class Home extends Component {
           transparent={true}
           visible={onboardingIntroVisible}>
           <OnboardingIntro closeModal={this.closeIntroModal} />
+        </Modal>
+        <Modal animationType="fade" transparent={true} visible={true}>
+          <OnboardingEnd
+            closeBreathingGame={this.closeBreathingGame}
+            closeModal={this.closeOnboardingEndModal}
+          />
         </Modal>
         <Modal
           animationType="fade"

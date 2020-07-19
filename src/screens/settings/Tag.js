@@ -40,10 +40,10 @@ export default Tag;
 
 const styles = StyleSheet.create({
   tiles: {
-    width: ScreenWidth / 2.4,
-    height: ScreenHeight / 6.2,
+    width: 300,
+    height: 90,
     marginVertical: 10,
-    borderRadius: 10,
+    borderRadius: 5,
   },
   nameContainer: {
     flex: 1,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   tagName: {
     fontFamily: FontType.SemiBold,
-    fontSize: 15,
+    fontSize: 20,
     color: 'white',
     paddingLeft: 10,
     textAlign: 'left',

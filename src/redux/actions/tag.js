@@ -205,3 +205,18 @@ export const activateTag = (tagIndex) => (dispatch, getState) => {
   );
   dispatch({type: 'UPDATE_ACTIVE_TAG', tags: updatedTags});
 };
+
+export const handleTagSelect = (tagId) => (dispatch, getState) => {
+  const {settings} = getState();
+  const {selectedTags} = settings;
+  const isSelected = selectedTags.includes(tagId);
+  if (isSelected) {
+    const updatedTags = selectedTags.filter((id) => id !== tagId);
+    dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+    analytics().logEvent('deselect_tag', {tag_id: tagId});
+  } else {
+    const updatedTags = [...selectedTags, tagId];
+    dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
+    analytics().logEvent('select_tag', {tag_id: tagId});
+  }
+};

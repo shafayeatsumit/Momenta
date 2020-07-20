@@ -278,7 +278,7 @@ class BreathingGame extends Component {
           </TouchableOpacity>
         ) : null}
         {finishedBreathingTutorial && (
-          <View style={styles.progressContainer}>
+          <View style={styles.progressContainer} pointerEvents="none">
             <Text style={styles.progressText}>{this.getProgress()}</Text>
           </View>
         )}

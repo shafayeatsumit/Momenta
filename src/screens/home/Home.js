@@ -19,6 +19,7 @@ import BrethingGame from '../breathingGame/BreathingGame';
 import OnboardingIntro from './modals/OnboardingIntro';
 import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
+import EndSessionModal from './modals/EndSessionModal';
 
 import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
@@ -78,10 +79,9 @@ class Home extends Component {
   closeIntroModal = () =>
     this.setState({onboardingIntroVisible: false}, this.showBreathingGame);
 
-  closeOnboardingEndModal = () => {
-    this.openBreathingGame();
-    this.setState({onboardingEndVisible: false});
-  };
+  closeOnboardingEndModal = () => this.setState({onboardingEndVisible: false});
+
+  closeEndSessionModal = () => this.setState({endSessionModalVisible: false});
 
   closeTodaysFocus = () => {
     this.setState({todaysFocusVisible: false, breathingGameVisible: true});
@@ -207,6 +207,7 @@ class Home extends Component {
       onboardingIntroVisible,
       todaysFocusVisible,
       onboardingEndVisible,
+      endSessionModalVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
@@ -234,6 +235,15 @@ class Home extends Component {
           <OnboardingEnd
             closeBreathingGame={this.closeBreathingGame}
             closeModal={this.closeOnboardingEndModal}
+            goToNextBreathing={this.goToNextBreathing}
+          />
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={endSessionModalVisible}>
+          <EndSessionModal
+            closeModal={this.closeEndSessionModal}
             goToNextBreathing={this.goToNextBreathing}
           />
         </Modal>

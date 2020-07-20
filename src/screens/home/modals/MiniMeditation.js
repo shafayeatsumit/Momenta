@@ -76,6 +76,7 @@ class MiniMeditation extends Component {
 
   showContent = () => {
     const tagId = this.findTag();
+    console.log('find tag id', tagId);
     const tagName = this.getTagNameById(tagId);
     const sets = this.getSetsByTagId(tagId);
     const content = this.getContent(sets);

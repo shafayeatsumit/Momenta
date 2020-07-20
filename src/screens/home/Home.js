@@ -33,8 +33,7 @@ class Home extends Component {
       onboardingIntroVisible: false,
       onboardingEndVisible: false,
       todaysFocusVisible: false,
-      meditationExplainerVisible: false,
-      meditationVisible: false,
+      endSessionModalVisible: false,
       appState: AppState.currentState,
       pressInParent: false,
     };
@@ -46,13 +45,12 @@ class Home extends Component {
 
   checkOnboardingModal = () => {
     const {currentSession, onboarding, settings, dispatch} = this.props;
-    if (!onboarding.breathingTutorial && currentSession.breathCount === 0) {
+    const finishedBreathingTutorial = !onboarding.breathingTutorial;
+    if (finishedBreathingTutorial && currentSession.breathCount === 0) {
       this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
     } else if (currentSession.breathCount === settings.breathPersSession) {
-      // show the modal, mini med
-      // reset the current session
+      this.setState({onboardingEndVisible: true});
       dispatch({type: 'RESET_SESSION'});
-      this.goToNextBreathing();
     } else {
       this.goToNextBreathing();
     }
@@ -63,12 +61,11 @@ class Home extends Component {
     if (onboarding.completed) {
       const {currentSession} = this.props;
       if (settings.breathPerSession === currentSession.breathCount) {
+        this.setState({endSessionModalVisible: true});
         dispatch({type: 'RESET_SESSION'});
-        this.goToNextBreathing();
       } else {
         this.goToNextBreathing();
       }
-      // currentSession === breathPerSession. and meditation selected
     } else {
       const {breathCount} = onboarding;
       // breathCount zero means, user doesn't need a second breath
@@ -115,7 +112,8 @@ class Home extends Component {
     const itsANewDay = breathing.lastBreathTaken !== today;
     const todayWithFocusOn =
       breathing.lastBreathTaken === today && settings.todaysFocusOn;
-    return itsANewDay || todayWithFocusOn;
+    const showFocus = itsANewDay || todayWithFocusOn;
+    showFocus && this.showTodaysFocus();
   };
 
   showBreathingGameWithDelay = () => {
@@ -177,15 +175,15 @@ class Home extends Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.props.dispatch({type: 'RESET_SESSION'});
-      const showFocus = this.checkTodaysFocus();
-      showFocus && this.showTodaysFocus();
+      const {dispatch, onboarding} = this.props;
+      dispatch({type: 'RESET_SESSION'});
+      onboarding.completed && this.checkTodaysFocus();
     }
     this.setState({appState: nextAppState});
   };
 
   componentDidMount() {
-    const {userInfo, dispatch, sets, settings} = this.props;
+    const {userInfo, dispatch, sets, onboarding} = this.props;
     const hasSets = Object.keys(sets).length;
     if (!userInfo.token) {
       dispatch(anonymousSignup());
@@ -194,8 +192,8 @@ class Home extends Component {
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     AppState.addEventListener('change', this.handleAppStateChange);
-    const showFocus = this.checkTodaysFocus();
-    // showFocus && this.showTodaysFocus();
+    // TODO: uncomment this part
+    onboarding.completed && this.checkTodaysFocus();
   }
 
   componentWillUnmount() {
@@ -230,10 +228,14 @@ class Home extends Component {
           visible={onboardingIntroVisible}>
           <OnboardingIntro closeModal={this.closeIntroModal} />
         </Modal>
-        <Modal animationType="fade" transparent={true} visible={true}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={onboardingEndVisible}>
           <OnboardingEnd
             closeBreathingGame={this.closeBreathingGame}
             closeModal={this.closeOnboardingEndModal}
+            goToNextBreathing={this.goToNextBreathing}
           />
         </Modal>
         <Modal

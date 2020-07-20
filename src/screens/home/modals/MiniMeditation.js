@@ -24,15 +24,14 @@ class MiniMeditation extends Component {
   fadeInContent = () => {
     Animated.timing(this.titleOpacity, {
       toValue: 1,
-      duration: 1000,
-      delay: 0,
+      duration: 2000,
       useNativeDriver: true,
     }).start();
 
     Animated.timing(this.contentOpacity, {
       toValue: 1,
-      duration: 1500,
-      delay: 500,
+      duration: 2500,
+      delay: 1000,
       useNativeDriver: true,
     }).start(this.showCloseButton);
   };

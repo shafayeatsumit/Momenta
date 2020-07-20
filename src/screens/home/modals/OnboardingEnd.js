@@ -4,6 +4,7 @@ import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
 import MeditationExplainer from './MeditaitonExplainer';
 import MiniMeditation from './MiniMeditation';
+import SuccessAndReward from './SuccessAndReward';
 
 import {connect} from 'react-redux';
 
@@ -13,7 +14,7 @@ class OnboardingEnd extends Component {
     this.state = {
       medExplainerVisible: true,
       minimeditationVisible: false,
-      successModalVisible: false,
+      successAndRewardVisible: false,
     };
   }
   closeMedExplainer = () => {
@@ -21,15 +22,27 @@ class OnboardingEnd extends Component {
   };
 
   closeMiniMed = () => {
-    this.setState({minimeditationVisible: false, successModalVisible: true});
+    this.setState({
+      minimeditationVisible: false,
+      successAndRewardVisible: true,
+    });
+  };
+
+  closeOnboardingEnd = () => {
+    this.props.dispatch({type: 'ONBOARDING_COMPLETED'});
+    this.props.closeModal();
   };
 
   componentDidMount() {
-    this.props.closeBreathingGame();
+    this.props.goToNextBreathing();
   }
 
   render() {
-    const {medExplainerVisible, minimeditationVisible} = this.state;
+    const {
+      medExplainerVisible,
+      minimeditationVisible,
+      successAndRewardVisible,
+    } = this.state;
     return (
       <View style={styles.mainContainer}>
         <Modal
@@ -43,6 +56,12 @@ class OnboardingEnd extends Component {
           transparent={true}
           visible={minimeditationVisible}>
           <MiniMeditation closeModal={this.closeMiniMed} />
+        </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={successAndRewardVisible}>
+          <SuccessAndReward closeModal={this.closeOnboardingEnd} />
         </Modal>
       </View>
     );

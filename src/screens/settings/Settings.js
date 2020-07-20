@@ -11,6 +11,7 @@ import {
 import {connect} from 'react-redux';
 import Tag from './Tag';
 import {ScreenWidth, PickerPlaceHolder} from '../../helpers/constants/common';
+import {handleTagSelect} from '../../redux/actions/tag';
 import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';
@@ -30,6 +31,17 @@ const ExhaleValues = [
   {label: '4s', value: 4},
   {label: '5s', value: 5},
   {label: '6s', value: 6},
+];
+
+const BreathNumbers = [
+  {label: '3', value: 3},
+  {label: '4', value: 4},
+  {label: '5', value: 5},
+  {label: '6', value: 6},
+  {label: '7', value: 7},
+  {label: '8', value: 8},
+  {label: '9', value: 9},
+  {label: '10', value: 10},
 ];
 
 const placeHolderStyle = {
@@ -52,24 +64,26 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
+  setBreathNumber = (value) => {
+    const {dispatch} = this.props;
+    dispatch({type: 'UPDATE_BREATH_PER_SESSION', value});
+  };
+
   goHome = () => this.props.navigation.goBack();
 
   handleTagPress = (tagId) => {
-    const {selectedTags, dispatch} = this.props;
-    const isSelected = selectedTags.includes(tagId);
-    if (isSelected) {
-      const updatedTags = selectedTags.filter((id) => id !== tagId);
-      dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
-      analytics().logEvent('deselect_tag', {tag_id: tagId});
-    } else {
-      const updatedTags = [...selectedTags, tagId];
-      dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
-      analytics().logEvent('select_tag', {tag_id: tagId});
-    }
+    const {dispatch} = this.props;
+    dispatch(handleTagSelect(tagId));
   };
 
   render() {
-    const {inhaleTime, exhaleTime, selectedTags, tagNames} = this.props;
+    const {
+      inhaleTime,
+      exhaleTime,
+      selectedTags,
+      tagNames,
+      breathPerSession,
+    } = this.props;
 
     return (
       <View style={styles.container}>
@@ -81,7 +95,27 @@ class Settings extends Component {
           </TouchableOpacity>
         </View>
         <View style={styles.pickersContainer}>
-          <Text style={styles.title}>Breathing</Text>
+          <Text style={styles.title}>Breaths</Text>
+
+          <View style={styles.dropDownContainer}>
+            <Text style={styles.subTitle}>Number</Text>
+            <View style={styles.pickerHolder}>
+              <RNPickerSelect
+                onValueChange={this.setBreathNumber}
+                style={placeHolderStyle}
+                placeholder={defaultPlaceHolder}
+                items={BreathNumbers}
+                value={breathPerSession}
+                useNativeAndroidPickerStyle={false}
+              />
+              <Image
+                source={downArrowIcon}
+                style={styles.downIcon}
+                pointerEvents="none"
+              />
+            </View>
+          </View>
+
           <View style={styles.dropDownContainer}>
             <Text style={styles.subTitle}>Inhale</Text>
             <View style={styles.pickerHolder}>
@@ -118,12 +152,9 @@ class Settings extends Component {
               />
             </View>
           </View>
-          <View style={{height: 50}} />
         </View>
         <View style={styles.tilesContainer}>
-          <Text style={[styles.title, {paddingLeft: 25}]}>
-            Mini-meditations
-          </Text>
+          <Text style={[styles.title, {paddingLeft: 25}]}>Meditations</Text>
           <ScrollView contentContainerStyle={styles.scrollView}>
             {tagNames.map((item) => (
               <Tag
@@ -143,12 +174,13 @@ class Settings extends Component {
 const mapStateToProps = (state, ownProps) => {
   const {settings, tagNames} = state;
 
-  const {inhaleTime, exhaleTime, selectedTags} = settings;
+  const {inhaleTime, exhaleTime, selectedTags, breathPerSession} = settings;
   return {
     inhaleTime,
     exhaleTime,
     tagNames,
     selectedTags,
+    breathPerSession,
   };
 };
 
@@ -219,10 +251,7 @@ const styles = StyleSheet.create({
   scrollView: {
     marginTop: 10,
     flexGrow: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginHorizontal: ScreenWidth * 0.05,
+    marginLeft: 30,
   },
   subTitle: {
     fontFamily: FontType.SemiBold,

@@ -11,6 +11,7 @@ class TodaysFocus extends Component {
     this.titleOpacity = new Animated.Value(1);
     this.contentOpacity = new Animated.Value(1);
   }
+
   getProgress = () => {
     const {settings} = this.props;
     return `0/${settings.breathPerSession}`;
@@ -45,11 +46,18 @@ class TodaysFocus extends Component {
     return focusOfTheDay.tip;
   };
 
+  handleDontShow = () => {
+    const {dispatch} = this.props;
+    dispatch({type: 'DONT_SHOW_FOCUS_TODAY'});
+  };
+
   componentDidMount() {
     this.getTodaysFocus();
   }
 
   render() {
+    const {settings} = this.props;
+    const {todaysFocusOn} = settings;
     return (
       <View style={styles.mainContainer}>
         <View style={styles.progressContainer}>
@@ -70,7 +78,9 @@ class TodaysFocus extends Component {
           onPress={this.props.closeModal}>
           <Text style={styles.start}>Start</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.dontShow}>
+        <TouchableOpacity
+          style={[styles.dontShow, !todaysFocusOn && {borderColor: 'red'}]}
+          onPress={this.handleDontShow}>
           <Text style={styles.start}>Don’t show again today</Text>
         </TouchableOpacity>
       </View>

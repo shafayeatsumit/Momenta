@@ -32,6 +32,20 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
+  progressContainer: {
+    position: 'absolute',
+    top: 20,
+    left: 0,
+    right: 0,
+    zIndex: 3,
+  },
+  progressText: {
+    fontFamily: FontType.SemiBold,
+    fontSize: 22,
+    color: 'white',
+    textAlign: 'center',
+    paddingTop: 18,
+  },
   buttonContainer: {
     position: 'absolute',
     height: 100,

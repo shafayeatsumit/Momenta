@@ -13,7 +13,6 @@ import {connect} from 'react-redux';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
-import IntroSlides from './intro_slides/IntroSlides';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import LottieView from 'lottie-react-native';
 
@@ -174,7 +173,8 @@ class BreathingGame extends Component {
   showHelpers = () => {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
-        this.helperAnimatePressIn();
+        // TODO: remove this later
+        // this.helperAnimatePressIn();
         this.setState({
           showHelperIcon: true,
         });
@@ -202,6 +202,11 @@ class BreathingGame extends Component {
 
       clearTimeout(this.pressOutHelperId);
     }, 1000);
+  };
+
+  getProgress = () => {
+    const {settings, currentSession} = this.props;
+    return `${currentSession.breathCount}/${settings.breathPerSession}`;
   };
 
   componentDidMount() {
@@ -260,6 +265,7 @@ class BreathingGame extends Component {
     });
     const reactFillColor = 'white';
     const circleFillColor = 'black';
+    const finishedBreathingTutorial = !onboarding.breathingTutorial;
     const canGoToSettings =
       onboarding.completed && !pressInParent && showArrowIcon;
     return (
@@ -271,6 +277,11 @@ class BreathingGame extends Component {
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         ) : null}
+        {finishedBreathingTutorial && (
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressText}>{this.getProgress()}</Text>
+          </View>
+        )}
 
         <Svg height="100%" width="100%">
           <Defs>
@@ -301,7 +312,7 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {showHelperIcon && !pressInParent && (
+        {/* {showHelperIcon && !pressInParent && (
           <LottieView
             progress={this.tapAnimation}
             autoSize
@@ -322,7 +333,7 @@ class BreathingGame extends Component {
             ]}
             source={require('../../../assets/anims/tap.json')}
           />
-        )}
+        )} */}
       </View>
     );
   }

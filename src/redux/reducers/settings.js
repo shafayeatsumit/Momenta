@@ -21,11 +21,6 @@ const settings = (state = initialState, action) => {
     case 'UPDATE_BREATH_PER_SESSION':
       return {
         ...state,
-        breathPerSession: action.value,
-      };
-    case 'UPDATE_BREATH_PER_SESSION':
-      return {
-        ...state,
         breathPerSession: action.breathCount,
       };
     case 'UPDATE_INHALE_EXHALE_TIME':
@@ -33,6 +28,11 @@ const settings = (state = initialState, action) => {
         ...state,
         inhaleTime: action.inhaleValue,
         exhaleTime: action.exhaleValue,
+      };
+    case 'DONT_SHOW_FOCUS_TODAY':
+      return {
+        ...state,
+        todaysFocusOn: !state.todaysFocusOn,
       };
     case 'UPDATE_INHALE_TIME':
       return {

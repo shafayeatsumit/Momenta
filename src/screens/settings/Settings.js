@@ -66,7 +66,7 @@ class Settings extends Component {
 
   setBreathNumber = (value) => {
     const {dispatch} = this.props;
-    dispatch({type: 'UPDATE_BREATH_PER_SESSION', value});
+    dispatch({type: 'UPDATE_BREATH_PER_SESSION', breathCount: value});
   };
 
   goHome = () => this.props.navigation.goBack();

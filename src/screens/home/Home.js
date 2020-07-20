@@ -48,7 +48,7 @@ class Home extends Component {
     const finishedBreathingTutorial = !onboarding.breathingTutorial;
     if (finishedBreathingTutorial && currentSession.breathCount === 0) {
       this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
-    } else if (currentSession.breathCount === settings.breathPersSession) {
+    } else if (currentSession.breathCount === settings.breathPerSession) {
       this.setState({onboardingEndVisible: true});
       dispatch({type: 'RESET_SESSION'});
     } else {
@@ -192,7 +192,6 @@ class Home extends Component {
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     AppState.addEventListener('change', this.handleAppStateChange);
-    // TODO: uncomment this part
     onboarding.completed && this.checkTodaysFocus();
   }
 
@@ -202,7 +201,7 @@ class Home extends Component {
   }
 
   render() {
-    const {backgrounds, navigation, settings, onboarding} = this.props;
+    const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,
       onboardingIntroVisible,

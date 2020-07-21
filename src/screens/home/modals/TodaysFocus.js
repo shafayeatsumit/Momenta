@@ -28,6 +28,13 @@ class TodaysFocus extends Component {
     return date;
   };
 
+  lastSeenFocusTip = (tips) => {
+    const tipsSorted = tips.sort(
+      (a, b) => new Date(a.lastSeen).getTime() - new Date(b.lastSeen).getTime(),
+    );
+    return tipsSorted[0];
+  };
+
   getTodaysFocus = () => {
     const {breathing, dispatch} = this.props;
     const tips = breathing.breathingTips;
@@ -37,11 +44,8 @@ class TodaysFocus extends Component {
     if (focusOfTheDay) {
       return focusOfTheDay.tip;
     }
-    const tipsSorted = tips.sort(
-      (a, b) => new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime(),
-    );
-    const lastIndex = tipsSorted.length - 1;
-    focusOfTheDay = tipsSorted[lastIndex];
+    const notSeenYet = tips.find((tip) => !tip.lastSeen);
+    focusOfTheDay = notSeenYet ? notSeenYet : this.lastSeenFocusTip(tips);
     dispatch({type: 'SEEN_BREATHING_TIP', tipId: focusOfTheDay.id});
     return focusOfTheDay.tip;
   };

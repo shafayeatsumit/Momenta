@@ -12,7 +12,7 @@ class EndSessionModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      meditationVisible: props.selectedTags.length > 0,
+      meditationVisible: false,
       showTodaysFocus: false,
       todaysFocusVisible: false,
       successAndRewardVisible: false,
@@ -35,13 +35,28 @@ class EndSessionModal extends Component {
   };
 
   checkTodaysFocus = () => {
-    const {breathing, settings} = this.props;
+    const {breathing, settings, dispatch} = this.props;
     const today = getTodaysDate();
     const itsANewDay = breathing.lastBreathTaken !== today;
     const todayWithFocusOn =
       breathing.lastBreathTaken === today && settings.todaysFocusOn;
     const showFocus = itsANewDay || todayWithFocusOn;
-    showFocus && this.setState({showTodaysFocus: true});
+    if (showFocus) {
+      this.setState({showTodaysFocus: true});
+    }
+    if (itsANewDay && !todayWithFocusOn) {
+      dispatch({type: 'TODAYS_FOCUS_ON'});
+    }
+  };
+
+  checkMeditation = () => {
+    const {selectedTags} = this.props;
+    const showMeditation = selectedTags.length > 0;
+    if (showMeditation) {
+      this.setState({meditationVisible: true});
+    } else {
+      this.setState({successAndRewardVisible: true});
+    }
   };
 
   componentDidMount() {
@@ -50,6 +65,7 @@ class EndSessionModal extends Component {
       clearTimeout(this.timerId);
     }, 1000);
     this.checkTodaysFocus();
+    this.checkMeditation();
   }
 
   componentWillUnmount() {

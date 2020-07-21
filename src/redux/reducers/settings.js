@@ -34,6 +34,11 @@ const settings = (state = initialState, action) => {
         ...state,
         todaysFocusOn: !state.todaysFocusOn,
       };
+    case 'TODAYS_FOCUS_ON':
+      return {
+        ...state,
+        todaysFocusOn: true,
+      };
     case 'UPDATE_INHALE_TIME':
       return {
         ...state,

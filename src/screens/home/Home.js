@@ -226,7 +226,10 @@ class Home extends Component {
           animationType="fade"
           transparent={true}
           visible={onboardingIntroVisible}>
-          <OnboardingIntro closeModal={this.closeIntroModal} />
+          <OnboardingIntro
+            goToNextBreathing={this.goToNextBreathing}
+            closeModal={this.closeIntroModal}
+          />
         </Modal>
         <Modal
           animationType="fade"

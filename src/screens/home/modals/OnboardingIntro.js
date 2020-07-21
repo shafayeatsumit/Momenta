@@ -28,6 +28,17 @@ class OnboardingIntro extends Component {
 
   closeTodaysFocus = () => this.props.closeModal();
 
+  componentDidMount() {
+    this.timerId = setTimeout(() => {
+      this.props.goToNextBreathing();
+      clearTimeout(this.timerId);
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    this.timerId && clearTimeout(this.timerId);
+  }
+
   render() {
     const {
       personalizedExperience,

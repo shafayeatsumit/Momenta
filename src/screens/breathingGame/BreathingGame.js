@@ -69,9 +69,12 @@ class BreathingGame extends Component {
   helperAnimatePressIn = () => {
     Animated.timing(this.tapAnimation, {
       toValue: 1,
-      duration: 2000,
+      duration: 3000,
       easing: Easing.linear,
-    }).start();
+    }).start(() => {
+      this.tapAnimation.setValue(0);
+      this.helperAnimatePressIn();
+    });
   };
 
   shrinkCircleCb = () => {
@@ -133,7 +136,7 @@ class BreathingGame extends Component {
     this.inhaleTimerId && clearTimeout(this.inhaleTimerId);
     if (fullScreenRevealed) {
       this.startExhale();
-      this.setState({showArrowIcon: false});
+      this.setState({showArrowIcon: false, touchDisabled: true});
     } else {
       this.shrinkCircle();
     }
@@ -174,7 +177,7 @@ class BreathingGame extends Component {
     this.hlperMessageId = setTimeout(() => {
       if (!this.props.pressInParent) {
         // TODO: remove this later
-        // this.helperAnimatePressIn();
+        this.helperAnimatePressIn();
         this.setState({
           showHelperIcon: true,
         });
@@ -194,7 +197,10 @@ class BreathingGame extends Component {
   showPressOutHelper = () => {
     this.pressOutHelperId = setTimeout(() => {
       const {pressInParent, dispatch, onboarding} = this.props;
-      pressInParent && this.setState({successMessage: 'show release helper'});
+      const {touchDisabled} = this.state;
+      if (pressInParent && touchDisabled) {
+        this.setState({successMessage: 'show release helper'});
+      }
       // user needs another breath.
       if (pressInParent && onboarding.breathCount === 0) {
         dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
@@ -312,28 +318,14 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {/* {showHelperIcon && !pressInParent && (
+        {showHelperIcon && !pressInParent && (
           <LottieView
             progress={this.tapAnimation}
             autoSize
             style={styles.tapIconHolder}
-            colorFilters={[
-              {
-                keypath: 'hand 2',
-                color: '#FFFFFF',
-              },
-              {
-                keypath: 'fill',
-                color: 'red',
-              },
-              {
-                keypath: 'line',
-                color: '#3c71de',
-              },
-            ]}
-            source={require('../../../assets/anims/tap.json')}
+            source={require('../../../assets/anims/release.json')}
           />
-        )} */}
+        )}
       </View>
     );
   }

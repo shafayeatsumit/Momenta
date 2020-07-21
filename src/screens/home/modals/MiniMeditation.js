@@ -134,7 +134,7 @@ class MiniMeditation extends Component {
         {showCloseButton && (
           <TouchableOpacity
             style={styles.finishIconContainer}
-            onPress={this.props.closeModal}>
+            onPress={this.handleClose}>
             <Text style={styles.finish}>Close</Text>
           </TouchableOpacity>
         )}

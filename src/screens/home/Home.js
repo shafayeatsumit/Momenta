@@ -51,7 +51,7 @@ class Home extends Component {
       this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
     } else if (currentSession.breathCount === settings.breathPerSession) {
       this.setState({onboardingEndVisible: true});
-      dispatch({type: 'RESET_SESSION'});
+      dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
       this.goToNextBreathing();
     }
@@ -63,7 +63,7 @@ class Home extends Component {
       const {currentSession} = this.props;
       if (settings.breathPerSession === currentSession.breathCount) {
         this.setState({endSessionModalVisible: true});
-        dispatch({type: 'RESET_SESSION'});
+        dispatch({type: 'RESET_BREATH_COUNT'});
       } else {
         this.goToNextBreathing();
       }
@@ -176,7 +176,7 @@ class Home extends Component {
       nextAppState === 'active'
     ) {
       const {dispatch, onboarding} = this.props;
-      dispatch({type: 'RESET_SESSION'});
+      dispatch({type: 'RESET_BREATH_COUNT'});
       onboarding.completed && this.checkTodaysFocus();
     }
     this.setState({appState: nextAppState});

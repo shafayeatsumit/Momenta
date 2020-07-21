@@ -1,7 +1,6 @@
 const initialState = {
   breathCountToday: 0,
   lastBreathTaken: null,
-  lastBreathingTipSeen: null,
   breathingTips: [],
 };
 

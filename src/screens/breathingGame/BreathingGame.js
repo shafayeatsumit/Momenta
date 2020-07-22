@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
+import IntroModal from './IntroModal';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import LottieView from 'lottie-react-native';
 
@@ -32,22 +33,22 @@ const START_RADIUSES = {
   5: 2,
   6: 1,
 };
-const FIRST_ONBOARDING_MSG =
-  'Tap and hold as you inhale slowly to reveal the calming image';
-const SECOND_ONBOARDING_MSG = 'Release just after image is revealed';
+
+const RELEASE_MESSAGE = 'Release just after image is revealed';
 
 class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
       touchDisabled: false,
-      showHelperIcon: false,
+      showTapAnimation: false,
       successMessage: '',
+      progressVisible: true,
+      introModalVisible: false,
     };
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    this.tapAnimation = new Animated.Value(0);
     // all the timers
     this.focusModalId = null;
     this.hlperMessageId = null;
@@ -66,28 +67,19 @@ class BreathingGame extends Component {
     }).start();
   };
 
-  helperAnimatePressIn = () => {
-    Animated.timing(this.tapAnimation, {
-      toValue: 1,
-      duration: 3000,
-      easing: Easing.linear,
-    }).start(() => {
-      this.tapAnimation.setValue(0);
-      this.helperAnimatePressIn();
-    });
-  };
-
   shrinkCircleCb = () => {
+    const {pressInParent, onboarding} = this.props;
     this.setState(
       {
-        showHelperIcon: true,
         breathCountVisible: true,
         successMessage: '',
         touchDisabled: false,
+        progressVisible: true,
+        settingsMenuVisible: true,
       },
       () => {
-        this.showArrowIcon();
-        this.props.pressInParent && this.handlePressIn();
+        pressInParent && this.handlePressIn();
+        onboarding.breathingTutorial && this.setState({showTapAnimation: true});
       },
     );
   };
@@ -95,8 +87,8 @@ class BreathingGame extends Component {
   shrinkCircle = () => {
     this.setState({
       successMessage: 'Almost, give it another shot',
-      showHelperIcon: false,
-      showArrowIcon: false,
+      showTapAnimation: false,
+      settingsMenuVisible: false,
       touchDisabled: true,
     });
     Animated.timing(this.radius, {
@@ -110,7 +102,10 @@ class BreathingGame extends Component {
   startExhale = () => {
     this.props.imageFadeOut();
     const smoothWord = _.sample(SMOOTH_WORDS);
-    this.setState({successMessage: `Exhale ${smoothWord}`});
+    this.setState({
+      successMessage: `Exhale ${smoothWord}`,
+      ...(this.state.showTapAnimation && {showTapAnimation: false}),
+    });
   };
 
   startInhale = () => {
@@ -136,7 +131,7 @@ class BreathingGame extends Component {
     this.inhaleTimerId && clearTimeout(this.inhaleTimerId);
     if (fullScreenRevealed) {
       this.startExhale();
-      this.setState({showArrowIcon: false, touchDisabled: true});
+      this.setState({touchDisabled: true});
     } else {
       this.shrinkCircle();
     }
@@ -156,36 +151,29 @@ class BreathingGame extends Component {
     this.radius.setValue(this.startRadius);
   };
 
-  showArrowIcon = () => {
-    this.helperIconId = setTimeout(
-      () => this.setState({showArrowIcon: true}),
-      1500,
-    );
+  showSettingsMenu = (time) => {
+    const duration = time || 1200;
+    this.helperIconId = setTimeout(() => {
+      const {onboarding} = this.props;
+      onboarding.completed && this.setState({settingsMenuVisible: true});
+    }, duration);
   };
 
-  showOnboardingSuccessMsg = () => {
-    const {onboarding} = this.props;
-    if (onboarding.breathCount === 0) {
-      this.setState({successMessage: FIRST_ONBOARDING_MSG});
-    } else if (onboarding.breathCount === 1) {
-      // if required
-      this.setState({successMessage: SECOND_ONBOARDING_MSG});
-    }
-  };
+  closeIntroModal = () =>
+    this.setState({introModalVisible: false}, this.showPressInAnimation);
+
+  showPressInAnimation = () => this.setState({showTapAnimation: true});
 
   showHelpers = () => {
-    this.hlperMessageId = setTimeout(() => {
-      if (!this.props.pressInParent) {
-        // TODO: remove this later
-        this.helperAnimatePressIn();
-        this.setState({
-          showHelperIcon: true,
-        });
-      }
-    }, 800);
-    this.showArrowIcon();
     const {onboarding} = this.props;
-    onboarding.breathingTutorial && this.showOnboardingSuccessMsg();
+    if (!onboarding.breathingTutorial) {
+      this.showSettingsMenu();
+      return;
+    }
+    const {breathCount} = onboarding;
+    breathCount === 0
+      ? this.setState({introModalVisible: true})
+      : this.showPressInAnimation();
   };
 
   handleArrowPresss = () => {
@@ -194,19 +182,13 @@ class BreathingGame extends Component {
     analytics().logEvent('viewed_settings');
   };
 
-  showPressOutHelper = () => {
-    this.pressOutHelperId = setTimeout(() => {
-      const {pressInParent, dispatch, onboarding} = this.props;
-      const {touchDisabled} = this.state;
-      if (pressInParent && touchDisabled) {
-        this.setState({successMessage: 'show release helper'});
+  showReleaseMessage = () => {
+    this.releaseMessageId = setTimeout(() => {
+      const {pressInParent} = this.props;
+      if (pressInParent) {
+        this.setState({successMessage: RELEASE_MESSAGE});
       }
-      // user needs another breath.
-      if (pressInParent && onboarding.breathCount === 0) {
-        dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
-      }
-
-      clearTimeout(this.pressOutHelperId);
+      clearTimeout(this.releaseMessageId);
     }, 1000);
   };
 
@@ -215,21 +197,31 @@ class BreathingGame extends Component {
     return `${currentSession.breathCount}/${settings.breathPerSession}`;
   };
 
-  componentDidMount() {
-    this.animationId = this.radius.addListener(({value}) => {
-      const fullScreenRevealed = value === 7;
-      const {onboarding, dispatch} = this.props;
-      if (fullScreenRevealed) {
-        // showPressOutAnimation helper
-        this.showPressOutHelper();
-        if (!onboarding.breathingTutorial) {
-          dispatch({type: 'ADD_BREATH_COUNT'});
-        } else if (onboarding.breathCount === 1) {
-          // new user took second breath now finish breathing tutorial
-          dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
-        }
+  radiusListener = (value) => {
+    const fullScreenRevealed = value === 7;
+    const {onboarding, dispatch} = this.props;
+    const {progressVisible} = this.state;
+    if (progressVisible && value > 5) {
+      this.setState({progressVisible: false});
+    }
+    if (fullScreenRevealed) {
+      // showPressOutAnimation helper
+      onboarding.breathingTutorial && this.showReleaseMessage();
+      if (!onboarding.breathingTutorial) {
+        dispatch({type: 'ADD_BREATH_COUNT'});
+      } else if (onboarding.breathCount === 2) {
+        // new user took second breath now finish breathing tutorial
+        dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
+      } else {
+        dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
       }
-    });
+    }
+  };
+
+  componentDidMount() {
+    this.animationId = this.radius.addListener(({value}) =>
+      this.radiusListener(value),
+    );
     const {pressInParent} = this.props;
     pressInParent && this.handlePressIn();
     // show it for the first time.
@@ -261,7 +253,14 @@ class BreathingGame extends Component {
   }
 
   render() {
-    const {successMessage, showHelperIcon, showArrowIcon} = this.state;
+    const {
+      successMessage,
+      showTapAnimation,
+      settingsMenuVisible,
+      touchDisabled,
+      progressVisible,
+      introModalVisible,
+    } = this.state;
     const {onboarding, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
     const radiusPercent = this.radius.interpolate({
@@ -272,23 +271,33 @@ class BreathingGame extends Component {
     const reactFillColor = 'white';
     const circleFillColor = 'black';
     const finishedBreathingTutorial = !onboarding.breathingTutorial;
-    const canGoToSettings =
-      onboarding.completed && !pressInParent && showArrowIcon;
+    const showSettingsMenu =
+      onboarding.completed &&
+      !pressInParent &&
+      !touchDisabled &&
+      settingsMenuVisible;
+    const showProgress = finishedBreathingTutorial && progressVisible;
+    console.log('show tap animation', showTapAnimation);
     return (
       <View style={styles.container}>
-        {canGoToSettings ? (
+        {showSettingsMenu && (
           <TouchableOpacity
             style={styles.arrowIconContainer}
             onPress={this.handleArrowPresss}>
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
-        ) : null}
-        {finishedBreathingTutorial && (
+        )}
+        {showProgress && (
           <View style={styles.progressContainer} pointerEvents="none">
             <Text style={styles.progressText}>{this.getProgress()}</Text>
           </View>
         )}
-
+        <Modal
+          visible={introModalVisible}
+          transparent={true}
+          animationType="fade">
+          <IntroModal closeModal={this.closeIntroModal} />
+        </Modal>
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">
@@ -318,12 +327,13 @@ class BreathingGame extends Component {
           </View>
         ) : null}
 
-        {showHelperIcon && !pressInParent && (
+        {showTapAnimation && !pressInParent && (
           <LottieView
-            progress={this.tapAnimation}
+            autoPlay
+            loop
             autoSize
             style={styles.tapIconHolder}
-            source={require('../../../assets/anims/release.json')}
+            source={require('../../../assets/anims/tap.json')}
           />
         )}
       </View>

@@ -21,11 +21,11 @@ import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
 import EndSessionModal from './modals/EndSessionModal';
 
-import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 import LottieView from 'lottie-react-native';
+import onboarding from '../../redux/reducers/onboarding';
 
 class Home extends Component {
   constructor(props) {
@@ -69,10 +69,6 @@ class Home extends Component {
         this.goToNextBreathing();
       }
     } else {
-      const {breathCount} = onboarding;
-      // breathCount zero means, user doesn't need a second breath
-      // so finish the tutorial.
-      breathCount === 0 && dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
       this.checkOnboardingModal();
     }
   };
@@ -211,6 +207,8 @@ class Home extends Component {
       endSessionModalVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
+    console.log('onboarding', this.props.onboarding);
+
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>

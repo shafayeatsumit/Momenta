@@ -35,11 +35,11 @@ class EndSessionModal extends Component {
   };
 
   checkTodaysFocus = () => {
-    const {breathing, settings, dispatch} = this.props;
+    const {breathing, dispatch} = this.props;
     const today = getTodaysDate();
-    const itsANewDay = breathing.lastBreathTaken !== today;
+    const itsANewDay = breathing.lastBreathingTipSeen !== today;
     const todayWithFocusOn =
-      breathing.lastBreathTaken === today && settings.todaysFocusOn;
+      breathing.lastBreathingTipSeen === today && breathing.showTips;
     const showFocus = itsANewDay || todayWithFocusOn;
     if (showFocus) {
       this.setState({showTodaysFocus: true});

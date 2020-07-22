@@ -60,8 +60,8 @@ class TodaysFocus extends Component {
   }
 
   render() {
-    const {settings} = this.props;
-    const {todaysFocusOn} = settings;
+    const {breathing} = this.props;
+    const {showTips} = breathing;
     return (
       <View style={styles.mainContainer}>
         <View style={styles.progressContainer}>
@@ -83,7 +83,7 @@ class TodaysFocus extends Component {
           <Text style={styles.start}>Start</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.dontShow, !todaysFocusOn && {borderColor: 'red'}]}
+          style={[styles.dontShow, !showTips && {borderColor: 'red'}]}
           onPress={this.handleDontShow}>
           <Text style={styles.start}>Don’t show again today</Text>
         </TouchableOpacity>

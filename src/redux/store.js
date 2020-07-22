@@ -12,7 +12,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userInfo', 'settings', 'onboarding'],
+  whitelist: ['userInfo', 'breathing', 'settings', 'onboarding'],
   stateReconciler: autoMergeLevel2,
 };
 // const middleware = [logger, thunk];

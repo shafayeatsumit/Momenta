@@ -3,7 +3,6 @@ const initialState = {
   exhaleTime: 4, // 4 seconds.
   breathPerSession: 3,
   selectedTags: [],
-  todaysFocusOn: true,
 };
 
 const settings = (state = initialState, action) => {
@@ -29,16 +28,7 @@ const settings = (state = initialState, action) => {
         inhaleTime: action.inhaleValue,
         exhaleTime: action.exhaleValue,
       };
-    case 'DONT_SHOW_FOCUS_TODAY':
-      return {
-        ...state,
-        todaysFocusOn: !state.todaysFocusOn,
-      };
-    case 'TODAYS_FOCUS_ON':
-      return {
-        ...state,
-        todaysFocusOn: true,
-      };
+
     case 'UPDATE_INHALE_TIME':
       return {
         ...state,

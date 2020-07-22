@@ -70,7 +70,16 @@ const parseBreathingTips = (tagsData) => {
   return breathingTips;
 };
 
+const getNewBreathingTips = (prevBreathingTips, breathingTips) => {
+  const prevTipsKeys = prevBreathingTips.map((item) => item.id);
+  const newTips = breathingTips.filter(
+    (tip) => prevTipsKeys.indexOf(tip.id) === -1,
+  );
+  return newTips;
+};
+
 export const fetchTags = (isNewUser) => (dispatch, getState) => {
+  const {breathing} = getState();
   const url = 'tags/';
   api
     .get(url)
@@ -78,6 +87,10 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
       const backgrounds = response.data.images;
       const tagsData = response.data.result;
       const breathingTips = parseBreathingTips(tagsData);
+      const newBreathingTips = getNewBreathingTips(
+        breathing.breathingTips,
+        breathingTips,
+      );
       const tagsResponse = tagsData.filter(
         (item) => item.name !== 'Breathing Tips',
       );
@@ -90,7 +103,7 @@ export const fetchTags = (isNewUser) => (dispatch, getState) => {
         tags,
         tagNames,
         sets,
-        breathingTips,
+        breathingTips: newBreathingTips,
       });
       downLoadImages(backgrounds, dispatch);
     })

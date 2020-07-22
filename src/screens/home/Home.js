@@ -25,6 +25,7 @@ import SplashScreen from '../../../assets/images/splash.png';
 import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
+import LottieView from 'lottie-react-native';
 
 class Home extends Component {
   constructor(props) {
@@ -107,11 +108,11 @@ class Home extends Component {
   showTodaysFocus = () => this.setState({todaysFocusVisible: true});
 
   checkTodaysFocus = () => {
-    const {breathing, settings} = this.props;
+    const {breathing} = this.props;
     const today = getTodaysDate();
-    const itsANewDay = breathing.lastBreathTaken !== today;
+    const itsANewDay = breathing.lastBreathingTipSeen !== today;
     const todayWithFocusOn =
-      breathing.lastBreathTaken === today && settings.todaysFocusOn;
+      breathing.lastBreathingTipSeen === today && breathing.showTips;
     const showFocus = itsANewDay || todayWithFocusOn;
     showFocus && this.showTodaysFocus();
   };
@@ -212,7 +213,14 @@ class Home extends Component {
     const backgroundImage = backgrounds[0];
     if (!backgroundImage) {
       return (
-        <ImageBackground style={styles.imageContainer} source={SplashScreen} />
+        <View style={styles.loadingContainer}>
+          <LottieView
+            autoSize
+            autoPlay
+            loop
+            source={require('../../../assets/anims/hourglass.json')}
+          />
+        </View>
       );
     }
 

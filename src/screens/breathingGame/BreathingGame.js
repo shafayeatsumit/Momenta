@@ -277,7 +277,6 @@ class BreathingGame extends Component {
       !touchDisabled &&
       settingsMenuVisible;
     const showProgress = finishedBreathingTutorial && progressVisible;
-    console.log('show tap animation', showTapAnimation);
     return (
       <View style={styles.container}>
         {showSettingsMenu && (

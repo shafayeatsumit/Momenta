@@ -9,11 +9,17 @@ const currentSession = (state = INITIAL_STATE, action) => {
         ...state,
         breathCount: state.breathCount + 1,
       };
+    case 'ONBOARDING_ADD_BREATH_COUNT':
+      return {
+        ...state,
+        breathCount: state.breathCount + 1,
+      };
     case 'LAST_SEEN_TAG':
       return {
         ...state,
         lastSeenTag: action.tag,
       };
+    case 'PICK_BREATH_PER_SESSION':
     case 'RESET_BREATH_COUNT':
       return {
         ...state,

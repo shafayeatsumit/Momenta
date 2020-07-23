@@ -14,7 +14,6 @@ const onboarding = (state = INIT_STATE, action) => {
     case 'FINISH_BREATHING_TUTORIAL':
       return {
         ...state,
-        breathCount: state.breathCount + 1,
         breathingTutorial: false,
       };
     case 'ONBOARDING_COMPLETED':

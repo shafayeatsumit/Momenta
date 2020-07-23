@@ -16,7 +16,7 @@ import {
   removeBackground,
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
-import OnboardingIntro from './modals/OnboardingIntro';
+import PersonalizeModal from './modals/OboardingPersonalize';
 import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
 import EndSessionModal from './modals/EndSessionModal';
@@ -25,14 +25,13 @@ import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 import LottieView from 'lottie-react-native';
-import onboarding from '../../redux/reducers/onboarding';
 
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       breathingGameVisible: true,
-      onboardingIntroVisible: false,
+      personalizeModalVisible: false,
       onboardingEndVisible: false,
       todaysFocusVisible: false,
       endSessionModalVisible: false,
@@ -47,9 +46,8 @@ class Home extends Component {
 
   checkOnboardingModal = () => {
     const {currentSession, onboarding, settings, dispatch} = this.props;
-    const finishedBreathingTutorial = !onboarding.breathingTutorial;
-    if (finishedBreathingTutorial && currentSession.breathCount === 0) {
-      this.setState({onboardingIntroVisible: true}, this.closeBreathingGame);
+    if (onboarding.breathingTutorial && currentSession.breathCount === 3) {
+      this.setState({personalizeModalVisible: true});
     } else if (currentSession.breathCount === settings.breathPerSession) {
       this.setState({onboardingEndVisible: true});
       dispatch({type: 'RESET_BREATH_COUNT'});
@@ -73,8 +71,7 @@ class Home extends Component {
     }
   };
 
-  closeIntroModal = () =>
-    this.setState({onboardingIntroVisible: false}, this.showBreathingGame);
+  closePersonalizeModal = () => this.setState({personalizeModalVisible: false});
 
   closeOnboardingEndModal = () => this.setState({onboardingEndVisible: false});
 
@@ -201,7 +198,7 @@ class Home extends Component {
     const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,
-      onboardingIntroVisible,
+      personalizeModalVisible,
       todaysFocusVisible,
       onboardingEndVisible,
       endSessionModalVisible,
@@ -221,7 +218,8 @@ class Home extends Component {
         </View>
       );
     }
-
+    console.log('onboardhing', this.props.onboarding);
+    console.log('session', this.props.currentSession);
     return (
       <View style={styles.container}>
         <Animated.Image
@@ -231,10 +229,10 @@ class Home extends Component {
         <Modal
           animationType="fade"
           transparent={true}
-          visible={onboardingIntroVisible}>
-          <OnboardingIntro
+          visible={personalizeModalVisible}>
+          <PersonalizeModal
             goToNextBreathing={this.goToNextBreathing}
-            closeModal={this.closeIntroModal}
+            closeModal={this.closePersonalizeModal}
           />
         </Modal>
         <Modal

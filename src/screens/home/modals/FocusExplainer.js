@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1b1f37',
+    // backgroundColor: '#1b1f37',
   },
   modal: {
     width: ScreenWidth * 0.9,

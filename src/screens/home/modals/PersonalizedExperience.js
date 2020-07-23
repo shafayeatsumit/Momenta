@@ -3,14 +3,14 @@ import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
 import {useDispatch} from 'react-redux';
-import Swiper from 'react-native-swiper';
+import FocusExplainer from './FocusExplainer';
 
 const PersonalizedExperience = ({closeModal}) => {
   const dispatch = useDispatch();
   const handlePick = (breath) => {
-    dispatch({type: 'UPDATE_BREATH_PER_SESSION', breathCount: breath});
-    closeModal();
+    dispatch({type: 'PICK_BREATH_PER_SESSION', breathCount: breath});
   };
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.modal}>
@@ -57,13 +57,7 @@ export default PersonalizedExperience;
 
 const styles = StyleSheet.create({
   mainContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-    backgroundColor: 'rgba(27,31,55,0.4)',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

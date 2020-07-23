@@ -17,6 +17,7 @@ const settings = (state = initialState, action) => {
         ...state,
         exhaleTime: action.value,
       };
+    case 'PICK_BREATH_PER_SESSION':
     case 'UPDATE_BREATH_PER_SESSION':
       return {
         ...state,

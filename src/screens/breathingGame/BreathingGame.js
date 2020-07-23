@@ -166,10 +166,12 @@ class BreathingGame extends Component {
 
   showHelpers = () => {
     const {onboarding} = this.props;
+    console.log('onboarding helper', onboarding.breathingTutorial);
     if (!onboarding.breathingTutorial) {
       this.showSettingsMenu();
       return;
     }
+    console.log('onboarding second helper');
     const {breathCount} = onboarding;
     breathCount === 0
       ? this.setState({introModalVisible: true})
@@ -209,9 +211,6 @@ class BreathingGame extends Component {
       onboarding.breathingTutorial && this.showReleaseMessage();
       if (!onboarding.breathingTutorial) {
         dispatch({type: 'ADD_BREATH_COUNT'});
-      } else if (onboarding.breathCount === 2) {
-        // new user took second breath now finish breathing tutorial
-        dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
       } else {
         dispatch({type: 'ONBOARDING_ADD_BREATH_COUNT'});
       }
@@ -268,15 +267,12 @@ class BreathingGame extends Component {
       outputRange: ['0%', '72%'],
       extrapolate: 'clamp',
     });
-    const reactFillColor = 'white';
-    const circleFillColor = 'black';
-    const finishedBreathingTutorial = !onboarding.breathingTutorial;
     const showSettingsMenu =
       onboarding.completed &&
       !pressInParent &&
       !touchDisabled &&
       settingsMenuVisible;
-    const showProgress = finishedBreathingTutorial && progressVisible;
+
     return (
       <View style={styles.container}>
         {showSettingsMenu && (
@@ -286,7 +282,7 @@ class BreathingGame extends Component {
             <Image source={arrowRightIcon} style={styles.arrowIcon} />
           </TouchableOpacity>
         )}
-        {showProgress && (
+        {progressVisible && (
           <View style={styles.progressContainer} pointerEvents="none">
             <Text style={styles.progressText}>{this.getProgress()}</Text>
           </View>
@@ -300,13 +296,13 @@ class BreathingGame extends Component {
         <Svg height="100%" width="100%">
           <Defs>
             <Mask id="mask" x="0" y="0" height="100%" width="100%">
-              <Rect height="100%" width="100%" fill={reactFillColor} />
+              <Rect height="100%" width="100%" fill={'white'} />
               <AnimatedCircle
                 r={radiusPercent}
                 cx="50%"
                 cy="50%"
                 strokeWidth="1"
-                fill={circleFillColor}
+                fill={'black'}
               />
             </Mask>
           </Defs>

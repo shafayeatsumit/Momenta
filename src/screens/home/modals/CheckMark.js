@@ -10,6 +10,7 @@ import {
 import {FontType} from '../../../helpers/theme';
 import {ScreenWidth} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
+import {connect} from 'react-redux';
 
 class CheckMark extends Component {
   constructor(props) {
@@ -28,11 +29,19 @@ class CheckMark extends Component {
     }).start();
   };
 
+  handleContinue = () => {
+    const {settings, dispatch, closeModal} = this.props;
+    const {breathPerSession} = settings;
+    dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
+    closeModal();
+  };
+
   componentDidMount() {
     this.startAnimation();
   }
 
   render() {
+    const {onboarding, goToNextModal} = this.props;
     return (
       <View style={styles.container}>
         <LottieView
@@ -40,16 +49,32 @@ class CheckMark extends Component {
           progress={this.animationProgress}
           style={styles.checkmark}
         />
-        <TouchableOpacity
-          style={styles.finishContainer}
-          onPress={this.props.closeModal}>
-          <Text style={styles.finish}>Close</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={goToNextModal}>
+            <Text style={styles.finish}>Finish</Text>
+          </TouchableOpacity>
+          {onboarding.completed && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.handleContinue}>
+              <Text style={styles.finish}>Continue</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     );
   }
 }
-export default CheckMark;
+
+const mapStateToProps = (state, ownProps) => {
+  const {onboarding, settings} = state;
+  return {
+    onboarding,
+    settings,
+  };
+};
+
+export default connect(mapStateToProps)(CheckMark);
 
 const styles = StyleSheet.create({
   container: {
@@ -90,11 +115,19 @@ const styles = StyleSheet.create({
     height: 320,
     width: 320,
   },
-  finishContainer: {
-    height: 50,
-    width: 120,
+  buttonContainer: {
     position: 'absolute',
-    borderRadius: 30,
+    bottom: 20,
+    width: ScreenWidth,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  button: {
+    height: 50,
+    width: 140,
+    // position: 'absolute',
+    borderRadius: 10,
     borderColor: 'white',
     borderWidth: 2,
     bottom: 40,

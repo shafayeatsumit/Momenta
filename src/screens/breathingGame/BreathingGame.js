@@ -194,7 +194,9 @@ class BreathingGame extends Component {
 
   getProgress = () => {
     const {settings, currentSession} = this.props;
-    return `${currentSession.breathCount}/${settings.breathPerSession}`;
+    const totalBreath =
+      settings.breathPerSession + currentSession.additionalBreath;
+    return `${currentSession.breathCount}/${totalBreath}`;
   };
 
   radiusListener = (value) => {

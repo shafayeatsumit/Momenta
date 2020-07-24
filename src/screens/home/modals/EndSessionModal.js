@@ -8,6 +8,7 @@ import SuccessAndReward from './SuccessAndReward';
 import CheckMark from './CheckMark';
 import {connect} from 'react-redux';
 import {getTodaysDate} from '../../../helpers/common';
+import {api} from '../../../helpers/api';
 
 class EndSessionModal extends Component {
   constructor(props) {
@@ -18,6 +19,9 @@ class EndSessionModal extends Component {
       todaysFocusVisible: false,
       successAndRewardVisible: false,
       checkMarkModal: false,
+      streak: null,
+      thisWeekMomenta: [],
+      userCount: null,
     };
   }
 
@@ -58,12 +62,36 @@ class EndSessionModal extends Component {
     }
   };
 
+  checkForReward = () => {
+    const url = 'user_momenta/';
+    api
+      .post(url, {})
+      .then((response) => {
+        const {streak, thisWeekMomenta, userCount} = response.data;
+        this.setState({
+          streak,
+          thisWeekMomenta,
+          userCount,
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+
   checkMeditation = () => {
     const {selectedTags} = this.props;
     const showMeditation = selectedTags.length > 0;
-    showMeditation
-      ? this.setState({meditationVisible: true})
-      : this.setState({checkMarkModal: true});
+    this.setState({checkMarkModal: true});
+    // TODO: uncomment the following
+    // showMeditation
+    //   ? this.setState({meditationVisible: true})
+    //   : this.setState({checkMarkModal: true});
+  };
+
+  getProgress = () => {
+    const {settings, currentSession} = this.props;
+    const totalBreathThisSession =
+      settings.breathPerSession + currentSession.additionalBreath;
+    return `${currentSession.breathCount}/${totalBreathThisSession}`;
   };
 
   componentDidMount() {
@@ -73,6 +101,7 @@ class EndSessionModal extends Component {
     }, 1000);
     this.checkTodaysFocus();
     this.checkMeditation();
+    this.checkForReward();
   }
 
   componentWillUnmount() {
@@ -85,24 +114,46 @@ class EndSessionModal extends Component {
       todaysFocusVisible,
       successAndRewardVisible,
       checkMarkModal,
+      streak,
+      thisWeekMomenta,
+      userCount,
     } = this.state;
+    const {settings} = this.props;
+
     return (
       <View style={styles.mainContainer}>
+        <View style={styles.progressContainer} pointerEvents="none">
+          <Text style={styles.progressText}>{this.getProgress()}</Text>
+        </View>
+
         <Modal
           animationType="fade"
           transparent={true}
           visible={meditationVisible}>
-          <MiniMeditation closeModal={this.closeMediation} />
+          <MiniMeditation
+            openSuccessModal={this.closeCheckMarkModal}
+            closeModal={this.closeMediation}
+          />
         </Modal>
+
         <Modal animationType="fade" transparent={true} visible={checkMarkModal}>
-          <MiniMeditation closeModal={this.closeCheckMarkModal} />
+          <CheckMark
+            goToNextModal={this.closeCheckMarkModal}
+            closeModal={this.props.closeModal}
+          />
         </Modal>
 
         <Modal
           animationType="fade"
           transparent={true}
           visible={successAndRewardVisible}>
-          <SuccessAndReward closeModal={this.closeSuccessAndReward} />
+          <SuccessAndReward
+            closeModal={this.closeSuccessAndReward}
+            streak={streak}
+            thisWeekMomenta={thisWeekMomenta}
+            userCount={userCount}
+            breathPerSession={settings.breathPerSession}
+          />
         </Modal>
         <Modal
           animationType="fade"
@@ -132,5 +183,19 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#1b1f37',
+  },
+  progressContainer: {
+    position: 'absolute',
+    top: 20,
+    left: 0,
+    right: 0,
+    zIndex: 3,
+  },
+  progressText: {
+    fontFamily: FontType.SemiBold,
+    fontSize: 22,
+    color: 'white',
+    textAlign: 'center',
+    paddingTop: 18,
   },
 });

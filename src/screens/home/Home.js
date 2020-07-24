@@ -50,7 +50,6 @@ class Home extends Component {
       this.setState({personalizeModalVisible: true});
     } else if (currentSession.breathCount === settings.breathPerSession) {
       this.setState({onboardingEndVisible: true});
-      dispatch({type: 'RESET_BREATH_COUNT'});
     } else {
       this.goToNextBreathing();
     }
@@ -59,13 +58,15 @@ class Home extends Component {
   nextBreathing = () => {
     const {onboarding, dispatch, settings} = this.props;
     if (onboarding.completed) {
-      const {currentSession} = this.props;
-      if (settings.breathPerSession === currentSession.breathCount) {
-        this.setState({endSessionModalVisible: true});
-        dispatch({type: 'RESET_BREATH_COUNT'});
-      } else {
-        this.goToNextBreathing();
-      }
+      this.setState({endSessionModalVisible: true});
+      // TODO: uncomment this
+      // const {currentSession} = this.props;
+      // const totalBreath = currentSession.breathCount+ currentSession.additionalBreath
+      // if (settings.breathPerSession === totalBreath) {
+      //   this.setState({endSessionModalVisible: true});
+      // } else {
+      //   this.goToNextBreathing();
+      // }
     } else {
       this.checkOnboardingModal();
     }

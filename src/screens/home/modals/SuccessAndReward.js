@@ -10,7 +10,6 @@ import {
 import {FontType} from '../../../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
-import {api} from '../../../helpers/api';
 
 const DAYS_OF_THE_WEEK = [
   'Monday',
@@ -37,29 +36,17 @@ const getDay = () => {
 };
 
 class SuccessAndReward extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showClose: false,
-    };
-    this.animationProgress = new Animated.Value(0);
+  closeModal = () => {
+    this.timerId = setTimeout(this.props.closeModal, 5000);
+  };
+
+  componentWillUnmount() {
+    this.timerId && clearTimeout(this.timerId);
   }
 
-  startAnimation = () => {
-    Animated.timing(this.animationProgress, {
-      toValue: 1,
-      duration: 2000,
-      easing: Easing.linear,
-    }).start();
-  };
-
-  checkForReward = () => {
-    const url = 'user_momenta/';
-    api
-      .post(url, {})
-      .then((response) => {})
-      .catch((error) => console.log(error));
-  };
+  componentDidMount() {
+    this.closeModal();
+  }
 
   getDays = (item) => {
     if (item === getDay()) {
@@ -77,7 +64,7 @@ class SuccessAndReward extends Component {
         </View>
       );
     }
-    const hasMomenta = last_week_momenta.includes(item);
+    const hasMomenta = this.props.thisWeekMomenta.includes(item);
     return (
       <View key={item} style={[styles.days, hasMomenta && styles.white]}>
         <Text style={[styles.daysText, hasMomenta && styles.darkText]}>
@@ -87,25 +74,27 @@ class SuccessAndReward extends Component {
     );
   };
 
-  componentDidMount() {
-    this.startAnimation();
-    this.checkForReward();
-  }
-
   render() {
+    const {userCount, streak, breathPerSession} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.sucessTitleHolder}>
-          <Text style={styles.sucessTitle}>15 people meditated with you</Text>
+          <Text style={styles.sucessTitle}>
+            {userCount} people meditated with you
+          </Text>
+        </View>
+        <View style={{paddingBottom: 50}}>
+          <Text style={styles.streak}>{streak} consecutive days</Text>
         </View>
         <View style={{flexDirection: 'row'}}>
           {DAYS_OF_THE_WEEK.map((item) => this.getDays(item))}
         </View>
-        <TouchableOpacity
-          style={styles.finishContainer}
-          onPress={this.props.closeModal}>
-          <Text style={styles.finish}>Close</Text>
-        </TouchableOpacity>
+        <View style={{paddingTop: 50}}>
+          <Text style={styles.congratsText}>Congratulations</Text>
+          <Text style={styles.congratsText}>
+            +{breathPerSession} calm breaths
+          </Text>
+        </View>
       </View>
     );
   }
@@ -117,6 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#1b1f37',
   },
   sucessTitle: {
     fontFamily: FontType.Medium,
@@ -124,6 +114,19 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
     paddingHorizontal: 30,
+  },
+  streak: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 25,
+    textAlign: 'center',
+    paddingHorizontal: 30,
+  },
+  congratsText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
   },
   sucessTitleHolder: {
     position: 'absolute',

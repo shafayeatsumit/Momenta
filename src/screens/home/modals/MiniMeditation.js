@@ -90,12 +90,6 @@ class MiniMeditation extends Component {
     );
   };
 
-  getProgress = () => {
-    const {settings} = this.props;
-    const {breathPerSession} = settings;
-    return `${breathPerSession}/${breathPerSession}`;
-  };
-
   handleClose = () => {
     const {onScreenTagId} = this.state;
     const {dispatch} = this.props;
@@ -114,12 +108,11 @@ class MiniMeditation extends Component {
   }
 
   render() {
-    const {showCloseButton, onScreenContent, onScreenTitle} = this.state;
+    const {onScreenContent, onScreenTitle} = this.state;
+    const {onboarding} = this.props;
+
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>{this.getProgress()}</Text>
-        </View>
         <View style={styles.titleHolder}>
           <Animated.Text style={[styles.title, {opacity: this.titleOpacity}]}>
             {onScreenTitle}
@@ -130,21 +123,29 @@ class MiniMeditation extends Component {
             {onScreenContent}
           </Animated.Text>
         </View>
-        {showCloseButton && (
+
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={styles.finishIconContainer}
-            onPress={this.handleClose}>
-            <Text style={styles.finish}>Close</Text>
+            style={styles.button}
+            onPress={this.props.openSuccessModal}>
+            <Text style={styles.finish}>Finish</Text>
           </TouchableOpacity>
-        )}
+          {onboarding && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.handleContinue}>
+              <Text style={styles.finish}>Continue</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, currentSession, tagNames, tags, sets} = state;
-  return {settings, currentSession, tagNames, tags, sets};
+  const {onboarding, currentSession, tagNames, tags, sets} = state;
+  return {onboarding, currentSession, tagNames, tags, sets};
 };
 
 export default connect(mapStateToProps)(MiniMeditation);
@@ -156,19 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#1b1f37',
   },
-  progressContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 0,
-    right: 0,
-  },
-  progressText: {
-    fontFamily: FontType.SemiBold,
-    fontSize: 22,
-    color: 'white',
-    textAlign: 'center',
-    paddingTop: 18,
-  },
+
   contentHolder: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
@@ -194,6 +183,26 @@ const styles = StyleSheet.create({
     left: 0,
     width: ScreenWidth,
     zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    width: ScreenWidth,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  button: {
+    height: 50,
+    width: 140,
+    // position: 'absolute',
+    borderRadius: 10,
+    borderColor: 'white',
+    borderWidth: 2,
+    bottom: 40,
+    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -103,6 +103,13 @@ class MiniMeditation extends Component {
     this.timerId = setTimeout(this.showContent, 1000);
   }
 
+  handleContinue = () => {
+    const {settings, dispatch, closeModal} = this.props;
+    const {breathPerSession} = settings;
+    dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
+    closeModal();
+  };
+
   componentWillUnmount() {
     this.timerId && clearTimeout(this.timerId);
   }
@@ -127,10 +134,10 @@ class MiniMeditation extends Component {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={this.props.openSuccessModal}>
+            onPress={this.props.goToNextModal}>
             <Text style={styles.finish}>Finish</Text>
           </TouchableOpacity>
-          {onboarding && (
+          {onboarding.completed && (
             <TouchableOpacity
               style={styles.button}
               onPress={this.handleContinue}>
@@ -144,8 +151,8 @@ class MiniMeditation extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {onboarding, currentSession, tagNames, tags, sets} = state;
-  return {onboarding, currentSession, tagNames, tags, sets};
+  const {onboarding, currentSession, settings, tagNames, tags, sets} = state;
+  return {onboarding, currentSession, settings, tagNames, tags, sets};
 };
 
 export default connect(mapStateToProps)(MiniMeditation);

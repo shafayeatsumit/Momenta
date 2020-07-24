@@ -80,11 +80,9 @@ class EndSessionModal extends Component {
   checkMeditation = () => {
     const {selectedTags} = this.props;
     const showMeditation = selectedTags.length > 0;
-    this.setState({checkMarkModal: true});
-    // TODO: uncomment the following
-    // showMeditation
-    //   ? this.setState({meditationVisible: true})
-    //   : this.setState({checkMarkModal: true});
+    showMeditation
+      ? this.setState({meditationVisible: true})
+      : this.setState({checkMarkModal: true});
   };
 
   getProgress = () => {
@@ -131,8 +129,8 @@ class EndSessionModal extends Component {
           transparent={true}
           visible={meditationVisible}>
           <MiniMeditation
-            openSuccessModal={this.closeCheckMarkModal}
-            closeModal={this.closeMediation}
+            goToNextModal={this.closeMediation}
+            closeModal={this.props.closeModal}
           />
         </Modal>
 

@@ -152,7 +152,7 @@ class BreathingGame extends Component {
   };
 
   showSettingsMenu = (time) => {
-    const duration = time || 1200;
+    const duration = time || 700;
     this.helperIconId = setTimeout(() => {
       const {onboarding} = this.props;
       onboarding.completed && this.setState({settingsMenuVisible: true});

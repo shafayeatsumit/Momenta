@@ -32,7 +32,6 @@ class Home extends Component {
     this.state = {
       breathingGameVisible: true,
       personalizeModalVisible: false,
-      onboardingEndVisible: false,
       todaysFocusVisible: false,
       endSessionModalVisible: false,
       appState: AppState.currentState,
@@ -73,8 +72,6 @@ class Home extends Component {
   };
 
   closePersonalizeModal = () => this.setState({personalizeModalVisible: false});
-
-  closeOnboardingEndModal = () => this.setState({onboardingEndVisible: false});
 
   closeEndSessionModal = () => this.setState({endSessionModalVisible: false});
 
@@ -201,7 +198,6 @@ class Home extends Component {
       breathingGameVisible,
       personalizeModalVisible,
       todaysFocusVisible,
-      onboardingEndVisible,
       endSessionModalVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
@@ -233,16 +229,7 @@ class Home extends Component {
             closeModal={this.closePersonalizeModal}
           />
         </Modal>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={onboardingEndVisible}>
-          <OnboardingEnd
-            closeBreathingGame={this.closeBreathingGame}
-            closeModal={this.closeOnboardingEndModal}
-            goToNextBreathing={this.goToNextBreathing}
-          />
-        </Modal>
+
         <Modal
           animationType="fade"
           transparent={true}

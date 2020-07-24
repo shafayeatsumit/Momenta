@@ -54,7 +54,7 @@ class OnboardingPersonalize extends Component {
           animationType="fade"
           transparent={true}
           visible={successModalVisible}>
-          <CheckMarkModal closeModal={this.closeSuccessModal} />
+          <CheckMarkModal goToNextModal={this.closeSuccessModal} />
         </Modal>
         <Modal
           animationType="fade"

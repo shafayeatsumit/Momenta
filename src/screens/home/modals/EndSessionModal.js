@@ -5,6 +5,7 @@ import {FontType} from '../../../helpers/theme';
 import TodaysFocus from './TodaysFocus';
 import MiniMeditation from './MiniMeditation';
 import SuccessAndReward from './SuccessAndReward';
+import MeditationPicker from './MeditaitonExplainer';
 import CheckMark from './CheckMark';
 import {connect} from 'react-redux';
 import {getTodaysDate} from '../../../helpers/common';
@@ -18,6 +19,7 @@ class EndSessionModal extends Component {
       showTodaysFocus: false,
       todaysFocusVisible: false,
       successAndRewardVisible: false,
+      meditationPickerVisible: false,
       checkMarkModal: false,
       streak: null,
       thisWeekMomenta: [],
@@ -35,7 +37,17 @@ class EndSessionModal extends Component {
     this.setState({checkMarkModal: false, successAndRewardVisible: true});
   };
 
+  finishOnboarding = () => {
+    this.props.dispatch({type: 'ONBOARDING_COMPLETED'});
+    this.props.closeModal();
+  };
+
   closeSuccessAndReward = () => {
+    const onboardingNotFinished = !this.props.onboarding.completed;
+    if (onboardingNotFinished) {
+      this.finishOnboarding();
+      return;
+    }
     const {showTodaysFocus} = this.state;
     if (showTodaysFocus) {
       this.setState({
@@ -77,6 +89,10 @@ class EndSessionModal extends Component {
       .catch((error) => console.log(error));
   };
 
+  closeMeditationPicker = () => {
+    this.setState({meditationPickerVisible: false, meditationVisible: true});
+  };
+
   checkMeditation = () => {
     const {selectedTags} = this.props;
     const showMeditation = selectedTags.length > 0;
@@ -92,11 +108,19 @@ class EndSessionModal extends Component {
     return `${currentSession.breathCount}/${totalBreathThisSession}`;
   };
 
+  openMeditationPicker = () => this.setState({meditationPickerVisible: true});
+
   componentDidMount() {
+    const onboardingNotFinished = !this.props.onboarding.completed;
     this.timerId = setTimeout(() => {
       this.props.goToNextBreathing();
       clearTimeout(this.timerId);
     }, 1000);
+
+    if (onboardingNotFinished) {
+      this.openMeditationPicker();
+      return;
+    }
     this.checkTodaysFocus();
     this.checkMeditation();
     this.checkForReward();
@@ -114,6 +138,7 @@ class EndSessionModal extends Component {
       checkMarkModal,
       streak,
       thisWeekMomenta,
+      meditationPickerVisible,
       userCount,
     } = this.state;
     const {settings} = this.props;
@@ -123,6 +148,13 @@ class EndSessionModal extends Component {
         <View style={styles.progressContainer} pointerEvents="none">
           <Text style={styles.progressText}>{this.getProgress()}</Text>
         </View>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={meditationPickerVisible}>
+          <MeditationPicker closeModal={this.closeMeditationPicker} />
+        </Modal>
 
         <Modal
           animationType="fade"
@@ -165,12 +197,13 @@ class EndSessionModal extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, currentSession, breathing} = state;
+  const {settings, currentSession, breathing, onboarding} = state;
 
   return {
     settings,
     currentSession,
     breathing,
+    onboarding,
     selectedTags: settings.selectedTags,
   };
 };

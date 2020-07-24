@@ -204,8 +204,6 @@ class Home extends Component {
       endSessionModalVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
-    console.log('onboarding', this.props.onboarding);
-
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>
@@ -218,8 +216,7 @@ class Home extends Component {
         </View>
       );
     }
-    console.log('onboardhing', this.props.onboarding);
-    console.log('session', this.props.currentSession);
+
     return (
       <View style={styles.container}>
         <Animated.Image

@@ -166,12 +166,10 @@ class BreathingGame extends Component {
 
   showHelpers = () => {
     const {onboarding} = this.props;
-    console.log('onboarding helper', onboarding.breathingTutorial);
     if (!onboarding.breathingTutorial) {
       this.showSettingsMenu();
       return;
     }
-    console.log('onboarding second helper');
     const {breathCount} = onboarding;
     breathCount === 0
       ? this.setState({introModalVisible: true})

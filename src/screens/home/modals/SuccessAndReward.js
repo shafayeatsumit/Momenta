@@ -22,6 +22,13 @@ const DAYS_OF_THE_WEEK = [
   'Sunday',
 ];
 const last_week_momenta = ['Thursday', 'Tuesday'];
+const LETTERS = {
+  S: require('../../../../assets/anims/S.json'),
+  M: require('../../../../assets/anims/M.json'),
+  W: require('../../../../assets/anims/W.json'),
+  T: require('../../../../assets/anims/T.json'),
+  F: require('../../../../assets/anims/F.json'),
+};
 
 const getDay = () => {
   const options = {weekday: 'long'};
@@ -55,33 +62,25 @@ class SuccessAndReward extends Component {
   };
 
   getDays = (item) => {
-    // if (item === getDay()) {
-    //   return (
-    //     <LottieView
-    //       style={{
-    //         height: 40,
-    //         width: 40,
-    //       }}
-    //       autoSize
-    //       source={require('../../../../assets/anims/m1.json')}
-    //       autoPlay
-    //     />
-    //   );
-    // }
+    if (item === getDay()) {
+      const firstLetter = item.charAt(0);
+      const letterSource = LETTERS[firstLetter];
+      return (
+        <View style={styles.animContainer} key={item}>
+          <LottieView
+            style={styles.anim}
+            autoSize
+            source={letterSource}
+            autoPlay
+            loop={false}
+          />
+        </View>
+      );
+    }
     const hasMomenta = last_week_momenta.includes(item);
     return (
-      <View
-        style={[
-          styles.days,
-          hasMomenta
-            ? {backgroundColor: 'white'}
-            : {backgroundColor: '#252a43'},
-        ]}>
-        <Text
-          style={[
-            styles.daysText,
-            hasMomenta ? {color: '#252a43'} : {color: '#787989'},
-          ]}>
+      <View key={item} style={[styles.days, hasMomenta && styles.white]}>
+        <Text style={[styles.daysText, hasMomenta && styles.darkText]}>
           {item.charAt(0)}
         </Text>
       </View>
@@ -142,15 +141,36 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 5,
+    marginHorizontal: 7,
+    backgroundColor: '#252a43',
   },
   daysText: {
     fontFamily: FontType.Medium,
     fontSize: 20,
+    color: '#787989',
+  },
+  darkText: {
+    color: '#252a43',
   },
   checkmark: {
     height: 320,
     width: 320,
+  },
+  animContainer: {
+    paddingHorizontal: 5,
+  },
+  anim: {
+    height: 34,
+    width: 34,
+  },
+  white: {
+    backgroundColor: 'white',
+  },
+  steel: {
+    backgroundColor: '#787989',
+  },
+  dark: {
+    backgroundColor: '#252a43',
   },
   finishContainer: {
     height: 50,

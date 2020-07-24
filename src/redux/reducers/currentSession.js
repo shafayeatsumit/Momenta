@@ -1,6 +1,7 @@
 const INITIAL_STATE = {
   lastSeenTag: null,
   breathCount: 0,
+  additionalBreath: 0,
 };
 const currentSession = (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -24,6 +25,12 @@ const currentSession = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         breathCount: 0,
+        additionalBreath: 0,
+      };
+    case 'ADD_EXTRA_BREATH':
+      return {
+        ...state,
+        additionalBreath: action.breathCount,
       };
     case 'RESET_SESSION':
       return {

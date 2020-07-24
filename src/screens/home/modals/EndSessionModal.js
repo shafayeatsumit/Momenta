@@ -5,6 +5,7 @@ import {FontType} from '../../../helpers/theme';
 import TodaysFocus from './TodaysFocus';
 import MiniMeditation from './MiniMeditation';
 import SuccessAndReward from './SuccessAndReward';
+import CheckMark from './CheckMark';
 import {connect} from 'react-redux';
 import {getTodaysDate} from '../../../helpers/common';
 
@@ -16,11 +17,19 @@ class EndSessionModal extends Component {
       showTodaysFocus: false,
       todaysFocusVisible: false,
       successAndRewardVisible: false,
+      checkMarkModal: false,
     };
   }
 
-  closeMediation = () =>
+  closeMediation = () => {
+    this.props.dispatch({type: 'RESET_BREATH_COUNT'});
     this.setState({meditationVisible: false, successAndRewardVisible: true});
+  };
+
+  closeCheckMarkModal = () => {
+    this.props.dispatch({type: 'RESET_BREATH_COUNT'});
+    this.setState({checkMarkModal: false, successAndRewardVisible: true});
+  };
 
   closeSuccessAndReward = () => {
     const {showTodaysFocus} = this.state;
@@ -52,11 +61,9 @@ class EndSessionModal extends Component {
   checkMeditation = () => {
     const {selectedTags} = this.props;
     const showMeditation = selectedTags.length > 0;
-    if (showMeditation) {
-      this.setState({meditationVisible: true});
-    } else {
-      this.setState({successAndRewardVisible: true});
-    }
+    showMeditation
+      ? this.setState({meditationVisible: true})
+      : this.setState({checkMarkModal: true});
   };
 
   componentDidMount() {
@@ -77,6 +84,7 @@ class EndSessionModal extends Component {
       meditationVisible,
       todaysFocusVisible,
       successAndRewardVisible,
+      checkMarkModal,
     } = this.state;
     return (
       <View style={styles.mainContainer}>
@@ -86,6 +94,10 @@ class EndSessionModal extends Component {
           visible={meditationVisible}>
           <MiniMeditation closeModal={this.closeMediation} />
         </Modal>
+        <Modal animationType="fade" transparent={true} visible={checkMarkModal}>
+          <MiniMeditation closeModal={this.closeCheckMarkModal} />
+        </Modal>
+
         <Modal
           animationType="fade"
           transparent={true}

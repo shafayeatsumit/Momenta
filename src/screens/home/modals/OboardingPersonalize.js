@@ -5,7 +5,7 @@ import {FontType} from '../../../helpers/theme';
 import PersonalizedExperience from './PersonalizedExperience';
 import FocusExplainer from './FocusExplainer';
 import TodaysFocus from './TodaysFocus';
-import BreathingTutorialSuccess from './BreathingTutorialSuccess';
+import CheckMarkModal from './CheckMark';
 import Swiper from 'react-native-swiper';
 
 import {connect} from 'react-redux';
@@ -54,7 +54,7 @@ class OnboardingPersonalize extends Component {
           animationType="fade"
           transparent={true}
           visible={successModalVisible}>
-          <BreathingTutorialSuccess closeModal={this.closeSuccessModal} />
+          <CheckMarkModal closeModal={this.closeSuccessModal} />
         </Modal>
         <Modal
           animationType="fade"

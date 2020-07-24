@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {FontType} from '../../../helpers/theme';
-import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
+import {ScreenWidth} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
 
-class SuccessAndReward extends Component {
+class CheckMark extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,7 +49,7 @@ class SuccessAndReward extends Component {
     );
   }
 }
-export default SuccessAndReward;
+export default CheckMark;
 
 const styles = StyleSheet.create({
   container: {

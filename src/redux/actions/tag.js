@@ -187,8 +187,7 @@ export const fetchContent = (tagId) => (dispatch, getState) => {
   const {tags} = getState();
   const tagName = tags[tagId].name;
   const queryString = '?tags' + '=' + tagName.replace(/ /g, '%20');
-  const contentUrl = 'contents/' + queryString;
-  console.log('contentUrl', contentUrl);
+  const contentUrl = 'contents/' + queryString;  
   api
     .get(contentUrl)
     .then((response) => addNewContent(dispatch, getState, response.data, tagId))

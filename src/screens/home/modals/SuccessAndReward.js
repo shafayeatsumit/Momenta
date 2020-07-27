@@ -7,6 +7,7 @@ import {
   Easing,
   TouchableOpacity,
 } from 'react-native';
+import moment from 'moment';
 import {FontType} from '../../../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
@@ -29,10 +30,8 @@ const LETTERS = {
   F: require('../../../../assets/anims/F.json'),
 };
 
-const getDay = () => {
-  const options = {weekday: 'long'};
-  const date = new Date();
-  return date.toLocaleDateString('en-US', options);
+const getDay = () => {  
+  return moment().format('dddd');
 };
 
 class SuccessAndReward extends Component {
@@ -49,9 +48,11 @@ class SuccessAndReward extends Component {
   }
 
   getDays = (item) => {
+    const firstLetter = item.charAt(0);
+    const letterSource = LETTERS[firstLetter];    
     if (item === getDay()) {
       const firstLetter = item.charAt(0);
-      const letterSource = LETTERS[firstLetter];
+      const letterSource = LETTERS[firstLetter];      
       return (
         <View style={styles.animContainer} key={item}>
           <LottieView

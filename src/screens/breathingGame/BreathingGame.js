@@ -49,11 +49,6 @@ class BreathingGame extends Component {
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    // all the timers
-    this.focusModalId = null;
-    this.hlperMessageId = null;
-    this.helperIconId = null;
-    this.inhaleTimerId = null;
   }
 
   expandCircle = () => {
@@ -152,7 +147,7 @@ class BreathingGame extends Component {
   };
 
   showSettingsMenu = (time) => {
-    const duration = time || 700;
+    const duration = time || 500;
     this.helperIconId = setTimeout(() => {
       const {onboarding} = this.props;
       onboarding.completed && this.setState({settingsMenuVisible: true});
@@ -161,6 +156,14 @@ class BreathingGame extends Component {
 
   closeIntroModal = () =>
     this.setState({introModalVisible: false}, this.showPressInAnimation);
+
+  showIntroModal = () => {
+    this.setState({touchDisabled: true});
+    this.intromodalId = setTimeout(() => {
+      this.setState({introModalVisible: true, touchDisabled: false});
+      clearTimeout(this.intromodalId);
+    }, 1500);
+  };
 
   showPressInAnimation = () => this.setState({showTapAnimation: true});
 
@@ -171,9 +174,7 @@ class BreathingGame extends Component {
       return;
     }
     const {breathCount} = onboarding;
-    breathCount === 0
-      ? this.setState({introModalVisible: true})
-      : this.showPressInAnimation();
+    breathCount === 0 ? this.showIntroModal() : this.showPressInAnimation();
   };
 
   handleArrowPresss = () => {
@@ -243,12 +244,11 @@ class BreathingGame extends Component {
 
   componentWillUnmount() {
     this.animationId && this.radius.removeListener(this.animationId);
-    this.focusModalId && clearTimeout(this.focusModalId);
-    this.hlperMessageId && clearTimeout(this.hlperMessageId);
+    this.intromodalId && clearTimeout(this.intromodalId);
     this.helperIconId && clearTimeout(this.helperIconId);
     this.inhaleTimerId && clearTimeout(this.inhaleTimerId);
-    this.hideHelperId && clearTimeout(this.hideHelperId);
     this.showHelperId && clearTimeout(this.showHelperId);
+    this.releaseMessageId && clearTimeout(this.releaseMessageId);
   }
 
   render() {
@@ -272,7 +272,9 @@ class BreathingGame extends Component {
       !pressInParent &&
       !touchDisabled &&
       settingsMenuVisible;
-
+    console.log(
+      `onboarding ${onboarding.completed} settingsMenuVisible ${settingsMenuVisible}`,
+    );
     return (
       <View style={styles.container}>
         {showSettingsMenu && (

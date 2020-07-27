@@ -208,7 +208,7 @@ class Home extends Component {
             autoSize
             autoPlay
             loop
-            source={require('../../../assets/anims/hourglass.json')}
+            source={require('../../../assets/anims/breath.json')}
           />
         </View>
       );

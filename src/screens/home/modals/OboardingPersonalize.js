@@ -20,8 +20,12 @@ class OnboardingPersonalize extends Component {
     };
   }
 
-  closePersonalizeModal = () =>
+  closePersonalizeModal = () => {
+    const {breathCount} = this.props.currentSession;
+    breathCount !== 0 && this.props.dispatch({type: 'RESET_BREATH_COUNT'});
+
     this.setState({personalizedExperience: false, todaysFocusVisible: true});
+  };
 
   closeSuccessModal = () => {
     this.props.dispatch({type: 'FINISH_BREATHING_TUTORIAL'});
@@ -31,7 +35,9 @@ class OnboardingPersonalize extends Component {
     );
   };
 
-  closeTodaysFocus = () => this.props.closeModal();
+  closeTodaysFocus = () => {
+    this.setState({todaysFocusVisible: false}, this.props.closeModal);
+  };
 
   getProgress = () => {
     const {settings, currentSession} = this.props;
@@ -50,17 +56,19 @@ class OnboardingPersonalize extends Component {
           <Text style={styles.progressText}>{this.getProgress()}</Text>
         </View>
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={successModalVisible}>
+        {successModalVisible && (
           <CheckMarkModal goToNextModal={this.closeSuccessModal} />
-        </Modal>
+        )}
+
         <Modal
           animationType="fade"
           transparent={true}
           visible={personalizedExperience}>
-          <Swiper style={styles.wrapper} showsButtons={false} loop={false}>
+          <Swiper
+            style={styles.wrapper}
+            showsButtons={false}
+            loop={false}
+            dotColor={'#5f6273'}>
             <PersonalizedExperience />
             <FocusExplainer closeModal={this.closePersonalizeModal} />
           </Swiper>

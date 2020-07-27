@@ -322,6 +322,8 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
+  - RNReactNativeHapticFeedback (1.10.0):
+    - React
   - RNReanimated (1.7.1):
     - React
   - RNScreens (2.4.0):
@@ -374,6 +376,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
@@ -468,6 +471,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/crashlytics"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -529,6 +534,7 @@ SPEC CHECKSUMS:
   RNFBApp: 49e1b8ce7e7d175b751c5b8568eafd51eac59b42
   RNFBCrashlytics: 866c95ff878a19129358e345b6ab6ed3fd98a883
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
+  RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
   RNReanimated: 4e102df74a9674fa943e05f97f3362b6e44d0b48
   RNScreens: b5c0e1b2b04512919e78bd3898e144a157ce2363
   RNSentry: 57824da1293d03966605d682d5868b11aa1b6e5a

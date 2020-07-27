@@ -16,6 +16,12 @@ import styles from './BreathingGame.styles';
 import IntroModal from './IntroModal';
 import arrowRightIcon from '../../../assets/icons/arrow_right.png';
 import LottieView from 'lottie-react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const hapticFeedbackOptions = {
+  enableVibrateFallback: false,
+  ignoreAndroidSystemSettings: true,
+};
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const SMOOTH_WORDS = [
@@ -132,6 +138,10 @@ class BreathingGame extends Component {
     }
   };
 
+  startHapticFeedback = () => {
+    ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+  };
+
   handlePressIn = () => {
     if (this.state.touchDisabled) {
       console.log('exhale timer');
@@ -209,6 +219,7 @@ class BreathingGame extends Component {
     }
     if (fullScreenRevealed) {
       // showPressOutAnimation helper
+      this.startHapticFeedback();
       onboarding.breathingTutorial && this.showReleaseMessage();
       if (!onboarding.breathingTutorial) {
         dispatch({type: 'ADD_BREATH_COUNT'});

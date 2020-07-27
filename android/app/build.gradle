@@ -136,6 +136,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
         versionName "1.1"
+        multiDexEnabled true
     }
     signingConfigs {
         release {
@@ -196,6 +197,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
     // implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    compile project(':react-native-haptic-feedback')
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
         debugImplementation files(hermesPath + "hermes-debug.aar")

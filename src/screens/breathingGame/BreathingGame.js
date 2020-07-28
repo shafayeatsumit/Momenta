@@ -55,6 +55,7 @@ class BreathingGame extends Component {
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
+    this.smoothWord = null;
   }
 
   expandCircle = () => {
@@ -102,9 +103,9 @@ class BreathingGame extends Component {
 
   startExhale = () => {
     this.props.imageFadeOut();
-    const smoothWord = _.sample(SMOOTH_WORDS);
+    
     this.setState({
-      successMessage: `Exhale ${smoothWord}`,
+      successMessage: `Exhale ${this.smoothWord}`,
       ...(this.state.showTapAnimation && {showTapAnimation: false}),
     });
   };
@@ -112,6 +113,7 @@ class BreathingGame extends Component {
   startInhale = () => {
     const {settings} = this.props;
     const smoothWord = _.sample(SMOOTH_WORDS);
+    this.smoothWord = smoothWord;
     this.setState({successMessage: `Inhale ${smoothWord}`});
     const duration = settings.inhaleTime * 1000;
     this.clearInhaleId = setTimeout(() => {
@@ -139,12 +141,11 @@ class BreathingGame extends Component {
   };
 
   startHapticFeedback = () => {
-    ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+    ReactNativeHapticFeedback.trigger('selection', hapticFeedbackOptions);
   };
 
   handlePressIn = () => {
-    if (this.state.touchDisabled) {
-      console.log('exhale timer');
+    if (this.state.touchDisabled) {      
       return;
     }
     this.startInhale();
@@ -213,10 +214,6 @@ class BreathingGame extends Component {
   radiusListener = (value) => {
     const fullScreenRevealed = value === 7;
     const {onboarding, dispatch} = this.props;
-    const {progressVisible} = this.state;
-    if (progressVisible && value > 5) {
-      this.setState({progressVisible: false});
-    }
     if (fullScreenRevealed) {
       // showPressOutAnimation helper
       this.startHapticFeedback();
@@ -283,9 +280,6 @@ class BreathingGame extends Component {
       !pressInParent &&
       !touchDisabled &&
       settingsMenuVisible;
-    console.log(
-      `onboarding ${onboarding.completed} settingsMenuVisible ${settingsMenuVisible}`,
-    );
     return (
       <View style={styles.container}>
         {showSettingsMenu && (

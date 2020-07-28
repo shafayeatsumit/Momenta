@@ -21,9 +21,7 @@ class OnboardingPersonalize extends Component {
   }
 
   closePersonalizeModal = () => {
-    const {breathCount} = this.props.currentSession;
-    breathCount !== 0 && this.props.dispatch({type: 'RESET_BREATH_COUNT'});
-
+    const {breathCount} = this.props.currentSession;    
     this.setState({personalizedExperience: false, todaysFocusVisible: true});
   };
 

@@ -36,7 +36,7 @@ const getDay = () => {
 
 class SuccessAndReward extends Component {
   closeModal = () => {
-    this.timerId = setTimeout(this.props.closeModal, 5000);
+    this.timerId = setTimeout(this.props.closeModal, 3000);
   };
 
   componentWillUnmount() {
@@ -76,7 +76,7 @@ class SuccessAndReward extends Component {
   };
 
   render() {
-    const {userCount, streak, breathPerSession} = this.props;
+    const {userCount, streak, breathPerSession, additionalBreath} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.sucessTitleHolder}>
@@ -93,7 +93,7 @@ class SuccessAndReward extends Component {
         <View style={{paddingTop: 50}}>
           <Text style={styles.congratsText}>Congratulations</Text>
           <Text style={styles.congratsText}>
-            +{breathPerSession} calm breaths
+            +{breathPerSession+additionalBreath} calm breaths
           </Text>
         </View>
       </View>

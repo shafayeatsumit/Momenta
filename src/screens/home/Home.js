@@ -163,12 +163,14 @@ class Home extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
+    const {endSessionModalVisible} = this.state;      
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
       const {dispatch, onboarding} = this.props;
       dispatch({type: 'RESET_BREATH_COUNT'});
+      endSessionModalVisible && this.setState({endSessionModalVisible:false})      
       onboarding.completed && this.checkTodaysFocus();
     }
     this.setState({appState: nextAppState});

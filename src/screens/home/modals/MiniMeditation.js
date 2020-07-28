@@ -96,7 +96,7 @@ class MiniMeditation extends Component {
     this.fadeOutContent();
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
-    this.props.closeModal();
+    this.props.goToNextModal();
   };
 
   componentDidMount() {
@@ -134,7 +134,7 @@ class MiniMeditation extends Component {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={this.props.goToNextModal}>
+            onPress={this.handleClose}>
             <Text style={styles.finish}>Finish</Text>
           </TouchableOpacity>
           {onboarding.completed && (

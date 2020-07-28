@@ -30,7 +30,7 @@ const currentSession = (state = INITIAL_STATE, action) => {
     case 'ADD_EXTRA_BREATH':
       return {
         ...state,
-        additionalBreath: action.breathCount,
+        additionalBreath: state.additionalBreath + action.breathCount,
       };
     case 'RESET_SESSION':
       return {

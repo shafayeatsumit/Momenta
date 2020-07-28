@@ -6,6 +6,7 @@ import TodaysFocus from './TodaysFocus';
 import MiniMeditation from './MiniMeditation';
 import SuccessAndReward from './SuccessAndReward';
 import MeditationPicker from './MeditaitonExplainer';
+import {onboardingFinished} from '../../../redux/actions/onboarding';
 import CheckMark from './CheckMark';
 import {connect} from 'react-redux';
 import {getTodaysDate} from '../../../helpers/common';
@@ -29,7 +30,8 @@ class EndSessionModal extends Component {
 
   closeMediation = () => {
     this.props.dispatch({type: 'RESET_BREATH_COUNT'});
-    this.setState({meditationVisible: false, successAndRewardVisible: true});
+    const {currentSession} = this.props;
+    this.setState({meditationVisible: false, successAndRewardVisible: true, additionalBreath: currentSession.additionalBreath});
   };
 
   closeCheckMarkModal = () => {
@@ -38,8 +40,11 @@ class EndSessionModal extends Component {
   };
 
   finishOnboarding = () => {
-    this.props.dispatch({type: 'ONBOARDING_COMPLETED'});
-    this.props.closeModal();
+    this.props.dispatch(onboardingFinished()) 
+    .then((resp)=>this.props.goToNextBreathing())    
+    this.timerId = setTimeout(() => {      
+      this.props.closeModal();      
+    }, 1000);
   };
 
   closeSuccessAndReward = () => {
@@ -112,18 +117,15 @@ class EndSessionModal extends Component {
 
   componentDidMount() {
     const onboardingNotFinished = !this.props.onboarding.completed;
-    this.timerId = setTimeout(() => {
-      this.props.goToNextBreathing();
-      clearTimeout(this.timerId);
-    }, 1000);
-
+    this.checkForReward();
     if (onboardingNotFinished) {
       this.openMeditationPicker();
       return;
     }
     this.checkTodaysFocus();
     this.checkMeditation();
-    this.checkForReward();
+    this.props.goToNextBreathing();  
+    
   }
 
   componentWillUnmount() {
@@ -140,6 +142,7 @@ class EndSessionModal extends Component {
       thisWeekMomenta,
       meditationPickerVisible,
       userCount,
+      additionalBreath,
     } = this.state;
     const {settings} = this.props;
 
@@ -183,6 +186,7 @@ class EndSessionModal extends Component {
             thisWeekMomenta={thisWeekMomenta}
             userCount={userCount}
             breathPerSession={settings.breathPerSession}
+            additionalBreath={additionalBreath}
           />
         </Modal>
         <Modal

@@ -33,7 +33,7 @@ const ExhaleValues = [
   {label: '6s', value: 6},
 ];
 
-const BreathNumbers = [
+const BreathNumbers = [  
   {label: '3', value: 3},
   {label: '4', value: 4},
   {label: '5', value: 5},
@@ -43,6 +43,18 @@ const BreathNumbers = [
   {label: '9', value: 9},
   {label: '10', value: 10},
 ];
+
+const AdditionBreathNumbers = [      
+  {label: '+2', value: 2},
+  {label: '+3', value: 3},
+  {label: '+4', value: 4},
+  {label: '+5', value: 5},
+  {label: '+6', value: 6},
+  {label: '+7', value: 7},
+  {label: '+8', value: 8},
+  {label: '+9', value: 9},
+  {label: '+10', value: 10},  
+]
 
 const placeHolderStyle = {
   inputIOS: {
@@ -54,6 +66,14 @@ const placeHolderStyle = {
 };
 
 class Settings extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      breathValue: props.breathPerSession,
+      pickedBreathValue:false,
+    }
+  } 
+
   setExhaleValue = (value) => {
     const {dispatch} = this.props;
     dispatch({type: 'UPDATE_EXHALE_TIME', value});
@@ -64,12 +84,34 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
-  setBreathNumber = (value) => {
-    const {dispatch} = this.props;
-    dispatch({type: 'UPDATE_BREATH_PER_SESSION', breathCount: value});
+  setBreathNumber = (value) => {      
+    if(Platform.OS==='android'){
+      this.setState({breathValue:value,pickedBreathValue:true})
+    } else {
+      this.setState({breathValue:value})
+    }   
+    
   };
 
-  goHome = () => this.props.navigation.goBack();
+  handleDonePressBreathValuePicker = () => {
+    this.setState({pickedBreathValue:true})
+  }
+
+  goHome = () => {
+    const {dispatch,currentSession} = this.props;
+    const {breathValue, pickedBreathValue } =this.state;
+    this.props.navigation.goBack();
+    if(!pickedBreathValue){
+      return
+    }
+
+    if(currentSession.breathCount===0){
+      dispatch({type: 'UPDATE_BREATH_PER_SESSION', breathCount: breathValue});
+    }else {
+      dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathValue})    
+    }        
+    
+  }
 
   handleTagPress = (tagId) => {
     const {dispatch} = this.props;
@@ -83,8 +125,10 @@ class Settings extends Component {
       selectedTags,
       tagNames,
       breathPerSession,
+      currentSession
     } = this.props;
-
+    const breathNumberItems = currentSession.breathCount ? AdditionBreathNumbers : BreathNumbers;
+        
     return (
       <View style={styles.container}>
         <View style={styles.backButtonContainer}>
@@ -104,9 +148,11 @@ class Settings extends Component {
                 onValueChange={this.setBreathNumber}
                 style={placeHolderStyle}
                 placeholder={defaultPlaceHolder}
-                items={BreathNumbers}
-                value={breathPerSession}
-                useNativeAndroidPickerStyle={false}
+                items={breathNumberItems}
+                value={this.state.breathValue}
+                useNativeAndroidPickerStyle={false}       
+                onDonePress={this.handleDonePressBreathValuePicker}  
+                  
               />
               <Image
                 source={downArrowIcon}
@@ -172,7 +218,7 @@ class Settings extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, tagNames} = state;
+  const {settings, tagNames,currentSession} = state;
 
   const {inhaleTime, exhaleTime, selectedTags, breathPerSession} = settings;
   return {
@@ -180,6 +226,7 @@ const mapStateToProps = (state, ownProps) => {
     exhaleTime,
     tagNames,
     selectedTags,
+    currentSession,
     breathPerSession,
   };
 };

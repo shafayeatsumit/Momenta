@@ -1,30 +1,23 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {ScreenWidth} from '../../helpers/constants/common';
-import {FontType} from '../../helpers/theme';
+import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
+import {FontType, Colors} from '../../helpers/theme';
 
 class IntroModal extends Component {
   render() {
     const {closeModal} = this.props;
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.modal}>
-          <View>
+        <View style={styles.hideTheBackground}>
+          <View style={styles.textContainer}>
             <Text style={styles.text}>
-              We’ll start with a 3 breath meditation
-              {'\n'}
-              {'\n'}
-              Tap and hold on next screen as you inhale slowly to reveal a
-              calming image and then release to exhale
+              We’ll start with a 3{'\n'}breath meditation
             </Text>
           </View>
-
-          <TouchableOpacity style={styles.button} onPress={closeModal}>
-            <View style={styles.timeTextContainer}>
-              <Text style={styles.timeText}>I’m ready</Text>
-            </View>
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.button} onPress={closeModal}>
+          <Text style={styles.buttonText}>I’m ready</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -36,70 +29,44 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1b1f37',
+    backgroundColor: Colors.betterBlue65,
   },
-  modal: {
-    width: ScreenWidth * 0.9,
-    height: 500,
-    borderRadius: 10,
-    backgroundColor: '#1b1f37',
-    justifyContent: 'space-around',
+  hideTheBackground: {
+    width: ScreenWidth,
+    height: '80%',
+    backgroundColor: Colors.betterBlue,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0.5,
-    borderColor: '#787989',
-    overflow: 'hidden',
   },
-  slide: {
-    // flexGrow: 1,
+  textContainer: {
+    height: 200,
+    width: 284,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
   text: {
     fontFamily: FontType.Regular,
-    fontSize: 22,
+    fontSize: 24,
     color: 'white',
     textAlign: 'center',
-    marginHorizontal: 20,
-    lineHeight: 30,
   },
-  smallText: {
-    fontFamily: FontType.Regular,
-    fontSize: 15,
-    color: 'white',
-    textAlign: 'center',
-    paddingTop: 20,
-  },
-
-  buttonContainer: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-
   button: {
-    height: 60,
-    width: 200,
-    borderRadius: 5,
-    backgroundColor: '#3c71de',
+    height: 50,
+    width: 300,
+    borderRadius: 25,
+    backgroundColor: Colors.cornflowerBlue,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: ScreenHeight * 0.2,
+  },
+  buttonText: {
+    fontSize: 24,
+    fontFamily: FontType.Regular,
+    color: 'white',
   },
   timeTextContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-  },
-  timeText: {
-    fontFamily: FontType.Medium,
-    fontSize: 20,
-    color: 'white',
-    textAlign: 'center',
-    lineHeight: 30,
-  },
-  timeTextSmall: {
-    fontFamily: FontType.Medium,
-    fontSize: 13,
-    color: 'white',
-    textAlign: 'center',
-    lineHeight: 27,
-    marginLeft: 1,
   },
 });

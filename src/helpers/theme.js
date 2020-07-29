@@ -1,5 +1,7 @@
-const colors = {
+const Colors = {
   cornflowerBlue: '#3c71de',
+  betterBlue: '#141831',
+  betterBlue65: 'rgba(19,23,47,0.65)',
   primary: '#1b1f37',
   primaryLight: '#232741',
   secondary: '#2BDA8E',
@@ -60,4 +62,4 @@ const fonts = {
   },
 };
 
-export {colors, sizes, fonts, FontType};
+export {Colors, sizes, fonts, FontType};

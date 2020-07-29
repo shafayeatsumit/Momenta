@@ -3,6 +3,7 @@ import CamelcaseKeys from 'camelcase-keys';
 import _ from 'lodash';
 import {Buffer} from 'buffer';
 import ReduxStore from '../redux/store';
+import moment from 'moment-timezone';
 const {store} = ReduxStore();
 import AsyncStorage from '@react-native-community/async-storage';
 // const BASEURL = 'http://localhost:8000/';
@@ -21,6 +22,9 @@ const transformResponse = (data) => {
 export const api = axios.create({
   baseURL: BASEURL,
   timeout: 20000, // = 20 seconds
+  headers: {
+    'Time-Zone': moment.tz.guess(),
+  },
   transformResponse: [
     ...axios.defaults.transformResponse,
     (data) => transformResponse(data),

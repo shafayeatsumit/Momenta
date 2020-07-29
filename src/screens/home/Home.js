@@ -20,7 +20,7 @@ import PersonalizeModal from './modals/OboardingPersonalize';
 import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
 import EndSessionModal from './modals/EndSessionModal';
-
+import moment from 'moment-timezone';
 import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
@@ -163,14 +163,14 @@ class Home extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
-    const {endSessionModalVisible} = this.state;      
+    const {endSessionModalVisible} = this.state;
     if (
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
       const {dispatch, onboarding} = this.props;
       dispatch({type: 'RESET_BREATH_COUNT'});
-      endSessionModalVisible && this.setState({endSessionModalVisible:false})      
+      endSessionModalVisible && this.setState({endSessionModalVisible: false});
       onboarding.completed && this.checkTodaysFocus();
     }
     this.setState({appState: nextAppState});

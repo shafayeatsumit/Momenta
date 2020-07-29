@@ -90,12 +90,16 @@ class MiniMeditation extends Component {
     );
   };
 
-  handleClose = () => {
+  adjustContent = () => {
     const {onScreenTagId} = this.state;
     const {dispatch} = this.props;
-    this.fadeOutContent();
     dispatch(removeContent(onScreenTagId));
     dispatch(fetchContent(onScreenTagId));
+  };
+
+  handleClose = () => {
+    this.adjustContent();
+    this.fadeOutContent();
     this.props.goToNextModal();
   };
 
@@ -106,6 +110,7 @@ class MiniMeditation extends Component {
   handleContinue = () => {
     const {settings, dispatch, closeModal} = this.props;
     const {breathPerSession} = settings;
+    this.adjustContent();
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
     closeModal();
   };
@@ -132,9 +137,7 @@ class MiniMeditation extends Component {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={this.handleClose}>
+          <TouchableOpacity style={styles.button} onPress={this.handleClose}>
             <Text style={styles.finish}>Finish</Text>
           </TouchableOpacity>
           {onboarding.completed && (

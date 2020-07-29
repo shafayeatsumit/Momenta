@@ -16,6 +16,7 @@ const FontType = {
   Medium: 'Montserrat-Medium',
   Bold: 'Montserrat-Bold',
   ExtraBold: 'Montserrat-ExtraBold',
+  Light: 'Montserrat-Light',
 };
 
 const sizes = {

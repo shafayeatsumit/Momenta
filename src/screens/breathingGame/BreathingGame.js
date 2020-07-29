@@ -14,7 +14,7 @@ import _ from 'lodash';
 import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
 import IntroModal from './IntroModal';
-import arrowRightIcon from '../../../assets/icons/arrow_right.png';
+import arrowRightIcon from '../../../assets/icons/menu.png';
 import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
@@ -103,7 +103,7 @@ class BreathingGame extends Component {
 
   startExhale = () => {
     this.props.imageFadeOut();
-    
+
     this.setState({
       successMessage: `Exhale ${this.smoothWord}`,
       ...(this.state.showTapAnimation && {showTapAnimation: false}),
@@ -145,7 +145,7 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    if (this.state.touchDisabled) {      
+    if (this.state.touchDisabled) {
       return;
     }
     this.startInhale();
@@ -208,7 +208,12 @@ class BreathingGame extends Component {
     const {settings, currentSession} = this.props;
     const totalBreath =
       settings.breathPerSession + currentSession.additionalBreath;
-    return `${currentSession.breathCount}/${totalBreath}`;
+    return (
+      <Text style={[styles.progressText, styles.progressTextBig]}>
+        {currentSession.breathCount}
+        <Text style={styles.progressText}>/{totalBreath}</Text>
+      </Text>
+    );
   };
 
   radiusListener = (value) => {
@@ -284,9 +289,9 @@ class BreathingGame extends Component {
       <View style={styles.container}>
         {showSettingsMenu && (
           <TouchableOpacity
-            style={styles.arrowIconContainer}
+            style={styles.menuIconContainer}
             onPress={this.handleArrowPresss}>
-            <Image source={arrowRightIcon} style={styles.arrowIcon} />
+            <Image source={arrowRightIcon} style={styles.menuIcon} />
           </TouchableOpacity>
         )}
         {progressVisible && (
@@ -317,26 +322,29 @@ class BreathingGame extends Component {
           <Rect
             height="100%"
             width="100%"
-            fill="#1b1f37"
+            fill="#141831"
             mask="url(#mask)"
             fill-opacity="0"
           />
         </Svg>
 
         {successMessage ? (
-          <View style={styles.successTextContainer} pointerEvents="none">
-            <Text style={styles.successText}>{successMessage}</Text>
+          <View style={styles.textWrapper}>
+            <View style={styles.successTextContainer} pointerEvents="none">
+              <Text style={styles.successText}>{successMessage}</Text>
+            </View>
           </View>
         ) : null}
 
         {showTapAnimation && !pressInParent && (
-          <LottieView
-            autoPlay
-            loop
-            autoSize
-            style={styles.tapIconHolder}
-            source={require('../../../assets/anims/tap.json')}
-          />
+          <View style={styles.tapIconHolder}>
+            <LottieView
+              autoPlay
+              loop
+              autoSize
+              source={require('../../../assets/anims/tap.json')}
+            />
+          </View>
         )}
       </View>
     );

@@ -1,8 +1,16 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Animated,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {connect} from 'react-redux';
-import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
-import {FontType} from '../../../helpers/theme';
+import {ScreenHeight} from '../../../helpers/constants/common';
+import {FontType, Colors} from '../../../helpers/theme';
+import checkIcon from '../../../../assets/icons/check.png';
 
 class TodaysFocus extends Component {
   constructor(props) {
@@ -11,11 +19,6 @@ class TodaysFocus extends Component {
     this.titleOpacity = new Animated.Value(1);
     this.contentOpacity = new Animated.Value(1);
   }
-
-  getProgress = () => {
-    const {settings} = this.props;
-    return `0/${settings.breathPerSession}`;
-  };
 
   getTodaysDate = () => {
     const today = new Date();
@@ -64,28 +67,34 @@ class TodaysFocus extends Component {
     const {showTips} = breathing;
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>{this.getProgress()}</Text>
-        </View>
-        <View style={styles.titleHolder}>
-          <Animated.Text style={[styles.title, {opacity: this.titleOpacity}]}>
-            Today's Focus
-          </Animated.Text>
-        </View>
         <View style={styles.contentHolder}>
-          <Animated.Text style={[styles.content, {opacity: this.titleOpacity}]}>
-            {this.getTodaysFocus()}
-          </Animated.Text>
+          <View style={styles.titleHolder}>
+            <Text allowFontScaling={false} style={styles.title}>
+              Today’s Focus
+            </Text>
+          </View>
+          <View style={styles.focusTextHolder}>
+            <Text allowFontScaling={false} style={styles.focusText}>
+              {this.getTodaysFocus()}
+            </Text>
+          </View>
         </View>
-        <TouchableOpacity
-          style={styles.startIconContainer}
-          onPress={this.props.closeModal}>
-          <Text style={styles.start}>Start</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.dontShow, !showTips && {borderColor: 'red'}]}
-          onPress={this.handleDontShow}>
-          <Text style={styles.start}>Don’t show again today</Text>
+        <View style={styles.dontShowContainer}>
+          <TouchableOpacity
+            style={styles.checkUncheckButton}
+            onPress={this.handleDontShow}>
+            {showTips ? (
+              <Image source={checkIcon} />
+            ) : (
+              <View style={styles.uncheckedBox} />
+            )}
+          </TouchableOpacity>
+          <Text allowFontScaling={false} style={styles.dontShowText}>
+            Don’t show this again today
+          </Text>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={this.props.closeModal}>
+          <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>
       </View>
     );
@@ -101,58 +110,36 @@ export default connect(mapStateToProps)(TodaysFocus);
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1b1f37',
-  },
-  progressContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 0,
-    right: 0,
-  },
-  progressText: {
-    fontFamily: FontType.SemiBold,
-    fontSize: 22,
-    color: 'white',
-    textAlign: 'center',
-    paddingTop: 18,
+    backgroundColor: Colors.betterBlue65,
   },
   contentHolder: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  content: {
-    fontFamily: FontType.Bold,
-    color: 'white',
-    fontSize: 36,
-    textAlign: 'center',
-    paddingHorizontal: 20,
-    zIndex: 1,
-  },
+
   title: {
-    fontFamily: FontType.ExtraBold,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 40,
-    textAlign: 'center',
+    fontSize: 18,
   },
-  startIconContainer: {
-    height: 45,
-    width: 100,
-    position: 'absolute',
-    borderRadius: 15,
-    borderColor: 'white',
-    borderWidth: 1,
-    bottom: 30,
-    right: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+
+  titleHolder: {
+    height: 22,
+    bottom: 46,
+    left: 25,
+    alignSelf: 'flex-start',
   },
-  start: {
-    fontFamily: FontType.Regular,
+
+  focusTextHolder: {
+    height: 235,
+    width: 325,
+    alignSelf: 'center',
+  },
+  focusText: {
+    fontFamily: FontType.Medium,
+    fontSize: 32,
     color: 'white',
-    fontSize: 20,
   },
   dontShow: {
     height: 70,
@@ -166,13 +153,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  titleHolder: {
+
+  checkUncheckButton: {
+    height: 25,
+    width: 35,
+  },
+  dontShowContainer: {
+    height: 25,
+    width: 300,
+    flexDirection: 'row',
     position: 'absolute',
-    top: ScreenHeight * 0.15,
-    left: 0,
-    width: ScreenWidth,
-    zIndex: 1,
+    bottom: ScreenHeight * 0.07 + 70,
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  dontShowText: {
+    fontFamily: FontType.Medium,
+    fontSize: 12,
+    color: '#6d7278',
+  },
+  uncheckedBox: {
+    height: 25,
+    width: 25,
+    borderRadius: 8,
+    borderColor: 'white',
+    borderWidth: 1.5,
+  },
+  button: {
+    height: 50,
+    width: 300,
+    borderRadius: 25,
+    backgroundColor: Colors.cornflowerBlue,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: '7%',
+    alignSelf: 'center',
+  },
+  buttonText: {
+    fontSize: 24,
+    fontFamily: FontType.Regular,
+    color: 'white',
   },
 });

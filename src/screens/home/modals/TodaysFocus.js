@@ -84,9 +84,9 @@ class TodaysFocus extends Component {
             style={styles.checkUncheckButton}
             onPress={this.handleDontShow}>
             {showTips ? (
-              <Image source={checkIcon} />
-            ) : (
               <View style={styles.uncheckedBox} />
+            ) : (
+              <Image source={checkIcon} />
             )}
           </TouchableOpacity>
           <Text allowFontScaling={false} style={styles.dontShowText}>
@@ -122,13 +122,14 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 18,
+    textAlign: 'left',
   },
 
   titleHolder: {
     height: 22,
+    width: 325,
     bottom: 46,
-    left: 25,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
   },
 
   focusTextHolder: {

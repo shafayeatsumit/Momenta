@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   successTextContainer: {
     height: 50,
     width: 278,
+    borderRadius: 7,
     backgroundColor: 'rgba(27,31,55,0.5)',
     justifyContent: 'center',
     alignItems: 'center',

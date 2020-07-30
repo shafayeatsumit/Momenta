@@ -234,13 +234,14 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 18,
+    textAlign: 'left',
   },
 
   titleHolder: {
     height: 22,
     bottom: 46,
-    left: 25,
-    alignSelf: 'flex-start',
+    width: 325,
+    alignSelf: 'center',
   },
 
   medTextHolder: {

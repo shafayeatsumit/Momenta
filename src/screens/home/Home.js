@@ -71,7 +71,8 @@ class Home extends Component {
     }
   };
 
-  closePersonalizeModal = () => this.setState({personalizeModalVisible: false});
+  closePersonalizeModal = () =>
+    this.setState({personalizeModalVisible: false, todaysFocusVisible: true});
 
   closeEndSessionModal = () => this.setState({endSessionModalVisible: false});
 
@@ -203,6 +204,7 @@ class Home extends Component {
       endSessionModalVisible,
     } = this.state;
     const backgroundImage = backgrounds[0];
+
     if (!backgroundImage) {
       return (
         <View style={styles.loadingContainer}>

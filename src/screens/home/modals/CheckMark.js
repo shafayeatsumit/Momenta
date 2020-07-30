@@ -7,10 +7,11 @@ import {
   Easing,
   TouchableOpacity,
 } from 'react-native';
-import {FontType} from '../../../helpers/theme';
-import {ScreenWidth} from '../../../helpers/constants/common';
+import {FontType, Colors} from '../../../helpers/theme';
+import {ScreenWidth, ScreenHeight} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
 import {connect} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 
 class CheckMark extends Component {
   constructor(props) {
@@ -30,6 +31,12 @@ class CheckMark extends Component {
   };
 
   handleContinue = () => {
+    var date = new Date();
+    var dateInMS = date.getTime();
+    analytics().logEvent('pressed_continue', {
+      time: dateInMS,
+    });
+
     const {settings, dispatch, closeModal} = this.props;
     const {breathPerSession} = settings;
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
@@ -49,18 +56,25 @@ class CheckMark extends Component {
           progress={this.animationProgress}
           style={styles.checkmark}
         />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={goToNextModal}>
-            <Text style={styles.finish}>Finish</Text>
-          </TouchableOpacity>
-          {onboarding.completed && (
+        {onboarding.completed ? (
+          <View style={styles.smallButtonContainer}>
             <TouchableOpacity
-              style={styles.button}
-              onPress={this.handleContinue}>
-              <Text style={styles.finish}>Continue</Text>
+              style={styles.buttonFinish}
+              onPress={goToNextModal}>
+              <Text style={styles.buttonText}>Finish</Text>
             </TouchableOpacity>
-          )}
-        </View>
+
+            <TouchableOpacity
+              style={styles.buttonContinue}
+              onPress={this.handleContinue}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.bigButton} onPress={goToNextModal}>
+            <Text style={styles.bigButtonText}>Finish</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
@@ -82,62 +96,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sucessTitle: {
-    fontFamily: FontType.Medium,
-    color: '#787989',
-    fontSize: 22,
-    textAlign: 'center',
-    paddingHorizontal: 30,
-  },
-  sucessTitleHolder: {
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    right: 0,
-    width: ScreenWidth,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  days: {
-    height: 34,
-    width: 34,
-    borderRadius: 17,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  daysText: {
-    fontFamily: FontType.Medium,
-    fontSize: 20,
-  },
   checkmark: {
     height: 320,
     width: 320,
   },
-  buttonContainer: {
+  smallButtonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: '20%',
     width: ScreenWidth,
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  button: {
-    height: 50,
-    width: 140,
-    // position: 'absolute',
-    borderRadius: 10,
-    borderColor: 'white',
-    borderWidth: 2,
-    bottom: 40,
-    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  finish: {
+  buttonFinish: {
+    height: 50,
+    width: 147,
+    borderRadius: 25,
+    borderColor: 'white',
+    borderWidth: 0.3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  buttonContinue: {
+    height: 51,
+    width: 147,
+    borderRadius: 25,
+    borderWidth: 0.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.cornflowerBlue,
+    marginLeft: 8,
+  },
+  buttonText: {
+    fontSize: 14,
     fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 20,
+  },
+  bigButton: {
+    height: 50,
+    width: 300,
+    borderRadius: 25,
+    backgroundColor: Colors.cornflowerBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: '20%',
+  },
+  bigButtonText: {
+    fontSize: 24,
+    fontFamily: FontType.Regular,
+    color: 'white',
   },
 });

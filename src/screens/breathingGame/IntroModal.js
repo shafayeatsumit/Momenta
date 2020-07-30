@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   hideTheBackground: {
     width: ScreenWidth,
-    height: '80%',
+    height: '60%',
     backgroundColor: Colors.betterBlue,
     justifyContent: 'center',
     alignItems: 'center',

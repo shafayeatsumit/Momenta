@@ -3,7 +3,7 @@ import {StyleSheet, View, Modal, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import {FontType} from '../../../helpers/theme';
 import MeditationExplainer from './MeditaitonExplainer';
-import MiniMeditation from './MiniMeditation';
+import MiniMeditation from './Meditation';
 import SuccessAndReward from './SuccessAndReward';
 
 import {connect} from 'react-redux';

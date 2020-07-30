@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {View, Text, Animated, StyleSheet, TouchableOpacity} from 'react-native';
-import {FontType} from '../../../helpers/theme';
+import {FontType, Colors} from '../../../helpers/theme';
 import {connect} from 'react-redux';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 import {removeContent, fetchContent} from '../../../redux/actions/tag';
 
-class MiniMeditation extends Component {
+class Meditation extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,6 +17,7 @@ class MiniMeditation extends Component {
     };
     this.titleOpacity = new Animated.Value(0);
     this.contentOpacity = new Animated.Value(0);
+    this.progressOpacity = new Animated.Value(1);
   }
 
   showCloseButton = () => this.setState({showCloseButton: true});
@@ -39,6 +40,7 @@ class MiniMeditation extends Component {
   fadeOutContent = () => {
     this.titleOpacity.setValue(0);
     this.contentOpacity.setValue(0);
+    this.progressOpacity.setValue(0);
   };
 
   getSetsByTagId = (tagId) => this.props.tags[tagId].sets;
@@ -98,13 +100,20 @@ class MiniMeditation extends Component {
   };
 
   handleClose = () => {
+    const {dispatch, onboarding, goToNextModal} = this.props;
+    if (!onboarding.completed) {
+      dispatch({type: 'ONBOARDING_COMPLETED'});
+      this.props.goToNextBreathing();
+    }
     this.adjustContent();
     this.fadeOutContent();
-    this.props.goToNextModal();
+    goToNextModal();
   };
 
   componentDidMount() {
     this.timerId = setTimeout(this.showContent, 1000);
+    const {onboarding} = this.props;
+    onboarding.completed && this.props.goToNextBreathing();
   }
 
   handleContinue = () => {
@@ -113,6 +122,18 @@ class MiniMeditation extends Component {
     this.adjustContent();
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
     closeModal();
+  };
+
+  getProgress = () => {
+    const {settings, currentSession} = this.props;
+    const totalBreath =
+      settings.breathPerSession + currentSession.additionalBreath;
+    return (
+      <Text style={[styles.progressText, styles.progressTextBig]}>
+        {currentSession.breathCount}
+        <Text style={styles.progressText}>/{totalBreath}</Text>
+      </Text>
+    );
   };
 
   componentWillUnmount() {
@@ -125,29 +146,48 @@ class MiniMeditation extends Component {
 
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.titleHolder}>
-          <Animated.Text style={[styles.title, {opacity: this.titleOpacity}]}>
-            {onScreenTitle}
+        <View style={styles.progressContainer} pointerEvents="none">
+          <Animated.Text
+            style={[styles.progressText, {opacity: this.progressOpacity}]}>
+            {this.getProgress()}
           </Animated.Text>
         </View>
         <View style={styles.contentHolder}>
-          <Animated.Text style={[styles.content, {opacity: this.titleOpacity}]}>
-            {onScreenContent}
-          </Animated.Text>
+          <View style={styles.titleHolder}>
+            <Animated.Text
+              allowFontScaling={false}
+              style={[styles.title, {opacity: this.titleOpacity}]}>
+              {onScreenTitle}
+            </Animated.Text>
+          </View>
+          <View style={styles.medTextHolder}>
+            <Animated.Text
+              allowFontScaling={false}
+              style={[styles.medText, {opacity: this.titleOpacity}]}>
+              {onScreenContent}
+            </Animated.Text>
+          </View>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={this.handleClose}>
-            <Text style={styles.finish}>Finish</Text>
-          </TouchableOpacity>
-          {onboarding.completed && (
+        {onboarding.completed ? (
+          <View style={styles.smallButtonContainer}>
             <TouchableOpacity
-              style={styles.button}
-              onPress={this.handleContinue}>
-              <Text style={styles.finish}>Continue</Text>
+              style={styles.buttonFinish}
+              onPress={this.handleClose}>
+              <Text style={styles.buttonText}>Finish</Text>
             </TouchableOpacity>
-          )}
-        </View>
+
+            <TouchableOpacity
+              style={styles.buttonContinue}
+              onPress={this.handleContinue}>
+              <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity style={styles.bigButton} onPress={this.handleClose}>
+            <Text style={styles.bigButtonText}>Finish</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
@@ -158,7 +198,7 @@ const mapStateToProps = (state, ownProps) => {
   return {onboarding, currentSession, settings, tagNames, tags, sets};
 };
 
-export default connect(mapStateToProps)(MiniMeditation);
+export default connect(mapStateToProps)(Meditation);
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -166,70 +206,101 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  progressContainer: {
+    position: 'absolute',
+    top: '5%',
+    height: 40,
+    width: 44,
+    alignSelf: 'center',
+    zIndex: 1,
+  },
+  progressText: {
+    fontFamily: FontType.Light,
+    fontSize: 18,
+    color: 'rgb(120,121,137)',
+    textAlign: 'center',
+  },
+  progressTextBig: {
+    fontSize: 36,
+  },
 
   contentHolder: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  content: {
-    fontFamily: FontType.Bold,
-    color: 'white',
-    fontSize: 36,
-    textAlign: 'center',
-    paddingHorizontal: 20,
-    zIndex: 1,
-  },
+
   title: {
-    fontFamily: FontType.ExtraBold,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 40,
-    textAlign: 'center',
+    fontSize: 18,
   },
+
   titleHolder: {
-    position: 'absolute',
-    top: ScreenHeight * 0.15,
-    left: 0,
-    width: ScreenWidth,
-    zIndex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: 22,
+    bottom: 46,
+    left: 25,
+    alignSelf: 'flex-start',
   },
-  buttonContainer: {
+
+  medTextHolder: {
+    height: 235,
+    width: 325,
+    alignSelf: 'center',
+  },
+  medText: {
+    fontFamily: FontType.Medium,
+    fontSize: 32,
+    color: 'white',
+  },
+
+  smallButtonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: '8%',
     width: ScreenWidth,
     height: 50,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  button: {
+  buttonFinish: {
     height: 50,
-    width: 140,
-    // position: 'absolute',
-    borderRadius: 10,
+    width: 147,
+    borderRadius: 25,
     borderColor: 'white',
-    borderWidth: 2,
-    bottom: 40,
-    alignSelf: 'center',
+    borderWidth: 0.3,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 8,
   },
-  finishIconContainer: {
-    height: 45,
-    width: 100,
-    position: 'absolute',
-    borderRadius: 15,
-    borderColor: 'white',
-    borderWidth: 1,
-    bottom: 30,
-    right: 20,
+  buttonContinue: {
+    height: 51,
+    width: 147,
+    borderRadius: 25,
+    borderWidth: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.cornflowerBlue,
+    marginLeft: 8,
   },
-  finish: {
+  buttonText: {
+    fontSize: 14,
     fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 20,
+  },
+  bigButton: {
+    height: 50,
+    width: 300,
+    borderRadius: 25,
+    backgroundColor: Colors.cornflowerBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: '8%',
+  },
+  bigButtonText: {
+    fontSize: 24,
+    fontFamily: FontType.Regular,
+    color: 'white',
   },
 });

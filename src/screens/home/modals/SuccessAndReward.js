@@ -1,15 +1,8 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import moment from 'moment';
-import {FontType} from '../../../helpers/theme';
-import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
+import {FontType, Colors} from '../../../helpers/theme';
 import LottieView from 'lottie-react-native';
 
 const DAYS_OF_THE_WEEK = [
@@ -21,7 +14,6 @@ const DAYS_OF_THE_WEEK = [
   'Saturday',
   'Sunday',
 ];
-const last_week_momenta = ['Thursday', 'Tuesday'];
 const LETTERS = {
   S: require('../../../../assets/anims/S.json'),
   M: require('../../../../assets/anims/M.json'),
@@ -30,7 +22,12 @@ const LETTERS = {
   F: require('../../../../assets/anims/F.json'),
 };
 
-const getDay = () => {  
+const hapticFeedbackOptions = {
+  enableVibrateFallback: false,
+  ignoreAndroidSystemSettings: true,
+};
+
+const getDay = () => {
   return moment().format('dddd');
 };
 
@@ -39,20 +36,27 @@ class SuccessAndReward extends Component {
     this.timerId = setTimeout(this.props.closeModal, 3000);
   };
 
+  startHapticFeedback = () => {
+    ReactNativeHapticFeedback.trigger('selection', hapticFeedbackOptions);
+  };
+
   componentWillUnmount() {
     this.timerId && clearTimeout(this.timerId);
+    this.hpFeedbackId && clearTimeout(this.hpFeedbackId);
   }
 
   componentDidMount() {
+    this.hpFeedbackId = setTimeout(() => {
+      this.startHapticFeedback();
+      clearTimeout(this.hpFeedbackId);
+    }, 2500);
     this.closeModal();
   }
 
   getDays = (item) => {
     const firstLetter = item.charAt(0);
-    const letterSource = LETTERS[firstLetter];    
+    const letterSource = LETTERS[firstLetter];
     if (item === getDay()) {
-      const firstLetter = item.charAt(0);
-      const letterSource = LETTERS[firstLetter];      
       return (
         <View style={styles.animContainer} key={item}>
           <LottieView
@@ -77,23 +81,26 @@ class SuccessAndReward extends Component {
 
   render() {
     const {userCount, streak, breathPerSession, additionalBreath} = this.props;
+    const dayOrDays = streak > 1 ? 'days' : 'day';
     return (
       <View style={styles.container}>
-        <View style={styles.sucessTitleHolder}>
-          <Text style={styles.sucessTitle}>
-            {userCount} people meditated with you
+        <View style={styles.box}>
+          <Text style={styles.streak}>
+            {streak} consecutive {dayOrDays}
           </Text>
+          <View style={styles.daysContainer}>
+            {DAYS_OF_THE_WEEK.map((item) => this.getDays(item))}
+          </View>
+          <View>
+            <Text style={styles.congratsText}>Congratulations</Text>
+            <Text style={styles.congratsText}>
+              +{breathPerSession + additionalBreath} calm breaths
+            </Text>
+          </View>
         </View>
-        <View style={{paddingBottom: 50}}>
-          <Text style={styles.streak}>{streak} consecutive days</Text>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          {DAYS_OF_THE_WEEK.map((item) => this.getDays(item))}
-        </View>
-        <View style={{paddingTop: 50}}>
-          <Text style={styles.congratsText}>Congratulations</Text>
-          <Text style={styles.congratsText}>
-            +{breathPerSession+additionalBreath} calm breaths
+        <View style={styles.peopleCountContainer}>
+          <Text style={styles.peopleCountText}>
+            {userCount} people meditated with you
           </Text>
         </View>
       </View>
@@ -105,39 +112,40 @@ export default SuccessAndReward;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1b1f37',
+    backgroundColor: Colors.betterBlue,
   },
-  sucessTitle: {
-    fontFamily: FontType.Medium,
-    color: '#787989',
-    fontSize: 22,
-    textAlign: 'center',
-    paddingHorizontal: 30,
+  box: {
+    position: 'absolute',
+    top: '30%',
+    height: 135,
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  peopleCountContainer: {
+    position: 'absolute',
+    bottom: '30%',
+    alignSelf: 'center',
+  },
+  peopleCountText: {
+    color: 'rgb(120,121,137)',
+    fontSize: 16,
+    fontFamily: FontType.Regular,
   },
   streak: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 25,
+    fontFamily: FontType.Regular,
+    color: 'rgb(120,121,137)',
+    fontSize: 24,
     textAlign: 'center',
-    paddingHorizontal: 30,
   },
   congratsText: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 20,
+    fontFamily: FontType.Light,
+    color: 'rgb(120,121,137)',
+    fontSize: 14,
     textAlign: 'center',
   },
-  sucessTitleHolder: {
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    right: 0,
-    width: ScreenWidth,
+  daysContainer: {
+    flexDirection: 'row',
     alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   days: {
     height: 34,
@@ -147,21 +155,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 7,
     backgroundColor: '#252a43',
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    elevation: 3,
   },
   daysText: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.Light,
     fontSize: 20,
     color: '#787989',
   },
   darkText: {
     color: '#252a43',
   },
-  checkmark: {
-    height: 320,
-    width: 320,
-  },
   animContainer: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 6,
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    elevation: 3,
   },
   anim: {
     height: 34,
@@ -170,27 +190,7 @@ const styles = StyleSheet.create({
   white: {
     backgroundColor: 'white',
   },
-  steel: {
-    backgroundColor: '#787989',
-  },
   dark: {
     backgroundColor: '#252a43',
-  },
-  finishContainer: {
-    height: 50,
-    width: 120,
-    position: 'absolute',
-    borderRadius: 30,
-    borderColor: 'white',
-    borderWidth: 2,
-    bottom: 40,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  finish: {
-    fontFamily: FontType.Regular,
-    color: 'white',
-    fontSize: 20,
   },
 });

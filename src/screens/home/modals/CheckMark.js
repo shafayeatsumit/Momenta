@@ -20,6 +20,7 @@ class CheckMark extends Component {
       showClose: false,
     };
     this.animationProgress = new Animated.Value(0);
+    this.progressOpacity = new Animated.Value(1);
   }
 
   startAnimation = () => {
@@ -43,7 +44,27 @@ class CheckMark extends Component {
     closeModal();
   };
 
+  handleFinish = () => {
+    this.progressOpacity.setValue(0);
+    this.props.goToNextModal();
+  };
+
+  getProgress = () => {
+    const {settings, currentSession} = this.props;
+    const totalBreath =
+      settings.breathPerSession + currentSession.additionalBreath;
+    return (
+      <Text style={[styles.progressText, styles.progressTextBig]}>
+        {currentSession.breathCount}
+        <Text style={styles.progressText}>/{totalBreath}</Text>
+      </Text>
+    );
+  };
+
   componentDidMount() {
+    const {goToNextBreathing} = this.props;
+    // goToNExtBreathing will be undefined in the first time user sees checkmark.
+    goToNextBreathing && goToNextBreathing();
     this.startAnimation();
   }
 
@@ -51,6 +72,12 @@ class CheckMark extends Component {
     const {onboarding, goToNextModal} = this.props;
     return (
       <View style={styles.container}>
+        <View style={styles.progressContainer} pointerEvents="none">
+          <Animated.Text
+            style={[styles.progressText, {opacity: this.progressOpacity}]}>
+            {this.getProgress()}
+          </Animated.Text>
+        </View>
         <LottieView
           source={require('../../../../assets/anims/success.json')}
           progress={this.animationProgress}
@@ -71,7 +98,9 @@ class CheckMark extends Component {
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity style={styles.bigButton} onPress={goToNextModal}>
+          <TouchableOpacity
+            style={styles.bigButton}
+            onPress={this.handleFinish}>
             <Text style={styles.bigButtonText}>Finish</Text>
           </TouchableOpacity>
         )}
@@ -81,9 +110,10 @@ class CheckMark extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {onboarding, settings} = state;
+  const {onboarding, settings, currentSession} = state;
   return {
     onboarding,
+    currentSession,
     settings,
   };
 };
@@ -96,13 +126,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  progressContainer: {
+    position: 'absolute',
+    top: '5%',
+    height: 40,
+    width: 44,
+    alignSelf: 'center',
+    zIndex: 1,
+  },
+  progressText: {
+    fontFamily: FontType.Light,
+    fontSize: 18,
+    color: 'rgb(120,121,137)',
+    textAlign: 'center',
+  },
+  progressTextBig: {
+    fontSize: 36,
+  },
   checkmark: {
     height: 320,
     width: 320,
   },
   smallButtonContainer: {
     position: 'absolute',
-    bottom: '20%',
+    bottom: '10%',
     width: ScreenWidth,
     height: 50,
     flexDirection: 'row',

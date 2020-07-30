@@ -296,7 +296,9 @@ class BreathingGame extends Component {
         )}
         {progressVisible && (
           <View style={styles.progressContainer} pointerEvents="none">
-            <Text style={styles.progressText}>{this.getProgress()}</Text>
+            <Text allowFontScaling={false} style={styles.progressText}>
+              {this.getProgress()}
+            </Text>
           </View>
         )}
         <Modal
@@ -331,7 +333,9 @@ class BreathingGame extends Component {
         {successMessage ? (
           <View style={styles.textWrapper}>
             <View style={styles.successTextContainer} pointerEvents="none">
-              <Text style={styles.successText}>{successMessage}</Text>
+              <Text allowFontScaling={false} style={styles.successText}>
+                {successMessage}
+              </Text>
             </View>
           </View>
         ) : null}

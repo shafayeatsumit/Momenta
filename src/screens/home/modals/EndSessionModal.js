@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Modal, Text, TouchableOpacity} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../../helpers/constants/common';
-import {FontType} from '../../../helpers/theme';
+import {Colors} from '../../../helpers/theme';
 import TodaysFocus from './TodaysFocus';
-import MiniMeditation from './MiniMeditation';
+import Meditation from './Meditation';
 import SuccessAndReward from './SuccessAndReward';
-import MeditationPicker from './MeditaitonExplainer';
-import {onboardingFinished} from '../../../redux/actions/onboarding';
 import CheckMark from './CheckMark';
 import {connect} from 'react-redux';
 import {getTodaysDate} from '../../../helpers/common';
@@ -18,9 +16,7 @@ class EndSessionModal extends Component {
     this.state = {
       meditationVisible: false,
       showTodaysFocus: false,
-      todaysFocusVisible: false,
       successAndRewardVisible: false,
-      meditationPickerVisible: false,
       checkMarkModal: false,
       streak: null,
       thisWeekMomenta: [],
@@ -31,7 +27,11 @@ class EndSessionModal extends Component {
   closeMediation = () => {
     this.props.dispatch({type: 'RESET_BREATH_COUNT'});
     const {currentSession} = this.props;
-    this.setState({meditationVisible: false, successAndRewardVisible: true, additionalBreath: currentSession.additionalBreath});
+    this.setState({
+      meditationVisible: false,
+      successAndRewardVisible: true,
+      additionalBreath: currentSession.additionalBreath,
+    });
   };
 
   closeCheckMarkModal = () => {
@@ -39,26 +39,10 @@ class EndSessionModal extends Component {
     this.setState({checkMarkModal: false, successAndRewardVisible: true});
   };
 
-  finishOnboarding = () => {
-    this.props.dispatch(onboardingFinished()) 
-    .then((resp)=>this.props.goToNextBreathing())    
-    this.timerId = setTimeout(() => {      
-      this.props.closeModal();      
-    }, 1000);
-  };
-
   closeSuccessAndReward = () => {
-    const onboardingNotFinished = !this.props.onboarding.completed;
-    if (onboardingNotFinished) {
-      this.finishOnboarding();
-      return;
-    }
     const {showTodaysFocus} = this.state;
     if (showTodaysFocus) {
-      this.setState({
-        successAndRewardVisible: false,
-        todaysFocusVisible: true,
-      });
+      this.props.openFocus();
     } else {
       this.props.closeModal();
     }
@@ -94,10 +78,6 @@ class EndSessionModal extends Component {
       .catch((error) => console.log(error));
   };
 
-  closeMeditationPicker = () => {
-    this.setState({meditationPickerVisible: false, meditationVisible: true});
-  };
-
   checkMeditation = () => {
     const {selectedTags} = this.props;
     const showMeditation = selectedTags.length > 0;
@@ -113,19 +93,10 @@ class EndSessionModal extends Component {
     return `${currentSession.breathCount}/${totalBreathThisSession}`;
   };
 
-  openMeditationPicker = () => this.setState({meditationPickerVisible: true});
-
   componentDidMount() {
-    const onboardingNotFinished = !this.props.onboarding.completed;
     this.checkForReward();
-    if (onboardingNotFinished) {
-      this.openMeditationPicker();
-      return;
-    }
-    this.checkTodaysFocus();
     this.checkMeditation();
-    this.props.goToNextBreathing();  
-    
+    this.checkTodaysFocus();
   }
 
   componentWillUnmount() {
@@ -135,12 +106,10 @@ class EndSessionModal extends Component {
   render() {
     const {
       meditationVisible,
-      todaysFocusVisible,
       successAndRewardVisible,
       checkMarkModal,
       streak,
       thisWeekMomenta,
-      meditationPickerVisible,
       userCount,
       additionalBreath,
     } = this.state;
@@ -148,24 +117,14 @@ class EndSessionModal extends Component {
 
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.progressContainer} pointerEvents="none">
-          <Text style={styles.progressText}>{this.getProgress()}</Text>
-        </View>
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={meditationPickerVisible}>
-          <MeditationPicker closeModal={this.closeMeditationPicker} />
-        </Modal>
-
         <Modal
           animationType="fade"
           transparent={true}
           visible={meditationVisible}>
-          <MiniMeditation
+          <Meditation
             goToNextModal={this.closeMediation}
             closeModal={this.props.closeModal}
+            goToNextBreathing={this.props.goToNextBreathing}
           />
         </Modal>
 
@@ -173,6 +132,7 @@ class EndSessionModal extends Component {
           <CheckMark
             goToNextModal={this.closeCheckMarkModal}
             closeModal={this.props.closeModal}
+            goToNextBreathing={this.props.goToNextBreathing}
           />
         </Modal>
 
@@ -188,12 +148,6 @@ class EndSessionModal extends Component {
             breathPerSession={settings.breathPerSession}
             additionalBreath={additionalBreath}
           />
-        </Modal>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={todaysFocusVisible}>
-          <TodaysFocus closeModal={this.props.closeModal} />
         </Modal>
       </View>
     );
@@ -217,20 +171,6 @@ export default connect(mapStateToProps)(EndSessionModal);
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#1b1f37',
-  },
-  progressContainer: {
-    position: 'absolute',
-    top: 20,
-    left: 0,
-    right: 0,
-    zIndex: 3,
-  },
-  progressText: {
-    fontFamily: FontType.SemiBold,
-    fontSize: 22,
-    color: 'white',
-    textAlign: 'center',
-    paddingTop: 18,
+    backgroundColor: Colors.betterBlue,
   },
 });

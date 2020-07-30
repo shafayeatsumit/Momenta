@@ -17,7 +17,6 @@ import {
 } from '../../redux/actions/tag';
 import BrethingGame from '../breathingGame/BreathingGame';
 import PersonalizeModal from './modals/OboardingPersonalize';
-import OnboardingEnd from './modals/OnboardingEnd';
 import TodaysFocusModal from './modals/TodaysFocus';
 import EndSessionModal from './modals/EndSessionModal';
 import moment from 'moment-timezone';
@@ -71,8 +70,12 @@ class Home extends Component {
     }
   };
 
-  closePersonalizeModal = () =>
-    this.setState({personalizeModalVisible: false, todaysFocusVisible: true});
+  openFocus = () =>
+    this.setState({
+      personalizeModalVisible: false,
+      endSessionModalVisible: false,
+      todaysFocusVisible: true,
+    });
 
   closeEndSessionModal = () => this.setState({endSessionModalVisible: false});
 
@@ -230,7 +233,7 @@ class Home extends Component {
           visible={personalizeModalVisible}>
           <PersonalizeModal
             goToNextBreathing={this.goToNextBreathing}
-            closeModal={this.closePersonalizeModal}
+            closeModal={this.openFocus}
           />
         </Modal>
 
@@ -240,6 +243,7 @@ class Home extends Component {
           visible={endSessionModalVisible}>
           <EndSessionModal
             closeModal={this.closeEndSessionModal}
+            openFocus={this.openFocus}
             goToNextBreathing={this.goToNextBreathing}
           />
         </Modal>

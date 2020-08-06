@@ -11,7 +11,7 @@ class IntroModal extends Component {
         <View style={styles.hideTheBackground}>
           <View style={styles.textContainer}>
             <Text style={styles.text}>
-              We’ll start with a 3{'\n'}breath meditation
+              We'll start with a 3{'\n'}breath meditation that produces calm
             </Text>
           </View>
         </View>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     fontSize: 24,
     color: 'white',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   button: {
     height: 50,

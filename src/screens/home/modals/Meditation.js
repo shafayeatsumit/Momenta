@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontFamily: FontType.Light,
     fontSize: 18,
-    color: 'rgb(120,121,137)',
+    color: 'white',
     textAlign: 'center',
   },
   progressTextBig: {

@@ -110,7 +110,7 @@ export default connect(mapStateToProps)(TodaysFocus);
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: Colors.betterBlue65,
+    backgroundColor: Colors.betterBlue85,
   },
   contentHolder: {
     ...StyleSheet.absoluteFillObject,

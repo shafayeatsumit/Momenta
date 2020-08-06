@@ -9,7 +9,7 @@ class LetsStart extends Component {
       <View style={styles.container}>
         <View style={styles.textContainer}>
           <Text style={styles.text} allowFontScaling={false}>
-            Let’s personalize your{'\n'}experience
+            Let's personalize your experience for your unique goals
           </Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={this.props.goNext}>

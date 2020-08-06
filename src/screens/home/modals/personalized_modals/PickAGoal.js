@@ -18,8 +18,8 @@ const PickAGoal = ({goNext}) => {
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.text} allowFontScaling={false}>
-          Pick a goal and each{'\n'}day you’ll get a focus{'\n'}based on yoga
-          and the{'\n'}latest science to{'\n'}help you achieve your goal.
+          Each day you'll get a focus based on yoga practices and the latest
+          science to help you achieve your goal.{'\n'}Pick one:
         </Text>
         <Text style={styles.textSmall} allowFontScaling={false}>
           You can change this later

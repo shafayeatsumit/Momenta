@@ -33,7 +33,7 @@ const getDay = () => {
 
 class SuccessAndReward extends Component {
   closeModal = () => {
-    this.timerId = setTimeout(this.props.closeModal, 3000);
+    this.timerId = setTimeout(this.props.closeModal, 5000);
   };
 
   startHapticFeedback = () => {

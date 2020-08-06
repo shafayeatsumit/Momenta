@@ -227,7 +227,7 @@ export const handleTagSelect = (tagId) => (dispatch, getState) => {
     dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
     analytics().logEvent('deselect_tag', {tag_id: tagId});
   } else {
-    const updatedTags = [...selectedTags, tagId];
+    const updatedTags = [tagId];
     dispatch({type: 'UPDATE_SELECTED_TAGS', selectedTags: updatedTags});
     analytics().logEvent('select_tag', {tag_id: tagId});
   }

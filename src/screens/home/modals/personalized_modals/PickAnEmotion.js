@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import {View, Text, TouchableHighlight, StyleSheet} from 'react-native';
+import LottieView from 'lottie-react-native';
 import {FontType, Colors} from '../../../../helpers/theme';
 import {handleTagSelect} from '../../../../redux/actions/tag';
 import {ScreenHeight} from '../../../../helpers/constants/common';
@@ -10,14 +11,15 @@ const PickAnEmotion = ({closeModal}) => {
   const dispatch = useDispatch();
   const handleTagPress = (tagId) => {
     dispatch(handleTagSelect(tagId));
+    dispatch({type: 'RESET_BREATH_COUNT'});
     closeModal();
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.text} allowFontScaling={false}>
-          Pick a positive emotion{'\n'}to end your calm{'\n'}breathing
-          meditation
+          Pick a positive emotion you want to add more of in your life
         </Text>
         <Text allowFontScaling={false} style={styles.textSmall}>
           You can adjust this later
@@ -41,6 +43,9 @@ export default PickAnEmotion;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  imageContainer: {
+    ...StyleSheet.absoluteFillObject,
   },
   buttonContainer: {
     position: 'absolute',

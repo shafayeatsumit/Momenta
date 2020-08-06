@@ -20,7 +20,6 @@ const currentSession = (state = INITIAL_STATE, action) => {
         ...state,
         lastSeenTag: action.tag,
       };
-    case 'PICK_BREATH_PER_SESSION':
     case 'RESET_BREATH_COUNT':
       return {
         ...state,

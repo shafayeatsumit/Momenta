@@ -1,12 +1,12 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {FontType} from '../../helpers/theme';
+import {FontType, Colors} from '../../helpers/theme';
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1b1f37',
+    backgroundColor: Colors.betterBlue,
   },
   imageContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // zIndex: 0,
-    backgroundColor: '#1b1f37',
+    backgroundColor: Colors.betterBlue,
   },
   contentContainer: {
     ...StyleSheet.absoluteFillObject,

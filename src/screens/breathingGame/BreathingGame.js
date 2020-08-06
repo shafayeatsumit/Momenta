@@ -103,21 +103,24 @@ class BreathingGame extends Component {
 
   startExhale = () => {
     this.props.imageFadeOut();
-
-    this.setState({
-      successMessage: `Exhale ${this.smoothWord}`,
-      ...(this.state.showTapAnimation && {showTapAnimation: false}),
-    });
+    const {onboarding} = this.props;
+    if (onboarding.breathingTutorial) {
+      this.setState({
+        successMessage: `Exhale ${this.smoothWord}`,
+        ...(this.state.showTapAnimation && {showTapAnimation: false}),
+      });
+    }
   };
 
   startInhale = () => {
-    const {settings} = this.props;
+    const {settings, onboarding} = this.props;
     const smoothWord = _.sample(SMOOTH_WORDS);
     this.smoothWord = smoothWord;
-    this.setState({successMessage: `Inhale ${smoothWord}`});
+    onboarding.breathingTutorial &&
+      this.setState({successMessage: `Inhale ${smoothWord}`});
     const duration = settings.inhaleTime * 1000;
     this.clearInhaleId = setTimeout(() => {
-      this.setState({successMessage: ''});
+      onboarding.breathingTutorial && this.setState({successMessage: ''});
       clearTimeout(this.clearInhaleId);
     }, duration);
   };
@@ -157,8 +160,9 @@ class BreathingGame extends Component {
     this.radius.setValue(this.startRadius);
   };
 
-  showSettingsMenu = (time) => {
-    const duration = time || 500;
+  showSettingsMenu = () => {
+    const {breathCount} = this.props.currentSession;
+    const duration = breathCount === 0 ? 0 : 2500;
     this.helperIconId = setTimeout(() => {
       const {onboarding} = this.props;
       onboarding.completed && this.setState({settingsMenuVisible: true});

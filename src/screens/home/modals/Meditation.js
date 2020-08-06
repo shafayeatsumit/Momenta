@@ -66,10 +66,13 @@ class Meditation extends Component {
   };
 
   getContent = (sets) => {
+    const date = new Date();
+    const dateInMS = date.getTime();
     const firstSetId = sets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
     analytics().logEvent('viewed_content', {
+      time: dateInMS,
       content_id: content.id,
       set_id: firstSetId,
     });

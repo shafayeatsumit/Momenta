@@ -144,7 +144,11 @@ class Home extends Component {
       const timeTakenExhale = ((new Date() - this.pressOutTime) / 1000).toFixed(
         1,
       );
+      const date = new Date();
+      const dateInMS = date.getTime();
+
       analytics().logEvent('exhale', {
+        time: dateInMS,
         time_taken: Number(timeTakenExhale),
         exhale_time: settings.exhaleTime,
         background_id: backgroundId,
@@ -158,7 +162,10 @@ class Home extends Component {
     const backgroundId = backgrounds[0] ? backgrounds[0].id : null;
     this.pressOutTime = new Date();
     const timeTakeInhale = ((new Date() - this.pressInTime) / 1000).toFixed(1);
+    const date = new Date();
+    const dateInMS = date.getTime();
     analytics().logEvent('inhale', {
+      time: dateInMS,
       time_taken: Number(timeTakeInhale),
       inhale_time: settings.inhale_time,
       background_id: backgroundId,

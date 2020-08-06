@@ -8,7 +8,6 @@ const PickAGoal = ({goNext}) => {
   const handlePress = (goal) => {
     var date = new Date();
     var dateInMS = date.getTime();
-    console.log('goal', goal, dateInMS);
     analytics().logEvent('picked_a_goal', {
       goal: goal,
       time: dateInMS,

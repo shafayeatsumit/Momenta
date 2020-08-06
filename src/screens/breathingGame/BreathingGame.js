@@ -190,8 +190,10 @@ class BreathingGame extends Component {
 
   handleArrowPresss = () => {
     const {navigation} = this.props;
+    const date = new Date();
+    const dateInMS = date.getTime();
     navigation.navigate('Settings');
-    analytics().logEvent('viewed_settings');
+    analytics().logEvent('viewed_settings', {time: dateInMS});
   };
 
   showReleaseMessage = () => {

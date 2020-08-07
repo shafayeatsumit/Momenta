@@ -146,8 +146,8 @@ class Home extends Component {
       );
       const date = new Date();
       const dateInMS = date.getTime();
-
-      analytics().logEvent('exhale', {
+      console.log('inhale event fired');
+      analytics().logEvent('inhale', {
         time: dateInMS,
         time_taken: Number(timeTakenExhale),
         exhale_time: settings.exhaleTime,
@@ -164,7 +164,8 @@ class Home extends Component {
     const timeTakeInhale = ((new Date() - this.pressInTime) / 1000).toFixed(1);
     const date = new Date();
     const dateInMS = date.getTime();
-    analytics().logEvent('inhale', {
+    console.log('exhale event fired');
+    analytics().logEvent('exhale', {
       time: dateInMS,
       time_taken: Number(timeTakeInhale),
       inhale_time: settings.inhale_time,

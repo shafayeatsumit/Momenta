@@ -57,7 +57,7 @@ const getTagNames = (response) => {
   return response.map((tag, index) => ({
     id: tag.id,
     name: tag.name,
-    gradientColors: TAG_COlORS[index],
+    imageName: tag.name.toLowerCase().split(/\s/).join(''),
   }));
 };
 

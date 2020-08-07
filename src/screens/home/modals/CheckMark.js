@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '5%',
     height: 40,
-    width: 44,
+    width: 100,
     alignSelf: 'center',
     zIndex: 1,
   },

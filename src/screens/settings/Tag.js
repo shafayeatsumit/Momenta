@@ -1,10 +1,18 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
-import LinearGradient from 'react-native-linear-gradient';
-import {RFValue} from '../../helpers/responsiveFont';
-import checkIcon from '../../../assets/icons/check_icon.png';
-import {FontType} from '../../helpers/theme';
+import {
+  StyleSheet,
+  Image,
+  ImageBackground,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import {ScreenWidth} from '../../helpers/constants/common';
+
+const TAG_IMAGE_SOURCES = {
+  lovingkindness: require('../../../assets/images/lovingKindness.png'),
+  reflection: require('../../../assets/images/reflection.png'),
+  gratitude: require('../../../assets/images/gratitude.png'),
+};
 
 const Tag = ({selectedTags, item, handlePress}) => {
   const selectedIndex = selectedTags.findIndex(
@@ -12,26 +20,20 @@ const Tag = ({selectedTags, item, handlePress}) => {
   );
   const isSelected = selectedIndex !== -1;
   return (
-    <TouchableOpacity activeOpacity={0.5} onPress={handlePress}>
-      <LinearGradient
-        key={item.id}
-        start={{x: 0.2, y: 0}}
-        end={{x: 1, y: 0}}
-        colors={item.gradientColors}
-        style={styles.tiles}>
-        <View style={styles.nameContainer}>
-          <Text style={styles.tagName}>{item.name}</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <View
-            style={[
-              styles.tagIndexHolder,
-              isSelected && styles.whiteBackground,
-            ]}>
-            {isSelected && <Image source={checkIcon} style={styles.tagIndex} />}
-          </View>
-        </View>
-      </LinearGradient>
+    <TouchableOpacity
+      activeOpacity={0.5}
+      onPress={handlePress}
+      style={styles.container}>
+      <ImageBackground
+        source={TAG_IMAGE_SOURCES[item.imageName]}
+        style={styles.tile}>
+        {isSelected && (
+          <Image
+            source={require('../../../assets/icons/checkmark.png')}
+            style={styles.checkmark}
+          />
+        )}
+      </ImageBackground>
     </TouchableOpacity>
   );
 };
@@ -39,45 +41,22 @@ const Tag = ({selectedTags, item, handlePress}) => {
 export default Tag;
 
 const styles = StyleSheet.create({
-  tiles: {
-    width: 300,
-    height: 90,
-    marginVertical: 10,
-    borderRadius: 5,
-  },
-  nameContainer: {
-    flex: 1,
+  container: {
     justifyContent: 'center',
   },
-  iconContainer: {
-    flex: 1,
+  tile: {
+    width: ScreenWidth * 0.85,
+    height: 95,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'flex-end',
-    paddingRight: 20,
-    paddingBottom: 10,
-  },
-  tagIndexHolder: {
-    height: 30,
-    width: 30,
-    borderRadius: 30 / 2,
     overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginBottom: 16,
   },
-  whiteBackground: {
-    backgroundColor: 'white',
-    overflow: 'hidden',
-  },
-  tagIndex: {
-    height: 20,
-    width: 20,
-    borderRadius: 20 / 2,
-  },
-  tagName: {
-    fontFamily: FontType.SemiBold,
-    fontSize: 20,
-    color: 'white',
-    paddingLeft: 10,
-    textAlign: 'left',
+  checkmark: {
+    position: 'absolute',
+    right: 15,
+    height: 25,
+    width: 25,
   },
 });

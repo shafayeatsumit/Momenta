@@ -71,6 +71,7 @@ class Meditation extends Component {
     const firstSetId = sets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
+    console.log('fired event viewed_content');
     analytics().logEvent('viewed_content', {
       time: dateInMS,
       content_id: content.id,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '5%',
     height: 40,
-    width: 44,
+    width: 100,
     alignSelf: 'center',
     zIndex: 1,
   },

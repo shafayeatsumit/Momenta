@@ -10,7 +10,11 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Tag from './Tag';
-import {ScreenWidth, PickerPlaceHolder} from '../../helpers/constants/common';
+import {
+  ScreenWidth,
+  PickerPlaceHolder,
+  ScreenHeight,
+} from '../../helpers/constants/common';
 import {handleTagSelect} from '../../redux/actions/tag';
 import {FontType} from '../../helpers/theme';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
@@ -33,7 +37,7 @@ const ExhaleValues = [
   {label: '6s', value: 6},
 ];
 
-const BreathNumbers = [  
+const BreathNumbers = [
   {label: '3', value: 3},
   {label: '4', value: 4},
   {label: '5', value: 5},
@@ -44,7 +48,7 @@ const BreathNumbers = [
   {label: '10', value: 10},
 ];
 
-const AdditionBreathNumbers = [      
+const AdditionBreathNumbers = [
   {label: '+2', value: 2},
   {label: '+3', value: 3},
   {label: '+4', value: 4},
@@ -53,8 +57,8 @@ const AdditionBreathNumbers = [
   {label: '+7', value: 7},
   {label: '+8', value: 8},
   {label: '+9', value: 9},
-  {label: '+10', value: 10},  
-]
+  {label: '+10', value: 10},
+];
 
 const placeHolderStyle = {
   inputIOS: {
@@ -70,9 +74,9 @@ class Settings extends Component {
     super(props);
     this.state = {
       breathValue: props.breathPerSession,
-      pickedBreathValue:false,
-    }
-  } 
+      pickedBreathValue: false,
+    };
+  }
 
   setExhaleValue = (value) => {
     const {dispatch} = this.props;
@@ -84,34 +88,32 @@ class Settings extends Component {
     dispatch({type: 'UPDATE_INHALE_TIME', value});
   };
 
-  setBreathNumber = (value) => {      
-    if(Platform.OS==='android'){
-      this.setState({breathValue:value,pickedBreathValue:true})
+  setBreathNumber = (value) => {
+    if (Platform.OS === 'android') {
+      this.setState({breathValue: value, pickedBreathValue: true});
     } else {
-      this.setState({breathValue:value})
-    }   
-    
+      this.setState({breathValue: value});
+    }
   };
 
   handleDonePressBreathValuePicker = () => {
-    this.setState({pickedBreathValue:true})
-  }
+    this.setState({pickedBreathValue: true});
+  };
 
   goHome = () => {
-    const {dispatch,currentSession} = this.props;
-    const {breathValue, pickedBreathValue } =this.state;
+    const {dispatch, currentSession} = this.props;
+    const {breathValue, pickedBreathValue} = this.state;
     this.props.navigation.goBack();
-    if(!pickedBreathValue){
-      return
+    if (!pickedBreathValue) {
+      return;
     }
 
-    if(currentSession.breathCount===0){
+    if (currentSession.breathCount === 0) {
       dispatch({type: 'UPDATE_BREATH_PER_SESSION', breathCount: breathValue});
-    }else {
-      dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathValue})    
-    }        
-    
-  }
+    } else {
+      dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathValue});
+    }
+  };
 
   handleTagPress = (tagId) => {
     const {dispatch} = this.props;
@@ -124,24 +126,29 @@ class Settings extends Component {
       exhaleTime,
       selectedTags,
       tagNames,
-      breathPerSession,
-      currentSession
+      currentSession,
     } = this.props;
-    const breathNumberItems = currentSession.breathCount ? AdditionBreathNumbers : BreathNumbers;
-        
+    const breathNumberItems = currentSession.breathCount
+      ? AdditionBreathNumbers
+      : BreathNumbers;
+
     return (
       <View style={styles.container}>
-        <View style={styles.backButtonContainer}>
-          <TouchableOpacity
-            style={styles.leftIconContainer}
-            onPress={this.goHome}>
-            <Image source={leftArrowIcon} style={styles.leftIcon} />
-          </TouchableOpacity>
+        <View style={styles.titleContainer} pointerEvents="none">
+          <Text allowFontScaling={false} style={styles.title}>
+            Settings
+          </Text>
         </View>
-        <View style={styles.pickersContainer}>
-          <Text style={styles.title}>Breaths</Text>
-
-          <View style={styles.dropDownContainer}>
+        <TouchableOpacity
+          style={styles.leftIconContainer}
+          onPress={this.goHome}>
+          <Image source={leftArrowIcon} style={styles.leftIcon} />
+        </TouchableOpacity>
+        <View style={{flex: 3, justifyContent: 'flex-end', marginLeft: 24}}>
+          <Text style={styles.breathingText}>Breathing</Text>
+        </View>
+        <View style={styles.dropdownContainer}>
+          <View style={styles.dropdownBox}>
             <Text style={styles.subTitle}>Number</Text>
             <View style={styles.pickerHolder}>
               <RNPickerSelect
@@ -150,9 +157,8 @@ class Settings extends Component {
                 placeholder={defaultPlaceHolder}
                 items={breathNumberItems}
                 value={this.state.breathValue}
-                useNativeAndroidPickerStyle={false}       
-                onDonePress={this.handleDonePressBreathValuePicker}  
-                  
+                useNativeAndroidPickerStyle={false}
+                onDonePress={this.handleDonePressBreathValuePicker}
               />
               <Image
                 source={downArrowIcon}
@@ -161,8 +167,7 @@ class Settings extends Component {
               />
             </View>
           </View>
-
-          <View style={styles.dropDownContainer}>
+          <View style={styles.dropdownBox}>
             <Text style={styles.subTitle}>Inhale</Text>
             <View style={styles.pickerHolder}>
               <RNPickerSelect
@@ -180,7 +185,7 @@ class Settings extends Component {
               />
             </View>
           </View>
-          <View style={styles.dropDownContainer}>
+          <View style={styles.dropdownBox}>
             <Text style={styles.subTitle}>Exhale</Text>
             <View style={styles.pickerHolder}>
               <RNPickerSelect
@@ -199,8 +204,10 @@ class Settings extends Component {
             </View>
           </View>
         </View>
-        <View style={styles.tilesContainer}>
-          <Text style={[styles.title, {paddingLeft: 25}]}>Meditations</Text>
+        <View style={{flex: 9}}>
+          <View style={{marginLeft: 24, top: -10}}>
+            <Text style={styles.breathingText}>Meditations</Text>
+          </View>
           <ScrollView contentContainerStyle={styles.scrollView}>
             {tagNames.map((item) => (
               <Tag
@@ -218,7 +225,7 @@ class Settings extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {settings, tagNames,currentSession} = state;
+  const {settings, tagNames, currentSession} = state;
 
   const {inhaleTime, exhaleTime, selectedTags, breathPerSession} = settings;
   return {
@@ -238,26 +245,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1b1f37',
   },
-  backButtonContainer: {
-    height: 100,
-    justifyContent: 'center',
+  titleContainer: {
+    position: 'absolute',
+    top: '5%',
+    height: 40,
+    width: 100,
+    alignSelf: 'center',
+    zIndex: 1,
+  },
+  title: {
+    fontFamily: FontType.SemiBold,
+    fontSize: 18,
+    color: 'white',
+    textAlign: 'center',
   },
   leftIconContainer: {
+    position: 'absolute',
+    top: '5%',
+    left: 10,
     height: 50,
     width: 50,
-    left: 25,
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    zIndex: 3,
   },
   leftIcon: {
-    height: 25,
-    width: 25,
+    left: 10,
+    height: 20,
+    width: 20,
     tintColor: 'white',
   },
+  breathingTextContainer: {
+    height: 20,
+    width: 100,
+
+    backgroundColor: 'red',
+  },
+  breathingText: {
+    fontFamily: FontType.Regular,
+    color: 'white',
+    fontSize: 14,
+  },
+  dropdownContainer: {
+    flex: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 24,
+    marginTop: 25,
+  },
+  dropdownBox: {
+    height: 75,
+    width: 85,
+    margin: 2,
+    // backgroundColor: 'red',
+  },
+
   downIcon: {
     alignSelf: 'center',
-    height: 30,
-    width: 30,
-    marginLeft: -50,
+    height: 24,
+    width: 24,
+    marginTop: -8,
+    right: 35,
   },
   pickersContainer: {
     flex: 2,
@@ -270,24 +317,9 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  tilesContainer: {
-    flex: 3,
-    // padding:20,
-  },
-  title: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 28,
-  },
-  dropDownContainer: {
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingLeft: 30,
-  },
+
   pickerHolder: {
     flex: 1,
-    marginLeft: 10,
     flexDirection: 'row',
   },
   switchHolder: {
@@ -301,8 +333,8 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   subTitle: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 22,
+    fontSize: 12,
   },
 });

@@ -113,6 +113,7 @@ class Settings extends Component {
     } else {
       dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathValue});
     }
+    analytics().logEvent('button_push', {title: 'left arrow'});
   };
 
   handleTagPress = (tagId) => {

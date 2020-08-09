@@ -43,7 +43,7 @@ class Home extends Component {
   }
 
   checkOnboardingModal = () => {
-    const {currentSession, onboarding, settings, dispatch} = this.props;
+    const {currentSession, onboarding, settings} = this.props;
     if (onboarding.breathingTutorial && currentSession.breathCount === 3) {
       this.setState({personalizeModalVisible: true});
     } else if (currentSession.breathCount === settings.breathPerSession) {
@@ -54,7 +54,7 @@ class Home extends Component {
   };
 
   nextBreathing = () => {
-    const {onboarding, dispatch, settings} = this.props;
+    const {onboarding, settings} = this.props;
     if (onboarding.completed) {
       // TODO: uncomment this
       const {currentSession} = this.props;
@@ -146,7 +146,6 @@ class Home extends Component {
       );
       const date = new Date();
       const dateInMS = date.getTime();
-      console.log('inhale event fired');
       analytics().logEvent('inhale', {
         time: dateInMS,
         time_taken: Number(timeTakenExhale),
@@ -164,7 +163,6 @@ class Home extends Component {
     const timeTakeInhale = ((new Date() - this.pressInTime) / 1000).toFixed(1);
     const date = new Date();
     const dateInMS = date.getTime();
-    console.log('exhale event fired');
     analytics().logEvent('exhale', {
       time: dateInMS,
       time_taken: Number(timeTakeInhale),
@@ -207,6 +205,7 @@ class Home extends Component {
   }
 
   render() {
+    console.log('user token', this.props.userInfo);
     const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,

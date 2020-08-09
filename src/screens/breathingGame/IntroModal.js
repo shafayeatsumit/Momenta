@@ -2,10 +2,14 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
+import analytics from '@react-native-firebase/analytics';
 
 class IntroModal extends Component {
+  handlePress = () => {
+    analytics().logEvent('button_push', {title: 'I am ready'});
+    this.props.closeModal();
+  };
   render() {
-    const {closeModal} = this.props;
     return (
       <View style={styles.mainContainer}>
         <View style={styles.hideTheBackground}>
@@ -15,7 +19,7 @@ class IntroModal extends Component {
             </Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.button} onPress={closeModal}>
+        <TouchableOpacity style={styles.button} onPress={this.handlePress}>
           <Text style={styles.buttonText}>I’m ready</Text>
         </TouchableOpacity>
       </View>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Platform} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import moment from 'moment';
 import {FontType, Colors} from '../../../helpers/theme';
@@ -37,7 +37,8 @@ class SuccessAndReward extends Component {
   };
 
   startHapticFeedback = () => {
-    ReactNativeHapticFeedback.trigger('selection', hapticFeedbackOptions);
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   componentWillUnmount() {

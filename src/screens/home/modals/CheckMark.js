@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {FontType, Colors} from '../../../helpers/theme';
-import {ScreenWidth, ScreenHeight} from '../../../helpers/constants/common';
+import {ScreenWidth} from '../../../helpers/constants/common';
 import LottieView from 'lottie-react-native';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
@@ -42,11 +42,13 @@ class CheckMark extends Component {
     const {breathPerSession} = settings;
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
     closeModal();
+    analytics().logEvent('button_push', {title: 'continue'});
   };
 
   handleFinish = () => {
     this.progressOpacity.setValue(0);
     this.props.goToNextModal();
+    analytics().logEvent('button_push', {title: 'finish'});
   };
 
   getProgress = () => {
@@ -86,15 +88,14 @@ class CheckMark extends Component {
         {onboarding.completed ? (
           <View style={styles.smallButtonContainer}>
             <TouchableOpacity
-              style={styles.buttonFinish}
-              onPress={goToNextModal}>
-              <Text style={styles.buttonText}>Finish</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               style={styles.buttonContinue}
               onPress={this.handleContinue}>
               <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonFinish}
+              onPress={goToNextModal}>
+              <Text style={styles.buttonText}>Finish</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -160,21 +161,21 @@ const styles = StyleSheet.create({
     height: 50,
     width: 147,
     borderRadius: 25,
-    borderColor: 'white',
-    borderWidth: 0.3,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginLeft: 8,
+    backgroundColor: Colors.cornflowerBlue,
   },
   buttonContinue: {
     height: 51,
     width: 147,
     borderRadius: 25,
-    borderWidth: 0.5,
+    marginRight: 8,
+    borderColor: 'white',
+    borderWidth: 0.3,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.cornflowerBlue,
-    marginLeft: 8,
   },
   buttonText: {
     fontSize: 14,

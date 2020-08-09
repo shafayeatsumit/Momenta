@@ -2,8 +2,13 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {FontType, Colors} from '../../../../helpers/theme';
 import {ScreenWidth, ScreenHeight} from '../../../../helpers/constants/common';
+import analytics from '@react-native-firebase/analytics';
 
 class LetsStart extends Component {
+  handlePress = () => {
+    analytics().logEvent('button_push', {title: 'start'});
+    this.props.goNext();
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -12,7 +17,7 @@ class LetsStart extends Component {
             Let's personalize your experience for your unique goals
           </Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={this.props.goNext}>
+        <TouchableOpacity style={styles.button} onPress={this.handlePress}>
           <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>
       </View>

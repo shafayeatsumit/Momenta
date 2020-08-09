@@ -5,6 +5,7 @@ import {
   Easing,
   Text,
   Modal,
+  Platform,
   TouchableOpacity,
   Image,
 } from 'react-native';
@@ -144,7 +145,8 @@ class BreathingGame extends Component {
   };
 
   startHapticFeedback = () => {
-    ReactNativeHapticFeedback.trigger('selection', hapticFeedbackOptions);
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   handlePressIn = () => {
@@ -194,10 +196,8 @@ class BreathingGame extends Component {
 
   handleArrowPresss = () => {
     const {navigation} = this.props;
-    const date = new Date();
-    const dateInMS = date.getTime();
     navigation.navigate('Settings');
-    analytics().logEvent('viewed_settings', {time: dateInMS});
+    analytics().logEvent('button_push', {title: 'settings menu'});
   };
 
   showReleaseMessage = () => {

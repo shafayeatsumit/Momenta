@@ -6,12 +6,7 @@ import analytics from '@react-native-firebase/analytics';
 
 const PickAGoal = ({goNext}) => {
   const handlePress = (goal) => {
-    var date = new Date();
-    var dateInMS = date.getTime();
-    analytics().logEvent('picked_a_goal', {
-      goal: goal,
-      time: dateInMS,
-    });
+    analytics().logEvent('button_push', {title: goal});
     goNext();
   };
   return (

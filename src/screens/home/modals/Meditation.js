@@ -71,12 +71,12 @@ class Meditation extends Component {
     const firstSetId = sets[0];
     const content = this.getContentBySetId(firstSetId);
     const contentText = content ? content.text : '';
-    console.log('fired event viewed_content');
     analytics().logEvent('viewed_content', {
       time: dateInMS,
       content_id: content.id,
       set_id: firstSetId,
     });
+    console.log('Viewed Content --> event');
     return contentText;
   };
 
@@ -112,6 +112,8 @@ class Meditation extends Component {
     this.adjustContent();
     this.fadeOutContent();
     goToNextModal();
+    analytics().logEvent('button_push', {title: 'finish'});
+    console.log('button_push finish --> event');
   };
 
   componentDidMount() {
@@ -126,6 +128,8 @@ class Meditation extends Component {
     this.adjustContent();
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
     closeModal();
+    analytics().logEvent('button_push', {title: 'continue'});
+    console.log('button_push continue --> event');
   };
 
   getProgress = () => {
@@ -176,15 +180,14 @@ class Meditation extends Component {
         {onboarding.completed ? (
           <View style={styles.smallButtonContainer}>
             <TouchableOpacity
-              style={styles.buttonFinish}
-              onPress={this.handleClose}>
-              <Text style={styles.buttonText}>Finish</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
               style={styles.buttonContinue}
               onPress={this.handleContinue}>
               <Text style={styles.buttonText}>Continue</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonFinish}
+              onPress={this.handleClose}>
+              <Text style={styles.buttonText}>Finish</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -272,21 +275,21 @@ const styles = StyleSheet.create({
     height: 50,
     width: 147,
     borderRadius: 25,
-    borderColor: 'white',
-    borderWidth: 0.3,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginLeft: 8,
+    backgroundColor: Colors.cornflowerBlue,
   },
   buttonContinue: {
     height: 51,
     width: 147,
     borderRadius: 25,
-    borderWidth: 0.5,
+    marginRight: 8,
+    borderColor: 'white',
+    borderWidth: 0.3,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.cornflowerBlue,
-    marginLeft: 8,
   },
   buttonText: {
     fontSize: 14,

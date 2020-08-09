@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {ScreenHeight} from '../../../helpers/constants/common';
 import {FontType, Colors} from '../../../helpers/theme';
 import checkIcon from '../../../../assets/icons/check.png';
+import analytics from '@react-native-firebase/analytics';
 
 class TodaysFocus extends Component {
   constructor(props) {
@@ -56,6 +57,12 @@ class TodaysFocus extends Component {
   handleDontShow = () => {
     const {dispatch} = this.props;
     dispatch({type: 'DONT_SHOW_FOCUS_TODAY'});
+    analytics().logEvent('button_push', {title: 'Dont show focus again today'});
+  };
+
+  handleStart = () => {
+    analytics().logEvent('button_push', {title: 'Start'});
+    this.props.closeModal();
   };
 
   componentDidMount() {
@@ -93,7 +100,7 @@ class TodaysFocus extends Component {
             Don’t show this again today
           </Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={this.props.closeModal}>
+        <TouchableOpacity style={styles.button} onPress={this.handleStart}>
           <Text style={styles.buttonText}>Start</Text>
         </TouchableOpacity>
       </View>

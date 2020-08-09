@@ -5,6 +5,7 @@ import {FontType, Colors} from '../../../../helpers/theme';
 import {handleTagSelect} from '../../../../redux/actions/tag';
 import {ScreenHeight} from '../../../../helpers/constants/common';
 import {useSelector, useDispatch} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 
 const PickAnEmotion = ({closeModal}) => {
   const tagNames = useSelector((state) => state.tagNames);
@@ -13,8 +14,9 @@ const PickAnEmotion = ({closeModal}) => {
     dispatch(handleTagSelect(tagId));
     dispatch({type: 'RESET_BREATH_COUNT'});
     closeModal();
+    const nameOfTheTag = tagNames.find((tag) => tag.id === tagId).name;
+    analytics().logEvent('button_push', {title: nameOfTheTag});
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>

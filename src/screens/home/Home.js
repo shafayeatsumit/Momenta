@@ -100,11 +100,19 @@ class Home extends Component {
     }).start(this.nextBreathing);
   };
 
+  imageFadeIn = () => {
+    Animated.timing(this.imageOpacity, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
   closeBreathingGame = () => this.setState({breathingGameVisible: false});
 
   showBreathingGame = () => {
     this.setState({breathingGameVisible: true});
-    this.imageOpacity.setValue(1);
+    this.imageFadeIn();
   };
 
   showTodaysFocus = () => this.setState({todaysFocusVisible: true});
@@ -143,7 +151,8 @@ class Home extends Component {
     }, 500);
   };
 
-  handlePressIn = () => {
+  handlePressIn = (event) => {
+    console.log('y location', event.nativeEvent.pageY);
     const {settings, backgrounds} = this.props;
     const backgroundId = backgrounds[0] ? backgrounds[0].id : null;
     this.pressInTime = new Date();
@@ -272,6 +281,7 @@ class Home extends Component {
             <BrethingGame
               backgroundImage={backgroundImage}
               imageFadeOut={this.imageFadeOut}
+              imageFadeIn={this.imageFadeIn}
               navigation={navigation}
               pressInParent={this.state.pressInParent}
               pressOutParent={this.state.pressOutParent}
@@ -280,7 +290,7 @@ class Home extends Component {
         ) : null}
 
         <TouchableOpacity
-          onPressIn={this.handlePressIn}
+          onPressIn={(evt) => this.handlePressIn(evt)}
           onPressOut={this.handlePressOut}
           style={styles.touchHandler}
         />

@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     paddingVertical: 10,
+    paddingHorizontal: 2,
   },
   tapIconHolder: {
     height: 100,

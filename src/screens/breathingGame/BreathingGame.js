@@ -18,30 +18,15 @@ import IntroModal from './IntroModal';
 import arrowRightIcon from '../../../assets/icons/menu.png';
 import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-
-const hapticFeedbackOptions = {
-  enableVibrateFallback: false,
-  ignoreAndroidSystemSettings: true,
-};
+import {
+  SMOOTH_WORDS,
+  EXHALE_MESSAGE,
+  START_RADIUSES,
+  hapticFeedbackOptions,
+  RELEASE_MESSAGE,
+} from '../../helpers/constants/common';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const SMOOTH_WORDS = [
-  'Slowly',
-  'Gently',
-  'Softly',
-  'Quietly',
-  'Smoothly',
-  'Lightly',
-];
-// inhaletime to radius
-const START_RADIUSES = {
-  3: 4,
-  4: 3,
-  5: 2,
-  6: 1,
-};
-
-const RELEASE_MESSAGE = 'Release just after image is revealed';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -56,6 +41,7 @@ class BreathingGame extends Component {
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
+    this.successTextOpacity = new Animated.Value(1);
     this.smoothWord = null;
   }
 
@@ -102,14 +88,44 @@ class BreathingGame extends Component {
     }).start(this.shrinkCircleCb);
   };
 
+  fadeInExhaleMessage = () => {
+    Animated.timing(this.successTextOpacity, {
+      toValue: 1,
+      duration: 500,
+      delay: 500,
+      useNativeDriver: true,
+    }).start(this.fadeOutExhaleMessage);
+  };
+
+  fadeOutExhaleMessage = () => {
+    const {settings} = this.props;
+    const exhaleTime = settings.exhaleTime * 1000;
+    const fadeInDuration = 500;
+    const fadeInDelay = 500;
+    const fadeInTime = fadeInDuration + fadeInDelay;
+    const fadeOutDuration = 500;
+    const delayDuration = exhaleTime - fadeInTime - fadeOutDuration;
+    Animated.timing(this.successTextOpacity, {
+      toValue: 0,
+      duration: fadeOutDuration,
+      delay: delayDuration,
+      useNativeDriver: true,
+    }).start();
+  };
+
   startExhale = () => {
     this.props.imageFadeOut();
     const {onboarding} = this.props;
+    const randomMessage = _.sample(EXHALE_MESSAGE);
     if (onboarding.breathingTutorial) {
       this.setState({
         successMessage: `Exhale ${this.smoothWord}`,
         ...(this.state.showTapAnimation && {showTapAnimation: false}),
       });
+    } else {
+      this.successTextOpacity.setValue(0);
+      this.setState({successMessage: randomMessage});
+      this.fadeInExhaleMessage();
     }
   };
 
@@ -338,11 +354,16 @@ class BreathingGame extends Component {
 
         {successMessage ? (
           <View style={styles.textWrapper}>
-            <View style={styles.successTextContainer} pointerEvents="none">
+            <Animated.View
+              style={[
+                styles.successTextContainer,
+                {opacity: this.successTextOpacity},
+              ]}
+              pointerEvents="none">
               <Text allowFontScaling={false} style={styles.successText}>
                 {successMessage}
               </Text>
-            </View>
+            </Animated.View>
           </View>
         ) : null}
 

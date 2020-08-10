@@ -3,7 +3,7 @@ import {
   View,
   Text,
   Animated,
-  ImageBackground,
+  Platform,
   TouchableOpacity,
   Modal,
   AppState,
@@ -19,11 +19,12 @@ import BrethingGame from '../breathingGame/BreathingGame';
 import PersonalizeModal from './modals/OboardingPersonalize';
 import TodaysFocusModal from './modals/TodaysFocus';
 import EndSessionModal from './modals/EndSessionModal';
-import moment from 'moment-timezone';
 import styles from './Home.styles';
 import {getTodaysDate} from '../../helpers/common';
 import analytics from '@react-native-firebase/analytics';
 import LottieView from 'lottie-react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 
 class Home extends Component {
   constructor(props) {
@@ -53,6 +54,11 @@ class Home extends Component {
     }
   };
 
+  startHapticFeedback = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   nextBreathing = () => {
     const {onboarding, settings} = this.props;
     if (onboarding.completed) {
@@ -68,6 +74,7 @@ class Home extends Component {
     } else {
       this.checkOnboardingModal();
     }
+    this.startHapticFeedback();
   };
 
   openFocus = () =>
@@ -205,7 +212,6 @@ class Home extends Component {
   }
 
   render() {
-    console.log('user token', this.props.userInfo);
     const {backgrounds, navigation} = this.props;
     const {
       breathingGameVisible,

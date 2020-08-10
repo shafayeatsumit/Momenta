@@ -76,7 +76,6 @@ class Meditation extends Component {
       content_id: content.id,
       set_id: firstSetId,
     });
-    console.log('Viewed Content --> event');
     return contentText;
   };
 
@@ -113,7 +112,6 @@ class Meditation extends Component {
     this.fadeOutContent();
     goToNextModal();
     analytics().logEvent('button_push', {title: 'finish'});
-    console.log('button_push finish --> event');
   };
 
   componentDidMount() {
@@ -129,7 +127,6 @@ class Meditation extends Component {
     dispatch({type: 'ADD_EXTRA_BREATH', breathCount: breathPerSession});
     closeModal();
     analytics().logEvent('button_push', {title: 'continue'});
-    console.log('button_push continue --> event');
   };
 
   getProgress = () => {

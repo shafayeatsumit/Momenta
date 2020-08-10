@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   successTextContainer: {
-    height: 50,
+    // height: 50,
     width: 278,
     borderRadius: 7,
     backgroundColor: 'rgba(27,31,55,0.5)',
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 20,
+    paddingVertical: 10,
   },
   tapIconHolder: {
     height: 100,

@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.betterBlue,
   },
   imageContainer: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
+    resizeMode: 'stretch',
   },
   breathingGameContainer: {
     height: ScreenHeight,

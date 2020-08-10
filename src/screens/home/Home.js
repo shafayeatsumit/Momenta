@@ -248,7 +248,7 @@ class Home extends Component {
         <Animated.Image
           style={[styles.imageContainer, {opacity: this.imageOpacity}]}
           source={backgroundImage.uri}
-          resizeMode="stretch"
+          // resizeMode="stretch"
         />
         <Modal
           animationType="fade"

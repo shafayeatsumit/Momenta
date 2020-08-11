@@ -49,15 +49,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  successTextContainer: {
-    // height: 50,
+  breathingTextContainer: {
     width: ScreenWidth * 0.9,
     borderRadius: 7,
-    // backgroundColor: 'rgba(27,31,55,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  successText: {
+  breathingTextOverlay: {
+    backgroundColor: 'rgba(27,31,55,0.5)',
+  },
+  breathingText: {
     textAlign: 'left',
     fontFamily: FontType.Medium,
     color: 'white',

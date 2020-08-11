@@ -24,6 +24,7 @@ import {
   START_RADIUSES,
   hapticFeedbackOptions,
   RELEASE_MESSAGE,
+  RANDOMNESS,
 } from '../../helpers/constants/common';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -34,14 +35,14 @@ class BreathingGame extends Component {
     this.state = {
       touchDisabled: false,
       showTapAnimation: false,
-      successMessage: '',
+      breathingMessage: '',
       progressVisible: true,
       introModalVisible: false,
     };
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    this.successTextOpacity = new Animated.Value(1);
+    this.breathingTextOpacity = new Animated.Value(1);
     this.smoothWord = null;
   }
 
@@ -61,7 +62,7 @@ class BreathingGame extends Component {
     this.setState(
       {
         breathCountVisible: true,
-        successMessage: '',
+        breathingMessage: '',
         touchDisabled: false,
         progressVisible: true,
         settingsMenuVisible: true,
@@ -75,7 +76,7 @@ class BreathingGame extends Component {
 
   shrinkCircle = () => {
     this.setState({
-      successMessage: 'Almost, give it another shot',
+      breathingMessage: 'Almost, give it another shot',
       showTapAnimation: false,
       settingsMenuVisible: false,
       touchDisabled: true,
@@ -89,7 +90,7 @@ class BreathingGame extends Component {
   };
 
   fadeInExhaleMessage = () => {
-    Animated.timing(this.successTextOpacity, {
+    Animated.timing(this.breathingTextOpacity, {
       toValue: 1,
       duration: 1000,
       delay: 0,
@@ -105,7 +106,7 @@ class BreathingGame extends Component {
     const fadeInTime = fadeInDuration + fadeInDelay;
     const fadeOutDuration = 500;
     const delayDuration = exhaleTime - fadeInTime - fadeOutDuration;
-    Animated.timing(this.successTextOpacity, {
+    Animated.timing(this.breathingTextOpacity, {
       toValue: 0,
       duration: fadeOutDuration,
       delay: delayDuration,
@@ -115,29 +116,44 @@ class BreathingGame extends Component {
 
   startExhale = () => {
     this.props.imageFadeOut();
-    const {onboarding} = this.props;
+    const {currentSession, onboarding} = this.props;
     const randomMessage = _.sample(EXHALE_MESSAGE);
-    if (onboarding.breathingTutorial) {
+    const showRandomMessage = _.sample(RANDOMNESS);
+    const firstBreathOfTheSession = currentSession.breathCount === 1;
+    const showInstruction =
+      onboarding.breathingTutorial || firstBreathOfTheSession;
+    if (showInstruction) {
       this.setState({
-        successMessage: `Exhale ${this.smoothWord}`,
+        breathingMessage: `Exhale ${this.smoothWord}`,
+        showTextOverlay: false,
         ...(this.state.showTapAnimation && {showTapAnimation: false}),
       });
     } else {
-      this.successTextOpacity.setValue(0);
-      this.setState({successMessage: randomMessage});
+      this.breathingTextOpacity.setValue(0);
+      showRandomMessage &&
+        this.setState({
+          breathingMessage: randomMessage,
+          showTextOverlay: false,
+        });
       this.fadeInExhaleMessage();
     }
   };
 
   startInhale = () => {
-    const {settings, onboarding} = this.props;
+    const {settings, onboarding, currentSession} = this.props;
     const smoothWord = _.sample(SMOOTH_WORDS);
     this.smoothWord = smoothWord;
-    onboarding.breathingTutorial &&
-      this.setState({successMessage: `Inhale ${smoothWord}`});
+    const firstBreathOfTheSession = currentSession.breathCount === 0;
+    const showInstruction =
+      onboarding.breathingTutorial || firstBreathOfTheSession;
+    showInstruction &&
+      this.setState({
+        breathingMessage: `Inhale ${smoothWord}`,
+        showTextOverlay: true,
+      });
     const duration = settings.inhaleTime * 1000;
     this.clearInhaleId = setTimeout(() => {
-      onboarding.breathingTutorial && this.setState({successMessage: ''});
+      onboarding.breathingTutorial && this.setState({breathingMessage: ''});
       clearTimeout(this.clearInhaleId);
     }, duration);
   };
@@ -220,7 +236,7 @@ class BreathingGame extends Component {
     this.releaseMessageId = setTimeout(() => {
       const {pressInParent} = this.props;
       if (pressInParent) {
-        this.setState({successMessage: RELEASE_MESSAGE});
+        this.setState({breathingMessage: RELEASE_MESSAGE});
       }
       clearTimeout(this.releaseMessageId);
     }, 1000);
@@ -288,12 +304,13 @@ class BreathingGame extends Component {
 
   render() {
     const {
-      successMessage,
+      breathingMessage,
       showTapAnimation,
       settingsMenuVisible,
       touchDisabled,
       progressVisible,
       introModalVisible,
+      showTextOverlay,
     } = this.state;
     const {onboarding, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
@@ -352,16 +369,17 @@ class BreathingGame extends Component {
           />
         </Svg>
 
-        {successMessage ? (
+        {breathingMessage ? (
           <View style={styles.textWrapper}>
             <Animated.View
               style={[
-                styles.successTextContainer,
-                {opacity: this.successTextOpacity},
+                styles.breathingTextContainer,
+                showTextOverlay && styles.breathingTextOverlay,
+                {opacity: this.breathingTextOpacity},
               ]}
               pointerEvents="none">
-              <Text allowFontScaling={false} style={styles.successText}>
-                {successMessage}
+              <Text allowFontScaling={false} style={styles.breathingText}>
+                {breathingMessage}
               </Text>
             </Animated.View>
           </View>

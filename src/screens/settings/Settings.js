@@ -10,55 +10,21 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Tag from './Tag';
-import {
-  ScreenWidth,
-  PickerPlaceHolder,
-  ScreenHeight,
-} from '../../helpers/constants/common';
+import {PickerPlaceHolder} from '../../helpers/constants/common';
 import {handleTagSelect} from '../../redux/actions/tag';
 import {FontType} from '../../helpers/theme';
+import {
+  InhaleValues,
+  ExhaleValues,
+  BreathNumbers,
+  AdditionBreathNumbers,
+} from '../../helpers/constants/common';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import downArrowIcon from '../../../assets/icons/icon_down.png';
 import RNPickerSelect from 'react-native-picker-select';
 import analytics from '@react-native-firebase/analytics';
 
 const defaultPlaceHolder = {};
-
-const InhaleValues = [
-  {label: '3s', value: 3},
-  {label: '4s', value: 4},
-  {label: '5s', value: 5},
-];
-
-const ExhaleValues = [
-  {label: '3s', value: 3},
-  {label: '4s', value: 4},
-  {label: '5s', value: 5},
-  {label: '6s', value: 6},
-];
-
-const BreathNumbers = [
-  {label: '3', value: 3},
-  {label: '4', value: 4},
-  {label: '5', value: 5},
-  {label: '6', value: 6},
-  {label: '7', value: 7},
-  {label: '8', value: 8},
-  {label: '9', value: 9},
-  {label: '10', value: 10},
-];
-
-const AdditionBreathNumbers = [
-  {label: '+2', value: 2},
-  {label: '+3', value: 3},
-  {label: '+4', value: 4},
-  {label: '+5', value: 5},
-  {label: '+6', value: 6},
-  {label: '+7', value: 7},
-  {label: '+8', value: 8},
-  {label: '+9', value: 9},
-  {label: '+10', value: 10},
-];
 
 const placeHolderStyle = {
   inputIOS: {

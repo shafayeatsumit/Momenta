@@ -15,6 +15,7 @@ import {
   anonymousSignup,
   removeBackground,
 } from '../../redux/actions/tag';
+import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import BrethingGame from '../breathingGame/BreathingGame';
 import PersonalizeModal from './modals/OboardingPersonalize';
 import TodaysFocusModal from './modals/TodaysFocus';
@@ -167,6 +168,10 @@ class Home extends Component {
         time_taken: Number(timeTakenExhale),
         exhale_time: settings.exhaleTime,
         background_id: backgroundId,
+        screen_height: ScreenHeight,
+        screen_width: ScreenWidth,
+        x: event.nativeEvent.pageX,
+        y: event.nativeEvent.pageY,
       });
     }
     this.setState({pressInParent: true, pressOutParent: false});

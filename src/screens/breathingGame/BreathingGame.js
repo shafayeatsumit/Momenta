@@ -91,8 +91,8 @@ class BreathingGame extends Component {
   fadeInExhaleMessage = () => {
     Animated.timing(this.successTextOpacity, {
       toValue: 1,
-      duration: 500,
-      delay: 500,
+      duration: 1000,
+      delay: 0,
       useNativeDriver: true,
     }).start(this.fadeOutExhaleMessage);
   };
@@ -100,8 +100,8 @@ class BreathingGame extends Component {
   fadeOutExhaleMessage = () => {
     const {settings} = this.props;
     const exhaleTime = settings.exhaleTime * 1000;
-    const fadeInDuration = 500;
-    const fadeInDelay = 500;
+    const fadeInDuration = 1000;
+    const fadeInDelay = 0;
     const fadeInTime = fadeInDuration + fadeInDelay;
     const fadeOutDuration = 500;
     const delayDuration = exhaleTime - fadeInTime - fadeOutDuration;

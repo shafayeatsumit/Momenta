@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 2,
     textShadowColor: 'black',
-    textShadowOffset: {height: 1, width: 1},
-    textShadowRadius: 2,
+    textShadowOffset: {height: 0, width: 0},
+    textShadowRadius: 1,
   },
   tapIconHolder: {
     height: 100,

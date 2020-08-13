@@ -23,10 +23,7 @@ class IntroModal extends Component {
     const {explainerVisible, helperVisible} = this.state;
     return (
       <View style={styles.mainContainer}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={explainerVisible}>
+        {explainerVisible && (
           <View style={styles.mainContainer}>
             <View style={styles.hideTheBackground}>
               <View style={styles.textContainer}>
@@ -39,7 +36,8 @@ class IntroModal extends Component {
               <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
+        )}
+
         <Modal animationType="fade" transparent={true} visible={helperVisible}>
           <IntroHelper closeModal={this.props.closeModal} />
         </Modal>

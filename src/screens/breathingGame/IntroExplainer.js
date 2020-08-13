@@ -15,25 +15,23 @@ const IntroExplainer = ({closeModal}) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.textContainer}>
-        <Text style={styles.text} allowFontScaling={false}>
-          Each breath is interactive. Hold screen as you inhale very slowly to
-          reveal calming image. Then release to exhale slowly
-        </Text>
+        {/* <Text style={styles.text} allowFontScaling={false}>
+          Hold as you inhale slowly. Then release to exhale.
+        </Text> */}
       </View>
       <View style={styles.lottieView}>
         <LottieView
           autoPlay
-          loop={false}
+          loop
           autoSize={false}
-          source={require('../../../assets/anims/Inhale_helper.json')}
-          onAnimationFinish={() => setAnimation(true)}
+          source={require('../../../assets/anims/inhale_exhale_helper.json')}
+          // onAnimationFinish={() => setAnimation(true)}
         />
       </View>
-      {showAnimation ? (
-        <TouchableOpacity style={styles.button} onPress={handlePress}>
-          <Text style={styles.buttonText}>I'm ready</Text>
-        </TouchableOpacity>
-      ) : null}
+
+      <TouchableOpacity style={styles.button} onPress={handlePress}>
+        <Text style={styles.buttonText}>I'm ready</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -42,29 +40,30 @@ export default IntroExplainer;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: Colors.betterBlue,
   },
   textContainer: {
     position: 'absolute',
-    bottom: ScreenHeight * 0.2 + 250,
+    bottom: ScreenHeight * 0.1 + 70 + 400,
     alignSelf: 'center',
     height: 240,
     width: 300,
-    justifyContent: 'space-around',
+    marginTop: 20,
+    // justifyContent: 'space-around',
   },
   text: {
     fontFamily: FontType.Regular,
     fontSize: 20,
     color: 'white',
+    lineHeight: 30,
   },
 
   lottieView: {
-    height: 350,
-    width: 350,
-    bottom: ScreenHeight * 0.3,
-    // backgroundColor: 'red',
+    height: 500,
+    width: 400,
+    bottom: ScreenHeight * 0.1 + 100,
     position: 'absolute',
   },
   button: {
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: ScreenHeight * 0.15,
+    bottom: ScreenHeight * 0.1,
   },
   buttonText: {
     fontSize: 24,

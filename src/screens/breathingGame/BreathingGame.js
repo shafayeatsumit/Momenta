@@ -16,8 +16,8 @@ import analytics from '@react-native-firebase/analytics';
 import styles from './BreathingGame.styles';
 import IntroModal from './IntroModal';
 import arrowRightIcon from '../../../assets/icons/menu.png';
-import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
 import {
   SMOOTH_WORDS,
   START_RADIUSES,

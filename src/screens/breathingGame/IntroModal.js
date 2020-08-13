@@ -1,27 +1,48 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Modal, View, Text, TouchableOpacity} from 'react-native';
 import {ScreenWidth, ScreenHeight} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 import analytics from '@react-native-firebase/analytics';
+import IntroHelper from './IntroExplainer';
 
 class IntroModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      explainerVisible: true,
+      helperVisible: false,
+    };
+  }
+
   handlePress = () => {
-    analytics().logEvent('button_push', {title: 'I am ready'});
-    this.props.closeModal();
+    analytics().logEvent('button_push', {title: 'Next'});
+    this.setState({explainerVisible: false, helperVisible: true});
   };
+
   render() {
+    const {explainerVisible, helperVisible} = this.state;
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.hideTheBackground}>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>
-              We'll start with a 3{'\n'}breath meditation that produces calm
-            </Text>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={explainerVisible}>
+          <View style={styles.mainContainer}>
+            <View style={styles.hideTheBackground}>
+              <View style={styles.textContainer}>
+                <Text style={styles.text}>
+                  We'll start with a 3{'\n'}breath meditation that produces calm
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.button} onPress={this.handlePress}>
+              <Text style={styles.buttonText}>Next</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-          <Text style={styles.buttonText}>I’m ready</Text>
-        </TouchableOpacity>
+        </Modal>
+        <Modal animationType="fade" transparent={true} visible={helperVisible}>
+          <IntroHelper closeModal={this.props.closeModal} />
+        </Modal>
       </View>
     );
   }
@@ -33,7 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.betterBlue65,
+    backgroundColor: Colors.betterBlue,
   },
   hideTheBackground: {
     width: ScreenWidth,

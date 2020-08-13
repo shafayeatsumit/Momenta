@@ -139,6 +139,7 @@ class Home extends Component {
     const {dispatch} = this.props;
     this.closeBreathingGame();
     dispatch(fetchBackground());
+
     dispatch(removeBackground()).then(() => {
       this.showBreathingGameWithDelay();
     });

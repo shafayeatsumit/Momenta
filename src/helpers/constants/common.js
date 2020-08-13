@@ -35,7 +35,6 @@ const EXHALE_MESSAGE = [
 
 // inhaletime to radius
 const START_RADIUSES = {
-  2: 5,
   2.5: 4.5,
   3: 4,
   3.5: 3.5,
@@ -50,7 +49,6 @@ const RELEASE_MESSAGE = 'Release just after image is revealed';
 const RANDOMNESS = [false, false, true];
 
 const InhaleValues = [
-  {label: '2s', value: 2},
   {label: '2.5s', value: 2.5},
   {label: '3s', value: 3},
   {label: '3.5s', value: 3.5},

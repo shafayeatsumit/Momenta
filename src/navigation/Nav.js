@@ -16,7 +16,7 @@ const Nav = () => {
       <StatusBar hidden />
       <Stack.Navigator headerMode="none">
         {/* <Stack.Screen name="Content" component={ContentScreen} /> */}
-        <Stack.Screen name="Home" component={HomeScreen}             />
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -125,7 +125,7 @@ class BreathingGame extends Component {
     if (showInstruction) {
       this.setState({
         breathingMessage: `Exhale ${this.smoothWord}`,
-        showTextOverlay: false,
+
         ...(this.state.showTapAnimation && {showTapAnimation: false}),
       });
     } else {
@@ -133,7 +133,6 @@ class BreathingGame extends Component {
       showRandomMessage &&
         this.setState({
           breathingMessage: randomMessage,
-          showTextOverlay: false,
         });
       this.fadeInExhaleMessage();
     }
@@ -149,7 +148,6 @@ class BreathingGame extends Component {
     showInstruction &&
       this.setState({
         breathingMessage: `Inhale ${smoothWord}`,
-        showTextOverlay: true,
       });
     const duration = settings.inhaleTime * 1000;
     this.clearInhaleId = setTimeout(() => {
@@ -310,7 +308,6 @@ class BreathingGame extends Component {
       touchDisabled,
       progressVisible,
       introModalVisible,
-      showTextOverlay,
     } = this.state;
     const {onboarding, pressInParent} = this.props;
     // 72% is the the value to reveal the full screen.
@@ -374,7 +371,6 @@ class BreathingGame extends Component {
             <Animated.View
               style={[
                 styles.breathingTextContainer,
-                showTextOverlay && styles.breathingTextOverlay,
                 {opacity: this.breathingTextOpacity},
               ]}
               pointerEvents="none">

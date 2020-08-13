@@ -1,6 +1,6 @@
 const initialState = {
-  inhaleTime: 4, // 4 seconds.
-  exhaleTime: 4, // 4 seconds.
+  inhaleTime: 2.5, // 2.5 seconds.
+  exhaleTime: 3, // 3 seconds.
   breathPerSession: 3,
   selectedTags: [],
 };

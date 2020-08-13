@@ -88,7 +88,7 @@ class BreathingGame extends Component {
     this.exhaleId = setTimeout(() => {
       this.setState({breathingMessage: `Exhale ${this.smoothWord}`});
       clearTimeout(this.exhaleId);
-    }, 500);
+    }, 300);
   };
 
   startExhale = () => {

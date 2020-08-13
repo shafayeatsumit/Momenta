@@ -20,11 +20,9 @@ import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {
   SMOOTH_WORDS,
-  EXHALE_MESSAGE,
   START_RADIUSES,
   hapticFeedbackOptions,
   RELEASE_MESSAGE,
-  RANDOMNESS,
 } from '../../helpers/constants/common';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -34,7 +32,6 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       touchDisabled: false,
-      showTapAnimation: false,
       breathingMessage: '',
       progressVisible: true,
       introModalVisible: false,
@@ -42,7 +39,6 @@ class BreathingGame extends Component {
 
     this.startRadius = START_RADIUSES[props.settings.inhaleTime];
     this.radius = new Animated.Value(this.startRadius);
-    this.breathingTextOpacity = new Animated.Value(1);
     this.smoothWord = null;
   }
 
@@ -69,7 +65,6 @@ class BreathingGame extends Component {
       },
       () => {
         pressInParent && this.handlePressIn();
-        onboarding.breathingTutorial && this.setState({showTapAnimation: true});
       },
     );
   };
@@ -77,7 +72,7 @@ class BreathingGame extends Component {
   shrinkCircle = () => {
     this.setState({
       breathingMessage: 'Almost, give it another shot',
-      showTapAnimation: false,
+
       settingsMenuVisible: false,
       touchDisabled: true,
     });
@@ -89,52 +84,21 @@ class BreathingGame extends Component {
     }).start(this.shrinkCircleCb);
   };
 
-  fadeInExhaleMessage = () => {
-    Animated.timing(this.breathingTextOpacity, {
-      toValue: 1,
-      duration: 1000,
-      delay: 0,
-      useNativeDriver: true,
-    }).start(this.fadeOutExhaleMessage);
-  };
-
-  fadeOutExhaleMessage = () => {
-    const {settings} = this.props;
-    const exhaleTime = settings.exhaleTime * 1000;
-    const fadeInDuration = 1000;
-    const fadeInDelay = 0;
-    const fadeInTime = fadeInDuration + fadeInDelay;
-    const fadeOutDuration = 500;
-    const delayDuration = exhaleTime - fadeInTime - fadeOutDuration;
-    Animated.timing(this.breathingTextOpacity, {
-      toValue: 0,
-      duration: fadeOutDuration,
-      delay: delayDuration,
-      useNativeDriver: true,
-    }).start();
+  showExhaleMessage = () => {
+    this.exhaleId = setTimeout(() => {
+      this.setState({breathingMessage: `Exhale ${this.smoothWord}`});
+      clearTimeout(this.exhaleId);
+    }, 500);
   };
 
   startExhale = () => {
     this.props.imageFadeOut();
     const {currentSession, onboarding} = this.props;
-    const randomMessage = _.sample(EXHALE_MESSAGE);
-    const showRandomMessage = _.sample(RANDOMNESS);
     const firstBreathOfTheSession = currentSession.breathCount === 1;
     const showInstruction =
       onboarding.breathingTutorial || firstBreathOfTheSession;
     if (showInstruction) {
-      this.setState({
-        breathingMessage: `Exhale ${this.smoothWord}`,
-
-        ...(this.state.showTapAnimation && {showTapAnimation: false}),
-      });
-    } else {
-      this.breathingTextOpacity.setValue(0);
-      showRandomMessage &&
-        this.setState({
-          breathingMessage: randomMessage,
-        });
-      this.fadeInExhaleMessage();
+      this.setState({breathingMessage: ''}, this.showExhaleMessage);
     }
   };
 
@@ -201,8 +165,7 @@ class BreathingGame extends Component {
     }, duration);
   };
 
-  closeIntroModal = () =>
-    this.setState({introModalVisible: false}, this.showPressInAnimation);
+  closeIntroModal = () => this.setState({introModalVisible: false});
 
   showIntroModal = () => {
     this.setState({touchDisabled: true});
@@ -212,8 +175,6 @@ class BreathingGame extends Component {
     }, 1500);
   };
 
-  showPressInAnimation = () => this.setState({showTapAnimation: true});
-
   showHelpers = () => {
     const {onboarding} = this.props;
     if (!onboarding.breathingTutorial) {
@@ -221,7 +182,7 @@ class BreathingGame extends Component {
       return;
     }
     const {breathCount} = onboarding;
-    breathCount === 0 ? this.showIntroModal() : this.showPressInAnimation();
+    breathCount === 0 && this.showIntroModal();
   };
 
   handleArrowPresss = () => {
@@ -303,7 +264,6 @@ class BreathingGame extends Component {
   render() {
     const {
       breathingMessage,
-      showTapAnimation,
       settingsMenuVisible,
       touchDisabled,
       progressVisible,
@@ -369,10 +329,7 @@ class BreathingGame extends Component {
         {breathingMessage ? (
           <View style={styles.textWrapper}>
             <Animated.View
-              style={[
-                styles.breathingTextContainer,
-                {opacity: this.breathingTextOpacity},
-              ]}
+              style={styles.breathingTextContainer}
               pointerEvents="none">
               <Text allowFontScaling={false} style={styles.breathingText}>
                 {breathingMessage}
@@ -380,17 +337,6 @@ class BreathingGame extends Component {
             </Animated.View>
           </View>
         ) : null}
-
-        {showTapAnimation && !pressInParent && (
-          <View style={styles.tapIconHolder}>
-            <LottieView
-              autoPlay
-              loop
-              autoSize
-              source={require('../../../assets/anims/tap.json')}
-            />
-          </View>
-        )}
       </View>
     );
   }

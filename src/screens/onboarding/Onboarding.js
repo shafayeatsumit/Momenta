@@ -8,6 +8,7 @@ import ImpNotes from './ImpNotes';
 import MeasurementBreaths from './MeasurementBreaths';
 import MeasurementSuccess from './MeasurementSuccess';
 import Reason from './Reason';
+import {connect} from 'react-redux';
 
 class Onboarding extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Onboarding extends Component {
   goToIntroVideo = () => this.setState({screen: 'introVideo'});
   goToReason = () => this.setState({screen: 'reason'});
   goToProfile = () => {
+    this.props.dispatch({type: 'ONBOARDING_COMPLETED'});
     this.props.navigation.navigate('Profile');
   };
 
@@ -57,4 +59,11 @@ class Onboarding extends Component {
     );
   }
 }
-export default Onboarding;
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    onboarding: state.onboarding,
+  };
+};
+
+export default connect(mapStateToProps)(Onboarding);

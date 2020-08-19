@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
 import Result from './IntroBreathResult';
 import CommonStyles from './Onboarding.styles';
 import LottieView from 'lottie-react-native';
 import {FontType, Colors} from '../../helpers/theme';
-import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-
+import {
+  ScreenHeight,
+  ScreenWidth,
+  hapticFeedbackOptions,
+} from '../../helpers/constants/common';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
 const FINISH_MESSAGE = 'Tap as you finish exhaling';
 
@@ -38,6 +42,11 @@ class IntroBreath extends Component {
     this.pressOutTime = null;
   };
 
+  startHapticFeedback = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   handlePressIn = () => {
     const {measuring} = this.state;
     !measuring &&
@@ -65,6 +74,7 @@ class IntroBreath extends Component {
       }
     }
     this.pressInTime = new Date();
+    this.startHapticFeedback();
   };
 
   checkmarkAnimationFinish = () => {
@@ -112,6 +122,7 @@ class IntroBreath extends Component {
     } else {
       this.setState({inhaleTimeRecorded: timeTakeInhale});
     }
+    this.startHapticFeedback();
   };
 
   render() {
@@ -139,10 +150,11 @@ class IntroBreath extends Component {
       return (
         <View style={styles.checkmarkContainer}>
           <LottieView
-            autoSize
+            autoSize={false}
             autoPlay
             loop={false}
             style={styles.checkmark}
+            resizeMode="cover"
             source={require('../../../assets/anims/check_mark.json')}
             onAnimationFinish={this.checkmarkAnimationFinish}
           />

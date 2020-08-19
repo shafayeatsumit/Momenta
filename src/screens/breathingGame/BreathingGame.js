@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, Platform, TouchableOpacity} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './BreathingGame.styles';
 import LottieView from 'lottie-react-native';
-
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
-const FINISH_MESSAGE = 'Tap as you finish exhaling';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class BreathingGame extends Component {
   };
 
   measureTime = (time) => {
-    return ((new Date() - time) / 1000).toFixed(1);
+    return ((new Date() - time) / 1000).toFixed(2);
   };
 
   resetTime = () => {
@@ -40,14 +40,17 @@ class BreathingGame extends Component {
     this.props.breathCompleted(inhaleTimeRecorded, exhaleTimeRecorded);
   };
 
+  startHapticFeedback = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   handlePressIn = () => {
-    const {measuring} = this.state;
-    !measuring &&
-      this.setState({
-        measuring: true,
-        measurementType: 'inhale',
-        instructionText: null,
-      });
+    this.setState({
+      measuring: true,
+      measurementType: 'inhale',
+      instructionText: null,
+    });
     if (this.pressInTime) {
       const timeTakenExhale = this.measureTime(this.pressOutTime);
       console.log('timeTakenExhale', timeTakenExhale);
@@ -69,6 +72,7 @@ class BreathingGame extends Component {
       }
     }
     this.pressInTime = new Date();
+    this.startHapticFeedback();
   };
 
   redoBreathing = () => {
@@ -106,6 +110,7 @@ class BreathingGame extends Component {
     } else {
       this.setState({inhaleTimeRecorded: timeTakeInhale});
     }
+    this.startHapticFeedback();
   };
 
   render() {

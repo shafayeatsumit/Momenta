@@ -4,26 +4,7 @@ import {FontType, Colors} from '../../helpers/theme';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.betterBlue,
-  },
-  message: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 28,
-    textAlign: 'center',
-    padding: 15,
-    zIndex: 1,
-    textShadowColor: 'black',
-    textShadowOffset: {height: 1, width: 1},
-    textShadowRadius: 2,
-  },
-  touchHandler: {
-    position: 'absolute',
-    bottom: 0,
-    width: ScreenWidth,
-    height: ScreenHeight * 0.5,
   },
   progressContainer: {
     position: 'absolute',
@@ -41,6 +22,42 @@ const styles = StyleSheet.create({
   },
   progressTextBig: {
     fontSize: 36,
+  },
+  resultContainer: {
+    flex: 3,
+    marginTop: 100,
+  },
+  buttonText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 22,
+    textAlign: 'center',
+  },
+  timeContainer: {
+    height: 100,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  smallButtonContainer: {
+    position: 'absolute',
+    bottom: '8%',
+    width: ScreenWidth,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  finishButton: {
+    height: 60,
+    width: 170,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+    backgroundColor: Colors.cornflowerBlue,
   },
 });
 

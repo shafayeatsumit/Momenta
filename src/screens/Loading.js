@@ -7,27 +7,38 @@ import {connect} from 'react-redux';
 import {FontType, Colors} from '../helpers/theme';
 
 class Loading extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      appState: AppState.currentState,
+    };
+  }
   navigate = () => {
-    const {dispatch, navigation, onboarding} = this.props;
-    navigation.navigate('Onboarding');
-    // if (onboarding.completed) {
-    //   // go to
-    //   navigation.navigte('Home')
-    // } else {
-    //   // go to home
-    //   // navigation.navigate('Onboarding')
-    // }
+    const {navigation, onboarding} = this.props;
+    onboarding.completed
+      ? navigation.replace('CheckIn')
+      : navigation.navigate('Onboarding');
+  };
+
+  handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      this.navigate();
+    }
+    this.setState({appState: nextAppState});
   };
 
   componentDidMount() {
-    const {userInfo, dispatch, onboarding} = this.props;
+    const {userInfo, dispatch} = this.props;
     if (!userInfo.token) {
       dispatch(anonymousSignup());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
     this.navigate();
-    // onboarding.completed && this.checkTodaysFocus();
   }
+
   render() {
     return (
       <View style={styles.loadingContainer}>

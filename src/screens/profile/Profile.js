@@ -16,6 +16,7 @@ const DAYS_OF_THE_WEEK = [
   'Saturday',
   'Sunday',
 ];
+
 const LETTERS = {
   S: require('../../../assets/anims/S.json'),
   M: require('../../../assets/anims/M.json'),

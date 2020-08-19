@@ -47,6 +47,13 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     color: 'white',
   },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: '7%',
+    width: ScreenWidth,
+    height: 80,
+    alignItems: 'center',
+  },
   touchableArea: {
     position: 'absolute',
     bottom: 0,

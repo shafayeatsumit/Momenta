@@ -7,7 +7,6 @@ import {FontType, Colors} from '../../helpers/theme';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 
 const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
-
 const FINISH_MESSAGE = 'Tap as you finish exhaling';
 
 class IntroBreath extends Component {
@@ -106,7 +105,6 @@ class IntroBreath extends Component {
     if (showError) {
       const errorMessage =
         'Almost.Hold and inhale for more than 1s but less than 6s';
-
       this.setState(
         {instructionText: errorMessage, measuring: false},
         this.resetTime,

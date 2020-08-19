@@ -4,86 +4,37 @@ import {FontType} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
-
-  progressContainer: {
+  measurementContainer: {
+    top: '15%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  wave: {
+    height: 180,
+    width: 180,
+  },
+  bottomTextContainer: {
     position: 'absolute',
-    top: '5%',
-    height: 40,
-    width: 100,
-    alignSelf: 'center',
-    zIndex: 1,
+    bottom: 0,
+    width: ScreenWidth,
+    height: ScreenHeight * 0.3,
+    paddingHorizontal: 20,
   },
-  progressText: {
-    fontFamily: FontType.Light,
-    fontSize: 18,
+  bottomText: {
+    fontFamily: FontType.SemiBold,
     color: 'white',
+    fontSize: 27,
     textAlign: 'center',
   },
-  progressTextBig: {
-    fontSize: 36,
-  },
-  menuIconContainer: {
-    position: 'absolute',
-    top: '5%',
-    right: 0,
-    zIndex: 1,
-    height: 40,
-    width: 65,
-    alignItems: 'flex-end',
-  },
-  menuIcon: {
-    right: 24,
-    height: 24,
-    width: 24,
-    tintColor: 'white',
-  },
 
-  textWrapper: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  breathingTextContainer: {
-    width: ScreenWidth * 0.9,
-    borderRadius: 7,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  breathingTextOverlay: {
-    backgroundColor: 'rgba(27,31,55,0.5)',
-  },
-  breathingText: {
-    textAlign: 'left',
-    fontFamily: FontType.Medium,
-    color: 'white',
-    fontSize: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 2,
-    textShadowColor: 'black',
-    textShadowOffset: {height: 0, width: 0},
-    textShadowRadius: 1,
-  },
-  tapIconHolder: {
-    height: 100,
-    width: ScreenWidth,
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    bottom: '5%',
-  },
-  tapArea: {
+  touchableArea: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: ScreenHeight * 0.35,
-    backgroundColor: 'yellow',
+    height: ScreenHeight * 0.4,
   },
 });
 export default styles;

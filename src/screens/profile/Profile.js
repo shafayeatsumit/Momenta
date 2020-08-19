@@ -1,77 +1,78 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
-} from 'react-native';
-import BrethingGame from '../BreathingGame';
-import LinearGradient from 'react-native-linear-gradient';
-import styles from './Profile.styles.js';
-import analytics from '@react-native-firebase/analytics';
-import {useFocusEffect} from '@react-navigation/native';
-import DEFAULT_IMAGE from '../../../assets/background_imges/image_6.png';
-const BLANK_PROFILE =
-  'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import moment from 'moment';
+import leftArrowIcon from '../../../assets/icons/arrow_left.png';
+import LottieView from 'lottie-react-native';
+import styles from './Profile.styles';
 
-const Profile = () => {
-  const [modalVisible, setModal] = useState(false);
-  useFocusEffect(
-    React.useCallback(() => {
-      // will do the api call here
-    }, []),
-  );
-  const closeModal = () => setModal(false);
-  return (
-    <View style={styles.container}>
-      <Modal animationType="fade" transparent={true} visible={modalVisible}>
-        <BrethingGame closeModal={closeModal} />
-      </Modal>
-      <LinearGradient
-        colors={['rgba(27,31,55,0.57)', 'rgb(27,31,56)']}
-        style={styles.topRow}>
-        <View style={{flex: 1}}>
-          <ImageBackground
-            source={DEFAULT_IMAGE}
-            style={styles.backgroundImage}>
-            <View
-              style={{flex: 3, justifyContent: 'center', alignItems: 'center'}}>
-              <View style={styles.profileImageContainer}>
-                <Image
-                  source={{uri: BLANK_PROFILE}}
-                  style={styles.profileImage}
-                />
-              </View>
-              <Text style={styles.profileName}>Your Name</Text>
-            </View>
-            <View style={styles.statsContainer}>
-              <View style={styles.scoreContainer}>
-                <Text style={styles.scoreTitle}>Today</Text>
-                <Text style={styles.score}>35</Text>
-              </View>
-              <View style={styles.scoreContainer}>
-                <Text style={styles.scoreTitle}>Total</Text>
-                <Text style={styles.score}>77</Text>
-              </View>
-              <View style={[styles.scoreContainer, {flex: 1.5}]}>
-                <Text style={styles.scoreTitle}>Daily Streak</Text>
-                <Text style={styles.score}>89</Text>
-              </View>
-            </View>
-          </ImageBackground>
-        </View>
-      </LinearGradient>
-      <View
-        style={[
-          styles.bottomRow,
-          {justifyContent: 'center', alignContent: 'center'},
-        ]}
-      />
-    </View>
-  );
+const DAYS_OF_THE_WEEK = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+const LETTERS = {
+  S: require('../../../assets/anims/S.json'),
+  M: require('../../../assets/anims/M.json'),
+  W: require('../../../assets/anims/W.json'),
+  T: require('../../../assets/anims/T.json'),
+  F: require('../../../assets/anims/F.json'),
 };
 
+const getDay = () => {
+  return moment().format('dddd');
+};
+
+class Profile extends Component {
+  getDays = (item) => {
+    const firstLetter = item.charAt(0);
+    const letterSource = LETTERS[firstLetter];
+    if (item === getDay()) {
+      return (
+        <View style={styles.animContainer} key={item}>
+          <LottieView
+            style={styles.anim}
+            autoSize
+            source={letterSource}
+            autoPlay
+            loop={false}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <View key={item} style={styles.days}>
+        <Text style={styles.daysText}>{item.charAt(0)}</Text>
+      </View>
+    );
+  };
+
+  goHome = () => {
+    this.props.navigation.navigate('Home');
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.leftIconContainer}
+          onPress={this.goHome}>
+          <Image source={leftArrowIcon} style={styles.leftIcon} />
+        </TouchableOpacity>
+        <View style={styles.daysContainer}>
+          {DAYS_OF_THE_WEEK.map((item) => this.getDays(item))}
+        </View>
+        <View style={styles.streakContainer}>
+          <Text style={styles.streak}>1 consecutive day</Text>
+        </View>
+      </View>
+    );
+  }
+}
 export default Profile;

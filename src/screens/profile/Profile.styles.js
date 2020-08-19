@@ -1,70 +1,87 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {colors, FontType} from '../../helpers/theme';
-import {RFValue} from '../../helpers/responsiveFont';
-const PROFILE_IMAGE_HEIGHT = ScreenHeight * 0.12;
+import {Colors, FontType} from '../../helpers/theme';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(27,31,55)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.betterBlue,
   },
-  topRow: {
-    flex: 2,
-  },
-  backgroundImageContainer: {
-    flex: 3,
-  },
-  backgroundImage: {
-    flex: 1,
-    height: null,
-    width: null,
-  },
-  profileImageContainer: {
-    height: PROFILE_IMAGE_HEIGHT,
-    width: PROFILE_IMAGE_HEIGHT,
-    borderRadius: PROFILE_IMAGE_HEIGHT / 2,
-    borderColor: 'white',
-    borderWidth: 3,
-    overflow: 'hidden',
-  },
-  profileImage: {
-    flex: 1,
-    height: null,
-    width: null,
-  },
-  statsContainer: {
-    flex: 1,
+  daysContainer: {
     flexDirection: 'row',
+    alignSelf: 'center',
   },
-  scoreContainer: {
-    flex: 1,
+  days: {
+    height: 34,
+    width: 34,
+    borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 7,
+    backgroundColor: '#252a43',
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    elevation: 3,
   },
-  scoreTitle: {
-    fontFamily: FontType.Regular,
-    color: 'rgb(120,121,137)',
-    fontSize: RFValue(18),
-    textAlign: 'center',
+  daysText: {
+    fontFamily: FontType.Light,
+    fontSize: 20,
+    color: '#787989',
   },
-  profileName: {
-    fontFamily: FontType.Regular,
-    color: 'white',
-    fontWeight: '500',
-    paddingTop: 10,
-    fontSize: RFValue(22),
-    textAlign: 'center',
-    paddingVertical: 5,
+  darkText: {
+    color: '#252a43',
   },
-  score: {
+  animContainer: {
+    paddingHorizontal: 6,
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowRadius: 2,
+    shadowOpacity: 1,
+    elevation: 3,
+  },
+  anim: {
+    height: 34,
+    width: 34,
+  },
+  white: {
+    backgroundColor: 'white',
+  },
+  dark: {
+    backgroundColor: '#252a43',
+  },
+  streakContainer: {
+    marginTop: 40,
+  },
+  streak: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: RFValue(25),
+    fontSize: 24,
     textAlign: 'center',
-    paddingVertical: 5,
   },
-  bottomRow: {
-    flex: 3,
+  leftIconContainer: {
+    position: 'absolute',
+    top: '5%',
+    left: 10,
+    height: 50,
+    width: 50,
+    alignItems: 'flex-start',
+    zIndex: 3,
+  },
+  leftIcon: {
+    left: 10,
+    height: 20,
+    width: 20,
+    tintColor: 'white',
   },
 });
 export default styles;

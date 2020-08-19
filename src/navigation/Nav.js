@@ -7,6 +7,7 @@ import SettingsScreen from '../screens/settings/Settings';
 import ContentScreen from '../screens/content/Content';
 import CheckInScreen from '../screens/check_in/CheckIn';
 import LoadingScreen from '../screens/Loading';
+import ProfileScreen from '../screens/profile/Profile';
 import OnboardingScreen from '../screens/onboarding/Onboarding';
 
 import {colors} from '../helpers/theme';
@@ -21,6 +22,7 @@ const Nav = () => {
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="CheckIn" component={CheckInScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>

@@ -7,7 +7,7 @@ import {FontType, Colors} from '../../helpers/theme';
 class IntroBreathResult extends Component {
   render() {
     const {inhaleTime, exhaleTime, redoBreathing} = this.props;
-    const total = Number(inhaleTime) + Number(exhaleTime);
+    const total = (Number(inhaleTime) + Number(exhaleTime)).toFixed(1);
     const rythm = (60 / total).toFixed(0);
     return (
       <View style={styles.container}>
@@ -23,7 +23,7 @@ class IntroBreathResult extends Component {
 
           <View style={styles.timeContainer}>
             <Text style={styles.buttonText}>Total</Text>
-            <Text style={styles.buttonText}>{total}s</Text>
+            <Text style={styles.buttonText}>{total} s</Text>
           </View>
 
           <View style={styles.timeContainer}>
@@ -41,7 +41,9 @@ class IntroBreathResult extends Component {
             onPress={redoBreathing}>
             <Text style={styles.buttonText}>Redo</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={ComonStyles.nextButtonSm}>
+          <TouchableOpacity
+            style={ComonStyles.nextButtonSm}
+            onPress={this.props.goNext}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
         </View>

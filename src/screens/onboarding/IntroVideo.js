@@ -19,7 +19,7 @@ class IntroVideo extends Component {
     if (!this.state.showImpNote) {
       this.setState({showImpNote: true});
     } else {
-      // go to the next screen
+      this.props.goNext();
     }
   };
 

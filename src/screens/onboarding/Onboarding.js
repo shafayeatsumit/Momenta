@@ -4,13 +4,34 @@ import styles from './Onboarding.styles';
 import Slogan from './Slogan';
 import IntroVideo from './IntroVideo';
 import IntroBreath from './IntroBreath';
+import ImpNotes from './ImpNotes';
+import MeasurementBreaths from './MeasurementBreaths';
+import MeasurementSuccess from './MeasurementSuccess';
+import Reason from './Reason';
 
 class Onboarding extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      screen: 'introBreath',
+      screen: 'slogan',
     };
+  }
+
+  goToIntroBreath = () => this.setState({screen: 'introBreath'});
+  goToImpNotes = () => this.setState({screen: 'impNotes'});
+  goToMeasurementBreaths = () => this.setState({screen: 'measurementBreaths'});
+  goToMeasurementSuccess = () => this.setState({screen: 'measurementSuccess'});
+  goToIntroVideo = () => this.setState({screen: 'introVideo'});
+  goToReason = () => this.setState({screen: 'reason'});
+  goToProfile = () => {
+    this.props.navigation.navigate('Profile');
+  };
+
+  componentDidMount() {
+    this.timerId = setTimeout(() => {
+      this.goToIntroVideo();
+      clearTimeout(this.timerId);
+    }, 3000);
   }
 
   render() {
@@ -18,8 +39,20 @@ class Onboarding extends Component {
     return (
       <View style={styles.container}>
         {screen === 'slogan' && <Slogan />}
-        {screen === 'introVideo' && <IntroVideo />}
-        {screen === 'introBreath' && <IntroBreath />}
+        {screen === 'introVideo' && (
+          <IntroVideo goNext={this.goToIntroBreath} />
+        )}
+        {screen === 'introBreath' && <IntroBreath goNext={this.goToImpNotes} />}
+        {screen === 'impNotes' && (
+          <ImpNotes goNext={this.goToMeasurementBreaths} />
+        )}
+        {screen === 'measurementBreaths' && (
+          <MeasurementBreaths goNext={this.goToMeasurementSuccess} />
+        )}
+        {screen === 'measurementSuccess' && (
+          <MeasurementSuccess goNext={this.goToReason} />
+        )}
+        {screen === 'reason' && <Reason goNext={this.goToProfile} />}
       </View>
     );
   }

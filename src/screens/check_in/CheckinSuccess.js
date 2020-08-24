@@ -28,6 +28,12 @@ class CheckinSuccess extends Component {
 
         <View style={styles.smallButtonContainer}>
           <TouchableOpacity
+            style={styles.redoButton}
+            onPress={this.props.redoBreathing}>
+            <Text style={styles.buttonText}>Redo</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={styles.finishButton}
             onPress={this.props.goNext}>
             <Text style={styles.buttonText}>Finish</Text>

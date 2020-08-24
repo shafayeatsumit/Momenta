@@ -1,41 +1,30 @@
 import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import LottieView from 'lottie-react-native';
-import BreathingGame from '../breathingGame/BreathingGame';
-import CheckinSuccess from './CheckinSuccess';
-import styles from './CheckIn.styles';
+import BreathingGame from './Breathing';
+import BreathingStats from './BreathingStats';
+import styles from './GuidedBreathing.styles';
 import {connect} from 'react-redux';
-const TOTAL_BREATHS = 3;
 
-class CheckIn extends Component {
+class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
       progressCount: 0,
       totalInhaleTime: 0,
       totalExhaleTime: 0,
-      showResult: false,
+      showStats: false,
       showCheckMark: false,
     };
   }
 
   handleFinish = () => {
-    const {totalInhaleTime, totalExhaleTime} = this.state;
-    console.log('total inhaletime +++>', totalInhaleTime);
-    console.log('total exhaletime +++>', totalExhaleTime);
-    const avgInhaleTime = totalInhaleTime / TOTAL_BREATHS;
-    const avgExhaleTime = totalExhaleTime / TOTAL_BREATHS;
-    this.props.dispatch({
-      type: 'UPDATE_CHECKIN_TIME',
-      inhaleTime: avgInhaleTime,
-      exhaleTime: avgExhaleTime,
-    });
-    this.props.navigation.navigate('Home');
+    this.props.navigation.replace('Home');
   };
 
   redoBreathing = () => {
     this.setState({
-      showResult: false,
+      // showStats: false,
       progressCount: 0,
       totalInhaleTime: 0,
       totalExhaleTime: 0,
@@ -43,17 +32,14 @@ class CheckIn extends Component {
   };
 
   checkmarkAnimationFinish = () => {
-    this.setState({showCheckMark: false, showResult: true});
+    this.setState({showCheckMark: false, showStats: true});
   };
 
-  shouldShowCheckMark = () => {
-    const {progressCount} = this.state;
-    if (progressCount === TOTAL_BREATHS) {
-      this.timerId = setTimeout(() => {
-        this.setState({showCheckMark: true});
-        clearTimeout(this.timerId);
-      }, 1000);
-    }
+  showCheckMark = () => {
+    this.timerId = setTimeout(() => {
+      this.setState({showCheckMark: true});
+      clearTimeout(this.timerId);
+    }, 1500);
   };
 
   breathCompleted = (inhaleTime, exhaleTime) => {
@@ -64,7 +50,7 @@ class CheckIn extends Component {
         totalExhaleTime: prevState.totalExhaleTime + Number(exhaleTime),
         progressCount: prevState.progressCount + 1,
       };
-    }, this.shouldShowCheckMark);
+    });
   };
 
   render() {
@@ -72,10 +58,23 @@ class CheckIn extends Component {
       totalInhaleTime,
       totalExhaleTime,
       progressCount,
-      showResult,
+      showStats,
       showCheckMark,
     } = this.state;
-    console.log('render checkin', this.props.checkin);
+
+    const {totalBreaths} = this.props.courses;
+
+    if (showStats) {
+      return (
+        <BreathingStats
+          totalBreaths={progressCount}
+          checkin={this.props.checkin}
+          inhaleTime={totalInhaleTime}
+          exhaleTime={totalExhaleTime}
+          goNext={this.handleFinish}
+        />
+      );
+    }
 
     if (showCheckMark) {
       return (
@@ -93,27 +92,20 @@ class CheckIn extends Component {
       );
     }
 
-    if (showResult) {
-      return (
-        <CheckinSuccess
-          inhaleTime={totalInhaleTime}
-          exhaleTime={totalExhaleTime}
-          goNext={this.handleFinish}
-          redoBreathing={this.redoBreathing}
-        />
-      );
-    }
     return (
       <View style={styles.container}>
         <View style={styles.progressContainer} pointerEvents="none">
           <Text allowFontScaling={false} style={styles.progressText}>
             <Text style={[styles.progressText, styles.progressTextBig]}>
               {progressCount}
-              <Text style={styles.progressText}>/{TOTAL_BREATHS}</Text>
+              <Text style={styles.progressText}>/{totalBreaths}</Text>
             </Text>
           </Text>
         </View>
-        <BreathingGame breathCompleted={this.breathCompleted} />
+        <BreathingGame
+          breathCompleted={this.breathCompleted}
+          finishBreathing={this.showCheckMark}
+        />
       </View>
     );
   }
@@ -121,8 +113,9 @@ class CheckIn extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    courses: state.courses,
     checkin: state.checkin,
   };
 };
 
-export default connect(mapStateToProps)(CheckIn);
+export default connect(mapStateToProps)(GuidedBreathing);

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {FontType} from '../../helpers/theme';
 import BreathingGame from '../breathingGame/BreathingGame';
+import {connect} from 'react-redux';
 
 const TOTAL_BREATHS = 3;
 
@@ -17,6 +18,16 @@ class MeasurementBreaths extends Component {
 
   shouldGoNext = () => {
     const {progressCount} = this.state;
+    const {totalInhaleTime, totalExhaleTime} = this.state;
+    console.log('total inhaletime +++>', totalInhaleTime);
+    console.log('total exhaletime +++>', totalExhaleTime);
+    const avgInhaleTime = totalInhaleTime / TOTAL_BREATHS;
+    const avgExhaleTime = totalExhaleTime / TOTAL_BREATHS;
+    this.props.dispatch({
+      type: 'UPDATE_CHECKIN_TIME',
+      inhaleTime: avgInhaleTime,
+      exhaleTime: avgExhaleTime,
+    });
     if (progressCount === TOTAL_BREATHS) {
       this.props.goNext();
     }
@@ -26,8 +37,8 @@ class MeasurementBreaths extends Component {
     this.setState((prevState) => {
       return {
         ...prevState,
-        totalInhaleTime: prevState.totalInhaleTime + inhaleTime,
-        totalExhaleTime: prevState.totalExhaleTime + exhaleTime,
+        totalInhaleTime: prevState.totalInhaleTime + Number(inhaleTime),
+        totalExhaleTime: prevState.totalExhaleTime + Number(exhaleTime),
         progressCount: prevState.progressCount + 1,
       };
     }, this.shouldGoNext);
@@ -50,7 +61,14 @@ class MeasurementBreaths extends Component {
     );
   }
 }
-export default MeasurementBreaths;
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    checkin: state.checkin,
+  };
+};
+
+export default connect(mapStateToProps)(MeasurementBreaths);
 
 const styles = StyleSheet.create({
   container: {

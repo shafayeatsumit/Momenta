@@ -11,14 +11,13 @@ class Home extends Component {
             <Text style={styles.buttonText}>Calm</Text>
           </View>
           <View style={styles.button} onPress={() => {}}>
-            <Text style={styles.buttonText}>10 breaths</Text>
-          </View>
-          <View style={styles.button} onPress={() => {}}>
-            <Text style={styles.buttonText}>Pulse</Text>
+            <Text style={styles.buttonText}>5 breaths</Text>
           </View>
           <TouchableOpacity
             style={[styles.button, styles.buttonActive]}
-            onPress={() => {}}>
+            onPress={() => {
+              this.props.navigation.navigate('GuidedBreathing');
+            }}>
             <Text style={[styles.buttonText]}>Start</Text>
           </TouchableOpacity>
         </View>

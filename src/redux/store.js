@@ -7,12 +7,12 @@ import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
-AsyncStorage.clear();
+// AsyncStorage.clear();
 // TODO: need to adjust the whitelist
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['userInfo', 'onboarding'],
+  whitelist: ['userInfo', 'onboarding', 'checkin'],
   stateReconciler: autoMergeLevel2,
 };
 // const middleware = [logger, thunk];

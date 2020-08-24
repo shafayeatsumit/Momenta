@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   box: {
-    height: 280,
+    height: 240,
     width: 270,
     justifyContent: 'space-around',
     borderRadius: 10,

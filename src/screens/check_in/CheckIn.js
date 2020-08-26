@@ -20,17 +20,20 @@ class CheckIn extends Component {
   }
 
   handleFinish = () => {
-    const {totalInhaleTime, totalExhaleTime} = this.state;
-    console.log('total inhaletime +++>', totalInhaleTime);
-    console.log('total exhaletime +++>', totalExhaleTime);
-    const avgInhaleTime = totalInhaleTime / TOTAL_BREATHS;
-    const avgExhaleTime = totalExhaleTime / TOTAL_BREATHS;
+    const {totalInhaleTime, totalExhaleTime, progressCount} = this.state;
+
+    const avgInhaleTime = totalInhaleTime / progressCount;
+    const avgExhaleTime = totalExhaleTime / progressCount;
+    console.log('progress', progressCount);
+    console.log('total inhaletime +++>', avgInhaleTime);
+    console.log('total exhaletime +++>', avgExhaleTime);
     this.props.dispatch({
       type: 'UPDATE_CHECKIN_TIME',
       inhaleTime: avgInhaleTime,
       exhaleTime: avgExhaleTime,
     });
-    this.props.navigation.navigate('Home');
+    // TODO: change stuff in here.
+    // this.props.navigation.navigate('Home');
   };
 
   redoBreathing = () => {
@@ -48,12 +51,17 @@ class CheckIn extends Component {
 
   shouldShowCheckMark = () => {
     const {progressCount} = this.state;
-    if (progressCount === TOTAL_BREATHS) {
-      this.timerId = setTimeout(() => {
-        this.setState({showCheckMark: true});
-        clearTimeout(this.timerId);
-      }, 1000);
+    if (progressCount === 3) {
+      this.setState({showCheckMark: true}, this.handleFinish);
+      console.log('show Guided Breathing Early');
     }
+  };
+
+  goToGuidedBreathing = () => {
+    const {showCheckMark} = this.state;
+    console.log('show checkmark', showCheckMark);
+    !showCheckMark && this.setState({showCheckMark: true}, this.handleFinish);
+    console.log('show Guided Breathing Later');
   };
 
   breathCompleted = (inhaleTime, exhaleTime) => {
@@ -75,23 +83,6 @@ class CheckIn extends Component {
       showResult,
       showCheckMark,
     } = this.state;
-    console.log('render checkin', this.props.checkin);
-
-    if (showCheckMark) {
-      return (
-        <View style={styles.checkmarkContainer}>
-          <LottieView
-            autoSize={false}
-            autoPlay
-            loop={false}
-            style={styles.checkmark}
-            resizeMode="cover"
-            source={require('../../../assets/anims/check_mark.json')}
-            onAnimationFinish={this.checkmarkAnimationFinish}
-          />
-        </View>
-      );
-    }
 
     if (showResult) {
       return (
@@ -104,17 +95,39 @@ class CheckIn extends Component {
       );
     }
     return (
-      <View style={styles.container}>
-        <View style={styles.progressContainer} pointerEvents="none">
-          <Text allowFontScaling={false} style={styles.progressText}>
-            <Text style={[styles.progressText, styles.progressTextBig]}>
-              {progressCount}
-              <Text style={styles.progressText}>/{TOTAL_BREATHS}</Text>
-            </Text>
-          </Text>
-        </View>
-        <BreathingGame breathCompleted={this.breathCompleted} />
-      </View>
+      <>
+        {showCheckMark ? (
+          <View style={styles.checkmarkContainer}>
+            <LottieView
+              autoSize={false}
+              autoPlay
+              loop={false}
+              style={styles.checkmark}
+              resizeMode="cover"
+              source={require('../../../assets/anims/check_mark.json')}
+              // onAnimationFinish={this.checkmarkAnimationFinish}
+            />
+          </View>
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.progressContainer} pointerEvents="none">
+              <Text allowFontScaling={false} style={styles.progressText}>
+                <Text style={[styles.progressText, styles.progressTextBig]}>
+                  {progressCount}
+                  <Text style={styles.progressText}>/{TOTAL_BREATHS}</Text>
+                </Text>
+              </Text>
+            </View>
+            <BreathingGame
+              breathCompleted={this.breathCompleted}
+              redoBreathing={this.redoBreathing}
+              progressCount={progressCount}
+              totalExhaleTime={totalExhaleTime}
+              goToGuidedBreathing={this.goToGuidedBreathing}
+            />
+          </View>
+        )}
+      </>
     );
   }
 }

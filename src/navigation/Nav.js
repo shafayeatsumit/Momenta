@@ -20,14 +20,15 @@ class Nav extends Component {
         <StatusBar hidden />
 
         <Stack.Navigator headerMode="none">
-          <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen
             name="GuidedBreathing"
             component={GuidedBreathingScreen}
           />
-
           <Stack.Screen name="CheckIn" component={CheckInScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+
+          <Stack.Screen name="Loading" component={LoadingScreen} />
+
           <Stack.Screen name="Onboarding" component={OnboardingScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
 

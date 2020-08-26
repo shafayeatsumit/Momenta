@@ -23,7 +23,7 @@ class BreathingGame extends Component {
   }
 
   shouldShowError = (time) => {
-    return time > 6 || time <= 1;
+    return time <= 1;
   };
 
   measureTime = (time) => {
@@ -45,22 +45,60 @@ class BreathingGame extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
+  resetBreathing = () => {
+    this.props.redoBreathing();
+    this.resetTime();
+  };
+
+  pressInTimeOut = () => {
+    this.pressInTimer = setTimeout(() => {
+      this.setState(
+        {
+          instructionText: 'Hold and Inhale for less than 10s',
+          measuring: false,
+        },
+        this.resetBreathing,
+      );
+
+      clearTimeout(this.pressInTimer);
+    }, 10000);
+  };
+
+  pressOutTimeOut = () => {
+    this.pressOutTimer = setTimeout(() => {
+      this.setState(
+        {
+          instructionText: 'Hold and Exhale for less than 10s',
+          measuring: false,
+        },
+        this.resetBreathing,
+      );
+
+      clearTimeout(this.pressOutTimer);
+    }, 10000);
+  };
+  componentWillUnmount() {
+    console.log('component is unmounted');
+  }
   handlePressIn = () => {
     this.setState({
       measuring: true,
       measurementType: 'inhale',
       instructionText: null,
     });
+    this.pressOutTimer && clearTimeout(this.pressOutTimer);
+    this.guidedBreathingTimer && clearTimeout(this.goToGuidedBreathingTimer);
+
+    this.pressInTimeOut();
     if (this.pressInTime) {
       const timeTakenExhale = this.measureTime(this.pressOutTime);
       console.log('timeTakenExhale', timeTakenExhale);
       const showError = this.shouldShowError(timeTakenExhale);
       if (showError) {
-        const errorMessage =
-          'Almost.Hold and exhale for more than 1s but less than 6s';
+        const errorMessage = 'Almost.Hold and exhale for more than 1s';
         this.setState(
           {instructionText: errorMessage, measuring: false},
-          this.resetTime,
+          this.resetBreathing,
         );
       } else {
         this.setState(
@@ -87,29 +125,38 @@ class BreathingGame extends Component {
     });
   };
 
+  goToGuidedBreathing = () => {
+    const {progressCount, totalExhaleTime, goToGuidedBreathing} = this.props;
+    if (progressCount === 2) {
+      const avgExhaleTime = totalExhaleTime / 2;
+      this.goToGuidedBreathingTimer = setTimeout(() => {
+        goToGuidedBreathing();
+      }, avgExhaleTime * 1000);
+    }
+  };
+
   handlePressOut = () => {
     if (!this.pressInTime) {
       return;
     }
+    this.setState({measurementType: 'exhale'});
 
-    this.setState({
-      measurementType: 'exhale',
-    });
-
+    this.pressInTimer && clearTimeout(this.pressInTimer);
+    this.pressOutTimeOut();
     this.pressOutTime = new Date();
-    const timeTakeInhale = this.measureTime(this.pressInTime);
-    console.log('time taken inhale', timeTakeInhale);
-    const showError = this.shouldShowError(timeTakeInhale);
+    const timeTakenInhale = this.measureTime(this.pressInTime);
+    console.log('time taken inhale', timeTakenInhale);
+    const showError = this.shouldShowError(timeTakenInhale);
     if (showError) {
-      const errorMessage =
-        'Almost.Hold and inhale for more than 1s but less than 6s';
+      const errorMessage = 'Almost.Hold and inhale for more than 1s';
       this.setState(
         {instructionText: errorMessage, measuring: false},
-        this.resetTime,
+        this.resetBreathing,
       );
     } else {
-      this.setState({inhaleTimeRecorded: timeTakeInhale});
+      this.setState({inhaleTimeRecorded: timeTakenInhale});
     }
+    this.goToGuidedBreathing();
     this.startHapticFeedback();
   };
 
@@ -122,13 +169,6 @@ class BreathingGame extends Component {
             <Text style={styles.bottomText}>
               Measuring {measurementType} time
             </Text>
-            <LottieView
-              autoSize
-              autoPlay
-              loop
-              style={styles.wave}
-              source={require('../../../assets/anims/wave.json')}
-            />
           </View>
         )}
 

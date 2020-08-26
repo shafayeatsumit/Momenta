@@ -8,15 +8,15 @@ class Home extends Component {
       <View style={styles.container}>
         <View style={styles.box}>
           <View style={styles.button} onPress={() => {}}>
-            <Text style={styles.buttonText}>Calm</Text>
+            <Text style={styles.buttonText}>Guided</Text>
           </View>
           <View style={styles.button} onPress={() => {}}>
-            <Text style={styles.buttonText}>5 breaths</Text>
+            <Text style={styles.buttonText}>10 breaths</Text>
           </View>
           <TouchableOpacity
             style={[styles.button, styles.buttonActive]}
             onPress={() => {
-              this.props.navigation.navigate('GuidedBreathing');
+              this.props.navigation.navigate('CheckIn');
             }}>
             <Text style={[styles.buttonText]}>Start</Text>
           </TouchableOpacity>

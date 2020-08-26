@@ -2,16 +2,16 @@ import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 
 import CheckInBreath from './CheckInBreath';
+import BreathingGame from './BreathingGame';
 
-import styles from './GuidedBreathing.styles';
 import {connect} from 'react-redux';
 
 class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCheckInBreath: true,
-      showBreathingGame: false,
+      showCheckInBreath: false,
+      showBreathingGame: true,
     };
   }
 
@@ -21,16 +21,18 @@ class GuidedBreathing extends Component {
       inhaleTime: avgInhaleTime,
       exhaleTime: avgExhaleTime,
     });
+    this.setState({showCheckInBreath: false, showBreathingGame: true});
     console.log(`avgInhaleTime${avgInhaleTime} avgExhale ${avgExhaleTime}`);
   };
 
   render() {
-    const {showCheckInBreath} = this.state;
+    const {showCheckInBreath, showBreathingGame} = this.state;
     return (
       <>
         {showCheckInBreath && (
           <CheckInBreath goToBreathingGame={this.goToBreathingGame} />
         )}
+        {showBreathingGame && <BreathingGame />}
       </>
     );
   }

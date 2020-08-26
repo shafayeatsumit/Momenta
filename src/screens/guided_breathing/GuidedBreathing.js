@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {View, Text} from 'react-native';
-import LottieView from 'lottie-react-native';
+
 import CheckInBreath from './CheckInBreath';
-import BreathingStats from './BreathingStats';
+
 import styles from './GuidedBreathing.styles';
 import {connect} from 'react-redux';
 
@@ -15,9 +15,24 @@ class GuidedBreathing extends Component {
     };
   }
 
+  goToBreathingGame = (avgInhaleTime, avgExhaleTime) => {
+    this.props.dispatch({
+      type: 'UPDATE_CHECKIN_TIME',
+      inhaleTime: avgInhaleTime,
+      exhaleTime: avgExhaleTime,
+    });
+    console.log(`avgInhaleTime${avgInhaleTime} avgExhale ${avgExhaleTime}`);
+  };
+
   render() {
     const {showCheckInBreath} = this.state;
-    return <>{showCheckInBreath && <CheckInBreath />}</>;
+    return (
+      <>
+        {showCheckInBreath && (
+          <CheckInBreath goToBreathingGame={this.goToBreathingGame} />
+        )}
+      </>
+    );
   }
 }
 

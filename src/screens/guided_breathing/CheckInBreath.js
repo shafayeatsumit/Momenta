@@ -77,11 +77,11 @@ class CheckInBreath extends Component {
     this.tenSecTimer = setTimeout(() => {
       console.log('more than 5 sec');
       const {measurementType} = this.state;
-      const instructionText = `You still there?\n${measurementType} for less than 5 seconds`;
+      const instructionText = `You still there?\n${measurementType} for less than 10 seconds`;
       this.setState({measuring: false, instructionText});
       this.resetTime();
       clearTimeout(this.tenSecTimer);
-    }, 5000);
+    }, 10000);
   };
 
   oneSecError = () => {

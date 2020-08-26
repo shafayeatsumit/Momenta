@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   box: {
-    height: 240,
-    width: 270,
+    height: 450,
+    width: 400,
     justifyContent: 'space-around',
     borderRadius: 10,
     alignItems: 'center',
@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     borderColor: 'white',
   },
   button: {
-    height: 50,
-    width: 200,
+    height: 80,
+    width: 300,
     backgroundColor: Colors.darkBlue,
     borderRadius: 15,
     justifyContent: 'center',
@@ -28,9 +28,14 @@ const styles = StyleSheet.create({
   buttonActive: {
     backgroundColor: Colors.cornflowerBlue,
   },
+  text: {
+    fontFamily: FontType.SemiBold,
+    fontSize: 20,
+    color: 'white',
+  },
   buttonText: {
-    fontFamily: FontType.Regular,
-    fontSize: 18,
+    fontFamily: FontType.SemiBold,
+    fontSize: 28,
     color: 'white',
   },
 });

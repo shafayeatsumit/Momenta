@@ -23,7 +23,8 @@ const {PI} = Math;
 const radius = (size - strokeWidth) / 2;
 const circumference = radius * 2 * PI;
 const TARGET_INHALE = 4;
-const TARGET_EXHALE = 5;
+const TARGET_EXHALE = 6;
+//TODO:change the totl breath count
 const TOTAL_BREATHS = 5;
 
 class BreathingGame extends Component {

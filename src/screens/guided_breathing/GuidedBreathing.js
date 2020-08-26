@@ -10,8 +10,8 @@ class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCheckInBreath: false,
-      showBreathingGame: true,
+      showCheckInBreath: true,
+      showBreathingGame: false,
     };
   }
 

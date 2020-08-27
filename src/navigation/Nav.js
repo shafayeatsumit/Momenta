@@ -25,6 +25,7 @@ class Nav extends Component {
             name="GuidedBreathing"
             component={GuidedBreathingScreen}
           />
+
           <Stack.Screen name="CheckIn" component={CheckInScreen} />
 
           <Stack.Screen name="Loading" component={LoadingScreen} />

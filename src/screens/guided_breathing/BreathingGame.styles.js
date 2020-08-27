@@ -49,7 +49,33 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlign: 'center',
   },
-
+  resultContainer: {
+    position: 'absolute',
+    top: 0,
+    marginTop: 50,
+    height: 120,
+    width: ScreenWidth,
+    flexDirection: 'row',
+  },
+  resultTextHolder: {
+    flex: 1,
+    justifyContent: 'space-around',
+  },
+  textSm: {
+    fontFamily: FontType.Regular,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  finishButton: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    height: 50,
+    width: ScreenWidth,
+    alignSelf: 'center',
+  },
   touchableArea: {
     position: 'absolute',
     bottom: 0,

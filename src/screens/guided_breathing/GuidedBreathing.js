@@ -15,6 +15,10 @@ class GuidedBreathing extends Component {
     };
   }
 
+  finish = () => {
+    this.props.navigation.replace('Home');
+  };
+
   goToBreathingGame = (avgInhaleTime, avgExhaleTime) => {
     this.props.dispatch({
       type: 'UPDATE_CHECKIN_TIME',
@@ -32,7 +36,7 @@ class GuidedBreathing extends Component {
         {showCheckInBreath && (
           <CheckInBreath goToBreathingGame={this.goToBreathingGame} />
         )}
-        {showBreathingGame && <BreathingGame />}
+        {showBreathingGame && <BreathingGame finish={this.finish} />}
       </>
     );
   }

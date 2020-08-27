@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, Platform, TouchableOpacity, StyleSheet} from 'react-native';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import styles from './CheckInBreath.styles';
 const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 class CheckInBreath extends Component {
   constructor(props) {
@@ -49,6 +51,11 @@ class CheckInBreath extends Component {
       instructionText: 'DONE measuring',
     });
     this.props.goToBreathingGame(avgInhale, avgExhale);
+  };
+
+  startHapticFeedback = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   breathCompleted = () => {
@@ -131,6 +138,7 @@ class CheckInBreath extends Component {
     }
 
     this.pressOutTime = new Date();
+    this.startHapticFeedback();
   };
 
   handlePressIn = () => {
@@ -139,7 +147,7 @@ class CheckInBreath extends Component {
       measurementType: 'inhale',
       instructionText: null,
     });
-
+    this.startHapticFeedback();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     if (this.pressInTime) {

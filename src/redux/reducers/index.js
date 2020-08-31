@@ -2,11 +2,15 @@ import {combineReducers} from 'redux';
 import userInfo from './userInfo';
 import onboarding from './onboarding';
 import checkin from './checkin';
-import courses from './courses';
+import breathing from './breathing';
+import guidedBreathing from './guidedBreathing';
+import fixedBreathing from './fixedBreathing';
 
 export default combineReducers({
   userInfo,
   onboarding,
   checkin,
-  courses,
+  breathing,
+  guidedBreathing,
+  fixedBreathing,
 });

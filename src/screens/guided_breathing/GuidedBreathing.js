@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
-
 import CheckInBreath from './CheckInBreath';
 import BreathingGame from './BreathingGame';
-
 import {connect} from 'react-redux';
 
 class GuidedBreathing extends Component {
@@ -21,12 +18,11 @@ class GuidedBreathing extends Component {
 
   goToBreathingGame = (avgInhaleTime, avgExhaleTime) => {
     this.props.dispatch({
-      type: 'UPDATE_CHECKIN_TIME',
-      inhaleTime: avgInhaleTime,
-      exhaleTime: avgExhaleTime,
+      type: 'UPDATE_CALIBRATION_TIME',
+      calibrationInhale: avgInhaleTime,
+      calibrationExhale: avgExhaleTime,
     });
     this.setState({showCheckInBreath: false, showBreathingGame: true});
-    console.log(`avgInhaleTime${avgInhaleTime} avgExhale ${avgExhaleTime}`);
   };
 
   render() {
@@ -44,7 +40,7 @@ class GuidedBreathing extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    checkin: state.checkin,
+    guidedBreathing: state.guidedBreathing,
   };
 };
 

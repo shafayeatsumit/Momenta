@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {View, Text, Platform, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Platform, TouchableOpacity} from 'react-native';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import styles from './CheckInBreath.styles';
 const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import CheckinProgress from './CheckinProgress';
 
 class CheckInBreath extends Component {
   constructor(props) {
@@ -17,7 +17,8 @@ class CheckInBreath extends Component {
       exhaleTimeRecorded: 0,
       totalInhaleTime: 0,
       totalExhaleTime: 0,
-      progressCount: 0,
+      inhaleCount: 0,
+      exhaleCount: 0,
       touchDisabled: false,
     };
     this.pressInTime = null;
@@ -34,7 +35,8 @@ class CheckInBreath extends Component {
       exhaleTimeRecorded: 0,
       totalInhaleTime: 0,
       totalExhaleTime: 0,
-      progressCount: 0,
+      inhaleCount: 0,
+      exhaleCount: 0,
     });
   };
 
@@ -60,20 +62,21 @@ class CheckInBreath extends Component {
 
   breathCompleted = () => {
     const {
-      progressCount,
+      inhaleCount,
+      exhaleCount,
       totalInhaleTime,
       totalExhaleTime,
       inhaleTimeRecorded,
       exhaleTimeRecorded,
     } = this.state;
-    console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
-    if (progressCount === 2) {
+    // console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
+    const totalBreath = inhaleCount + exhaleCount;
+    if (totalBreath === 6) {
       const avgInhale = (inhaleTimeRecorded + totalInhaleTime) / 3;
       const avgExhale = (exhaleTimeRecorded + totalExhaleTime) / 3;
       this.measurmentCompleted(avgInhale, avgExhale);
     } else {
       this.setState({
-        progressCount: progressCount + 1,
         totalInhaleTime: inhaleTimeRecorded + totalInhaleTime,
         totalExhaleTime: exhaleTimeRecorded + totalExhaleTime,
       });
@@ -82,7 +85,6 @@ class CheckInBreath extends Component {
 
   moreThanTenSec = () => {
     this.tenSecTimer = setTimeout(() => {
-      console.log('more than 5 sec');
       const {measurementType} = this.state;
       const instructionText = `You still there?\n${measurementType} for less than 10 seconds`;
       this.setState({measuring: false, instructionText});
@@ -106,35 +108,24 @@ class CheckInBreath extends Component {
     );
   };
 
-  goToGuidedBreathTimer = (avgTime) => {
-    this.exhaleTimer = setTimeout(() => {
-      console.log('Later then expected');
-      this.setState(
-        {exhaleTimeRecorded: Number(avgTime)},
-        this.breathCompleted,
-      );
-    }, avgTime * 1000);
-  };
-
   handlePressOut = () => {
     // for reset breath
     if (!this.pressInTime) {
       return;
     }
-    const {progressCount, totalExhaleTime} = this.state;
+    const {inhaleCount} = this.state;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     this.setState({measurementType: 'exhale', measuring: true});
     const timeTakenInhale = this.measureTime(this.pressInTime);
-    // logic for last exhale time
-    if (progressCount === 2) {
-      const avgOfTwoExhales = totalExhaleTime / 2;
-      this.goToGuidedBreathTimer(avgOfTwoExhales);
-    }
+
     if (timeTakenInhale < 1) {
       this.oneSecError();
     } else {
-      this.setState({inhaleTimeRecorded: Number(timeTakenInhale)});
+      this.setState({
+        inhaleTimeRecorded: Number(timeTakenInhale),
+        inhaleCount: inhaleCount + 1,
+      });
     }
 
     this.pressOutTime = new Date();
@@ -155,8 +146,12 @@ class CheckInBreath extends Component {
       if (timeTakenExhale < 1) {
         this.oneSecError();
       } else {
+        const {exhaleCount} = this.state;
         this.setState(
-          {exhaleTimeRecorded: Number(timeTakenExhale)},
+          {
+            exhaleTimeRecorded: Number(timeTakenExhale),
+            exhaleCount: exhaleCount + 1,
+          },
           this.breathCompleted,
         );
       }
@@ -170,19 +165,17 @@ class CheckInBreath extends Component {
       measuring,
       instructionText,
       touchDisabled,
+      inhaleCount,
+      exhaleCount,
     } = this.state;
-
     return (
       <View style={styles.container}>
-        {measuring && (
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Measuring {measurementType}</Text>
-          </View>
-        )}
-
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{instructionText}</Text>
-        </View>
+        <CheckinProgress
+          measuring={measuring}
+          measurementType={measurementType}
+          instructionText={instructionText}
+          breathCount={inhaleCount + exhaleCount}
+        />
         {touchDisabled ? null : (
           <TouchableOpacity
             onPressIn={this.handlePressIn}

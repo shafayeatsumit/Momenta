@@ -24,13 +24,10 @@ class CheckIn extends Component {
 
     const avgInhaleTime = totalInhaleTime / progressCount;
     const avgExhaleTime = totalExhaleTime / progressCount;
-    console.log('progress', progressCount);
-    console.log('total inhaletime +++>', avgInhaleTime);
-    console.log('total exhaletime +++>', avgExhaleTime);
     this.props.dispatch({
-      type: 'UPDATE_CHECKIN_TIME',
-      inhaleTime: avgInhaleTime,
-      exhaleTime: avgExhaleTime,
+      type: 'UPDATE_CALIBRATION_TIME',
+      calibrationInhale: avgInhaleTime,
+      calibrationExhale: avgExhaleTime,
     });
     // TODO: change stuff in here.
     // this.props.navigation.navigate('Home');

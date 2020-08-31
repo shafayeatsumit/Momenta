@@ -25,10 +25,6 @@ const strokeWidth = 20;
 const {PI} = Math;
 const radius = (size - strokeWidth) / 2;
 const circumference = radius * 2 * PI;
-const TARGET_INHALE = 4;
-const TARGET_EXHALE = 6;
-//TODO:change the totl breath count
-const TOTAL_BREATHS = 10;
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -49,12 +45,16 @@ class BreathingGame extends Component {
     this.animated = new Animated.Value(0);
     // hapticfeedback stuffs
     this.counter = 0;
-    this.inhaleTime = props.checkin.inhaleTime;
-    this.exhaleTime = props.checkin.exhaleTime;
+    // TODO: need to change these stuffs.
+    this.totalBreaths = props.guidedBreathing.numberOfBreaths;
+    this.inhaleTime = props.guidedBreathing.calibrationInhale;
+    this.exhaleTime = props.guidedBreathing.calibrationExhale;
+    this.targetInhale = props.guidedBreathing.targetInhale;
+    this.targetExhale = props.guidedBreathing.targetExhale;
     this.inhaleIncrementValue =
-      (TARGET_INHALE - this.inhaleTime) / TOTAL_BREATHS;
+      (this.targetInhale - this.inhaleTime) / this.totalBreaths;
     this.exhlaeIncrementValue =
-      (TARGET_EXHALE - this.exhaleTime) / TOTAL_BREATHS;
+      (this.targetExhale - this.exhaleTime) / this.totalBreaths;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
   }
@@ -73,7 +73,7 @@ class BreathingGame extends Component {
       easing: Easing.linear,
     }).start(() => {
       this.counter += 1;
-      if (this.counter < TOTAL_BREATHS) {
+      if (this.counter < this.totalBreaths) {
         this.startHapticFeedback();
         this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
         this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
@@ -134,9 +134,7 @@ class BreathingGame extends Component {
       inhaleTimeRecorded,
       exhaleTimeRecorded,
     } = this.state;
-    console.log(
-      `total_inhale ${totalInhaleTime} total_exhale ${totalExhaleTime}`,
-    );
+
     this.setState({
       progressCount: progressCount + 1,
       totalInhaleTime: inhaleTimeRecorded + totalInhaleTime,
@@ -184,7 +182,8 @@ class BreathingGame extends Component {
       finalInhaleTime,
       finalExhaleTime,
     } = this.state;
-    const {checkin} = this.props;
+    const {guidedBreathing} = this.props;
+    const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const strokeoffset =
       (2 * Math.PI * radius * this.inhaleTime) /
       (this.inhaleTime + this.exhaleTime);
@@ -199,10 +198,10 @@ class BreathingGame extends Component {
             <View style={styles.resultTextHolder}>
               <Text style={styles.textSm}>Start Average</Text>
               <Text style={styles.textSm}>
-                Inhale: {checkin.inhaleTime.toFixed(2)}
+                Inhale: {calibrationInhale.toFixed(2)}
               </Text>
               <Text style={styles.textSm}>
-                Exhale: {checkin.exhaleTime.toFixed(2)}
+                Exhale: {calibrationExhale.toFixed(2)}
               </Text>
             </View>
             <View style={styles.resultTextHolder}>
@@ -267,8 +266,7 @@ class BreathingGame extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    courses: state.courses,
-    checkin: state.checkin,
+    guidedBreathing: state.guidedBreathing,
   };
 };
 

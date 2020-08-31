@@ -52,7 +52,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         calibrationInhale: action.calibrationInhale,
-        calibrationExhale: action.calibrationInhale,
+        calibrationExhale: action.calibrationExhale,
       };
     case 'ADD_GUIDED_BREATH':
       return {

@@ -3,28 +3,15 @@ import {
   View,
   Animated,
   Text,
-  Dimensions,
   Platform,
   Easing,
   TouchableOpacity,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import BreathingGameProgress from './BreathingGameProgress';
 import styles from './BreathingGame.styles';
-import LottieView from 'lottie-react-native';
-import {
-  hapticFeedbackOptions,
-  ScreenWidth,
-} from '../../helpers/constants/common';
-const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
-import Svg, {Defs, LinearGradient, Stop, Circle} from 'react-native-svg';
-
-const {width} = Dimensions.get('window');
-const size = width - 50;
-const strokeWidth = 20;
-const {PI} = Math;
-const radius = (size - strokeWidth) / 2;
-const circumference = radius * 2 * PI;
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -44,8 +31,8 @@ class BreathingGame extends Component {
     this.pressOutTime = null;
     this.animated = new Animated.Value(0);
     // hapticfeedback stuffs
+
     this.counter = 0;
-    // TODO: need to change these stuffs.
     this.totalBreaths = props.guidedBreathing.numberOfBreaths;
     this.inhaleTime = props.guidedBreathing.calibrationInhale;
     this.exhaleTime = props.guidedBreathing.calibrationExhale;
@@ -108,7 +95,6 @@ class BreathingGame extends Component {
     }, this.inhaleTime * 1000);
   }
 
-  // breathing game related
   resetTime = () => {
     this.pressInTime = null;
     this.pressOutTime = null;
@@ -120,10 +106,6 @@ class BreathingGame extends Component {
 
   measureTime = (time) => {
     return ((new Date() - time) / 1000).toFixed(2);
-  };
-
-  measurmentCompleted = (avgInhale, avgExhale) => {
-    this.setState({touchDisabled: true});
   };
 
   breathCompleted = () => {
@@ -184,9 +166,6 @@ class BreathingGame extends Component {
     } = this.state;
     const {guidedBreathing} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
-    const strokeoffset =
-      (2 * Math.PI * radius * this.inhaleTime) /
-      (this.inhaleTime + this.exhaleTime);
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
@@ -215,29 +194,10 @@ class BreathingGame extends Component {
             </View>
           </View>
         )}
-
-        <Svg width={size} height={size} style={styles.circleContainer}>
-          <Circle
-            stroke="silver"
-            fill="none"
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            strokeWidth={strokeWidth}
-            strokeDasharray={[circumference, circumference]}
-          />
-
-          <Circle
-            stroke="#2162cc"
-            fill="none"
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            strokeWidth={strokeWidth}
-            strokeDasharray={[circumference, circumference]}
-            strokeDashoffset={-strokeoffset}
-          />
-        </Svg>
+        <BreathingGameProgress
+          inhaleTime={this.inhaleTime}
+          exhaleTime={this.exhaleTime}
+        />
         <View style={styles.textContainer}>
           <Text style={styles.text}>{circleText}</Text>
         </View>

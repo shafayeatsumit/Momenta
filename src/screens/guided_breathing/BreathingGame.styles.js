@@ -4,6 +4,7 @@ import {FontType, Colors} from '../../helpers/theme';
 
 const size = ScreenWidth - 50;
 const BOX_SIZE = size - 40;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

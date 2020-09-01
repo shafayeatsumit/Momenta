@@ -16,6 +16,7 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* three_thoughtsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* three_thoughtsTests.m */; };
 		3122B03424339B40001C2A30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3122B03324339B40001C2A30 /* Assets.xcassets */; };
+		31236E1524FE2B3C00C9F770 /* loop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 31236E1424FE2B3C00C9F770 /* loop.mp3 */; };
 		31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31822BCB24D14DE800C41C29 /* Montserrat-Light.ttf */; };
 		31C6EEC224BAB9080030BBE5 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6EEC124BAB9080030BBE5 /* File.swift */; };
 		31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 31E39EB52465098C00F1116E /* GoogleService-Info.plist */; };
@@ -64,6 +65,7 @@
 		2D02E47B1E0B4A5D006451C7 /* three_thoughts-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "three_thoughts-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* three_thoughts-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "three_thoughts-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3122B03324339B40001C2A30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		31236E1424FE2B3C00C9F770 /* loop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = loop.mp3; sourceTree = "<group>"; };
 		316BFC582431D3D90083A48C /* Fontisto.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fontisto.ttf; sourceTree = "<group>"; };
 		316BFC592431D3D90083A48C /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		316BFC5A2431D3D90083A48C /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		13B07FAE1A68108700A75B9A /* three_thoughts */ = {
 			isa = PBXGroup;
 			children = (
+				31236E1424FE2B3C00C9F770 /* loop.mp3 */,
 				31E39EB52465098C00F1116E /* GoogleService-Info.plist */,
 				3122B03324339B40001C2A30 /* Assets.xcassets */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -427,6 +430,7 @@
 				2230DC331FA240BA960526CC /* Montserrat-Medium.ttf in Resources */,
 				BCA444CA6D6543AA847EB15A /* Montserrat-Regular.ttf in Resources */,
 				36ED219C9AFB48548213E8DA /* Montserrat-SemiBold.ttf in Resources */,
+				31236E1524FE2B3C00C9F770 /* loop.mp3 in Resources */,
 				3122B03424339B40001C2A30 /* Assets.xcassets in Resources */,
 				31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */,
 				31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */,

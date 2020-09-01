@@ -1,6 +1,7 @@
 package org.threethoughtshealthierllc.momenta;
 
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
+import com.zmxv.RNSound.RNSoundPackage;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;

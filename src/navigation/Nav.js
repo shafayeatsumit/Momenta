@@ -3,7 +3,7 @@ import {StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/home/Home';
 import SettingsScreen from '../screens/settings/Settings';
-import ContentScreen from '../screens/content/Content';
+import FixedBreathingScreen from '../screens/fixed_breathing/FixedBreathing';
 import CheckInScreen from '../screens/check_in/CheckIn';
 import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
@@ -25,7 +25,10 @@ class Nav extends Component {
             name="GuidedBreathing"
             component={GuidedBreathingScreen}
           />
-
+          <Stack.Screen
+            name="FixedBreathing"
+            component={FixedBreathingScreen}
+          />
           <Stack.Screen name="CheckIn" component={CheckInScreen} />
 
           <Stack.Screen name="Loading" component={LoadingScreen} />

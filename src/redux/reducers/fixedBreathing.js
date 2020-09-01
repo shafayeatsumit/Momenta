@@ -1,13 +1,23 @@
+import {fixedBreathingProperties} from '../../helpers/constants';
+
 const initialState = {
+  id: 'beginner_box',
   numberOfBreaths: 10,
-  inhale: 4,
-  inhaleHold: 3,
-  exhale: 4,
-  exhaleHold: 3,
+  name: 'Beginner Box',
+  inhale: 2,
+  inhaleHold: 2,
+  exhale: 2,
+  exhaleHold: 2,
 };
 
 const breathing = (state = initialState, action) => {
   switch (action.type) {
+    case 'SWITCH_FIXED_BREATHING_TYPE':
+      return {
+        ...state,
+        ...fixedBreathingProperties[action.breathingType],
+      };
+
     case 'ADD_FIXED_INHALE':
       return {
         ...state,
@@ -16,7 +26,7 @@ const breathing = (state = initialState, action) => {
     case 'REMOVE_FIXED_INHALE':
       return {
         ...state,
-        inhale: state.inhale > 3 ? state.inhale - 1 : state.inhale,
+        inhale: state.inhale > 2 ? state.inhale - 1 : state.inhale,
       };
 
     case 'ADD_FIXED_EXHALE':
@@ -28,7 +38,7 @@ const breathing = (state = initialState, action) => {
     case 'REMOVE_FIXED_EXHALE':
       return {
         ...state,
-        exhale: state.exhale > 3 ? state.exhale - 1 : state.exhale,
+        exhale: state.exhale > 2 ? state.exhale - 1 : state.exhale,
       };
 
     case 'ADD_FIXED_INHALE_HOLD':
@@ -41,7 +51,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         inhaleHold:
-          state.inhaleHold > 1 ? state.inhaleHold - 1 : state.inhaleHold,
+          state.inhaleHold > 0 ? state.inhaleHold - 1 : state.inhaleHold,
       };
 
     case 'ADD_FIXED_EXHALE_HOLD':
@@ -54,7 +64,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         exhaleHold:
-          state.exhaleHold > 1 ? state.exhaleHold - 1 : state.exhaleHold,
+          state.exhaleHold > 0 ? state.exhaleHold - 1 : state.exhaleHold,
       };
 
     case 'ADD_FIXED_BREATH':
@@ -66,7 +76,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         numberOfBreaths:
-          state.numberOfBreaths > 10
+          state.numberOfBreaths > 5
             ? state.numberOfBreaths - 1
             : state.numberOfBreaths,
       };

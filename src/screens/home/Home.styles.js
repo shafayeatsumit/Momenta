@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   box: {
-    height: 500,
+    height: 600,
     width: 400,
     borderRadius: 10,
 
@@ -58,10 +58,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 20,
   },
+  fixedBreathingSettings: {
+    marginTop: 30,
+    height: 250,
+    width: '100%',
+    backgroundColor: 'red',
+  },
   settingsContainer: {
     height: 50,
     marginHorizontal: 60,
     flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  fixedBreathingType: {
+    height: 200,
+    flexDirection: 'column',
     justifyContent: 'space-between',
   },
   settingsText: {
@@ -147,8 +158,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   startButton: {
-    position: 'absolute',
-    bottom: '20%',
     alignSelf: 'center',
     width: 180,
     height: 60,

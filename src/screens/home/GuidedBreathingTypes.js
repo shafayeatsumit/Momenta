@@ -14,6 +14,7 @@ const GuidedBreathingTypes = (props) => {
       {GUIDED_BREATHINGS.map((item) => {
         return (
           <TouchableOpacity
+            key={item.id}
             onPress={() =>
               dispatch({
                 type: 'SWITCH_GUIDED_BREATHING_TYPE',

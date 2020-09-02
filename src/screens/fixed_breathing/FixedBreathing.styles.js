@@ -84,6 +84,22 @@ const styles = StyleSheet.create({
     right: 0,
     height: ScreenHeight * 0.4,
   },
+  musicIcon: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
+  musicIconHolder: {
+    position: 'absolute',
+    // left: 20,
+    top: '8%',
+    left: 35,
+    zIndex: 3,
+    backgroundColor: 'white',
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+  },
 });
 
 export default styles;

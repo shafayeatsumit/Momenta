@@ -27,7 +27,6 @@ class GuidedBreathing extends Component {
 
   render() {
     const {showCheckInBreath, showBreathingGame} = this.state;
-    console.log('guidedBreathing', this.props.guidedBreathing);
     return (
       <>
         {showCheckInBreath && (

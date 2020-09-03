@@ -62,25 +62,16 @@ class CheckInBreath extends Component {
 
   breathCompleted = () => {
     const {
-      inhaleCount,
-      exhaleCount,
       totalInhaleTime,
       totalExhaleTime,
       inhaleTimeRecorded,
       exhaleTimeRecorded,
     } = this.state;
     // console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
-    const totalBreath = inhaleCount + exhaleCount;
-    if (totalBreath === 6) {
-      const avgInhale = (inhaleTimeRecorded + totalInhaleTime) / 3;
-      const avgExhale = (exhaleTimeRecorded + totalExhaleTime) / 3;
-      this.measurmentCompleted(avgInhale, avgExhale);
-    } else {
-      this.setState({
-        totalInhaleTime: inhaleTimeRecorded + totalInhaleTime,
-        totalExhaleTime: exhaleTimeRecorded + totalExhaleTime,
-      });
-    }
+    console.log('breath completed ***END***');
+    const avgInhale = inhaleTimeRecorded + totalInhaleTime;
+    const avgExhale = exhaleTimeRecorded + totalExhaleTime;
+    this.measurmentCompleted(avgInhale, avgExhale);
   };
 
   moreThanTenSec = () => {

@@ -20,7 +20,7 @@ class CheckinProgress extends Component {
       instructionText,
       breathCount,
     } = this.props;
-    const offset = (circumference * breathCount) / 6;
+    const offset = (circumference * breathCount) / 2;
     return (
       <>
         <Svg width={size} height={size} style={styles.circleContainer}>

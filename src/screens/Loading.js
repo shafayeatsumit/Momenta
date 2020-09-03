@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {View, StyleSheet, AppState} from 'react-native';
 import LottieView from 'lottie-react-native';
 import analytics from '@react-native-firebase/analytics';
-import {anonymousSignup} from '../redux/actions/tag';
+import {anonymousSignup} from '../redux/actions/user';
 import {connect} from 'react-redux';
-import {FontType, Colors} from '../helpers/theme';
+import {Colors} from '../helpers/theme';
 
 class Loading extends Component {
   constructor(props) {

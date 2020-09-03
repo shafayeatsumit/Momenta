@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {View, Text, Image, TouchableOpacity} from 'react-native';
 import moment from 'moment';
 import leftArrowIcon from '../../../assets/icons/arrow_left.png';
 import LottieView from 'lottie-react-native';

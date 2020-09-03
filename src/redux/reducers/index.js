@@ -9,4 +9,7 @@ export default combineReducers({
   breathing,
   guidedBreathing,
   fixedBreathing,
+  // RIP: this later. these were whitelisted before.
+  settings: (state = {}) => state,
+  onboarding: (state = {}) => state,
 });

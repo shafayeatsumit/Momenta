@@ -27,12 +27,15 @@ const BreathCounter = (props) => {
       ? dispatch({type: 'REMOVE_GUIDED_BREATH'})
       : dispatch({type: 'REMOVE_FIXED_BREATH'});
 
+  const minutes = breathCount > 1 ? 'Minutes' : 'Minute';
   return (
     <View style={styles.breathCounterContainer}>
       <TouchableOpacity onPress={removeBreathCount}>
         <Image source={MinusIcon} style={styles.minusIcon} />
       </TouchableOpacity>
-      <Text style={styles.breathCount}>{breathCount} Breaths</Text>
+      <Text style={styles.breathCount}>
+        {breathCount} {minutes}
+      </Text>
       <TouchableOpacity onPress={addBreathCount}>
         <Image source={PlusIcon} style={styles.plusIcon} />
       </TouchableOpacity>

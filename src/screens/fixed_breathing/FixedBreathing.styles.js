@@ -85,20 +85,20 @@ const styles = StyleSheet.create({
     height: ScreenHeight * 0.4,
   },
   musicIcon: {
-    height: 50,
-    width: 50,
-    borderRadius: 25,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
   },
   musicIconHolder: {
     position: 'absolute',
     // left: 20,
-    top: '8%',
+    bottom: '8%',
     left: 35,
     zIndex: 3,
     backgroundColor: 'white',
-    height: 50,
-    width: 50,
-    borderRadius: 25,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
   },
 });
 

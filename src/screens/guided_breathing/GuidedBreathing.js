@@ -13,7 +13,7 @@ class GuidedBreathing extends Component {
   }
 
   finish = () => {
-    this.props.navigation.replace('Home');
+    this.props.navigation.pop();
   };
 
   goToBreathingGame = (avgInhaleTime, avgExhaleTime) => {
@@ -27,12 +27,22 @@ class GuidedBreathing extends Component {
 
   render() {
     const {showCheckInBreath, showBreathingGame} = this.state;
+    const {userInfo} = this.props;
+    const {musicOn} = userInfo;
+    const {route} = this.props;
+
     return (
       <>
         {showCheckInBreath && (
           <CheckInBreath goToBreathingGame={this.goToBreathingGame} />
         )}
-        {showBreathingGame && <BreathingGame finish={this.finish} />}
+        {showBreathingGame && (
+          <BreathingGame
+            finish={this.finish}
+            musicOn={musicOn}
+            handleMusic={route.params.handleMusic}
+          />
+        )}
       </>
     );
   }
@@ -41,6 +51,7 @@ class GuidedBreathing extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     guidedBreathing: state.guidedBreathing,
+    userInfo: state.userInfo,
   };
 };
 

@@ -171,6 +171,21 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: 'white',
   },
+  musicIcon: {
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
+  musicIconHolder: {
+    position: 'absolute',
+    bottom: '5%',
+    left: 35,
+    zIndex: 3,
+    backgroundColor: 'white',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
 });
 
 export default styles;

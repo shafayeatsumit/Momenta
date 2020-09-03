@@ -16,16 +16,6 @@ import {connect} from 'react-redux';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 
-const Sound = require('react-native-sound');
-Sound.setCategory('Playback');
-
-const loopSound = new Sound('loop.mp3', Sound.MAIN_BUNDLE, (error) => {
-  if (error) {
-    console.log('failed to load the sound', error);
-    return;
-  }
-});
-
 class BreathingGame extends Component {
   constructor(props) {
     super(props);
@@ -39,7 +29,6 @@ class BreathingGame extends Component {
       finalExhaleTime: 0,
       finalInhaleTime: 0,
       touchDisabled: false,
-      musicOn: true,
     };
     this.pressInTime = null;
     this.pressOutTime = null;
@@ -63,17 +52,6 @@ class BreathingGame extends Component {
   startHapticFeedback = () => {
     const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-  };
-
-  stopMusic = () => {
-    const {musicOn} = this.state;
-    this.setState({musicOn: !musicOn});
-    musicOn ? loopSound.stop() : this.startMusic();
-  };
-
-  startMusic = () => {
-    loopSound.play();
-    loopSound.setNumberOfLoops(-1);
   };
 
   animate = (duration) => {
@@ -110,10 +88,6 @@ class BreathingGame extends Component {
     this.startHapticFeedback();
   };
 
-  componentWillUnmount() {
-    loopSound.stop();
-  }
-
   componentDidMount() {
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.animate(totalTime);
@@ -122,7 +96,6 @@ class BreathingGame extends Component {
       this.inhalePulse();
       clearTimeout(this.initAnimatorTimer);
     }, this.inhaleTime * 1000);
-    this.startMusic();
   }
 
   resetTime = () => {
@@ -193,9 +166,8 @@ class BreathingGame extends Component {
       touchDisabled,
       finalInhaleTime,
       finalExhaleTime,
-      musicOn,
     } = this.state;
-    const {guidedBreathing} = this.props;
+    const {guidedBreathing, musicOn, handleMusic} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -250,9 +222,7 @@ class BreathingGame extends Component {
             style={styles.touchableArea}
           />
         )}
-        <TouchableOpacity
-          onPress={this.stopMusic}
-          style={styles.musicIconHolder}>
+        <TouchableOpacity onPress={handleMusic} style={styles.musicIconHolder}>
           <Image
             style={styles.musicIcon}
             source={musicOn ? MusicIcon : NoMusicIcon}

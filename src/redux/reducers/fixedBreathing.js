@@ -76,7 +76,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         numberOfBreaths:
-          state.numberOfBreaths > 5
+          state.numberOfBreaths > 1
             ? state.numberOfBreaths - 1
             : state.numberOfBreaths,
       };

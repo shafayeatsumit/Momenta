@@ -16,43 +16,28 @@ import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 import {connect} from 'react-redux';
 
-const Sound = require('react-native-sound');
-const soundFile = 'loop.mp3';
-Sound.setCategory('Playback');
-
 class FixedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
       circleText: 'Tap Anywhere To Start',
       finished: false,
-      musicOn: true,
     };
     this.animated = new Animated.Value(0);
     this.counter = 0;
-    this.totalBreaths = props.fixedBreathing.numberOfBreaths;
     this.inhaleTime = props.fixedBreathing.inhale;
     this.inhaleHold = props.fixedBreathing.inhaleHold;
     this.exhaleTime = props.fixedBreathing.exhale;
     this.exhaleHold = props.fixedBreathing.exhaleHold;
     this.totalTime =
       this.inhaleTime + this.exhaleTime + this.inhaleHold + this.exhaleHold;
-    // sound files.
-    this.playingFile1 = false;
-    this.playingFile2 = false;
-    this.soundFile1 = new Sound(soundFile, Sound.MAIN_BUNDLE, (error) => {});
-    this.soundFile2 = new Sound(soundFile, Sound.MAIN_BUNDLE, (error) => {});
+    this.totalBreathingTime = props.fixedBreathing.numberOfBreaths;
+    this.totalBreaths = Math.ceil((this.totalBreaths * 60) / this.totalTime);
   }
 
   startHapticFeedback = () => {
     const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-  };
-
-  handleMusic = () => {
-    const {musicOn} = this.state;
-    musicOn ? this.stopSound() : this.playSoundFileOne();
-    this.setState({musicOn: !musicOn});
   };
 
   startInhaleHoldTimer = () => {
@@ -108,58 +93,12 @@ class FixedBreathing extends Component {
     this.startHapticFeedback();
   };
 
-  completedPlayingSoundFile1 = () => {
-    this.playingFile1 = false;
-    // this.soundFile1.setCurrentTime(0);
-    this.soundTimerOne && clearInterval(this.soundTimerOne);
-  };
-
-  completedPlayingSoundFile2 = () => {
-    this.playingFile2 = false;
-    // this.soundFile2.setCurrentTime(0);
-    this.soundTimerTwo && clearInterval(this.soundTimerTwo);
-  };
-
-  stopSound = () => {
-    this.setState({musicOn: false});
-    this.playingFile1 && this.soundFile1.stop();
-    this.playingFile2 && this.soundFile2.stop();
-    this.soundTimerOne && clearInterval(this.soundTimerOne);
-    this.soundTimerOne && clearInterval(this.soundTimerTwo);
-  };
-
-  playSoundFileTwo = () => {
-    this.soundFile2.play(this.completedPlayingSoundFile2);
-    this.playingFile2 = true;
-    this.soundTimerTwo = setInterval(() => {
-      this.soundFile2.getCurrentTime((seconds, isPlaying) => {
-        if (seconds > 29 && this.playingFile1 === false) {
-          this.playSoundFileOne();
-        }
-      });
-    }, 500);
-  };
-
-  playSoundFileOne = () => {
-    this.soundFile1.play(this.completedPlayingSoundFile1);
-    this.playingFile1 = true;
-    this.soundTimerOne = setInterval(() => {
-      this.soundFile1.getCurrentTime((seconds, isPlaying) => {
-        console.log('sound timer one', seconds);
-        if (seconds > 29 && this.playingFile2 === false) {
-          this.playSoundFileTwo();
-        }
-      });
-    }, 500);
-  };
-
   handlePress = () => {
     this.inhaleStart();
     this.startExhaleTimer();
     this.exhaleHold && this.startExhaleHoldTimer();
     this.inhaleHold && this.startInhaleHoldTimer();
     this.animate();
-    this.playSoundFileOne();
   };
 
   componentWillUnmount() {
@@ -173,8 +112,12 @@ class FixedBreathing extends Component {
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
-    const {circleText, finished, musicOn} = this.state;
+    const {circleText, finished} = this.state;
     const transform = [{rotate: this.rotate}];
+    const {userInfo} = this.props;
+    const {musicOn} = userInfo;
+    const {route} = this.props;
+    console.log('route params', route.params);
     return (
       <TouchableOpacity
         style={styles.container}
@@ -198,12 +141,12 @@ class FixedBreathing extends Component {
         {finished && (
           <TouchableOpacity
             style={styles.finishButton}
-            onPress={() => this.props.navigation.replace('Home')}>
+            onPress={() => this.props.navigation.pop()}>
             <Text style={styles.text}>Finish</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={this.handleMusic}
+          onPress={route.params.handleMusic}
           style={styles.musicIconHolder}>
           <Image
             style={styles.musicIcon}
@@ -217,6 +160,7 @@ class FixedBreathing extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     fixedBreathing: state.fixedBreathing,
+    userInfo: state.userInfo,
   };
 };
 

@@ -2,12 +2,14 @@ import {guidedBreathingProperties} from '../../helpers/constants';
 
 const initialState = {
   id: 'calm',
-  numberOfBreaths: 10,
-  targetInhale: 4,
-  targetExhale: 4,
-  multiLevel: false,
-  calibrationInhale: 0,
-  calibrationExhale: 0,
+  numberOfBreaths: 2,
+  minNumberOfBreaths: 2,
+  targetInhale: 3.5,
+  targetExhale: 3.5,
+  firstThreshold: 120,
+  secondThreshold: 0,
+  secondTargetInhale: 0,
+  secondTargetExhale: 0,
 };
 
 const breathing = (state = initialState, action) => {
@@ -32,7 +34,7 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         numberOfBreaths:
-          state.numberOfBreaths > 1
+          state.numberOfBreaths > state.minNumberOfBreaths
             ? state.numberOfBreaths - 1
             : state.numberOfBreaths,
       };

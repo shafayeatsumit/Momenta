@@ -31,8 +31,8 @@ class FixedBreathing extends Component {
     this.exhaleHold = props.fixedBreathing.exhaleHold;
     this.totalTime =
       this.inhaleTime + this.exhaleTime + this.inhaleHold + this.exhaleHold;
-    this.totalBreathingTime = props.fixedBreathing.numberOfBreaths;
-    this.totalBreaths = Math.ceil((this.totalBreaths * 60) / this.totalTime);
+    this.totalBreathingTime = props.fixedBreathing.numberOfBreaths * 60;
+    this.totalBreaths = Math.ceil(this.totalBreathingTime / this.totalTime);
   }
 
   startHapticFeedback = () => {
@@ -66,7 +66,7 @@ class FixedBreathing extends Component {
 
   animatCb = () => {
     this.counter += 1;
-    console.log('total breaths', this.totalBreaths, this.counter);
+    console.log('time total', this.counter * this.totalTime);
     if (this.totalBreaths > this.counter) {
       this.inhaleStart();
       this.startExhaleTimer();
@@ -105,7 +105,6 @@ class FixedBreathing extends Component {
     this.inhaleHoldTimer && clearTimeout(this.inhaleHoldTimer);
     this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
-    this.stopSound();
   }
 
   render() {
@@ -117,7 +116,6 @@ class FixedBreathing extends Component {
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
-    console.log('route params', route.params);
     return (
       <TouchableOpacity
         style={styles.container}

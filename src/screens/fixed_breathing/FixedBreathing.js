@@ -40,38 +40,37 @@ class FixedBreathing extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
-  startInhaleHoldTimer = () => {
+  startExhaleHoldTimer = () => {
     this.inhaleHoldTimer = setTimeout(() => {
-      this.setState({circleText: 'Hold!'});
+      this.setState({circleText: 'Hold'});
       this.startHapticFeedback();
       clearTimeout(this.inhaleHoldTimer);
-    }, this.inhaleTime * 1000);
+    }, this.exhaleTime * 1000);
   };
 
-  startExhaleTimer = () => {
+  startInhaleTimer = () => {
     this.exhaleTimer = setTimeout(() => {
-      this.setState({circleText: 'Exhale'});
+      this.setState({circleText: 'Inhale'});
       this.startHapticFeedback();
       clearTimeout(this.exhaleTimer);
-    }, (this.inhaleTime + this.inhaleHold) * 1000);
+    }, (this.exhaleTime + this.exhaleHold) * 1000);
   };
 
-  startExhaleHoldTimer = () => {
+  startInhaleHoldTimer = () => {
     this.exhaleHoldTimer = setTimeout(() => {
-      this.setState({circleText: 'Hold!'});
+      this.setState({circleText: 'Hold'});
       this.startHapticFeedback();
       clearTimeout(this.exhaleHoldTimer);
-    }, (this.totalTime - this.exhaleHold) * 1000);
+    }, (this.totalTime - this.inhaleHold) * 1000);
   };
 
   animatCb = () => {
     this.counter += 1;
-    console.log('time total', this.counter * this.totalTime);
     if (this.totalBreaths > this.counter) {
-      this.inhaleStart();
-      this.startExhaleTimer();
-      this.inhaleHold && this.startInhaleHoldTimer();
+      this.exhaleStart();
       this.exhaleHold && this.startExhaleHoldTimer();
+      this.inhaleHold && this.startInhaleHoldTimer();
+      this.startInhaleTimer();
       this.animate();
     } else {
       this.setState({finished: true});
@@ -88,14 +87,14 @@ class FixedBreathing extends Component {
     }).start(this.animatCb);
   };
 
-  inhaleStart = () => {
-    this.setState({circleText: 'Inhale'});
+  exhaleStart = () => {
+    this.setState({circleText: 'Exhale'});
     this.startHapticFeedback();
   };
 
   handlePress = () => {
-    this.inhaleStart();
-    this.startExhaleTimer();
+    this.exhaleStart();
+    this.startInhaleTimer();
     this.exhaleHold && this.startExhaleHoldTimer();
     this.inhaleHold && this.startInhaleHoldTimer();
     this.animate();

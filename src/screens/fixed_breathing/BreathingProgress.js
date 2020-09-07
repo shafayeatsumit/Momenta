@@ -17,11 +17,11 @@ const BreathingGameProgress = ({
   exhaleHold,
 }) => {
   const total = inhaleTime + exhaleTime + inhaleHold + exhaleHold;
-  const inhaleHoldOffset = (2 * Math.PI * radius * inhaleTime) / total;
-  const exhaleOffset =
-    (2 * Math.PI * radius * (inhaleTime + inhaleHold)) / total;
-  const exhaleHoldOffset =
-    (2 * Math.PI * radius * (inhaleTime + inhaleHold + exhaleTime)) / total;
+  const exhaleHoldOffset = (2 * Math.PI * radius * exhaleTime) / total;
+  const inhaleOffset =
+    (2 * Math.PI * radius * (exhaleHold + exhaleTime)) / total;
+  const inhaleHoldOffset =
+    (2 * Math.PI * radius * (exhaleTime + exhaleHold + inhaleTime)) / total;
 
   return (
     <Svg width={size} height={size} style={styles.circleContainer}>
@@ -36,14 +36,14 @@ const BreathingGameProgress = ({
       />
 
       <Circle
-        stroke="silver"
+        stroke="#79a0e0"
         fill="none"
         cx={size / 2}
         cy={size / 2}
         r={radius}
         strokeWidth={strokeWidth}
         strokeDasharray={[circumference, circumference]}
-        strokeDashoffset={-inhaleHoldOffset}
+        strokeDashoffset={-exhaleHoldOffset}
       />
       <Circle
         stroke="#2162cc"
@@ -53,17 +53,17 @@ const BreathingGameProgress = ({
         r={radius}
         strokeWidth={strokeWidth}
         strokeDasharray={[circumference, circumference]}
-        strokeDashoffset={-exhaleOffset}
+        strokeDashoffset={-inhaleOffset}
       />
       <Circle
-        stroke="silver"
+        stroke="#79a0e0"
         fill="none"
         cx={size / 2}
         cy={size / 2}
         r={radius}
         strokeWidth={strokeWidth}
         strokeDasharray={[circumference, circumference]}
-        strokeDashoffset={-exhaleHoldOffset}
+        strokeDashoffset={-inhaleHoldOffset}
       />
     </Svg>
   );

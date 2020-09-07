@@ -68,11 +68,9 @@ class CheckInBreath extends Component {
       inhaleTimeRecorded,
       exhaleTimeRecorded,
     } = this.state;
-    console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
-    console.log('breath completed ***END***');
     const avgInhale = inhaleTimeRecorded + totalInhaleTime;
     const avgExhale = exhaleTimeRecorded + totalExhaleTime;
-    this.measurmentCompleted(avgInhale, avgExhale);
+    this.measurmentCompleted(avgExhale, avgInhale);
   };
 
   moreThanTenSec = () => {
@@ -119,7 +117,6 @@ class CheckInBreath extends Component {
         exhaleCount: exhaleCount + 1,
       });
     }
-
     this.pressOutTime = new Date();
     this.startHapticFeedback();
   };

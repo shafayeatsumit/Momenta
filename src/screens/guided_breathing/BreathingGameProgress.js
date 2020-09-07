@@ -12,7 +12,7 @@ const circumference = radius * 2 * PI;
 
 const BreathingGameProgress = ({inhaleTime, exhaleTime}) => {
   const strokeoffset =
-    (2 * Math.PI * radius * inhaleTime) / (inhaleTime + exhaleTime);
+    (2 * Math.PI * radius * exhaleTime) / (inhaleTime + exhaleTime);
   return (
     <Svg width={size} height={size} style={styles.circleContainer}>
       <Circle

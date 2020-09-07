@@ -16,8 +16,6 @@ import {connect} from 'react-redux';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 
-const FIRST_TIME_THRESHOLD = 30;
-
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
 
@@ -28,7 +26,7 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleText: 'Inhaling',
+      circleText: 'Exhaling',
       inhaleTimeRecorded: 0,
       exhaleTimeRecorded: 0,
       totalInhaleTime: 0,
@@ -46,22 +44,21 @@ class BreathingGame extends Component {
     this.finishBreathingTime = props.guidedBreathing.numberOfBreaths * 60; // in secs
     this.totalBreathingTime = 0;
     this.totalBreaths = props.guidedBreathing.numberOfBreaths;
-    this.inhaleTime = props.guidedBreathing.calibrationInhale;
     this.exhaleTime = props.guidedBreathing.calibrationExhale;
-    this.targetInhale = props.guidedBreathing.targetInhale;
+    this.inhaleTime = props.guidedBreathing.calibrationInhale;
     this.targetExhale = props.guidedBreathing.targetExhale;
-    this.avgInhale = avgInhale(this.inhaleTime, this.targetInhale);
+    this.targetInhale = props.guidedBreathing.targetInhale;
     this.avgExhale = avgExhale(this.exhaleTime, this.targetExhale);
+    this.avgInhale = avgInhale(this.inhaleTime, this.targetInhale);
     this.firstThresholdBreathCount = Math.floor(
       props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
     );
-    console.log('firstThresholdBreathCount', this.firstThresholdBreathCount);
-    this.inhaleIncrementValue =
-      (this.targetInhale - this.inhaleTime) / this.firstThresholdBreathCount;
     this.exhlaeIncrementValue =
       (this.targetExhale - this.exhaleTime) / this.firstThresholdBreathCount;
-    this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
+    this.inhaleIncrementValue =
+      (this.targetInhale - this.inhaleTime) / this.firstThresholdBreathCount;
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
+    this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
   }
 
   startHapticFeedback = () => {
@@ -77,7 +74,6 @@ class BreathingGame extends Component {
       secondTargetExhale,
       secondThreshold,
     } = this.props.guidedBreathing;
-    console.log('second threashhold setup');
     this.avgInhale = avgInhale(targetInhale, secondTargetInhale);
     this.avgExhale = avgExhale(targetExhale, secondTargetExhale);
     this.secondThresholdBreathCount = Math.floor(
@@ -102,13 +98,13 @@ class BreathingGame extends Component {
     this.exhaleTime = noIncrement
       ? this.exhaleTime
       : this.exhaleTime + this.exhlaeIncrementValue;
-    console.log(
-      `inhale time ${this.inhaleTime} exhale time ${this.exhaleTime}`,
-    );
-    this.setState({circleText: 'Inhaling'});
+    this.setState({circleText: 'Exhaling'});
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
-    setTimeout(this.inhalePulse, this.inhaleTime * 1000);
+    this.exhalePulseTimer = setTimeout(() => {
+      this.exhalePulse();
+      clearTimeout(this.exhalePulseTimer);
+    }, this.exhaleTime * 1000);
     this.animate(totalTime);
   };
 
@@ -132,11 +128,6 @@ class BreathingGame extends Component {
     }).start(() => {
       this.counter += 1;
       const {secondThreshold} = this.props.guidedBreathing;
-      console.log(
-        'finishing',
-        this.finishBreathingTime,
-        this.totalBreathingTime,
-      );
       if (this.counter < this.firstThresholdBreathCount) {
         this.animateCB();
       } else if (secondThreshold) {
@@ -151,22 +142,19 @@ class BreathingGame extends Component {
     });
   };
 
-  inhalePulse = () => {
-    this.setState({circleText: 'Exhaling'});
+  exhalePulse = () => {
+    this.setState({circleText: 'Inhaling'});
     this.startHapticFeedback();
   };
 
   componentDidMount() {
-    console.log('this', this.props.guidedBreathing);
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.animate(totalTime);
-    this.startHapticFeedback();
-
-    this.initAnimatorTimer = setTimeout(() => {
-      this.inhalePulse();
-      clearTimeout(this.initAnimatorTimer);
-    }, this.inhaleTime * 1000);
+    this.initExhalePulseTimer = setTimeout(() => {
+      this.exhalePulse();
+      clearTimeout(this.initExhalePulseTimer);
+    }, this.exhaleTime * 1000);
   }
 
   resetTime = () => {

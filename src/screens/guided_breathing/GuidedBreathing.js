@@ -22,6 +22,7 @@ class GuidedBreathing extends Component {
       calibrationExhale: avgExhaleTime,
       calibrationInhale: avgInhaleTime,
     });
+    console.log('+++>', avgExhaleTime, avgInhaleTime);
     this.setState({showCheckInBreath: false, showBreathingGame: true});
   };
 

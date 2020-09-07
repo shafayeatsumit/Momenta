@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Platform, TouchableOpacity} from 'react-native';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import styles from './CheckInBreath.styles';
-const INITIAL_MESSAGE = 'Tap and hold when ready to inhale';
+const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import CheckinProgress from './CheckinProgress';
 
@@ -44,7 +44,7 @@ class CheckInBreath extends Component {
     return ((new Date() - time) / 1000).toFixed(2);
   };
 
-  measurmentCompleted = (avgInhale, avgExhale) => {
+  measurmentCompleted = (exhaleTime, inhaleTime) => {
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.setState({
@@ -52,7 +52,8 @@ class CheckInBreath extends Component {
       touchDisabled: true,
       instructionText: 'DONE measuring',
     });
-    this.props.goToBreathingGame(avgInhale, avgExhale);
+    console.log(`exhaleTime ${exhaleTime} inhaleTime ${inhaleTime}`);
+    this.props.goToBreathingGame(exhaleTime, inhaleTime);
   };
 
   startHapticFeedback = () => {
@@ -67,7 +68,7 @@ class CheckInBreath extends Component {
       inhaleTimeRecorded,
       exhaleTimeRecorded,
     } = this.state;
-    // console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
+    console.log(`inhale ${inhaleTimeRecorded} exhale ${exhaleTimeRecorded}`);
     console.log('breath completed ***END***');
     const avgInhale = inhaleTimeRecorded + totalInhaleTime;
     const avgExhale = exhaleTimeRecorded + totalExhaleTime;
@@ -104,18 +105,18 @@ class CheckInBreath extends Component {
     if (!this.pressInTime) {
       return;
     }
-    const {inhaleCount} = this.state;
+    const {exhaleCount} = this.state;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
-    this.setState({measurementType: 'exhale', measuring: true});
-    const timeTakenInhale = this.measureTime(this.pressInTime);
+    this.setState({measurementType: 'inhale', measuring: true});
+    const timeTakenExhale = this.measureTime(this.pressInTime);
 
-    if (timeTakenInhale < 1) {
+    if (timeTakenExhale < 1) {
       this.oneSecError();
     } else {
       this.setState({
-        inhaleTimeRecorded: Number(timeTakenInhale),
-        inhaleCount: inhaleCount + 1,
+        exhaleTimeRecorded: Number(timeTakenExhale),
+        exhaleCount: exhaleCount + 1,
       });
     }
 
@@ -126,22 +127,22 @@ class CheckInBreath extends Component {
   handlePressIn = () => {
     this.setState({
       measuring: true,
-      measurementType: 'inhale',
+      measurementType: 'exhale',
       instructionText: null,
     });
     this.startHapticFeedback();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     if (this.pressInTime) {
-      const timeTakenExhale = this.measureTime(this.pressOutTime);
-      if (timeTakenExhale < 1) {
+      const timeTakenInhale = this.measureTime(this.pressOutTime);
+      if (timeTakenInhale < 1) {
         this.oneSecError();
       } else {
-        const {exhaleCount} = this.state;
+        const {inhaleCount} = this.state;
         this.setState(
           {
-            exhaleTimeRecorded: Number(timeTakenExhale),
-            exhaleCount: exhaleCount + 1,
+            inhaleTimeRecorded: Number(timeTakenInhale),
+            inhaleCount: inhaleCount + 1,
           },
           this.breathCompleted,
         );
@@ -156,8 +157,8 @@ class CheckInBreath extends Component {
       measuring,
       instructionText,
       touchDisabled,
-      inhaleCount,
       exhaleCount,
+      inhaleCount,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -165,7 +166,7 @@ class CheckInBreath extends Component {
           measuring={measuring}
           measurementType={measurementType}
           instructionText={instructionText}
-          breathCount={inhaleCount + exhaleCount}
+          breathCount={exhaleCount + inhaleCount}
         />
         {touchDisabled ? null : (
           <TouchableOpacity

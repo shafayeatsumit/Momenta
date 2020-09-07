@@ -16,11 +16,11 @@ class GuidedBreathing extends Component {
     this.props.navigation.pop();
   };
 
-  goToBreathingGame = (avgInhaleTime, avgExhaleTime) => {
+  goToBreathingGame = (avgExhaleTime, avgInhaleTime) => {
     this.props.dispatch({
       type: 'UPDATE_CALIBRATION_TIME',
-      calibrationInhale: avgInhaleTime,
       calibrationExhale: avgExhaleTime,
+      calibrationInhale: avgInhaleTime,
     });
     this.setState({showCheckInBreath: false, showBreathingGame: true});
   };

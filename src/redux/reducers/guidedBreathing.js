@@ -22,8 +22,8 @@ const breathing = (state = initialState, action) => {
     case 'UPDATE_CALIBRATION_TIME':
       return {
         ...state,
-        calibrationInhale: action.calibrationInhale,
         calibrationExhale: action.calibrationExhale,
+        calibrationInhale: action.calibrationInhale,
       };
     case 'ADD_GUIDED_BREATH':
       return {

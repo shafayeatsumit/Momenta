@@ -17,7 +17,6 @@ class Nav extends Component {
     return (
       <NavigationContainer>
         <StatusBar hidden />
-
         <Stack.Navigator headerMode="none">
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen
@@ -29,7 +28,6 @@ class Nav extends Component {
             component={FixedBreathingScreen}
           />
           <Stack.Screen name="Loading" component={LoadingScreen} />
-
           <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>

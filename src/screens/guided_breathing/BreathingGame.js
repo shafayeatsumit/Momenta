@@ -195,23 +195,23 @@ class BreathingGame extends Component {
     if (!this.pressInTime) {
       return;
     }
-    const timeTakenInhale = this.measureTime(this.pressInTime);
-    if (timeTakenInhale < 1) {
+    const timeTakenExhale = this.measureTime(this.pressInTime);
+    if (timeTakenExhale < 1) {
       this.oneSecError();
     } else {
-      this.setState({inhaleTimeRecorded: Number(timeTakenInhale)});
+      this.setState({exhaleTimeRecorded: Number(timeTakenExhale)});
     }
     this.pressOutTime = new Date();
   };
 
   handlePressIn = () => {
     if (this.pressInTime) {
-      const timeTakenExhale = this.measureTime(this.pressOutTime);
-      if (timeTakenExhale < 1) {
+      const timeTakenInhale = this.measureTime(this.pressOutTime);
+      if (timeTakenInhale < 1) {
         this.oneSecError();
       } else {
         this.setState(
-          {exhaleTimeRecorded: Number(timeTakenExhale)},
+          {inhaleTimeRecorded: Number(timeTakenInhale)},
           this.breathCompleted,
         );
       }

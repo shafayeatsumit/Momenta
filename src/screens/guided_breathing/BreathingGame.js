@@ -62,7 +62,12 @@ class BreathingGame extends Component {
   }
 
   startHapticFeedback = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'contextClick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
+  loopHapticFeedback = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'virtualKey';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
@@ -101,9 +106,9 @@ class BreathingGame extends Component {
     this.setState({circleText: 'Exhaling'});
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
-    this.exhalePulseTimer = setTimeout(() => {
-      this.exhalePulse();
-      clearTimeout(this.exhalePulseTimer);
+    this.exhaleEndPulseTimer = setTimeout(() => {
+      this.exhaleEndPulse();
+      clearTimeout(this.exhaleEndPulseTimer);
     }, this.exhaleTime * 1000);
     this.animate(totalTime);
   };
@@ -120,6 +125,7 @@ class BreathingGame extends Component {
 
   animate = (duration) => {
     this.animated.setValue(0);
+    this.vibrateLoop();
     Animated.timing(this.animated, {
       toValue: 1,
       duration: duration * 1000,
@@ -142,7 +148,8 @@ class BreathingGame extends Component {
     });
   };
 
-  exhalePulse = () => {
+  exhaleEndPulse = () => {
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
     this.setState({circleText: 'Inhaling'});
     this.startHapticFeedback();
   };
@@ -152,9 +159,13 @@ class BreathingGame extends Component {
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.animate(totalTime);
     this.initExhalePulseTimer = setTimeout(() => {
-      this.exhalePulse();
+      this.exhaleEndPulse();
       clearTimeout(this.initExhalePulseTimer);
     }, this.exhaleTime * 1000);
+  }
+
+  componentWillUnmount() {
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   }
 
   resetTime = () => {
@@ -202,6 +213,10 @@ class BreathingGame extends Component {
       this.setState({exhaleTimeRecorded: Number(timeTakenExhale)});
     }
     this.pressOutTime = new Date();
+  };
+
+  vibrateLoop = () => {
+    this.vibrateLoopId = setInterval(this.loopHapticFeedback, 30);
   };
 
   handlePressIn = () => {

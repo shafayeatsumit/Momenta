@@ -75,24 +75,6 @@ const FixedBreathing = () => {
       {breathingType === 'custom' && (
         <View>
           <View style={styles.settingsContainer}>
-            <TouchableOpacity onPress={() => removeValue('inhale')}>
-              <Image source={MinusIcon} style={styles.minusIconSm} />
-            </TouchableOpacity>
-            <Text style={styles.settingsText}>{inhale}s Inhale</Text>
-            <TouchableOpacity onPress={() => addValue('inhale')}>
-              <Image source={PlusIcon} style={styles.plusIconSm} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.settingsContainer}>
-            <TouchableOpacity onPress={() => removeValue('inhale_hold')}>
-              <Image source={MinusIcon} style={styles.minusIconSm} />
-            </TouchableOpacity>
-            <Text style={styles.settingsText}>{inhaleHold}s Hold</Text>
-            <TouchableOpacity onPress={() => addValue('inhale_hold')}>
-              <Image source={PlusIcon} style={styles.plusIconSm} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.settingsContainer}>
             <TouchableOpacity onPress={() => removeValue('exhale')}>
               <Image source={MinusIcon} style={styles.minusIconSm} />
             </TouchableOpacity>
@@ -107,6 +89,24 @@ const FixedBreathing = () => {
             </TouchableOpacity>
             <Text style={styles.settingsText}>{exhaleHold}s Hold</Text>
             <TouchableOpacity onPress={() => addValue('exhale_hold')}>
+              <Image source={PlusIcon} style={styles.plusIconSm} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.settingsContainer}>
+            <TouchableOpacity onPress={() => removeValue('inhale')}>
+              <Image source={MinusIcon} style={styles.minusIconSm} />
+            </TouchableOpacity>
+            <Text style={styles.settingsText}>{inhale}s Inhale</Text>
+            <TouchableOpacity onPress={() => addValue('inhale')}>
+              <Image source={PlusIcon} style={styles.plusIconSm} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.settingsContainer}>
+            <TouchableOpacity onPress={() => removeValue('inhale_hold')}>
+              <Image source={MinusIcon} style={styles.minusIconSm} />
+            </TouchableOpacity>
+            <Text style={styles.settingsText}>{inhaleHold}s Hold</Text>
+            <TouchableOpacity onPress={() => addValue('inhale_hold')}>
               <Image source={PlusIcon} style={styles.plusIconSm} />
             </TouchableOpacity>
           </View>

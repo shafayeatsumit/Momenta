@@ -6,7 +6,7 @@ import FixedBreathingScreen from '../screens/fixed_breathing/FixedBreathing';
 
 import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
-// import OnboardingScreen from '../screens/onboarding/Onboarding';
+import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -18,6 +18,7 @@ class Nav extends Component {
       <NavigationContainer>
         <StatusBar hidden />
         <Stack.Navigator headerMode="none">
+          <Stack.Screen name="Content" component={ContentScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen
             name="GuidedBreathing"

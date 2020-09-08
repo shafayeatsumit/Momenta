@@ -1,155 +1,185 @@
 import React from 'react';
-import {StyleSheet, View, Dimensions} from 'react-native';
+import {
+  View,
+  Dimensions,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  Alert,
+} from 'react-native';
+import styles from './Content.styles';
 import Animated from 'react-native-reanimated';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import RNPickerSelect from 'react-native-picker-select';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 const {width, height} = Dimensions.get('window');
-const {
-  cond,
-  eq,
-  add,
-  call,
-  set,
-  Value,
-  event,
-  lessOrEq,
-  and,
-  greaterOrEq,
-} = Animated;
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
-// console.log(`width ${width} height ${height}`);
-// 40% of the height - circle height
-// 60% of the width - circle height
-const maxYLimit = height * 0.4 - 60;
-const maxXLimit = width * 0.6 - 60;
-console.log('max y limit', maxYLimit);
+const ANDROID_HAPTICS = [
+  {label: 'selection', item: 'selection', value: 'selection'},
+  {label: 'impactLight', item: 'impactLight', value: 'impactLight'},
+  {label: 'impactMedium', item: 'impactMedium', value: 'impactMedium'},
+  {label: 'impactHeavy', item: 'impactHeavy', value: 'impactHeavy'},
+  {
+    label: 'notificationSuccess',
+    item: 'notificationSuccess',
+    value: 'notificationSuccess',
+  },
+  {
+    label: 'notificationWarning',
+    item: 'notificationWarning',
+    value: 'notificationWarning',
+  },
+  {
+    label: 'notificationError',
+    item: 'notificationError',
+    value: 'notificationError',
+  },
+  {label: 'clockTick', item: 'clockTick', value: 'clockTick'},
+  {label: 'contextClick', item: 'contextClick', value: 'contextClick'},
+  {label: 'keyboardPress', item: 'keyboardPress', value: 'keyboardPress'},
+  {label: 'keyboardRelease', item: 'keyboardRelease', value: 'keyboardRelease'},
+  {label: 'keyboardTap', item: 'keyboardTap', value: 'keyboardTap'},
+  {label: 'longPress', item: 'longPress', value: 'longPress'},
+  {label: 'textHandleMove', item: 'textHandleMove', value: 'textHandleMove'},
+  {label: 'virtualKey', item: 'virtualKey', value: 'virtualKey'},
+  {
+    label: 'virtualKeyRelease',
+    item: 'virtualKeyRelease',
+    value: 'virtualKeyRelease',
+  },
+];
+
+const IOS_HAPTICS = [
+  {label: 'selection', item: 'selection', value: 'selection'},
+  {label: 'impactLight', item: 'impactLight', value: 'impactLight'},
+  {label: 'impactMedium', item: 'impactMedium', value: 'impactMedium'},
+  {label: 'impactHeavy', item: 'impactHeavy', value: 'impactHeavy'},
+  {
+    label: 'notificationSuccess',
+    item: 'notificationSuccess',
+    value: 'notificationSuccess',
+  },
+  {
+    label: 'notificationWarning',
+    item: 'notificationWarning',
+    value: 'notificationWarning',
+  },
+  {
+    label: 'notificationError',
+    item: 'notificationError',
+    value: 'notificationError',
+  },
+];
+
 export default class Example extends React.Component {
   constructor(props) {
     super(props);
-    this.dragX = new Value(0);
-    this.dragY = new Value(0);
-    this.offsetX = new Value(0);
-    this.offsetY = new Value(0);
-    this.absoluteX = this.offsetX;
-    this.absoluteY = this.offsetY;
-    this.gestureState = new Value(-1);
-    this.opacity = new Value(1);
-    this.onGestureEvent = event([
-      {
-        nativeEvent: {
-          translationX: this.dragX,
-          translationY: this.dragY,
-          state: this.gestureState,
-        },
-      },
-    ]);
-
-    this.setYOffset = cond(
-      lessOrEq(add(this.absoluteY, this.dragY), 0),
-      set(this.offsetY, 0),
-      set(this.offsetY, maxYLimit),
-    );
-
-    this.setXOffset = cond(
-      lessOrEq(add(this.absoluteX, this.dragX), 0),
-      set(this.offsetX, 0),
-      set(this.offsetX, maxXLimit),
-    );
-
-    this.addY = cond(
-      and(
-        greaterOrEq(add(this.absoluteY, this.dragY), 0),
-        lessOrEq(add(this.absoluteY, this.dragY), maxYLimit),
-      ),
-      add(this.offsetY, this.dragY),
-      this.setYOffset,
-    );
-
-    this.addX = cond(
-      and(
-        greaterOrEq(add(this.absoluteX, this.dragX), 0),
-        lessOrEq(add(this.absoluteX, this.dragX), maxXLimit),
-      ),
-      add(this.offsetX, this.dragX),
-      this.setXOffset,
-    );
-
-    this.opacity = cond(eq(this.gestureState, State.ACTIVE), 0.3, 1);
-
-    this.transX = cond(
-      eq(this.gestureState, State.ACTIVE),
-      this.addX,
-      set(this.offsetX, this.addX),
-    );
-
-    this.transY = cond(eq(this.gestureState, State.ACTIVE), this.addY, [
-      set(this.offsetY, this.addY),
-    ]);
+    this.state = {
+      biggerVibration: 'selection',
+      contVibration: 'selection',
+      spacingVal: '30',
+      randomVal: '1',
+    };
   }
 
-  onDrop = ([x, y]) => {
-    console.log(`You dropped at x: ${x} and y: ${y}`);
+  loopHapticFeedback = () => {
+    const feedbackType = this.state.contVibration;
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
+  handlePressIn = () => {
+    const {spacingVal, randomVal} = this.state;
+    if (
+      Number.isNaN(Number(spacingVal)) ||
+      Number.isNaN(Number(randomVal)) ||
+      Number(randomVal) > 1
+    ) {
+      Alert.alert('sorry', 'invalid input');
+      return;
+    }
+    const feedbackType = this.state.biggerVibration;
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    this.contId = setInterval(() => {
+      const d = Math.random();
+      // if (d < Number(randomVal)) {
+      //   this.loopHapticFeedback();
+      // }
+      this.loopHapticFeedback();
+    }, Number(spacingVal));
+  };
+
+  handlePressOut = () => {
+    const feedbackType = this.state.biggerVibration;
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+
+    clearInterval(this.contId);
+  };
+  onChangeText = (type, val) => {
+    this.setState({[type]: val});
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.graph}>
-          <Animated.Code>
-            {() =>
-              cond(
-                eq(this.gestureState, State.END),
-                call([this.addX, this.addY], this.onDrop),
-              )
-            }
-          </Animated.Code>
+      <View style={styles.main}>
+        <View style={styles.halfScreen}>
+          <Text style={styles.title}>Bigger Vibration (default selection)</Text>
+          <RNPickerSelect
+            onValueChange={(value) => this.setState({biggerVibration: value})}
+            placeholder={{}}
+            style={{
+              inputIOS: styles.pickerPlaceHolder,
+              inputAndroid: styles.pickerPlaceHolder,
+            }}
+            value={this.state.biggerVibration}
+            items={Platform.OS === 'ios' ? IOS_HAPTICS : ANDROID_HAPTICS}
+            useNativeAndroidPickerStyle={false}
+          />
+          <View style={styles.spacer} />
+          <Text style={styles.title}>
+            Continuous Vibration (default selection)
+          </Text>
+          <RNPickerSelect
+            onValueChange={(value) => this.setState({contVibration: value})}
+            placeholder={{}}
+            style={{
+              inputIOS: styles.pickerPlaceHolder,
+              inputAndroid: styles.pickerPlaceHolder,
+            }}
+            value={this.state.contVibration}
+            items={Platform.OS === 'ios' ? IOS_HAPTICS : ANDROID_HAPTICS}
+            useNativeAndroidPickerStyle={false}
+          />
+          <View style={styles.spacer} />
+          <Text style={styles.title}>Spacing in miliseconds (default 30)</Text>
+          <TextInput
+            style={styles.textInput}
+            // placeholder={'in miliseconds'}
+            // placeholderTextColor="black"
+            onChangeText={(text) => this.onChangeText('spacingVal', text)}
+            value={this.state.spacingVal}
+          />
+          <View style={styles.spacer} />
+          <Text style={styles.title}>Randomness Vibration range (0-1) </Text>
+          <TextInput
+            style={styles.textInput}
+            // placeholder={'between 0-100'}
+            // placeholderTextColor="black"
+            onChangeText={(text) => this.onChangeText('randomVal', text)}
+            value={this.state.randomVal}
+          />
+        </View>
 
-          <PanGestureHandler
-            maxPointers={1}
-            onGestureEvent={this.onGestureEvent}
-            onHandlerStateChange={this.onGestureEvent}>
-            <Animated.View
-              style={[
-                styles.box,
-                {
-                  transform: [
-                    {
-                      translateX: this.transX,
-                    },
-                    {
-                      translateY: this.transY,
-                    },
-                  ],
-                },
-              ]}
-            />
-          </PanGestureHandler>
+        <View style={styles.halfScreen}>
+          <TouchableOpacity
+            style={styles.roundButton}
+            onPressIn={this.handlePressIn}
+            onPressOut={this.handlePressOut}>
+            <Text style={styles.buttonText}>Long Press Button</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
   }
 }
-
-const CIRCLE_SIZE = 60;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  graph: {
-    backgroundColor: '#141831',
-    height: ScreenHeight * 0.4,
-    width: ScreenWidth * 0.6,
-  },
-  box: {
-    borderWidth: 2,
-    borderColor: '#3c71de',
-    // backgroundColor: '#3c71de',
-    position: 'absolute',
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
-    borderRadius: CIRCLE_SIZE / 2,
-  },
-});

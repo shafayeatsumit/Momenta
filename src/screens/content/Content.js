@@ -77,8 +77,10 @@ export default class Example extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      biggerVibration: 'selection',
+      startVibration: 'selection',
+      endVibration: 'selection',
       contVibration: 'selection',
+      duration: '10',
       spacingVal: '30',
       randomVal: '1',
     };
@@ -90,31 +92,38 @@ export default class Example extends React.Component {
   };
 
   handlePressIn = () => {
-    const {spacingVal, randomVal} = this.state;
+    const {spacingVal, duration, randomVal} = this.state;
     if (
       Number.isNaN(Number(spacingVal)) ||
       Number.isNaN(Number(randomVal)) ||
+      Number.isNaN(Number(duration)) ||
       Number(randomVal) > 1
     ) {
       Alert.alert('sorry', 'invalid input');
       return;
     }
-    const feedbackType = this.state.biggerVibration;
+
+    this.timerTwo = setTimeout(() => {
+      this.contId && clearInterval(this.contId);
+      ReactNativeHapticFeedback.trigger(
+        this.state.endVibration,
+        hapticFeedbackOptions,
+      );
+    }, Number(duration) * 1000);
+
+    const feedbackType = this.state.startVibration;
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
     this.contId = setInterval(() => {
       const d = Math.random();
-      // if (d < Number(randomVal)) {
-      //   this.loopHapticFeedback();
-      // }
-      this.loopHapticFeedback();
+      if (d < Number(randomVal)) {
+        this.loopHapticFeedback();
+      }
     }, Number(spacingVal));
   };
 
   handlePressOut = () => {
-    const feedbackType = this.state.biggerVibration;
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-
-    clearInterval(this.contId);
+    this.contId && clearInterval(this.contId);
+    this.timerTwo && clearTimeout(this.timerTwo);
   };
   onChangeText = (type, val) => {
     this.setState({[type]: val});
@@ -123,16 +132,28 @@ export default class Example extends React.Component {
   render() {
     return (
       <View style={styles.main}>
-        <View style={styles.halfScreen}>
-          <Text style={styles.title}>Bigger Vibration (default selection)</Text>
+        <View style={styles.firstHalf}>
+          <Text style={styles.title}>Start Vibration (default selection)</Text>
           <RNPickerSelect
-            onValueChange={(value) => this.setState({biggerVibration: value})}
+            onValueChange={(value) => this.setState({startVibration: value})}
             placeholder={{}}
             style={{
               inputIOS: styles.pickerPlaceHolder,
               inputAndroid: styles.pickerPlaceHolder,
             }}
-            value={this.state.biggerVibration}
+            value={this.state.startVibration}
+            items={Platform.OS === 'ios' ? IOS_HAPTICS : ANDROID_HAPTICS}
+            useNativeAndroidPickerStyle={false}
+          />
+          <Text style={styles.title}>End Vibration (default selection)</Text>
+          <RNPickerSelect
+            onValueChange={(value) => this.setState({endVibration: value})}
+            placeholder={{}}
+            style={{
+              inputIOS: styles.pickerPlaceHolder,
+              inputAndroid: styles.pickerPlaceHolder,
+            }}
+            value={this.state.endVibration}
             items={Platform.OS === 'ios' ? IOS_HAPTICS : ANDROID_HAPTICS}
             useNativeAndroidPickerStyle={false}
           />
@@ -152,11 +173,19 @@ export default class Example extends React.Component {
             useNativeAndroidPickerStyle={false}
           />
           <View style={styles.spacer} />
+          <Text style={styles.title}>
+            duration in seconds (default 10 secs)
+          </Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(text) => this.onChangeText('duration', text)}
+            value={this.state.duration}
+          />
+
+          <View style={styles.spacer} />
           <Text style={styles.title}>Spacing in miliseconds (default 30)</Text>
           <TextInput
             style={styles.textInput}
-            // placeholder={'in miliseconds'}
-            // placeholderTextColor="black"
             onChangeText={(text) => this.onChangeText('spacingVal', text)}
             value={this.state.spacingVal}
           />
@@ -164,8 +193,6 @@ export default class Example extends React.Component {
           <Text style={styles.title}>Randomness Vibration range (0-1) </Text>
           <TextInput
             style={styles.textInput}
-            // placeholder={'between 0-100'}
-            // placeholderTextColor="black"
             onChangeText={(text) => this.onChangeText('randomVal', text)}
             value={this.state.randomVal}
           />

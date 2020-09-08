@@ -1,6 +1,7 @@
 const Colors = {
   cornflowerBlue: '#3c71de',
   betterBlue: '#141831',
+  buttonBlue: '#252a43',
   betterBlue65: 'rgba(19,23,47,0.65)',
   betterBlue85: 'rgba(19,23,47,0.85)',
   darkBlue: '#252a43',

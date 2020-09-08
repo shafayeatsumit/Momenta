@@ -10,6 +10,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  firstHalf: {
+    flex: 3,
+    justifyContent: 'center',
+  },
   halfScreen: {
     flex: 1,
     justifyContent: 'center',
@@ -49,16 +53,16 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   roundButton: {
-    height: 160,
-    width: 160,
+    height: 120,
+    width: 120,
     backgroundColor: 'tomato',
-    borderRadius: 80,
+    borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
     fontFamily: FontType.Regular,
-    fontSize: 18,
+    fontSize: 15,
     textAlign: 'center',
   },
 });

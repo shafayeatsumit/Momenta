@@ -1,5 +1,5 @@
-import {StyleSheet, Dimensions} from 'react-native';
-import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
+import {StyleSheet} from 'react-native';
+import {ScreenHeight} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
@@ -58,6 +58,20 @@ const styles = StyleSheet.create({
   },
   initTextBold: {
     fontFamily: FontType.ExtraBold,
+  },
+  musicIcon: {
+    height: 30,
+    width: 30,
+    borderRadius: 20,
+  },
+  musicIconHolder: {
+    position: 'absolute',
+    bottom: 30,
+    left: 35,
+    height: 30,
+    width: 30,
+    borderRadius: 20,
+    zIndex: 4,
   },
 });
 export default styles;

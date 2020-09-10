@@ -36,7 +36,11 @@ class GuidedBreathing extends Component {
     return (
       <>
         {showCheckInBreath && (
-          <CheckInBreath goToBreathingGame={this.goToBreathingGame} />
+          <CheckInBreath
+            goToBreathingGame={this.goToBreathingGame}
+            musicOn={musicOn}
+            handleMusic={route.params.handleMusic}
+          />
         )}
         {showBreathingGame && (
           <BreathingGame

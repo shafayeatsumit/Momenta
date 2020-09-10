@@ -5,6 +5,7 @@ import {
   Easing,
   Platform,
   TouchableOpacity,
+  Image,
   Animated,
 } from 'react-native';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
@@ -12,6 +13,9 @@ import styles from './CheckInBreath.styles';
 const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import CheckinProgress from './CheckinProgress';
+
+import MusicIcon from '../../../assets/icons/music.png';
+import NoMusicIcon from '../../../assets/icons/no_music.png';
 
 class CheckInBreath extends Component {
   constructor(props) {
@@ -75,14 +79,14 @@ class CheckInBreath extends Component {
     this.setState({
       measuring: false,
       touchDisabled: true,
-      circleText: 'DONE measuring',
+      circleText: '',
     });
     console.log(`exhaleTime ${exhaleTime} inhaleTime ${inhaleTime}`);
     this.props.goToBreathingGame(exhaleTime, inhaleTime);
   };
 
   startHapticFeedback = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    const feedbackType = 'impactHeavy';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
@@ -98,6 +102,13 @@ class CheckInBreath extends Component {
     this.measurmentCompleted(avgExhale, avgInhale);
   };
 
+  vibrateLoop = () => {
+    this.vibrateLoopId = setInterval(() => {
+      const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    }, 100);
+  };
+
   moreThanTenSec = () => {
     this.tenSecTimer = setTimeout(() => {
       const {measurementType} = this.state;
@@ -109,6 +120,7 @@ class CheckInBreath extends Component {
       });
       this.resetTime();
       clearTimeout(this.tenSecTimer);
+      this.vibrateLoopId && clearInterval(this.vibrateLoopId);
     }, 10000);
   };
 
@@ -126,6 +138,7 @@ class CheckInBreath extends Component {
       {circleText: '', instructionText: errorMessage, measuring: false},
       this.resetTime,
     );
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   };
 
   handlePressOut = () => {
@@ -155,6 +168,7 @@ class CheckInBreath extends Component {
     }
     this.pressOutTime = new Date();
     this.startHapticFeedback();
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   };
 
   handlePressIn = () => {
@@ -167,6 +181,7 @@ class CheckInBreath extends Component {
       instructionText: '',
     });
     this.startHapticFeedback();
+    this.vibrateLoop();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     if (this.pressInTime) {
@@ -187,6 +202,10 @@ class CheckInBreath extends Component {
     this.pressInTime = new Date();
   };
 
+  componentWillUnmount() {
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+  }
+
   render() {
     const {
       circleText,
@@ -195,7 +214,9 @@ class CheckInBreath extends Component {
       inhaleCount,
       startedMeasuring,
       instructionText,
+      measuring,
     } = this.state;
+    const {musicOn, handleMusic} = this.props;
     return (
       <View style={styles.container}>
         {startedMeasuring ? (
@@ -220,6 +241,16 @@ class CheckInBreath extends Component {
             </Animated.Text>
           </View>
         </View>
+        {!measuring && (
+          <TouchableOpacity
+            onPress={handleMusic}
+            style={styles.musicIconHolder}>
+            <Image
+              style={styles.musicIcon}
+              source={musicOn ? MusicIcon : NoMusicIcon}
+            />
+          </TouchableOpacity>
+        )}
         {touchDisabled ? null : (
           <TouchableOpacity
             onPressIn={this.handlePressIn}
@@ -231,4 +262,5 @@ class CheckInBreath extends Component {
     );
   }
 }
+
 export default CheckInBreath;

@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.buttonBlue,
   },
   targetLine: {
-    height: 20,
+    height: 10,
     alignSelf: 'center',
-    width: 5,
-    marginTop: -15,
+    width: 7,
+    marginTop: -10,
     backgroundColor: '#6dd400',
   },
   box: {
@@ -115,12 +115,11 @@ const styles = StyleSheet.create({
     width: 60,
     zIndex: 3,
     justifyContent: 'center',
-    // backgroundColor: 'red',
   },
   quitButtonText: {
     fontFamily: FontType.SemiBold,
     color: 'rgb(66,72,102)',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
   },
   touchableArea: {

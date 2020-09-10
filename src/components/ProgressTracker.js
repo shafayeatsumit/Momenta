@@ -2,40 +2,38 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Colors, FontType} from '../helpers/theme';
 import {ScreenWidth} from '../helpers/constants';
+import AnimatedProgress from './AnimatedProgress';
 
-const twoDigitPadding = (num) =>
-  num.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false});
+const twoDigitPadding = (num) => String(num).padStart(2, '0');
 
-const ProgressLine = ({currentTime, targetTime}) => {
+const ProgressTracker = ({currentTime, targetTime}) => {
   const currentTimeMin = Math.floor(currentTime / 60);
   const currentTimeSec = currentTime % 60;
   let currentTimePercent = (100 * currentTime) / targetTime;
   const targetTimeMin = targetTime / 60;
+  const targetTimeSec = targetTime % 60;
   currentTimePercent = currentTimePercent > 100 ? 100 : currentTimePercent;
   return (
     <View style={styles.container}>
-      <View style={[styles.progressLine, {width: `${currentTimePercent}%`}]} />
+      <AnimatedProgress value={currentTimePercent} width={ScreenWidth * 0.9} />
       <View style={styles.timerContainer}>
         <Text style={styles.time}>
-          {twoDigitPadding(currentTimeMin)}:
-          {twoDigitPadding(currentTimeSec.toFixed(0))}
+          {currentTimeMin}:{twoDigitPadding(currentTimeSec)}
         </Text>
-        <Text style={styles.targetTime}>/{targetTimeMin.toFixed(2)}</Text>
+        <Text style={styles.targetTime}>
+          /{targetTimeMin}:{twoDigitPadding(targetTimeSec)}
+        </Text>
       </View>
     </View>
   );
 };
-export default ProgressLine;
+export default ProgressTracker;
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,
     width: ScreenWidth * 0.9,
     alignSelf: 'center',
-  },
-  progressLine: {
-    height: 5,
-    backgroundColor: Colors.buttonBlue,
   },
   timerContainer: {
     flexDirection: 'row',

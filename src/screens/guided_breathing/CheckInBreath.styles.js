@@ -10,17 +10,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  textContainer: {
+  wave: {
+    height: 80,
+    width: 80,
+  },
+  contentContainer: {
     position: 'absolute',
-    width: ScreenWidth,
-    paddingHorizontal: 20,
-    height: ScreenHeight,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  containerBox: {
+    height: 150,
+    width: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 27,
+    fontSize: 20,
     textAlign: 'center',
   },
 
@@ -30,6 +42,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.4,
+  },
+  initTextHolder: {
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
+    height: 100,
+    width: 200,
+  },
+  initText: {
+    fontFamily: FontType.Medium,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  initTextBold: {
+    fontFamily: FontType.ExtraBold,
   },
 });
 export default styles;

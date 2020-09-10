@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Platform, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Easing,
+  Platform,
+  TouchableOpacity,
+  Animated,
+} from 'react-native';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import styles from './CheckInBreath.styles';
 const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
@@ -11,7 +18,7 @@ class CheckInBreath extends Component {
     super(props);
     this.state = {
       measuring: false,
-      instructionText: INITIAL_MESSAGE,
+      circleText: '',
       measurementType: null,
       inhaleTimeRecorded: 0,
       exhaleTimeRecorded: 0,
@@ -20,9 +27,12 @@ class CheckInBreath extends Component {
       inhaleCount: 0,
       exhaleCount: 0,
       touchDisabled: false,
+      initiMessage: INITIAL_MESSAGE,
+      instructionText: '',
     };
     this.pressInTime = null;
     this.pressOutTime = null;
+    this.animatedText = new Animated.Value(0);
   }
 
   resetTime = () => {
@@ -44,13 +54,28 @@ class CheckInBreath extends Component {
     return ((new Date() - time) / 1000).toFixed(2);
   };
 
+  fadeOutText = () => {
+    this.animatedText.setValue(0);
+    this.fadeInText();
+  };
+
+  fadeInText = () => {
+    Animated.timing(this.animatedText, {
+      toValue: 1,
+      delay: 500,
+      duration: 1000,
+      useNativeDriver: true,
+      easing: Easing.ease,
+    }).start();
+  };
+
   measurmentCompleted = (exhaleTime, inhaleTime) => {
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.setState({
       measuring: false,
       touchDisabled: true,
-      instructionText: 'DONE measuring',
+      circleText: 'DONE measuring',
     });
     console.log(`exhaleTime ${exhaleTime} inhaleTime ${inhaleTime}`);
     this.props.goToBreathingGame(exhaleTime, inhaleTime);
@@ -76,8 +101,12 @@ class CheckInBreath extends Component {
   moreThanTenSec = () => {
     this.tenSecTimer = setTimeout(() => {
       const {measurementType} = this.state;
-      const instructionText = `You still there?\n${measurementType} for less than 10 seconds`;
-      this.setState({measuring: false, instructionText});
+      const errorMessage = `${measurementType} for less than 10 seconds`;
+      this.setState({
+        measuring: false,
+        circleText: '',
+        instructionText: errorMessage,
+      });
       this.resetTime();
       clearTimeout(this.tenSecTimer);
     }, 10000);
@@ -92,8 +121,9 @@ class CheckInBreath extends Component {
       measurementType === 'inhale' ? inhaleError : exhaleError;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
+    this.fadeOutText();
     this.setState(
-      {instructionText: errorMessage, measuring: false},
+      {circleText: '', instructionText: errorMessage, measuring: false},
       this.resetTime,
     );
   };
@@ -106,7 +136,13 @@ class CheckInBreath extends Component {
     const {exhaleCount} = this.state;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
-    this.setState({measurementType: 'inhale', measuring: true});
+    this.fadeOutText();
+    this.setState({
+      measurementType: 'inhale',
+      circleText: 'Measuring inhale time',
+      measuring: true,
+      instructionText: '',
+    });
     const timeTakenExhale = this.measureTime(this.pressInTime);
 
     if (timeTakenExhale < 1) {
@@ -122,10 +158,13 @@ class CheckInBreath extends Component {
   };
 
   handlePressIn = () => {
+    this.fadeOutText();
     this.setState({
       measuring: true,
       measurementType: 'exhale',
-      instructionText: null,
+      circleText: 'Measuring exhale time',
+      startedMeasuring: true,
+      instructionText: '',
     });
     this.startHapticFeedback();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
@@ -150,21 +189,37 @@ class CheckInBreath extends Component {
 
   render() {
     const {
-      measurementType,
-      measuring,
-      instructionText,
+      circleText,
       touchDisabled,
       exhaleCount,
       inhaleCount,
+      startedMeasuring,
+      instructionText,
     } = this.state;
     return (
       <View style={styles.container}>
-        <CheckinProgress
-          measuring={measuring}
-          measurementType={measurementType}
-          instructionText={instructionText}
-          breathCount={exhaleCount + inhaleCount}
-        />
+        {startedMeasuring ? (
+          <CheckinProgress breathCount={exhaleCount + inhaleCount} />
+        ) : (
+          <View style={styles.initTextHolder} pointerEvents="none">
+            <Text style={styles.initText}>
+              Hold during your next{' '}
+              <Text style={styles.initTextBold}>exhale</Text>
+            </Text>
+          </View>
+        )}
+        {!!instructionText && (
+          <View style={styles.initTextHolder} pointerEvents="none">
+            <Text style={styles.initText}>{instructionText}</Text>
+          </View>
+        )}
+        <View style={styles.contentContainer}>
+          <View style={styles.containerBox}>
+            <Animated.Text style={[styles.text, {opacity: this.animatedText}]}>
+              {circleText}
+            </Animated.Text>
+          </View>
+        </View>
         {touchDisabled ? null : (
           <TouchableOpacity
             onPressIn={this.handlePressIn}

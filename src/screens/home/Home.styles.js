@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   musicIcon: {
-    height: 40,
-    width: 40,
+    height: 30,
+    width: 30,
     borderRadius: 20,
   },
   musicIconHolder: {
@@ -181,9 +181,8 @@ const styles = StyleSheet.create({
     bottom: '5%',
     left: 35,
     zIndex: 3,
-    backgroundColor: 'white',
-    height: 40,
-    width: 40,
+    height: 30,
+    width: 30,
     borderRadius: 20,
   },
 });

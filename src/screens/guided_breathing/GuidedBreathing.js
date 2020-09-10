@@ -13,6 +13,8 @@ class GuidedBreathing extends Component {
   }
 
   finish = () => {
+    console.log('here');
+    this.setState({showBreathingGame: false});
     this.props.navigation.pop();
   };
 
@@ -22,7 +24,6 @@ class GuidedBreathing extends Component {
       calibrationExhale: avgExhaleTime,
       calibrationInhale: avgInhaleTime,
     });
-    console.log('+++>', avgExhaleTime, avgInhaleTime);
     this.setState({showCheckInBreath: false, showBreathingGame: true});
   };
 

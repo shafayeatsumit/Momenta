@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import ProgressBar from '../../components/ProgressBar';
+import BreathingStats from './BreathingStats';
 import BreathingGameProgress from './BreathingGameProgress';
 import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
@@ -26,7 +28,8 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleText: 'Exhaling',
+      circleText: 'Exhale',
+      finished: false,
       inhaleTimeRecorded: 0,
       exhaleTimeRecorded: 0,
       totalInhaleTime: 0,
@@ -34,6 +37,7 @@ class BreathingGame extends Component {
       progressCount: 0,
       finalExhaleTime: 0,
       finalInhaleTime: 0,
+      timer: 0,
       touchDisabled: false,
     };
     this.pressInTime = null;
@@ -50,7 +54,7 @@ class BreathingGame extends Component {
     this.targetInhale = props.guidedBreathing.targetInhale;
     this.avgExhale = avgExhale(this.exhaleTime, this.targetExhale);
     this.avgInhale = avgInhale(this.inhaleTime, this.targetInhale);
-    this.firstThresholdBreathCount = Math.floor(
+    this.firstThresholdBreathCount = Math.ceil(
       props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
     );
     this.exhlaeIncrementValue =
@@ -59,15 +63,16 @@ class BreathingGame extends Component {
       (this.targetInhale - this.inhaleTime) / this.firstThresholdBreathCount;
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
+    this.unmount = false;
   }
 
   startHapticFeedback = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'contextClick';
+    const feedbackType = 'impactHeavy';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   loopHapticFeedback = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'virtualKey';
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
@@ -92,21 +97,33 @@ class BreathingGame extends Component {
   };
 
   animateCB = (noIncrement = false) => {
-    if (this.totalBreathingTime > this.finishBreathingTime) {
+    let finished = false;
+    console.log(
+      'animateCB',
+      this.totalBreathingTime,
+      this.finishBreathingTime,
+      this.totalBreathingTime > this.finishBreathingTime,
+    );
+    if (this.totalBreathingTime > this.finishBreathingTime || this.unmount) {
+      console.log('FINISHHHHHHHHH');
       this.animateCBFinish();
+      finished = true;
       return;
     }
     this.startHapticFeedback();
-    this.inhaleTime = noIncrement
-      ? this.inhaleTime
-      : this.inhaleTime + this.inhaleIncrementValue;
-    this.exhaleTime = noIncrement
-      ? this.exhaleTime
-      : this.exhaleTime + this.exhlaeIncrementValue;
-    this.setState({circleText: 'Exhaling'});
+    this.inhaleTime =
+      noIncrement || finished
+        ? this.inhaleTime
+        : this.inhaleTime + this.inhaleIncrementValue;
+    this.exhaleTime =
+      noIncrement || finished
+        ? this.exhaleTime
+        : this.exhaleTime + this.exhlaeIncrementValue;
+    this.setState({circleText: 'Exhale'});
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.exhaleEndPulseTimer = setTimeout(() => {
+      console.log('exhale end pulse +++');
       this.exhaleEndPulse();
       clearTimeout(this.exhaleEndPulseTimer);
     }, this.exhaleTime * 1000);
@@ -118,9 +135,11 @@ class BreathingGame extends Component {
     this.setState({
       touchDisabled: true,
       circleText: 'Finished',
+      finished: true,
       finalInhaleTime: totalInhaleTime / progressCount,
       finalExhaleTime: totalExhaleTime / progressCount,
     });
+    clearInterval(this.stopWatchId);
   };
 
   animate = (duration) => {
@@ -150,8 +169,18 @@ class BreathingGame extends Component {
 
   exhaleEndPulse = () => {
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
-    this.setState({circleText: 'Inhaling'});
+    this.setState({circleText: 'Inhale'});
     this.startHapticFeedback();
+  };
+
+  startStopWatch = () => {
+    this.stopWatchId = setInterval(() => {
+      if (this.state.timer >= this.finishBreathingTime) {
+        clearInterval(this.stopWatchId);
+        return;
+      }
+      this.setState({timer: this.state.timer + 0.01});
+    }, 10);
   };
 
   componentDidMount() {
@@ -159,13 +188,22 @@ class BreathingGame extends Component {
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.animate(totalTime);
     this.initExhalePulseTimer = setTimeout(() => {
+      console.log('++++initExhalePulseTimer');
       this.exhaleEndPulse();
       clearTimeout(this.initExhalePulseTimer);
     }, this.exhaleTime * 1000);
+    this.startStopWatch();
   }
 
   componentWillUnmount() {
+    console.log('component will unmount');
+    clearTimeout(this.exhaleEndPulseTimer);
+    this.exhaleEndPulseTimer && clearTimeout(this.exhaleEndPulseTimer);
+    this.initExhalePulseTimer && clearTimeout(this.initExhalePulseTimer);
+    this.stopWatchId && clearInterval(this.stopWatchId);
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+
+    this.unmount = true;
   }
 
   resetTime = () => {
@@ -216,7 +254,18 @@ class BreathingGame extends Component {
   };
 
   vibrateLoop = () => {
-    this.vibrateLoopId = setInterval(this.loopHapticFeedback, 30);
+    // this.vibrateLoopId = setInterval(() => {
+    //   console.log('haptics');
+    //   this.loopHapticFeedback();
+    // }, 100);
+  };
+
+  handleFinishQuit = () => {
+    // this.props.finish();
+    // this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+    this.totalBreathingTime = 100000000;
+    this.animated.stopAnimation();
+    this.props.finish();
   };
 
   handlePressIn = () => {
@@ -237,40 +286,36 @@ class BreathingGame extends Component {
   render() {
     const {
       circleText,
-      touchDisabled,
-      finalInhaleTime,
       finalExhaleTime,
+      finalInhaleTime,
+      finished,
+      timer,
     } = this.state;
     const {guidedBreathing, musicOn, handleMusic} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
+    const targetRotation =
+      (360 * this.targetExhale) / (this.targetExhale + this.targetInhale);
+    console.log('render breathing game');
     const transform = [{rotate: this.rotate}];
     return (
       <View style={styles.container}>
-        {touchDisabled && (
-          <View style={styles.resultContainer}>
-            <View style={styles.resultTextHolder}>
-              <Text style={styles.textSm}>Start Average</Text>
-              <Text style={styles.textSm}>
-                Inhale: {calibrationInhale.toFixed(2)}
-              </Text>
-              <Text style={styles.textSm}>
-                Exhale: {calibrationExhale.toFixed(2)}
-              </Text>
-            </View>
-            <View style={styles.resultTextHolder}>
-              <Text style={styles.textSm}>End Average</Text>
-              <Text style={styles.textSm}>
-                Inhale: {finalInhaleTime.toFixed(2)}
-              </Text>
-              <Text style={styles.textSm}>
-                Exhale: {finalExhaleTime.toFixed(2)}
-              </Text>
-            </View>
-          </View>
-        )}
+        <View style={styles.topView}>
+          <ProgressBar
+            currentTime={timer}
+            targetTime={this.finishBreathingTime}
+          />
+          {finished && (
+            <BreathingStats
+              calibrationExhale={calibrationExhale}
+              calibrationInhale={calibrationInhale}
+              finalInhaleTime={finalInhaleTime}
+              finalExhaleTime={finalExhaleTime}
+            />
+          )}
+        </View>
         <BreathingGameProgress
           inhaleTime={this.inhaleTime}
           exhaleTime={this.exhaleTime}
@@ -278,16 +323,27 @@ class BreathingGame extends Component {
         <View style={styles.textContainer}>
           <Text style={styles.text}>{circleText}</Text>
         </View>
+
+        <View style={styles.targetBoxContainer}>
+          <Animated.View
+            style={[
+              styles.box,
+              {transform: [{rotate: `${targetRotation}deg`}]},
+            ]}>
+            <View style={[styles.targetLine]} />
+          </Animated.View>
+        </View>
         <View style={styles.boxContainer}>
           <Animated.View style={[styles.box, {transform: transform}]}>
             <View style={styles.dot} />
           </Animated.View>
         </View>
-        {touchDisabled ? (
+
+        {finished ? (
           <TouchableOpacity
             style={styles.finishButton}
-            onPress={this.props.finish}>
-            <Text style={styles.text}>Finish</Text>
+            onPress={this.handleFinishQuit}>
+            <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -295,6 +351,13 @@ class BreathingGame extends Component {
             onPressOut={this.handlePressOut}
             style={styles.touchableArea}
           />
+        )}
+        {!finished && (
+          <TouchableOpacity
+            style={styles.quitButton}
+            onPress={this.handleFinishQuit}>
+            <Text style={styles.quitButtonText}>Quit</Text>
+          </TouchableOpacity>
         )}
         <TouchableOpacity onPress={handleMusic} style={styles.musicIconHolder}>
           <Image

@@ -18,8 +18,8 @@ class Nav extends Component {
       <NavigationContainer>
         <StatusBar hidden />
         <Stack.Navigator headerMode="none">
-          <Stack.Screen name="Content" component={ContentScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Content" component={ContentScreen} />
           <Stack.Screen
             name="GuidedBreathing"
             component={GuidedBreathingScreen}

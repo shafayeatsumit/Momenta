@@ -1,9 +1,8 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
-const size = ScreenWidth - 50;
-const BOX_SIZE = size - 40;
+const BOX_SIZE = 180;
 
 const styles = StyleSheet.create({
   container: {
@@ -25,15 +24,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     transform: [{rotateZ: '45deg'}],
   },
+  targetBoxContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   dot: {
-    height: 80,
-    width: 80,
-    borderRadius: 40,
-    backgroundColor: '#7da1e9',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.buttonBlue,
+  },
+  targetLine: {
+    height: 20,
+    alignSelf: 'center',
+    width: 5,
+    marginTop: -15,
+    backgroundColor: '#6dd400',
   },
   box: {
-    width: BOX_SIZE,
-    height: BOX_SIZE,
+    width: BOX_SIZE - 20,
+    height: BOX_SIZE - 20,
+  },
+  topView: {
+    position: 'absolute',
+    top: 30,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: ScreenWidth,
+    height: 150,
+    // backgroundColor: 'yellow',
   },
   textContainer: {
     position: 'absolute',
@@ -45,9 +70,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 25,
+    fontSize: 16,
     textAlign: 'center',
   },
   resultContainer: {
@@ -71,11 +96,32 @@ const styles = StyleSheet.create({
   finishButton: {
     position: 'absolute',
     bottom: 30,
-    left: 0,
-    right: 0,
     height: 50,
-    width: ScreenWidth,
+    width: 120,
+    justifyContent: 'center',
     alignSelf: 'center',
+  },
+  finishText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  quitButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 15,
+    height: 50,
+    width: 60,
+    zIndex: 3,
+    justifyContent: 'center',
+    // backgroundColor: 'red',
+  },
+  quitButtonText: {
+    fontFamily: FontType.SemiBold,
+    color: 'rgb(66,72,102)',
+    fontSize: 20,
+    textAlign: 'center',
   },
   touchableArea: {
     position: 'absolute',
@@ -85,19 +131,19 @@ const styles = StyleSheet.create({
     height: ScreenHeight * 0.4,
   },
   musicIcon: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 30,
+    width: 30,
+    borderRadius: 15,
   },
   musicIconHolder: {
     position: 'absolute',
-    bottom: '8%',
-    left: 35,
+    bottom: 35,
+    left: 30,
     zIndex: 3,
-    backgroundColor: 'white',
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    // backgroundColor: 'white',
+    height: 30,
+    width: 30,
+    borderRadius: 15,
   },
 });
 

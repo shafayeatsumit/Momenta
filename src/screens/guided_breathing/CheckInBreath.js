@@ -8,15 +8,16 @@ import {
   Image,
   Animated,
 } from 'react-native';
-import {hapticFeedbackOptions} from '../../helpers/constants/common';
-import styles from './CheckInBreath.styles';
-const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import CheckinProgress from './CheckinProgress';
+import LottieView from 'lottie-react-native';
 
+import styles from './CheckInBreath.styles';
+import CheckinProgress from './CheckinProgress';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 
+const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
 class CheckInBreath extends Component {
   constructor(props) {
     super(props);
@@ -235,11 +236,19 @@ class CheckInBreath extends Component {
           </View>
         )}
         <View style={styles.contentContainer}>
-          <View style={styles.containerBox}>
-            <Animated.Text style={[styles.text, {opacity: this.animatedText}]}>
-              {circleText}
-            </Animated.Text>
-          </View>
+          <Animated.View
+            style={[styles.containerBox, {opacity: this.animatedText}]}>
+            <Text style={styles.text}>{circleText}</Text>
+            {measuring && (
+              <LottieView
+                autoSize
+                autoPlay
+                loop
+                style={styles.wave}
+                source={require('../../../assets/anims/wave.json')}
+              />
+            )}
+          </Animated.View>
         </View>
         {!measuring && (
           <TouchableOpacity

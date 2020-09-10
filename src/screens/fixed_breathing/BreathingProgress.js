@@ -1,11 +1,10 @@
 import React from 'react';
-
-import {Dimensions} from 'react-native';
+import {Colors} from '../../helpers/theme';
 import Svg, {Circle} from 'react-native-svg';
 import styles from './FixedBreathing.styles';
-const {width} = Dimensions.get('window');
-const size = width - 50;
-const strokeWidth = 20;
+
+const size = 180;
+const strokeWidth = 10;
 const {PI} = Math;
 const radius = (size - strokeWidth) / 2;
 const circumference = radius * 2 * PI;
@@ -36,7 +35,7 @@ const BreathingGameProgress = ({
       />
 
       <Circle
-        stroke="#79a0e0"
+        stroke={Colors.betterBlueLight}
         fill="none"
         cx={size / 2}
         cy={size / 2}
@@ -56,7 +55,7 @@ const BreathingGameProgress = ({
         strokeDashoffset={-inhaleOffset}
       />
       <Circle
-        stroke="#79a0e0"
+        stroke={Colors.betterBlueLight}
         fill="none"
         cx={size / 2}
         cy={size / 2}

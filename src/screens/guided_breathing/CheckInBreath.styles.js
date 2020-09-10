@@ -11,8 +11,9 @@ const styles = StyleSheet.create({
   },
 
   wave: {
-    height: 80,
-    width: 80,
+    marginTop: 3,
+    height: 20,
+    width: 20,
   },
   contentContainer: {
     position: 'absolute',

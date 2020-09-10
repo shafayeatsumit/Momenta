@@ -2,8 +2,6 @@ import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
-const BOX_SIZE = 180;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -47,8 +45,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#6dd400',
   },
   box: {
-    width: BOX_SIZE - 20,
-    height: BOX_SIZE - 20,
+    width: 160,
+    height: 160,
   },
   topView: {
     position: 'absolute',

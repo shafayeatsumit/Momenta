@@ -12,6 +12,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './FixedBreathing.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import BreathingProgress from './BreathingProgress';
+import ProgressTracker from '../../components/ProgressTracker';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 import {connect} from 'react-redux';
@@ -20,9 +21,13 @@ class FixedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleText: 'Tap Anywhere To Start',
+      circleText: '',
       finished: false,
+      initialized: false,
+      touchDisabled: false,
+      timer: 0,
     };
+    this.unmounted = false;
     this.animated = new Animated.Value(0);
     this.counter = 0;
     this.inhaleTime = props.fixedBreathing.inhale;
@@ -31,8 +36,8 @@ class FixedBreathing extends Component {
     this.exhaleHold = props.fixedBreathing.exhaleHold;
     this.totalTime =
       this.inhaleTime + this.exhaleTime + this.inhaleHold + this.exhaleHold;
-    this.totalBreathingTime = props.fixedBreathing.numberOfBreaths * 60;
-    this.totalBreaths = Math.ceil(this.totalBreathingTime / this.totalTime);
+    this.finishBreathingTime = props.fixedBreathing.numberOfBreaths * 60;
+    this.totalBreaths = Math.ceil(this.finishBreathingTime / this.totalTime);
   }
 
   startHapticFeedback = () => {
@@ -65,6 +70,9 @@ class FixedBreathing extends Component {
   };
 
   animatCb = () => {
+    if (this.unmounted) {
+      return;
+    }
     this.counter += 1;
     if (this.totalBreaths > this.counter) {
       this.exhaleStart();
@@ -73,6 +81,7 @@ class FixedBreathing extends Component {
       this.startInhaleTimer();
       this.animate();
     } else {
+      this.stopWatchId && clearInterval(this.stopWatchId);
       this.setState({finished: true});
     }
   };
@@ -92,33 +101,57 @@ class FixedBreathing extends Component {
     this.startHapticFeedback();
   };
 
+  startStopWatch = () => {
+    this.stopWatchId = setInterval(() => {
+      if (this.state.timer >= this.finishBreathingTime) {
+        clearInterval(this.stopWatchId);
+        return;
+      }
+      this.setState({timer: this.state.timer + 1});
+    }, 1000);
+  };
+
   handlePress = () => {
+    this.setState({initialized: true, touchDisabled: true});
     this.exhaleStart();
     this.startInhaleTimer();
     this.exhaleHold && this.startExhaleHoldTimer();
     this.inhaleHold && this.startInhaleHoldTimer();
     this.animate();
+    this.startStopWatch();
   };
 
+  handleFinish = () => this.props.navigation.pop();
+
   componentWillUnmount() {
+    this.unmounted = true;
     this.inhaleHoldTimer && clearTimeout(this.inhaleHoldTimer);
     this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
+    this.stopWatchId && clearInterval(this.stopWatchId);
   }
 
   render() {
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
-    const {circleText, finished} = this.state;
+    const {
+      circleText,
+      finished,
+      initialized,
+      touchDisabled,
+      timer,
+    } = this.state;
     const transform = [{rotate: this.rotate}];
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
+
     return (
       <TouchableOpacity
         style={styles.container}
         activeOpacity={1}
+        touchDisabled={touchDisabled}
         onPress={this.handlePress}>
         <BreathingProgress
           inhaleTime={this.inhaleTime}
@@ -126,6 +159,12 @@ class FixedBreathing extends Component {
           inhaleHold={this.inhaleHold}
           exhaleHold={this.exhaleHold}
         />
+        <View style={styles.progressTrackerContainer}>
+          <ProgressTracker
+            currentTime={timer}
+            targetTime={this.finishBreathingTime}
+          />
+        </View>
         <View style={styles.boxContainer}>
           <Animated.View style={[styles.box, {transform: transform}]}>
             <View style={styles.dot} />
@@ -138,18 +177,32 @@ class FixedBreathing extends Component {
         {finished && (
           <TouchableOpacity
             style={styles.finishButton}
-            onPress={() => this.props.navigation.pop()}>
-            <Text style={styles.text}>Finish</Text>
+            onPress={this.handleFinish}>
+            <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          onPress={route.params.handleMusic}
-          style={styles.musicIconHolder}>
-          <Image
-            style={styles.musicIcon}
-            source={musicOn ? MusicIcon : NoMusicIcon}
-          />
-        </TouchableOpacity>
+        {initialized && (
+          <TouchableOpacity
+            onPress={route.params.handleMusic}
+            style={styles.musicIconHolder}>
+            <Image
+              style={styles.musicIcon}
+              source={musicOn ? MusicIcon : NoMusicIcon}
+            />
+          </TouchableOpacity>
+        )}
+        {!initialized && (
+          <View style={styles.initTextHolder} pointerEvents="none">
+            <Text style={styles.initText}>Tap screen to begin</Text>
+          </View>
+        )}
+        {!finished && initialized && (
+          <TouchableOpacity
+            style={styles.quitButton}
+            onPress={this.handleFinish}>
+            <Text style={styles.quitButtonText}>Quit</Text>
+          </TouchableOpacity>
+        )}
       </TouchableOpacity>
     );
   }

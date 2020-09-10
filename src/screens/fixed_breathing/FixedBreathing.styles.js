@@ -1,9 +1,6 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
-
-const size = ScreenWidth - 50;
-const BOX_SIZE = size - 40;
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +11,12 @@ const styles = StyleSheet.create({
   },
   circleContainer: {
     transform: [{rotateZ: '270deg'}],
+  },
+  progressTrackerContainer: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
   },
   boxContainer: {
     position: 'absolute',
@@ -26,14 +29,14 @@ const styles = StyleSheet.create({
     transform: [{rotateZ: '45deg'}],
   },
   dot: {
-    height: 80,
-    width: 80,
-    borderRadius: 40,
-    backgroundColor: '#7da1e9',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.buttonBlueDeep,
   },
   box: {
-    width: BOX_SIZE,
-    height: BOX_SIZE,
+    width: 160,
+    height: 160,
   },
   textContainer: {
     position: 'absolute',
@@ -44,12 +47,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   text: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 25,
+    fontSize: 16,
     textAlign: 'center',
   },
+
   resultContainer: {
     position: 'absolute',
     top: 0,
@@ -91,14 +96,51 @@ const styles = StyleSheet.create({
   },
   musicIconHolder: {
     position: 'absolute',
-    // left: 20,
-    bottom: '8%',
+    bottom: 30,
     left: 35,
     zIndex: 3,
-    backgroundColor: 'white',
     height: 40,
     width: 40,
     borderRadius: 20,
+  },
+  finishText: {
+    fontFamily: FontType.SemiBold,
+    color: Colors.white,
+    fontSize: 22,
+    textAlign: 'center',
+  },
+  quitButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 15,
+    height: 50,
+    width: 60,
+    zIndex: 3,
+    justifyContent: 'center',
+  },
+  quitButtonText: {
+    fontFamily: FontType.SemiBold,
+    color: 'rgb(66,72,102)',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+
+  initTextHolder: {
+    position: 'absolute',
+    bottom: 50,
+    alignSelf: 'center',
+    height: 50,
+    width: 200,
+    // backgroundColor: 'yellow',
+  },
+  initText: {
+    fontFamily: FontType.Medium,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+  initTextBold: {
+    fontFamily: FontType.ExtraBold,
   },
 });
 

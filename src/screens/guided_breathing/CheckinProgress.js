@@ -18,7 +18,7 @@ class CheckinProgress extends Component {
       <>
         <Svg width={size} height={size} style={styles.circleContainer}>
           <Circle
-            stroke={'rgba(60,113,222,0.3)'}
+            stroke={Colors.betterBlueLight}
             fill="none"
             cx={size / 2}
             cy={size / 2}

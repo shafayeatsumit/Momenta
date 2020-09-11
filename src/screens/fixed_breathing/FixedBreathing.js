@@ -27,6 +27,7 @@ class FixedBreathing extends Component {
       finished: false,
       touchDisabled: false,
       timer: 0,
+      showStuffs: false,
     };
     this.checkmarkProgress = new Animated.Value(0);
     this.unmounted = false;
@@ -114,14 +115,19 @@ class FixedBreathing extends Component {
     }, 1000);
   };
 
-  startTheGame = () => {
-    this.setState({started: true, touchDisabled: true});
-    this.exhaleStart();
-    this.startInhaleTimer();
-    this.exhaleHold && this.startExhaleHoldTimer();
-    this.inhaleHold && this.startInhaleHoldTimer();
-    this.animate();
-    this.startStopWatch();
+  handleTap = () => {
+    const {started, showStuffs} = this.state;
+    if (!started) {
+      this.setState({started: true, touchDisabled: true});
+      this.exhaleStart();
+      this.startInhaleTimer();
+      this.exhaleHold && this.startExhaleHoldTimer();
+      this.inhaleHold && this.startInhaleHoldTimer();
+      this.animate();
+      this.startStopWatch();
+    } else {
+      this.setState({showStuffs: !showStuffs});
+    }
   };
 
   handleFinish = () => this.props.navigation.pop();
@@ -142,17 +148,25 @@ class FixedBreathing extends Component {
     }, 1000);
   };
 
+  measureTime = (time) => {
+    return ((new Date() - time) / 1000).toFixed(2);
+  };
+
   handlePressIn = () => {
     const {started, circleText} = this.state;
-    !started && this.startTheGame();
+    !started && this.handleTap();
     if (circleText === 'Exhale' || !started) {
       this.vibrateLoop();
     }
+    this.pressInTime = new Date();
   };
 
   handlePressOut = () => {
-    console.log('press OUT');
     this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+    const timeTaken = this.measureTime(this.pressInTime);
+    if (timeTaken < 1) {
+      this.handleTap();
+    }
   };
 
   componentWillUnmount() {
@@ -168,7 +182,14 @@ class FixedBreathing extends Component {
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
-    const {circleText, finished, started, touchDisabled, timer} = this.state;
+    const {
+      circleText,
+      finished,
+      started,
+      touchDisabled,
+      showStuffs,
+      timer,
+    } = this.state;
     const transform = [{rotate: this.rotate}];
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
@@ -194,7 +215,7 @@ class FixedBreathing extends Component {
         style={styles.container}
         activeOpacity={1}
         touchDisabled={touchDisabled}
-        onPress={this.startTheGame}>
+        onPress={this.handleTap}>
         <BreathingProgress
           inhaleTime={this.inhaleTime}
           exhaleTime={this.exhaleTime}
@@ -205,6 +226,7 @@ class FixedBreathing extends Component {
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
+            showTimer={showStuffs}
           />
         </View>
         <View style={styles.boxContainer}>
@@ -216,7 +238,7 @@ class FixedBreathing extends Component {
           <Text style={styles.text}>{circleText}</Text>
         </View>
 
-        {started && (
+        {started && showStuffs && (
           <TouchableOpacity
             onPress={route.params.handleMusic}
             style={styles.musicIconHolder}>
@@ -231,7 +253,7 @@ class FixedBreathing extends Component {
             <Text style={styles.initText}>Tap screen to begin</Text>
           </View>
         )}
-        {!finished && started && (
+        {!finished && started && showStuffs && (
           <TouchableOpacity
             style={styles.quitButton}
             onPress={this.handleFinish}>

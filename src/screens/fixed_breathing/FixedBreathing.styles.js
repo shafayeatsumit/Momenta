@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.4,
+    zIndex: 3,
   },
   musicIcon: {
     height: 40,
@@ -98,10 +99,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
     left: 35,
-    zIndex: 3,
     height: 40,
     width: 40,
     borderRadius: 20,
+    zIndex: 5,
+    resizeMode: 'contain',
   },
   finishText: {
     fontFamily: FontType.SemiBold,
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
     right: 15,
     height: 50,
     width: 60,
-    zIndex: 3,
+    zIndex: 5,
     justifyContent: 'center',
   },
   quitButtonText: {

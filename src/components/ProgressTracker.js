@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, Platform, StyleSheet} from 'react-native';
 import {FontType} from '../helpers/theme';
 import {ScreenWidth} from '../helpers/constants';
 import AnimatedProgress from './AnimatedProgress';
@@ -50,8 +50,9 @@ const styles = StyleSheet.create({
   targetTime: {
     // fontFamily: FontType.Medium,
     color: 'rgb(120,121,137)',
+    lineHeight: 20,
     fontSize: 12,
     textAlign: 'center',
-    paddingTop: 3,
+    paddingTop: Platform.OS === 'ios' ? 0 : 3,
   },
 });

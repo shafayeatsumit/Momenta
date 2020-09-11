@@ -23,8 +23,8 @@ class FixedBreathing extends Component {
     super(props);
     this.state = {
       circleText: '',
+      started: false,
       finished: false,
-      initialized: false,
       touchDisabled: false,
       timer: 0,
     };
@@ -43,13 +43,14 @@ class FixedBreathing extends Component {
   }
 
   startHapticFeedback = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'clockTick';
+    const feedbackType = 'impactHeavy';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   startExhaleHoldTimer = () => {
     this.inhaleHoldTimer = setTimeout(() => {
       this.setState({circleText: 'Hold'});
+      this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
       this.startHapticFeedback();
       clearTimeout(this.inhaleHoldTimer);
     }, this.exhaleTime * 1000);
@@ -113,8 +114,8 @@ class FixedBreathing extends Component {
     }, 1000);
   };
 
-  handlePress = () => {
-    this.setState({initialized: true, touchDisabled: true});
+  startTheGame = () => {
+    this.setState({started: true, touchDisabled: true});
     this.exhaleStart();
     this.startInhaleTimer();
     this.exhaleHold && this.startExhaleHoldTimer();
@@ -125,14 +126,6 @@ class FixedBreathing extends Component {
 
   handleFinish = () => this.props.navigation.pop();
 
-  componentWillUnmount() {
-    this.unmounted = true;
-    this.inhaleHoldTimer && clearTimeout(this.inhaleHoldTimer);
-    this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
-    this.exhaleTimer && clearTimeout(this.exhaleTimer);
-    this.stopWatchId && clearInterval(this.stopWatchId);
-  }
-
   finishAnimation = () => {
     Animated.timing(this.checkmarkProgress, {
       toValue: 1,
@@ -141,17 +134,41 @@ class FixedBreathing extends Component {
     }).start(this.handleFinish);
   };
 
+  vibrateLoop = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    this.vibrateLoopId = setInterval(() => {
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    }, 1000);
+  };
+
+  handlePressIn = () => {
+    const {started, circleText} = this.state;
+    !started && this.startTheGame();
+    if (circleText === 'Exhale' || !started) {
+      this.vibrateLoop();
+    }
+  };
+
+  handlePressOut = () => {
+    console.log('press OUT');
+    this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+  };
+
+  componentWillUnmount() {
+    this.unmounted = true;
+    this.inhaleHoldTimer && clearTimeout(this.inhaleHoldTimer);
+    this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
+    this.exhaleTimer && clearTimeout(this.exhaleTimer);
+    this.stopWatchId && clearInterval(this.stopWatchId);
+    this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+  }
+
   render() {
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
     this.rotate = this.animated.interpolate({inputRange, outputRange});
-    const {
-      circleText,
-      finished,
-      initialized,
-      touchDisabled,
-      timer,
-    } = this.state;
+    const {circleText, finished, started, touchDisabled, timer} = this.state;
     const transform = [{rotate: this.rotate}];
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
@@ -177,7 +194,7 @@ class FixedBreathing extends Component {
         style={styles.container}
         activeOpacity={1}
         touchDisabled={touchDisabled}
-        onPress={this.handlePress}>
+        onPress={this.startTheGame}>
         <BreathingProgress
           inhaleTime={this.inhaleTime}
           exhaleTime={this.exhaleTime}
@@ -199,7 +216,7 @@ class FixedBreathing extends Component {
           <Text style={styles.text}>{circleText}</Text>
         </View>
 
-        {initialized && (
+        {started && (
           <TouchableOpacity
             onPress={route.params.handleMusic}
             style={styles.musicIconHolder}>
@@ -209,18 +226,23 @@ class FixedBreathing extends Component {
             />
           </TouchableOpacity>
         )}
-        {!initialized && (
+        {!started && (
           <View style={styles.initTextHolder} pointerEvents="none">
             <Text style={styles.initText}>Tap screen to begin</Text>
           </View>
         )}
-        {!finished && initialized && (
+        {!finished && started && (
           <TouchableOpacity
             style={styles.quitButton}
             onPress={this.handleFinish}>
             <Text style={styles.quitButtonText}>Quit</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}
+          style={styles.touchableArea}
+        />
       </TouchableOpacity>
     );
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Colors, FontType} from '../helpers/theme';
+import {FontType} from '../helpers/theme';
 import {ScreenWidth} from '../helpers/constants';
 import AnimatedProgress from './AnimatedProgress';
 
@@ -42,14 +42,13 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   time: {
-    fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
     paddingHorizontal: 3,
   },
   targetTime: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Medium,
     color: 'rgb(120,121,137)',
     fontSize: 12,
     textAlign: 'center',

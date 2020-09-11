@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './FixedBreathing.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
@@ -27,6 +28,7 @@ class FixedBreathing extends Component {
       touchDisabled: false,
       timer: 0,
     };
+    this.checkmarkProgress = new Animated.Value(0);
     this.unmounted = false;
     this.animated = new Animated.Value(0);
     this.counter = 0;
@@ -82,7 +84,7 @@ class FixedBreathing extends Component {
       this.animate();
     } else {
       this.stopWatchId && clearInterval(this.stopWatchId);
-      this.setState({finished: true});
+      this.setState({finished: true}, this.finishAnimation);
     }
   };
 
@@ -131,6 +133,14 @@ class FixedBreathing extends Component {
     this.stopWatchId && clearInterval(this.stopWatchId);
   }
 
+  finishAnimation = () => {
+    Animated.timing(this.checkmarkProgress, {
+      toValue: 1,
+      duration: 3000,
+      easing: Easing.linear,
+    }).start(this.handleFinish);
+  };
+
   render() {
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -146,6 +156,21 @@ class FixedBreathing extends Component {
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
+
+    if (finished) {
+      return (
+        <View style={styles.checkmarkHolder}>
+          <LottieView
+            autoSize
+            autoPlay
+            loop={false}
+            style={styles.checkmark}
+            resizeMode="cover"
+            source={require('../../../assets/anims/success.json')}
+          />
+        </View>
+      );
+    }
 
     return (
       <TouchableOpacity
@@ -174,13 +199,6 @@ class FixedBreathing extends Component {
           <Text style={styles.text}>{circleText}</Text>
         </View>
 
-        {finished && (
-          <TouchableOpacity
-            style={styles.finishButton}
-            onPress={this.handleFinish}>
-            <Text style={styles.finishText}>Finish</Text>
-          </TouchableOpacity>
-        )}
         {initialized && (
           <TouchableOpacity
             onPress={route.params.handleMusic}

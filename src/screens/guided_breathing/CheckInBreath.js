@@ -107,7 +107,7 @@ class CheckInBreath extends Component {
     this.vibrateLoopId = setInterval(() => {
       const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
       ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-    }, 100);
+    }, 1000);
   };
 
   moreThanTenSec = () => {

@@ -142,6 +142,16 @@ const styles = StyleSheet.create({
   initTextBold: {
     fontFamily: FontType.ExtraBold,
   },
+  checkmarkHolder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.betterBlue,
+  },
+  checkmark: {
+    height: 300,
+    width: 300,
+  },
 });
 
 export default styles;

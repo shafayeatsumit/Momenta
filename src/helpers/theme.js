@@ -16,6 +16,7 @@ const FontType = {
   Bold: 'Montserrat-Bold',
   ExtraBold: 'Montserrat-ExtraBold',
   Light: 'Montserrat-Light',
+  Monospace: 'AlNile-Bold',
 };
 
 const sizes = {

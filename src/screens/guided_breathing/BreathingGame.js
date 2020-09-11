@@ -72,9 +72,12 @@ class BreathingGame extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
-  loopHapticFeedback = () => {
+  vibrateLoop = () => {
     const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    this.vibrateLoopId = setInterval(() => {
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    }, 1000);
   };
 
   secondThresholdSetup = () => {
@@ -117,6 +120,7 @@ class BreathingGame extends Component {
         ? this.exhaleTime
         : this.exhaleTime + this.exhlaeIncrementValue;
     this.setState({circleText: 'Exhale'});
+
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.exhaleEndPulseTimer = setTimeout(() => {
@@ -168,6 +172,7 @@ class BreathingGame extends Component {
   exhaleEndPulse = () => {
     this.setState({circleText: 'Inhale'});
     this.startHapticFeedback();
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   };
 
   startStopWatch = () => {
@@ -197,6 +202,7 @@ class BreathingGame extends Component {
     this.exhaleEndPulseTimer && clearTimeout(this.exhaleEndPulseTimer);
     this.initExhalePulseTimer && clearTimeout(this.initExhalePulseTimer);
     this.stopWatchId && clearInterval(this.stopWatchId);
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   }
 
   resetTime = () => {
@@ -247,6 +253,10 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
+    this.pressIn = true;
+    const {circleText} = this.state;
+    circleText === 'Exhale' && this.vibrateLoop();
+
     if (this.pressInTime) {
       const timeTakenInhale = this.measureTime(this.pressOutTime);
       if (timeTakenInhale < 1) {
@@ -301,7 +311,7 @@ class BreathingGame extends Component {
         <View style={styles.textContainer}>
           <Text style={styles.text}>{circleText}</Text>
         </View>
-        {targetVisible && (
+        {targetVisible && this.counter > 0 && (
           <View style={styles.targetBoxContainer}>
             <Animated.View
               style={[

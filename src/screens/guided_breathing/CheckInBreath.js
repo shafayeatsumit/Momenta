@@ -67,8 +67,8 @@ class CheckInBreath extends Component {
   fadeInText = () => {
     Animated.timing(this.animatedText, {
       toValue: 1,
-      delay: 500,
-      duration: 1000,
+      delay: 0,
+      duration: 800,
       useNativeDriver: true,
       easing: Easing.ease,
     }).start();

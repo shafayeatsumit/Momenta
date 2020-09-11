@@ -28,7 +28,7 @@ class BreathingGame extends Component {
       finalInhaleTime: 0,
       timer: 0,
       touchDisabled: false,
-      targetVisible: true,
+      targetVisible: false,
     };
     this.pressInTime = null;
     this.pressOutTime = null;
@@ -177,10 +177,18 @@ class BreathingGame extends Component {
     }, 1000);
   };
 
+  showTarget = (totalTime) => {
+    this.showTargetTimerId = setTimeout(() => {
+      this.setState({targetVisible: true});
+      clearTimeout(this.showTargetTimerId);
+    }, totalTime * 1000 - 500);
+  };
+
   componentDidMount() {
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.animate(totalTime);
+    this.showTarget(totalTime);
     this.initExhalePulseTimer = setTimeout(() => {
       this.exhaleEndPulse();
       clearTimeout(this.initExhalePulseTimer);
@@ -314,7 +322,7 @@ class BreathingGame extends Component {
         <View style={styles.textContainer}>
           <Text style={styles.text}>{circleText}</Text>
         </View>
-        {targetVisible && this.counter > 0 && (
+        {targetVisible && (
           <View style={styles.targetBoxContainer}>
             <Animated.View
               style={[

@@ -60,19 +60,5 @@ const styles = StyleSheet.create({
   initTextBold: {
     fontFamily: FontType.ExtraBold,
   },
-  musicIcon: {
-    height: 30,
-    width: 30,
-    borderRadius: 20,
-  },
-  musicIconHolder: {
-    position: 'absolute',
-    bottom: 30,
-    left: 35,
-    height: 30,
-    width: 30,
-    borderRadius: 20,
-    zIndex: 4,
-  },
 });
 export default styles;

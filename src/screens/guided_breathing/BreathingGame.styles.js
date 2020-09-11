@@ -91,35 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-  finishButton: {
-    position: 'absolute',
-    bottom: 30,
-    height: 50,
-    width: 120,
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  finishText: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  quitButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 15,
-    height: 50,
-    width: 60,
-    zIndex: 3,
-    justifyContent: 'center',
-  },
-  quitButtonText: {
-    fontFamily: FontType.SemiBold,
-    color: 'rgb(66,72,102)',
-    fontSize: 18,
-    textAlign: 'center',
-  },
+
   touchableArea: {
     position: 'absolute',
     bottom: 0,

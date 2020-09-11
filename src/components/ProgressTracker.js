@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
   },
   targetTime: {
-    fontFamily: FontType.Medium,
+    // fontFamily: FontType.Medium,
     color: 'rgb(120,121,137)',
     fontSize: 12,
     textAlign: 'center',

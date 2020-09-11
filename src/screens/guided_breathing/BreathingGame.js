@@ -1,13 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Animated,
-  Text,
-  Platform,
-  Easing,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Animated, Text, Platform, Easing} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import ProgressTracker from '../../components/ProgressTracker';
 import BreathingStats from './BreathingStats';
@@ -15,8 +7,6 @@ import BreathingGameProgress from './BreathingGameProgress';
 import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
-import MusicIcon from '../../../assets/icons/music.png';
-import NoMusicIcon from '../../../assets/icons/no_music.png';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
@@ -29,7 +19,6 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       circleText: 'Exhale',
-      finished: false,
       inhaleTimeRecorded: 0,
       exhaleTimeRecorded: 0,
       totalInhaleTime: 0,
@@ -65,6 +54,9 @@ class BreathingGame extends Component {
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.unmount = false;
+
+    // press in
+    props.pressIn && this.handlePressIn();
   }
 
   startHapticFeedback = () => {
@@ -132,10 +124,10 @@ class BreathingGame extends Component {
 
   animateCBFinish = () => {
     const {progressCount, totalExhaleTime, totalInhaleTime} = this.state;
+    this.props.setFinished();
     this.setState({
       touchDisabled: true,
       circleText: 'Finished',
-      finished: true,
       finalInhaleTime: totalInhaleTime / progressCount,
       finalExhaleTime: totalExhaleTime / progressCount,
     });
@@ -240,9 +232,11 @@ class BreathingGame extends Component {
 
   handlePressOut = () => {
     // for reset breath
+    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
     if (!this.pressInTime) {
       return;
     }
+
     const timeTakenExhale = this.measureTime(this.pressInTime);
     if (timeTakenExhale < 1) {
       this.oneSecError();
@@ -271,16 +265,25 @@ class BreathingGame extends Component {
     this.pressInTime = new Date();
   };
 
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.pressIn !== prevProps.pressIn ||
+      this.props.pressOut !== prevProps.pressOut
+    ) {
+      this.props.pressIn && this.handlePressIn();
+      this.props.pressOut && this.handlePressOut();
+    }
+  }
+
   render() {
     const {
       circleText,
       finalExhaleTime,
       finalInhaleTime,
-      finished,
       timer,
       targetVisible,
     } = this.state;
-    const {guidedBreathing, musicOn, handleMusic} = this.props;
+    const {guidedBreathing, finished} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -328,33 +331,6 @@ class BreathingGame extends Component {
             <View style={styles.dot} />
           </Animated.View>
         </View>
-
-        {finished ? (
-          <TouchableOpacity
-            style={styles.finishButton}
-            onPress={this.props.finish}>
-            <Text style={styles.finishText}>Finish</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPressIn={this.handlePressIn}
-            onPressOut={this.handlePressOut}
-            style={styles.touchableArea}
-          />
-        )}
-        {!finished && (
-          <TouchableOpacity
-            style={styles.quitButton}
-            onPress={this.props.finish}>
-            <Text style={styles.quitButtonText}>Quit</Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity onPress={handleMusic} style={styles.musicIconHolder}>
-          <Image
-            style={styles.musicIcon}
-            source={musicOn ? MusicIcon : NoMusicIcon}
-          />
-        </TouchableOpacity>
       </View>
     );
   }

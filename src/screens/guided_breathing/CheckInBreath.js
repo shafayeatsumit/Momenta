@@ -197,6 +197,16 @@ class CheckInBreath extends Component {
     this.pressInTime = new Date();
   };
 
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.pressIn !== prevProps.pressIn ||
+      this.props.pressOut !== prevProps.pressOut
+    ) {
+      this.props.pressIn && this.handlePressIn();
+      this.props.pressOut && this.handlePressOut();
+    }
+  }
+
   componentWillUnmount() {
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   }
@@ -204,14 +214,12 @@ class CheckInBreath extends Component {
   render() {
     const {
       circleText,
-      touchDisabled,
       exhaleCount,
       inhaleCount,
       startedMeasuring,
       instructionText,
       measuring,
     } = this.state;
-    const {musicOn, handleMusic} = this.props;
     return (
       <View style={styles.container}>
         {startedMeasuring ? (
@@ -244,23 +252,6 @@ class CheckInBreath extends Component {
             )}
           </Animated.View>
         </View>
-        {!measuring && (
-          <TouchableOpacity
-            onPress={handleMusic}
-            style={styles.musicIconHolder}>
-            <Image
-              style={styles.musicIcon}
-              source={musicOn ? MusicIcon : NoMusicIcon}
-            />
-          </TouchableOpacity>
-        )}
-        {touchDisabled ? null : (
-          <TouchableOpacity
-            onPressIn={this.handlePressIn}
-            onPressOut={this.handlePressOut}
-            style={styles.touchableArea}
-          />
-        )}
       </View>
     );
   }

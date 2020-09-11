@@ -1,22 +1,31 @@
 import React, {Component} from 'react';
+import {StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import CheckInBreath from './CheckInBreath';
 import BreathingGame from './BreathingGame';
 import {connect} from 'react-redux';
-
+import {FontType, Colors} from '../../helpers/theme';
+import {ScreenHeight} from '../../helpers/constants/common';
+import MusicIcon from '../../../assets/icons/music.png';
+import NoMusicIcon from '../../../assets/icons/no_music.png';
 class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showCheckInBreath: true,
       showBreathingGame: false,
+      pressIn: false,
+      pressOut: false,
+      finished: false,
     };
   }
 
-  finish = () => {
+  goHome = () => {
     console.log('here');
     this.setState({showBreathingGame: false});
     this.props.navigation.pop();
   };
+
+  setFinished = () => this.setState({finished: true});
 
   goToBreathingGame = (avgExhaleTime, avgInhaleTime) => {
     this.props.dispatch({
@@ -27,12 +36,26 @@ class GuidedBreathing extends Component {
     this.setState({showCheckInBreath: false, showBreathingGame: true});
   };
 
+  handlePressIn = () => {
+    this.setState({pressIn: true, pressOut: false});
+  };
+
+  handlePressOut = () => {
+    this.setState({pressIn: false, pressOut: true});
+  };
+
   render() {
-    const {showCheckInBreath, showBreathingGame} = this.state;
+    const {
+      showCheckInBreath,
+      showBreathingGame,
+      pressIn,
+      pressOut,
+      finished,
+    } = this.state;
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
-
+    const showQuit = !finished && showBreathingGame;
     return (
       <>
         {showCheckInBreath && (
@@ -40,14 +63,43 @@ class GuidedBreathing extends Component {
             goToBreathingGame={this.goToBreathingGame}
             musicOn={musicOn}
             handleMusic={route.params.handleMusic}
+            pressIn={pressIn}
+            pressOut={pressOut}
           />
         )}
         {showBreathingGame && (
           <BreathingGame
-            finish={this.finish}
             musicOn={musicOn}
             handleMusic={route.params.handleMusic}
+            pressIn={pressIn}
+            pressOut={pressOut}
+            finished={finished}
+            setFinished={this.setFinished}
           />
+        )}
+        <TouchableOpacity
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}
+          style={styles.touchableArea}
+        />
+        <TouchableOpacity
+          onPress={route.params.handleMusic}
+          style={styles.musicIconHolder}>
+          <Image
+            style={styles.musicIcon}
+            source={musicOn ? MusicIcon : NoMusicIcon}
+          />
+        </TouchableOpacity>
+        {finished && (
+          <TouchableOpacity style={styles.finishButton} onPress={this.goHome}>
+            <Text style={styles.finishText}>Finish</Text>
+          </TouchableOpacity>
+        )}
+
+        {showQuit && (
+          <TouchableOpacity style={styles.quitButton} onPress={this.goHome}>
+            <Text style={styles.quitButtonText}>Quit</Text>
+          </TouchableOpacity>
         )}
       </>
     );
@@ -62,3 +114,56 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps)(GuidedBreathing);
+
+const styles = StyleSheet.create({
+  touchableArea: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.4,
+  },
+  musicIcon: {
+    height: 30,
+    width: 30,
+    borderRadius: 20,
+  },
+  musicIconHolder: {
+    position: 'absolute',
+    bottom: 30,
+    left: 35,
+    height: 30,
+    width: 30,
+    borderRadius: 20,
+    zIndex: 4,
+  },
+  quitButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 15,
+    height: 50,
+    width: 60,
+    justifyContent: 'center',
+    zIndex: 5,
+  },
+  quitButtonText: {
+    fontFamily: FontType.SemiBold,
+    color: 'rgb(66,72,102)',
+    fontSize: 18,
+    textAlign: 'center',
+  },
+  finishButton: {
+    position: 'absolute',
+    bottom: 30,
+    height: 50,
+    width: 120,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  finishText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+});

@@ -18,15 +18,6 @@ class CheckinProgress extends Component {
       <>
         <Svg width={size} height={size} style={styles.circleContainer}>
           <Circle
-            stroke={Colors.betterBlueLight}
-            fill="none"
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            strokeWidth={strokeWidth}
-            strokeDasharray={[circumference, circumference]}
-          />
-          <Circle
             stroke="#2162cc"
             fill="none"
             cx={size / 2}

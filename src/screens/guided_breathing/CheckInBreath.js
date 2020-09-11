@@ -82,13 +82,8 @@ class CheckInBreath extends Component {
       touchDisabled: true,
       circleText: '',
     });
-    console.log(`exhaleTime ${exhaleTime} inhaleTime ${inhaleTime}`);
-    this.props.goToBreathingGame(exhaleTime, inhaleTime);
-  };
 
-  startHapticFeedback = () => {
-    const feedbackType = 'impactHeavy';
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    this.props.goToBreathingGame(exhaleTime, inhaleTime);
   };
 
   breathCompleted = () => {
@@ -104,8 +99,9 @@ class CheckInBreath extends Component {
   };
 
   vibrateLoop = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
     this.vibrateLoopId = setInterval(() => {
-      const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
       ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
     }, 1000);
   };
@@ -155,7 +151,7 @@ class CheckInBreath extends Component {
       measurementType: 'inhale',
       circleText: 'Measuring inhale time',
       measuring: true,
-      instructionText: '',
+      instructionText: 'Hold when done inhaling to start',
     });
     const timeTakenExhale = this.measureTime(this.pressInTime);
 
@@ -168,7 +164,6 @@ class CheckInBreath extends Component {
       });
     }
     this.pressOutTime = new Date();
-    this.startHapticFeedback();
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   };
 
@@ -178,10 +173,9 @@ class CheckInBreath extends Component {
       measuring: true,
       measurementType: 'exhale',
       circleText: 'Measuring exhale time',
-      startedMeasuring: true,
       instructionText: '',
+      startedMeasuring: true,
     });
-    this.startHapticFeedback();
     this.vibrateLoop();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();

@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Animated, Text, Platform, Easing} from 'react-native';
+import {
+  View,
+  Animated,
+  Text,
+  Platform,
+  Easing,
+  TouchableOpacity,
+} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import ProgressTracker from '../../components/ProgressTracker';
 import BreathingStats from './BreathingStats';
@@ -248,6 +255,7 @@ class BreathingGame extends Component {
     const timeTakenExhale = this.measureTime(this.pressInTime);
     if (timeTakenExhale < 1) {
       this.oneSecError();
+      this.props.handleTap();
     } else {
       this.setState({exhaleTimeRecorded: Number(timeTakenExhale)});
     }
@@ -291,7 +299,7 @@ class BreathingGame extends Component {
       timer,
       targetVisible,
     } = this.state;
-    const {guidedBreathing, finished} = this.props;
+    const {guidedBreathing, finished, handleTap, showStuffs} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -300,11 +308,15 @@ class BreathingGame extends Component {
       (360 * this.targetExhale) / (this.targetExhale + this.targetInhale);
     const transform = [{rotate: this.rotate}];
     return (
-      <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={handleTap}
+        activeOpacity={1}>
         <View style={styles.topView}>
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
+            showTimer={showStuffs}
           />
           {finished && (
             <BreathingStats
@@ -339,7 +351,7 @@ class BreathingGame extends Component {
             <View style={styles.dot} />
           </Animated.View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }

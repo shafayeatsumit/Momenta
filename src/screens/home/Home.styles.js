@@ -175,6 +175,8 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 20,
+    tintColor: '#F5F5F5',
+    resizeMode: 'contain',
   },
   musicIconHolder: {
     position: 'absolute',

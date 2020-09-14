@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, Platform, StyleSheet} from 'react-native';
-import {FontType} from '../helpers/theme';
 import {ScreenWidth} from '../helpers/constants';
 import AnimatedProgress from './AnimatedProgress';
 

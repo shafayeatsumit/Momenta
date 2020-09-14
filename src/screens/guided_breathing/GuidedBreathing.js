@@ -16,6 +16,7 @@ class GuidedBreathing extends Component {
       pressIn: false,
       pressOut: false,
       finished: false,
+      showStuffs: false,
     };
   }
 
@@ -44,6 +45,11 @@ class GuidedBreathing extends Component {
     this.setState({pressIn: false, pressOut: true});
   };
 
+  handleTap = () => {
+    const {showStuffs} = this.state;
+    this.setState({showStuffs: !showStuffs});
+  };
+
   render() {
     const {
       showCheckInBreath,
@@ -51,11 +57,14 @@ class GuidedBreathing extends Component {
       pressIn,
       pressOut,
       finished,
+      showStuffs,
     } = this.state;
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
-    const showQuit = !finished && showBreathingGame;
+    const showQuit = !finished && showBreathingGame && showStuffs;
+    const showSoundIcon =
+      showCheckInBreath || (showBreathingGame && showStuffs);
     return (
       <>
         {showCheckInBreath && (
@@ -69,12 +78,12 @@ class GuidedBreathing extends Component {
         )}
         {showBreathingGame && (
           <BreathingGame
-            musicOn={musicOn}
-            handleMusic={route.params.handleMusic}
             pressIn={pressIn}
             pressOut={pressOut}
             finished={finished}
+            showStuffs={showStuffs}
             setFinished={this.setFinished}
+            handleTap={this.handleTap}
           />
         )}
         <TouchableOpacity
@@ -82,14 +91,16 @@ class GuidedBreathing extends Component {
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}
         />
-        <TouchableOpacity
-          onPress={route.params.handleMusic}
-          style={styles.musicIconHolder}>
-          <Image
-            style={styles.musicIcon}
-            source={musicOn ? MusicIcon : NoMusicIcon}
-          />
-        </TouchableOpacity>
+        {showSoundIcon && (
+          <TouchableOpacity
+            onPress={route.params.handleMusic}
+            style={styles.musicIconHolder}>
+            <Image
+              style={styles.musicIcon}
+              source={musicOn ? MusicIcon : NoMusicIcon}
+            />
+          </TouchableOpacity>
+        )}
         {finished && (
           <TouchableOpacity style={styles.finishButton} onPress={this.goHome}>
             <Text style={styles.finishText}>Finish</Text>
@@ -127,6 +138,8 @@ const styles = StyleSheet.create({
     height: 30,
     width: 30,
     borderRadius: 20,
+    tintColor: '#F5F5F5',
+    resizeMode: 'contain',
   },
   musicIconHolder: {
     position: 'absolute',

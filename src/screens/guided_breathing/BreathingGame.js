@@ -42,9 +42,8 @@ class BreathingGame extends Component {
     this.animated = new Animated.Value(0);
     // hapticfeedback stuffs
     this.counter = 0;
-    this.finishBreathingTime = props.guidedBreathing.numberOfBreaths * 60; // in secs
+    this.finishBreathingTime = props.guidedBreathing.breathingTime * 60; // in secs
     this.totalBreathingTime = 0;
-    this.totalBreaths = props.guidedBreathing.numberOfBreaths;
     this.exhaleTime = props.guidedBreathing.calibrationExhale;
     this.inhaleTime = props.guidedBreathing.calibrationInhale;
     this.targetExhale = props.guidedBreathing.targetExhale;

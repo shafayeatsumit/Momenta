@@ -1,9 +1,6 @@
-import {guidedBreathingProperties} from '../../helpers/constants';
-
 const initialState = {
   id: 'calm',
   numberOfBreaths: 2,
-  minNumberOfBreaths: 2,
   targetInhale: 3.5,
   targetExhale: 3.5,
   firstThreshold: 120,
@@ -14,10 +11,10 @@ const initialState = {
 
 const breathing = (state = initialState, action) => {
   switch (action.type) {
-    case 'SWITCH_GUIDED_BREATHING_TYPE':
+    case 'SELECT_GUIDED_TYPE':
       return {
         ...state,
-        ...guidedBreathingProperties[action.breathingType],
+        ...action.data,
       };
     case 'UPDATE_CALIBRATION_TIME':
       return {
@@ -25,18 +22,10 @@ const breathing = (state = initialState, action) => {
         calibrationExhale: action.calibrationExhale,
         calibrationInhale: action.calibrationInhale,
       };
-    case 'ADD_GUIDED_BREATH':
+    case 'SELECT_GUIDED_TIME':
       return {
         ...state,
-        numberOfBreaths: state.numberOfBreaths + 1,
-      };
-    case 'REMOVE_GUIDED_BREATH':
-      return {
-        ...state,
-        numberOfBreaths:
-          state.numberOfBreaths > state.minNumberOfBreaths
-            ? state.numberOfBreaths - 1
-            : state.numberOfBreaths,
+        breathingTime: action.breathingTime,
       };
     default:
       return state;

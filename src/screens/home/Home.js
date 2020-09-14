@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import styles from './Home.styles';
-import GuidedBreathing from './GuidedBreathingTypes';
-import BreathCounter from './BreathCounter';
-import FixedBreathing from './FixedBreathing';
-
+import ButtonBig from './ButtonBig';
+import ButtonGroup from './ButtonGroup';
+import Options from './Options';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
 
@@ -16,6 +15,13 @@ Sound.setCategory('Playback');
 class Home extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showCutomButtonGroup: false,
+      customConfigType: '',
+      showCustomInterval: false,
+      showBreathingTypes: true,
+      showBreathingTime: false,
+    };
     this.playingFile1 = false;
     this.playingFile2 = false;
     this.soundFile1 = new Sound(soundFile, Sound.MAIN_BUNDLE, (error) => {});
@@ -93,49 +99,126 @@ class Home extends Component {
     }
   }
 
+  handleTypeSelect = (breating) => {
+    const breathingType = breating.type;
+    const breathingId = breating.id;
+    const {dispatch} = this.props;
+    if (breathingType === 'guided') {
+      dispatch({type: 'SELECT_GUIDED_TYPE', data: breating});
+    } else {
+      dispatch({type: 'SELECT_FIXED_TYPE', data: breating});
+    }
+    this.setState({
+      showBreathingTypes: false,
+      ...(breathingId === 'custom'
+        ? {showCutomButtonGroup: true}
+        : {showCutomButtonGroup: false}),
+    });
+  };
+
+  handleTimeSelect = (breathingTime) => {
+    const {dispatch, breathing} = this.props;
+    if (breathing.type === 'guided') {
+      dispatch({type: 'SELECT_GUIDED_TIME', breathingTime});
+    } else {
+      dispatch({type: 'SELECT_FIXED_TIME', breathingTime});
+    }
+    this.setState({showBreathingTime: false});
+  };
+
+  buttonGroupPress = (breathingId, breathingType) => {
+    this.setState({
+      customConfigId: breathingId,
+      customConfigType: breathingType,
+      showCustomInterval: true,
+    });
+  };
+
+  buttonGroupOptionSelect = (breathingTime) => {
+    const {customConfigType} = this.state;
+    this.setState({
+      customConfigType: '',
+      customConfigId: null,
+      showCustomInterval: false,
+    });
+    this.props.dispatch({
+      type: 'SELECT_CUSTOM_TIME',
+      customType: customConfigType,
+      customTime: breathingTime,
+    });
+  };
+
   render() {
-    const {breathing, userInfo} = this.props;
+    const {breathing, userInfo, guidedBreathing, fixedBreathing} = this.props;
+    console.log('++++++++++++++++++++++');
+    console.log('breathing', breathing);
+    console.log('fixed breathing', fixedBreathing);
+    console.log('guided breathing', guidedBreathing);
+    console.log('++++++++++++++++++++++');
     const {musicOn} = userInfo;
+    const {
+      showCutomButtonGroup,
+      showCustomInterval,
+      showBreathingTypes,
+      showBreathingTime,
+      customConfigType,
+      customConfigId,
+    } = this.state;
+    const hideBreathingType = showCustomInterval;
+    const hideBreathingTime = showCustomInterval || showBreathingTypes;
+    const hideStart =
+      showCustomInterval || showBreathingTypes || showBreathingTime;
+    const minuteText = breathing.breathingTime > 1 ? 'minutes' : 'minute';
     return (
       <View style={styles.container}>
-        <View style={styles.box}>
-          <View style={styles.tabBar}>
-            <TouchableOpacity
-              onPress={this.switchTab}
-              style={[
-                styles.tab,
-                breathing.type === 'guided' && styles.tabHighlight,
-              ]}>
-              <Text style={styles.tabText}>Guided</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={this.switchTab}
-              style={[
-                styles.tab,
-                breathing.type === 'fixed' && styles.tabHighlight,
-              ]}>
-              <Text style={styles.tabText}>Fixed</Text>
-            </TouchableOpacity>
-          </View>
-          {breathing.type === 'guided' ? (
-            <GuidedBreathing />
-          ) : (
-            <FixedBreathing />
-          )}
-
-          <BreathCounter />
-        </View>
-        <TouchableOpacity style={styles.startButton} onPress={this.handleStart}>
-          <Text style={styles.startText}>Start</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.handleMusic}
-          style={styles.musicIconHolder}>
-          <Image
-            style={styles.musicIcon}
-            source={musicOn ? MusicIcon : NoMusicIcon}
+        {showCutomButtonGroup && (
+          <ButtonGroup
+            handlePress={this.buttonGroupPress}
+            customConfigType={customConfigType}
           />
-        </TouchableOpacity>
+        )}
+        {showCustomInterval && (
+          <Options
+            type={'custom_interval'}
+            customConfigId={customConfigId}
+            handlePress={this.buttonGroupOptionSelect}
+          />
+        )}
+        {!hideBreathingType && (
+          <ButtonBig
+            title={breathing.name}
+            handlePress={() => {
+              this.setState({showBreathingTypes: true});
+            }}
+          />
+        )}
+
+        {showBreathingTypes && (
+          <Options
+            type={'breathing_type'}
+            handlePress={this.handleTypeSelect}
+          />
+        )}
+        {!hideBreathingTime && (
+          <ButtonBig
+            title={`${breathing.breathingTime} ${minuteText}`}
+            handlePress={() => this.setState({showBreathingTime: true})}
+          />
+        )}
+
+        {showBreathingTime && (
+          <Options
+            type={'breathing_time'}
+            handlePress={this.handleTimeSelect}
+          />
+        )}
+        {!hideStart && (
+          <ButtonBig
+            title={'Start'}
+            buttonColor={'#3c71de'}
+            handlePress={this.handleStart}
+          />
+        )}
       </View>
     );
   }
@@ -144,6 +227,8 @@ class Home extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     breathing: state.breathing,
+    guidedBreathing: state.guidedBreathing,
+    fixedBreathing: state.fixedBreathing,
     userInfo: state.userInfo,
   };
 };

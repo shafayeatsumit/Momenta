@@ -39,7 +39,7 @@ class FixedBreathing extends Component {
     this.exhaleHold = props.fixedBreathing.exhaleHold;
     this.totalTime =
       this.inhaleTime + this.exhaleTime + this.inhaleHold + this.exhaleHold;
-    this.finishBreathingTime = props.fixedBreathing.numberOfBreaths * 60;
+    this.finishBreathingTime = props.fixedBreathing.breathingTime * 60;
     this.totalBreaths = Math.ceil(this.finishBreathingTime / this.totalTime);
   }
 

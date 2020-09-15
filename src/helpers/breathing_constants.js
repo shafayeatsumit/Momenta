@@ -105,7 +105,7 @@ export const BREATHING_TIME = {
   prepare_for_sleep: {
     id: 'prepare_for_sleep',
     min: 5,
-    max: 50,
+    max: 30,
     interval: 1,
   },
   inner_quiet: {
@@ -117,25 +117,25 @@ export const BREATHING_TIME = {
   beginner_box: {
     id: 'beginner_box',
     min: 1,
-    max: 50,
+    max: 30,
     interval: 1,
   },
   box: {
     id: 'box',
     min: 1,
-    max: 50,
+    max: 30,
     interval: 1,
   },
   '4-7-8': {
     id: '4-7-8',
     min: 1,
-    max: 50,
+    max: 30,
     interval: 1,
   },
   custom: {
     id: 'custom',
     min: 1,
-    max: 50,
+    max: 30,
     interval: 1,
   },
 };

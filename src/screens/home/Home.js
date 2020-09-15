@@ -131,6 +131,16 @@ class Home extends Component {
       customConfigId: breathingId,
       customConfigType: breathingType,
       showCustomInterval: true,
+      showBreathingTypes: false,
+      showBreathingTime: false,
+    });
+  };
+
+  closeOptions = () => {
+    this.setState({
+      showCustomInterval: false,
+      showBreathingTypes: false,
+      showBreathingTime: false,
     });
   };
 
@@ -170,7 +180,10 @@ class Home extends Component {
       showCustomInterval || showBreathingTypes || showBreathingTime;
     const minuteText = breathing.breathingTime > 1 ? 'minutes' : 'minute';
     return (
-      <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={1}
+        onPress={this.closeOptions}>
         {showCutomButtonGroup && (
           <ButtonGroup
             handlePress={this.buttonGroupPress}
@@ -188,7 +201,10 @@ class Home extends Component {
           <ButtonBig
             title={breathing.name}
             handlePress={() => {
-              this.setState({showBreathingTypes: true});
+              this.setState({
+                showBreathingTypes: true,
+                showBreathingTime: false,
+              });
             }}
           />
         )}
@@ -219,7 +235,7 @@ class Home extends Component {
             handlePress={this.handleStart}
           />
         )}
-      </View>
+      </TouchableOpacity>
     );
   }
 }

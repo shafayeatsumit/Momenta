@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
-    backgroundColor: Colors.buttonBlue,
+    backgroundColor: Colors.buttonBlueDeep,
   },
   targetLine: {
     height: 10,
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     bottom: 35,
     left: 30,
     zIndex: 3,
-    // backgroundColor: 'white',
     height: 30,
     width: 30,
     borderRadius: 15,

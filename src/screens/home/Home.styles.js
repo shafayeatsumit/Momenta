@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.betterBlue,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: -1,
   },
 });
 

@@ -25,7 +25,7 @@ const BreathingGameProgress = ({
   return (
     <Svg width={size} height={size} style={styles.circleContainer}>
       <Circle
-        stroke="#2162cc"
+        stroke={Colors.buttonBlueDeep}
         fill="none"
         cx={size / 2}
         cy={size / 2}
@@ -45,7 +45,7 @@ const BreathingGameProgress = ({
         strokeDashoffset={-exhaleHoldOffset}
       />
       <Circle
-        stroke="#2162cc"
+        stroke={Colors.buttonBlue}
         fill="none"
         cx={size / 2}
         cy={size / 2}

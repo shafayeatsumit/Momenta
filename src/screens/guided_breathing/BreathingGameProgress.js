@@ -14,7 +14,7 @@ const BreathingGameProgress = ({inhaleTime, exhaleTime}) => {
   return (
     <Svg width={size} height={size} style={styles.circleContainer}>
       <Circle
-        stroke={Colors.buttonBlue}
+        stroke={Colors.buttonBlueDeep}
         fill="none"
         cx={size / 2}
         cy={size / 2}
@@ -24,7 +24,7 @@ const BreathingGameProgress = ({inhaleTime, exhaleTime}) => {
       />
 
       <Circle
-        stroke={Colors.buttonBlueDeep}
+        stroke={Colors.buttonBlue}
         fill="none"
         cx={size / 2}
         cy={size / 2}

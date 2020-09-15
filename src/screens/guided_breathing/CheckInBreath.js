@@ -37,7 +37,8 @@ class CheckInBreath extends Component {
     };
     this.pressInTime = null;
     this.pressOutTime = null;
-    this.animatedText = new Animated.Value(0);
+    this.animatedView = new Animated.Value(0);
+    this.animatedText = new Animated.Value(1);
   }
 
   resetTime = () => {
@@ -59,13 +60,28 @@ class CheckInBreath extends Component {
     return ((new Date() - time) / 1000).toFixed(2);
   };
 
+  fadeOutView = () => {
+    this.animatedView.setValue(0);
+    this.fadeInView();
+  };
+
+  fadeInText = () => {
+    Animated.timing(this.animatedText, {
+      toValue: 1,
+      delay: 0,
+      duration: 800,
+      useNativeDriver: true,
+      easing: Easing.ease,
+    }).start();
+  };
+
   fadeOutText = () => {
     this.animatedText.setValue(0);
     this.fadeInText();
   };
 
-  fadeInText = () => {
-    Animated.timing(this.animatedText, {
+  fadeInView = () => {
+    Animated.timing(this.animatedView, {
       toValue: 1,
       delay: 0,
       duration: 800,
@@ -130,7 +146,7 @@ class CheckInBreath extends Component {
       measurementType === 'inhale' ? inhaleError : exhaleError;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
-    this.fadeOutText();
+    this.fadeOutView();
     this.setState(
       {circleText: '', instructionText: errorMessage, measuring: false},
       this.resetTime,
@@ -149,7 +165,7 @@ class CheckInBreath extends Component {
     this.fadeOutText();
     this.setState({
       measurementType: 'inhale',
-      circleText: 'Measuring inhale time',
+      circleText: 'inhale time',
       measuring: true,
       instructionText: 'Hold when done inhaling to start',
     });
@@ -168,11 +184,11 @@ class CheckInBreath extends Component {
   };
 
   handlePressIn = () => {
-    this.fadeOutText();
+    this.fadeOutView();
     this.setState({
       measuring: true,
       measurementType: 'exhale',
-      circleText: 'Measuring exhale time',
+      circleText: 'exhale time',
       instructionText: '',
       startedMeasuring: true,
     });
@@ -239,8 +255,12 @@ class CheckInBreath extends Component {
         )}
         <View style={styles.contentContainer}>
           <Animated.View
-            style={[styles.containerBox, {opacity: this.animatedText}]}>
-            <Text style={styles.text}>{circleText}</Text>
+            style={[styles.containerBox, {opacity: this.animatedView}]}>
+            {!!circleText && <Text style={styles.text}>Measuring </Text>}
+            <Animated.Text style={[styles.text, {opacity: this.animatedText}]}>
+              {circleText}
+            </Animated.Text>
+
             {measuring && (
               <LottieView
                 autoSize

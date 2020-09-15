@@ -204,7 +204,7 @@ class FixedBreathing extends Component {
             loop={false}
             style={styles.checkmark}
             resizeMode="cover"
-            source={require('../../../assets/anims/success.json')}
+            source={require('../../../assets/anims/check_mark.json')}
           />
         </View>
       );

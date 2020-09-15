@@ -1,7 +1,7 @@
 const initialState = {
-  type: null,
-  id: null,
-  name: 'Exercises',
+  id: 'calm',
+  name: 'Calm',
+  type: 'guided',
   breathingTime: 1,
 };
 

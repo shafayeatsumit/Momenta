@@ -116,16 +116,18 @@ const styles = StyleSheet.create({
   quitButton: {
     position: 'absolute',
     bottom: 30,
-    right: 15,
-    height: 50,
-    width: 60,
-    zIndex: 5,
+    right: 35,
+    height: 30,
+    width: 40,
+    borderRadius: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5,
   },
   quitButtonText: {
     fontFamily: FontType.SemiBold,
     color: 'rgb(66,72,102)',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
   },
 

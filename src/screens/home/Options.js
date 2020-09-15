@@ -12,7 +12,7 @@ import {
   BREATHING_TIME,
   CUSTOM_CONFIG,
 } from '../../helpers/breathing_constants';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const Options = ({type, handlePress, customConfigId}) => {
   const {id: breathingId, breathingTime} = useSelector(

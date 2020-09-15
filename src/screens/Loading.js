@@ -14,10 +14,10 @@ class Loading extends Component {
     };
   }
   navigate = () => {
-    const {navigation, onboarding} = this.props;
-    onboarding.completed
-      ? navigation.replace('CheckIn')
-      : navigation.navigate('Onboarding');
+    const {navigation, userInfo} = this.props;
+    userInfo.onboarded
+      ? navigation.replace('Home')
+      : navigation.navigate('OnboardingIntro');
   };
 
   handleAppStateChange = (nextAppState) => {
@@ -30,13 +30,16 @@ class Loading extends Component {
     this.setState({appState: nextAppState});
   };
 
+  animationFinished = () => {
+    this.navigate();
+  };
+
   componentDidMount() {
     const {userInfo, dispatch} = this.props;
     if (!userInfo.token) {
       dispatch(anonymousSignup());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
-    this.navigate();
   }
 
   render() {
@@ -45,8 +48,9 @@ class Loading extends Component {
         <LottieView
           autoSize
           autoPlay
-          loop
+          loop={false}
           source={require('../../assets/anims/hourglass.json')}
+          onAnimationFinish={this.animationFinished}
         />
       </View>
     );
@@ -57,7 +61,6 @@ const mapStateToProps = (state, ownProps) => {
   const {userInfo, onboarding} = state;
   return {
     userInfo,
-    onboarding,
   };
 };
 

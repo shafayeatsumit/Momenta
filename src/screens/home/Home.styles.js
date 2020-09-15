@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {FontType, Colors} from '../../helpers/theme';
+import {Colors} from '../../helpers/theme';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -8,6 +8,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: -1,
+  },
+  musicIconHolder: {
+    position: 'absolute',
+    top: 40,
+    left: 35,
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    zIndex: 5,
+    resizeMode: 'contain',
+  },
+  musicIcon: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    tintColor: '#F5F5F5',
+    resizeMode: 'contain',
   },
 });
 

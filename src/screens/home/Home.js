@@ -31,7 +31,16 @@ class Home extends Component {
   switchTab = () => this.props.dispatch({type: 'SWITCH_BREATHING_TYPE'});
 
   handleStart = () => {
-    const {breathing, navigation} = this.props;
+    const {breathing, navigation, userInfo} = this.props;
+    if (!userInfo.onboarded) {
+      const breathingType =
+        breathing.type === 'fixed' ? 'FixedBreathing' : 'GuidedBreathing';
+      navigation.navigate('CheckinTutorial', {
+        handleMusic: this.handleMusic,
+        navRoute: breathingType,
+      });
+      return;
+    }
     breathing.type === 'fixed'
       ? navigation.navigate('FixedBreathing', {handleMusic: this.handleMusic})
       : navigation.navigate('GuidedBreathing', {handleMusic: this.handleMusic});
@@ -190,6 +199,14 @@ class Home extends Component {
             customConfigType={customConfigType}
           />
         )}
+        <TouchableOpacity
+          onPress={this.handleMusic}
+          style={styles.musicIconHolder}>
+          <Image
+            style={styles.musicIcon}
+            source={musicOn ? MusicIcon : NoMusicIcon}
+          />
+        </TouchableOpacity>
         {showCustomInterval && (
           <Options
             type={'custom_interval'}

@@ -4,6 +4,7 @@ const INIT_STATE = {
   userId: null,
   name: null,
   musicOn: true,
+  onboarded: false,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -21,6 +22,11 @@ const loginInfo = (state = INIT_STATE, action) => {
       return {
         ...state,
         musicOn: !state.musicOn,
+      };
+    case 'ONBOARDING_DONE':
+      return {
+        ...state,
+        onboarded: true,
       };
     default:
       return state;

@@ -1,21 +1,11 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  Easing,
-  Platform,
-  TouchableOpacity,
-  Image,
-  Animated,
-} from 'react-native';
+import {View, Text, Easing, Platform, Animated} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 
 import styles from './CheckInBreath.styles';
 import CheckinProgress from './CheckinProgress';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
-import MusicIcon from '../../../assets/icons/music.png';
-import NoMusicIcon from '../../../assets/icons/no_music.png';
 
 const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
 class CheckInBreath extends Component {
@@ -102,6 +92,11 @@ class CheckInBreath extends Component {
     this.props.goToBreathingGame(exhaleTime, inhaleTime);
   };
 
+  startExhalePulse = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   breathCompleted = () => {
     const {
       totalInhaleTime,
@@ -112,14 +107,14 @@ class CheckInBreath extends Component {
     const avgInhale = inhaleTimeRecorded + totalInhaleTime;
     const avgExhale = exhaleTimeRecorded + totalExhaleTime;
     this.measurmentCompleted(avgExhale, avgInhale);
+    this.startExhalePulse();
   };
 
   vibrateLoop = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
     this.vibrateLoopId = setInterval(() => {
       ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-    }, 1000);
+    }, 900);
   };
 
   moreThanTenSec = () => {

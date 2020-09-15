@@ -149,7 +149,7 @@ ProgressBar.defaultProps = {
   barAnimationDuration: 1000,
   backgroundAnimationDuration: 1000,
   height: 5,
-  backgroundColor: Colors.buttonBlue,
+  backgroundColor: Colors.buttonBlueDeep,
   backgroundColorOnComplete: null,
 
   borderWidth: 0,

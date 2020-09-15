@@ -43,8 +43,24 @@ class FixedBreathing extends Component {
     this.totalBreaths = Math.ceil(this.finishBreathingTime / this.totalTime);
   }
 
-  startHapticFeedback = () => {
-    const feedbackType = 'impactHeavy';
+  startExhalePulse = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
+  startInhalePulse = () => {
+    const feedbackType =
+      Platform.OS === 'ios' ? 'impactLight' : 'keyboardRelease';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
+  startExhaleHoldPulse = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
+  startInhaleHoldPulse = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
@@ -52,7 +68,7 @@ class FixedBreathing extends Component {
     this.inhaleHoldTimer = setTimeout(() => {
       this.setState({circleText: 'Hold'});
       this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
-      this.startHapticFeedback();
+      this.startExhaleHoldPulse();
       clearTimeout(this.inhaleHoldTimer);
     }, this.exhaleTime * 1000);
   };
@@ -60,7 +76,7 @@ class FixedBreathing extends Component {
   startInhaleTimer = () => {
     this.exhaleTimer = setTimeout(() => {
       this.setState({circleText: 'Inhale'});
-      this.startHapticFeedback();
+      this.startInhalePulse();
       clearTimeout(this.exhaleTimer);
     }, (this.exhaleTime + this.exhaleHold) * 1000);
   };
@@ -68,7 +84,7 @@ class FixedBreathing extends Component {
   startInhaleHoldTimer = () => {
     this.exhaleHoldTimer = setTimeout(() => {
       this.setState({circleText: 'Hold'});
-      this.startHapticFeedback();
+      this.startInhaleHoldPulse();
       clearTimeout(this.exhaleHoldTimer);
     }, (this.totalTime - this.inhaleHold) * 1000);
   };
@@ -102,7 +118,7 @@ class FixedBreathing extends Component {
 
   exhaleStart = () => {
     this.setState({circleText: 'Exhale'});
-    this.startHapticFeedback();
+    this.startExhalePulse();
   };
 
   startStopWatch = () => {
@@ -145,7 +161,7 @@ class FixedBreathing extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
     this.vibrateLoopId = setInterval(() => {
       ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-    }, 1000);
+    }, 3);
   };
 
   measureTime = (time) => {

@@ -160,11 +160,11 @@ class Home extends Component {
 
   render() {
     const {breathing, userInfo, guidedBreathing, fixedBreathing} = this.props;
-    console.log('++++++++++++++++++++++');
-    console.log('breathing', breathing);
-    console.log('fixed breathing', fixedBreathing);
-    console.log('guided breathing', guidedBreathing);
-    console.log('++++++++++++++++++++++');
+    // console.log('++++++++++++++++++++++');
+    // console.log('breathing', breathing);
+    // console.log('fixed breathing', fixedBreathing);
+    // console.log('guided breathing', guidedBreathing);
+    // console.log('++++++++++++++++++++++');
     const {musicOn} = userInfo;
     const {
       showCutomButtonGroup,

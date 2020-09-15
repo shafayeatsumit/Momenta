@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
   quitButton: {
     position: 'absolute',
     bottom: 30,
-    right: 35,
+    right: 30,
     height: 30,
-    width: 40,
+    width: 45,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',

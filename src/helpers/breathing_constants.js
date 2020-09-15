@@ -93,13 +93,13 @@ export const BREATHING_TIME = {
   calm: {
     id: 'calm',
     min: 1,
-    max: 15,
+    max: 30,
     interval: 1,
   },
   deep_calm: {
     id: 'deep_calm',
     min: 1,
-    max: 10,
+    max: 30,
     interval: 1,
   },
   prepare_for_sleep: {
@@ -111,7 +111,7 @@ export const BREATHING_TIME = {
   inner_quiet: {
     id: 'inner_quiet',
     min: 1,
-    max: 5,
+    max: 30,
     interval: 1,
   },
   beginner_box: {
@@ -143,21 +143,21 @@ export const BREATHING_TIME = {
 export const CUSTOM_CONFIG = {
   custom_inhale: {
     id: 'custom_inhale',
-    min: 1, //seconds
-    max: 10, //seconds
-    interval: 0.5, //seconds
+    min: 1,
+    max: 10,
+    interval: 0.5,
   },
   custom_inhale_hold: {
     id: 'custom_inhale_hold',
-    min: 1, //seconds
-    max: 10, //seconds
-    interval: 0.5, //seconds
+    min: 1,
+    max: 10,
+    interval: 0.5,
   },
   custom_exhale: {
     id: 'custom_exhale',
-    min: 1, //seconds
-    max: 10, //seconds
-    interval: 0.5, //seconds
+    min: 1,
+    max: 10,
+    interval: 0.5,
   },
   custom_exhale_hold: {
     id: 'custom_exhale_hold',

@@ -21,7 +21,6 @@ class GuidedBreathing extends Component {
   }
 
   goHome = () => {
-    console.log('here');
     this.setState({showBreathingGame: false});
     this.props.navigation.pop();
   };
@@ -91,7 +90,7 @@ class GuidedBreathing extends Component {
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}
         />
-        {showSoundIcon && (
+        {showSoundIcon && !pressIn && (
           <TouchableOpacity
             onPress={route.params.handleMusic}
             style={styles.musicIconHolder}>
@@ -107,7 +106,7 @@ class GuidedBreathing extends Component {
           </TouchableOpacity>
         )}
 
-        {showQuit && (
+        {showQuit && !pressIn && (
           <TouchableOpacity style={styles.quitButton} onPress={this.goHome}>
             <Text style={styles.quitButtonText}>Quit</Text>
           </TouchableOpacity>

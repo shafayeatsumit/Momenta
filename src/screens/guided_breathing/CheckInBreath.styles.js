@@ -36,7 +36,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-
+  instructionTextHolder: {
+    height: 300,
+    width: 250,
+  },
+  instructionText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: 25,
+  },
   touchableArea: {
     position: 'absolute',
     bottom: 0,
@@ -51,6 +61,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: 200,
   },
+
   initText: {
     fontFamily: FontType.Medium,
     color: 'white',

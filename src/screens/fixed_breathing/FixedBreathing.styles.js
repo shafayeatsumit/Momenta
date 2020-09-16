@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
 
   finishButton: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 30,
     height: 70,
     width: 120,
     justifyContent: 'center',

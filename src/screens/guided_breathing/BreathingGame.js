@@ -68,6 +68,7 @@ class BreathingGame extends Component {
     // exhale timer;
     this.exhalePulseCount = 0;
     this.exhaleEndTime = null;
+    this.ignoreExhaleCount = true;
   }
 
   startExhalePulse = () => {
@@ -81,27 +82,35 @@ class BreathingGame extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
-  vibrateLoop = () => {
+  feedbackLoop = (pulse) => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
+    const exhalePulseCount = pulse - 1;
+    this.feedbackLoopId = setTimeout(() => {
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+      if (!exhalePulseCount) {
+        clearTimeout(this.feedbackLoopId);
+      } else {
+        this.feedbackLoop(exhalePulseCount);
+      }
+    }, 900);
+  };
+
+  exhaleHoldFeedack = () => {
     let endTime = this.exhaleEndTime;
-    if (!endTime) {
-      let timeObject = new Date();
-      let milliseconds = this.exhaleTime * 1000; // 10000 milliseconds
-      endTime = new Date(timeObject.getTime() + milliseconds);
+    let exhalePulseCount;
+    let timeDiff;
+    if (endTime) {
+      timeDiff = endTime - new Date();
+      exhalePulseCount = Math.floor(timeDiff / 900) - 1;
+    } else {
+      timeDiff = this.exhaleTime * 1000;
+      exhalePulseCount = Math.floor((this.exhaleTime * 1000) / 900) - 1;
     }
-    const timeDiff = endTime - new Date();
-    this.exhalePulseCount = Math.floor(timeDiff / 900);
     const minimumDiff = 1800; // Timediff
     if (timeDiff < minimumDiff && this.finishedGame) {
       return;
     }
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
-    this.vibrateLoopId = setInterval(() => {
-      this.exhalePulseCount = this.exhalePulseCount - 1;
-      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-      if (!this.exhalePulseCount) {
-        clearInterval(this.vibrateLoopId);
-      }
-    }, 900);
+    this.feedbackLoop(exhalePulseCount);
   };
 
   secondThresholdSetup = () => {
@@ -131,7 +140,6 @@ class BreathingGame extends Component {
   };
 
   animateCB = (noIncrement = false) => {
-    console.log('+++animateCB+++');
     let finished = false;
     if (this.unmount) {
       return;
@@ -205,7 +213,7 @@ class BreathingGame extends Component {
   exhaleEndPulse = () => {
     this.setState({circleText: 'Inhale'});
     this.startInhalePulse();
-    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
   };
 
   startStopWatch = () => {
@@ -226,7 +234,6 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    console.log('component did mount');
     const totalTime = this.inhaleTime + this.exhaleTime;
     this.totalBreathingTime = this.totalBreathingTime + totalTime;
     this.animate(totalTime);
@@ -243,7 +250,7 @@ class BreathingGame extends Component {
     this.exhaleEndPulseTimer && clearTimeout(this.exhaleEndPulseTimer);
     this.initExhalePulseTimer && clearTimeout(this.initExhalePulseTimer);
     this.stopWatchId && clearInterval(this.stopWatchId);
-    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
   }
 
   resetTime = () => {
@@ -281,7 +288,7 @@ class BreathingGame extends Component {
 
   handlePressOut = () => {
     // for reset breath
-    this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     if (!this.pressInTime) {
       return;
     }
@@ -289,7 +296,7 @@ class BreathingGame extends Component {
     const timeTakenExhale = this.measureTime(this.pressInTime);
     if (timeTakenExhale < 1) {
       this.oneSecError();
-      this.props.handleTap();
+      timeTakenExhale < 0.2 && this.props.handleTap();
     } else {
       this.setState({exhaleTimeRecorded: Number(timeTakenExhale)});
     }
@@ -299,9 +306,7 @@ class BreathingGame extends Component {
   handlePressIn = () => {
     this.pressIn = true;
     const {circleText} = this.state;
-    console.log('handle press IN');
-    circleText === 'Exhale' && this.vibrateLoop();
-
+    circleText === 'Exhale' && this.exhaleHoldFeedack();
     if (this.pressInTime) {
       const timeTakenInhale = this.measureTime(this.pressOutTime);
       if (timeTakenInhale < 1) {
@@ -334,7 +339,13 @@ class BreathingGame extends Component {
       timer,
       targetVisible,
     } = this.state;
-    const {guidedBreathing, finished, handleTap, showStuffs} = this.props;
+    const {
+      guidedBreathing,
+      finished,
+      handleTap,
+      showStuffs,
+      pressIn,
+    } = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -351,7 +362,7 @@ class BreathingGame extends Component {
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
-            showTimer={showStuffs}
+            showTimer={showStuffs && !pressIn}
           />
           {finished && (
             <BreathingStats

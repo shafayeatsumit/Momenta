@@ -120,7 +120,7 @@ class CheckInBreath extends Component {
   moreThanTenSec = () => {
     this.tenSecTimer = setTimeout(() => {
       const {measurementType} = this.state;
-      const errorMessage = `${measurementType} for less than 10 seconds`;
+      const errorMessage = `${measurementType} must be less than 10 seconds`;
       this.setState({
         measuring: false,
         circleText: '',
@@ -134,11 +134,7 @@ class CheckInBreath extends Component {
 
   oneSecError = () => {
     const {measurementType} = this.state;
-    const inhaleError = 'Tap and hold to inhale for at least 1 second';
-    const exhaleError = 'Exhale for at least 1 second';
-
-    const errorMessage =
-      measurementType === 'inhale' ? inhaleError : exhaleError;
+    const errorMessage = `${measurementType} must be at least 1 second long`;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.fadeOutView();
@@ -159,10 +155,11 @@ class CheckInBreath extends Component {
     this.moreThanTenSec();
     this.fadeOutText();
     this.setState({
-      measurementType: 'inhale',
+      measurementType: 'Inhale',
       circleText: 'inhale time',
       measuring: true,
-      instructionText: 'Hold when done inhaling to start',
+      instructionText: '',
+      initiMessage: 'Hold when done inhaling to start',
     });
     const timeTakenExhale = this.measureTime(this.pressInTime);
 
@@ -182,9 +179,10 @@ class CheckInBreath extends Component {
     this.fadeOutView();
     this.setState({
       measuring: true,
-      measurementType: 'exhale',
+      measurementType: 'Exhale',
       circleText: 'exhale time',
       instructionText: '',
+      initiMessage: '',
       startedMeasuring: true,
     });
     this.vibrateLoop();
@@ -230,22 +228,22 @@ class CheckInBreath extends Component {
       startedMeasuring,
       instructionText,
       measuring,
+      initiMessage,
     } = this.state;
     return (
       <View style={styles.container}>
-        {startedMeasuring ? (
+        {startedMeasuring && (
           <CheckinProgress breathCount={exhaleCount + inhaleCount} />
-        ) : (
+        )}
+
+        {!!initiMessage && !instructionText && (
           <View style={styles.initTextHolder} pointerEvents="none">
-            <Text style={styles.initText}>
-              Hold during your next{' '}
-              <Text style={styles.initTextBold}>exhale</Text>
-            </Text>
+            <Text style={styles.initText}>{initiMessage}</Text>
           </View>
         )}
         {!!instructionText && (
-          <View style={styles.initTextHolder} pointerEvents="none">
-            <Text style={styles.initText}>{instructionText}</Text>
+          <View style={styles.instructionTextHolder} pointerEvents="none">
+            <Text style={styles.instructionText}>{instructionText}</Text>
           </View>
         )}
         <View style={styles.contentContainer}>

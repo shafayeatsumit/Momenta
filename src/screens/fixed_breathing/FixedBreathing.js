@@ -43,7 +43,17 @@ class FixedBreathing extends Component {
       this.inhaleTime + this.exhaleTime + this.inhaleHold + this.exhaleHold;
     this.finishBreathingTime = props.fixedBreathing.breathingTime * 60;
     this.totalBreaths = Math.ceil(this.finishBreathingTime / this.totalTime);
+
+    // exhale pulse
+    this.exhalePulseCount = 0;
+    this.exhaleEndTime = null;
   }
+
+  setExhaleEndTime = () => {
+    const timeObject = new Date();
+    const milliseconds = this.exhaleTime * 1000; // 10000 milliseconds
+    this.exhaleEndTime = new Date(timeObject.getTime() + milliseconds);
+  };
 
   startExhalePulse = () => {
     const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
@@ -69,7 +79,7 @@ class FixedBreathing extends Component {
   startExhaleHoldTimer = () => {
     this.inhaleHoldTimer = setTimeout(() => {
       this.setState({circleText: 'Hold'});
-      this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+      this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
       this.startExhaleHoldPulse();
       clearTimeout(this.inhaleHoldTimer);
     }, this.exhaleTime * 1000);
@@ -91,13 +101,43 @@ class FixedBreathing extends Component {
     }, (this.totalTime - this.inhaleHold) * 1000);
   };
 
+  feedbackLoop = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
+    this.exhalePulseCount = this.exhalePulseCount - 1;
+    this.feedbackLoopId = setTimeout(() => {
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+      if (!this.exhalePulseCount) {
+        clearTimeout(this.feedbackLoopId);
+      } else {
+        this.feedbackLoop();
+      }
+    }, 900);
+  };
+
+  exhaleHoldFeedback = () => {
+    let endTime = this.exhaleEndTime;
+    if (!endTime) {
+      let timeObject = new Date();
+      let milliseconds = this.exhaleTime * 1000; // 10000 milliseconds
+      endTime = new Date(timeObject.getTime() + milliseconds);
+    }
+
+    const timeDiff = endTime - new Date();
+    this.exhalePulseCount = Math.floor(timeDiff / 900) - 1;
+    const minimumDiff = 1800; // Timediff
+    if (timeDiff < minimumDiff && this.state.finished) {
+      return;
+    }
+    this.feedbackLoop();
+  };
+
   animatCb = () => {
     if (this.unmounted) {
       return;
     }
+    this.setExhaleEndTime();
     this.counter += 1;
     if (this.counter === this.totalBreaths) {
-      this.removeTimers();
       this.stopWatchId && clearInterval(this.stopWatchId);
       this.setState({finished: true});
     }
@@ -137,7 +177,7 @@ class FixedBreathing extends Component {
   handleTap = () => {
     const {started, showStuffs} = this.state;
     if (!started) {
-      this.setState({started: true, touchDisabled: true});
+      this.setState({started: true, touchDisabled: true, showStuffs: false});
       this.exhaleStart();
       this.startInhaleTimer();
       this.exhaleHold && this.startExhaleHoldTimer();
@@ -159,13 +199,6 @@ class FixedBreathing extends Component {
     }).start(this.handleFinish);
   };
 
-  vibrateLoop = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
-    this.vibrateLoopId = setInterval(() => {
-      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-    }, 900);
-  };
-
   measureTime = (time) => {
     return ((new Date() - time) / 1000).toFixed(2);
   };
@@ -173,14 +206,16 @@ class FixedBreathing extends Component {
   handlePressIn = () => {
     const {started, circleText} = this.state;
     !started && this.handleTap();
+    this.setState({pressIn: true});
     if (circleText === 'Exhale' || !started) {
-      this.vibrateLoop();
+      this.exhaleHoldFeedback();
     }
     this.pressInTime = new Date();
   };
 
   handlePressOut = () => {
-    this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+    this.setState({pressIn: false});
+    this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     const timeTaken = this.measureTime(this.pressInTime);
     if (timeTaken < 1) {
       this.handleTap();
@@ -193,7 +228,7 @@ class FixedBreathing extends Component {
     this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.stopWatchId && clearInterval(this.stopWatchId);
-    this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+    this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
   };
   componentWillUnmount() {
     this.removeTimers();
@@ -227,6 +262,7 @@ class FixedBreathing extends Component {
       showStuffs,
       showAnimation,
       timer,
+      pressIn,
     } = this.state;
     const transform = [{rotate: this.rotate}];
     const {userInfo} = this.props;
@@ -253,7 +289,7 @@ class FixedBreathing extends Component {
       <TouchableOpacity
         style={styles.container}
         activeOpacity={1}
-        touchDisabled={touchDisabled}
+        // touchDisabled={touchDisabled}
         onPress={this.handleTap}>
         <BreathingProgress
           inhaleTime={this.inhaleTime}
@@ -265,7 +301,7 @@ class FixedBreathing extends Component {
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
-            showTimer={showStuffs}
+            showTimer={showStuffs && !pressIn}
           />
         </View>
         <View style={styles.boxContainer}>
@@ -277,7 +313,7 @@ class FixedBreathing extends Component {
           <Text style={styles.text}>{circleText}</Text>
         </View>
 
-        {started && showStuffs && (
+        {started && showStuffs && !pressIn && (
           <TouchableOpacity
             onPress={route.params.handleMusic}
             style={styles.musicIconHolder}>
@@ -292,7 +328,7 @@ class FixedBreathing extends Component {
             <Text style={styles.initText}>Tap screen to begin</Text>
           </View>
         )}
-        {!finished && started && showStuffs && (
+        {!finished && started && !pressIn && showStuffs && (
           <TouchableOpacity
             style={styles.quitButton}
             onPress={this.handleFinish}>

@@ -215,13 +215,7 @@ class Home extends Component {
             source={musicOn ? MusicIcon : NoMusicIcon}
           />
         </TouchableOpacity>
-        {showCustomInterval && (
-          <Options
-            type={'custom_interval'}
-            customConfigId={customConfigId}
-            handlePress={this.buttonGroupOptionSelect}
-          />
-        )}
+
         {!hideBreathingType && (
           <ButtonBig
             title={breathing.name}
@@ -234,19 +228,25 @@ class Home extends Component {
           />
         )}
 
-        {showBreathingTypes && (
-          <Options
-            type={'breathing_type'}
-            handlePress={this.handleTypeSelect}
-          />
-        )}
         {!hideBreathingTime && (
           <ButtonBig
             title={`${breathing.breathingTime} ${minuteText}`}
             handlePress={() => this.setState({showBreathingTime: true})}
           />
         )}
-
+        {showCustomInterval && (
+          <Options
+            type={'custom_interval'}
+            customConfigId={customConfigId}
+            handlePress={this.buttonGroupOptionSelect}
+          />
+        )}
+        {showBreathingTypes && (
+          <Options
+            type={'breathing_type'}
+            handlePress={this.handleTypeSelect}
+          />
+        )}
         {showBreathingTime && (
           <Options
             type={'breathing_time'}

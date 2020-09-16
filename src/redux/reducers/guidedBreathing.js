@@ -7,6 +7,7 @@ const initialState = {
   secondThreshold: 0,
   secondTargetInhale: 0,
   secondTargetExhale: 0,
+  breathingTime: 1,
 };
 
 const breathing = (state = initialState, action) => {

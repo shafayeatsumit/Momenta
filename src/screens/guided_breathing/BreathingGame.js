@@ -172,13 +172,13 @@ class BreathingGame extends Component {
   };
 
   animateCBFinish = () => {
-    const {progressCount, totalExhaleTime, totalInhaleTime} = this.state;
+    const {totalExhaleTime, totalInhaleTime} = this.state;
     this.props.setFinished();
     this.setState({
       touchDisabled: true,
       circleText: 'Finished',
-      finalInhaleTime: totalInhaleTime / progressCount,
-      finalExhaleTime: totalExhaleTime / progressCount,
+      finalInhaleTime: this.inhaleTime,
+      finalExhaleTime: this.exhaleTime,
     });
     clearInterval(this.stopWatchId);
   };
@@ -277,8 +277,8 @@ class BreathingGame extends Component {
 
     this.setState({
       progressCount: progressCount + 1,
-      totalInhaleTime: inhaleTimeRecorded + totalInhaleTime,
-      totalExhaleTime: exhaleTimeRecorded + totalExhaleTime,
+      totalInhaleTime: inhaleTimeRecorded,
+      totalExhaleTime: exhaleTimeRecorded,
     });
   };
 

@@ -5,9 +5,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.betterBlue,
-    justifyContent: 'center',
-    alignItems: 'center',
     zIndex: -1,
+  },
+  insideContainer: {
+    alignItems: 'center',
+    marginTop: ScreenHeight / 2 - 195,
   },
   musicIconHolder: {
     position: 'absolute',
@@ -18,6 +20,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     zIndex: 5,
     resizeMode: 'contain',
+    // backgroundColor: 'red',
   },
   musicIcon: {
     height: 30,

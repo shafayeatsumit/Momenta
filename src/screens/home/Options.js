@@ -76,7 +76,9 @@ export default Options;
 
 const styles = StyleSheet.create({
   container: {
-    height: 210,
+    // position: 'absolute',
+    // bottom: 140,
+    height: 150,
     width: 270,
     marginBottom: 15,
   },

@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 30,
+    // backgroundColor: 'yellow',
   },
   resultTextHolder: {
     flex: 1,

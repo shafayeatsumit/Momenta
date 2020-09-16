@@ -177,11 +177,6 @@ class Home extends Component {
 
   render() {
     const {breathing, userInfo, guidedBreathing, fixedBreathing} = this.props;
-    // console.log('++++++++++++++++++++++');
-    // console.log('breathing', breathing);
-    // console.log('fixed breathing', fixedBreathing);
-    // console.log('guided breathing', guidedBreathing);
-    // console.log('++++++++++++++++++++++');
     const {musicOn} = userInfo;
     const {
       showCutomButtonGroup,
@@ -201,12 +196,6 @@ class Home extends Component {
         style={styles.container}
         activeOpacity={1}
         onPress={this.closeOptions}>
-        {showCutomButtonGroup && (
-          <ButtonGroup
-            handlePress={this.buttonGroupPress}
-            customConfigType={customConfigType}
-          />
-        )}
         <TouchableOpacity
           onPress={this.handleMusic}
           style={styles.musicIconHolder}>
@@ -215,51 +204,62 @@ class Home extends Component {
             source={musicOn ? MusicIcon : NoMusicIcon}
           />
         </TouchableOpacity>
+        <View style={styles.insideContainer}>
+          {showCutomButtonGroup ? (
+            <ButtonGroup
+              handlePress={this.buttonGroupPress}
+              customConfigType={customConfigType}
+            />
+          ) : (
+            <View style={{height: 95}} />
+          )}
 
-        {!hideBreathingType && (
-          <ButtonBig
-            title={breathing.name}
-            handlePress={() => {
-              this.setState({
-                showBreathingTypes: true,
-                showBreathingTime: false,
-              });
-            }}
-          />
-        )}
+          {!hideBreathingType && (
+            <ButtonBig
+              title={breathing.name}
+              handlePress={() => {
+                this.setState({
+                  showBreathingTypes: true,
+                  showBreathingTime: false,
+                });
+              }}
+            />
+          )}
 
-        {!hideBreathingTime && (
-          <ButtonBig
-            title={`${breathing.breathingTime} ${minuteText}`}
-            handlePress={() => this.setState({showBreathingTime: true})}
-          />
-        )}
-        {showCustomInterval && (
-          <Options
-            type={'custom_interval'}
-            customConfigId={customConfigId}
-            handlePress={this.buttonGroupOptionSelect}
-          />
-        )}
-        {showBreathingTypes && (
-          <Options
-            type={'breathing_type'}
-            handlePress={this.handleTypeSelect}
-          />
-        )}
-        {showBreathingTime && (
-          <Options
-            type={'breathing_time'}
-            handlePress={this.handleTimeSelect}
-          />
-        )}
-        {!hideStart && (
-          <ButtonBig
-            title={'Start'}
-            buttonColor={'#3c71de'}
-            handlePress={this.handleStart}
-          />
-        )}
+          {!hideBreathingTime && (
+            <ButtonBig
+              title={`${breathing.breathingTime} ${minuteText}`}
+              handlePress={() => this.setState({showBreathingTime: true})}
+            />
+          )}
+          {!hideStart && (
+            <ButtonBig
+              title={'Start'}
+              buttonColor={'#3c71de'}
+              handlePress={this.handleStart}
+            />
+          )}
+
+          {showCustomInterval && (
+            <Options
+              type={'custom_interval'}
+              customConfigId={customConfigId}
+              handlePress={this.buttonGroupOptionSelect}
+            />
+          )}
+          {showBreathingTypes && (
+            <Options
+              type={'breathing_type'}
+              handlePress={this.handleTypeSelect}
+            />
+          )}
+          {showBreathingTime && (
+            <Options
+              type={'breathing_time'}
+              handlePress={this.handleTimeSelect}
+            />
+          )}
+        </View>
       </TouchableOpacity>
     );
   }

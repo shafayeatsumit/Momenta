@@ -109,10 +109,12 @@ const styles = StyleSheet.create({
   musicIconHolder: {
     position: 'absolute',
     bottom: 35,
-    left: 30,
+    left: 20,
     zIndex: 3,
-    height: 30,
-    width: 30,
+    height: 60,
+    width: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 15,
   },
 });

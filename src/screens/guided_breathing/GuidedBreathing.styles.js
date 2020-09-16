@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 8,
     backgroundColor: Colors.cornflowerBlue,
+    zIndex: 5,
   },
 });
 

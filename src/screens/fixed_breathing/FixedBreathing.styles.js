@@ -73,15 +73,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
-  finishButton: {
-    position: 'absolute',
-    bottom: 30,
-    left: 0,
-    right: 0,
-    height: 50,
-    width: ScreenWidth,
-    alignSelf: 'center',
-  },
   touchableArea: {
     position: 'absolute',
     bottom: 0,
@@ -100,25 +91,21 @@ const styles = StyleSheet.create({
   musicIconHolder: {
     position: 'absolute',
     bottom: 30,
-    left: 35,
-    height: 30,
-    width: 30,
+    left: 20,
+    height: 60,
+    width: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 15,
     zIndex: 5,
     resizeMode: 'contain',
   },
-  finishText: {
-    fontFamily: FontType.SemiBold,
-    color: Colors.white,
-    fontSize: 22,
-    textAlign: 'center',
-  },
   quitButton: {
     position: 'absolute',
     bottom: 30,
-    right: 30,
-    height: 30,
-    width: 45,
+    right: 20,
+    height: 60,
+    width: 60,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -127,8 +114,24 @@ const styles = StyleSheet.create({
   quitButtonText: {
     fontFamily: FontType.SemiBold,
     color: 'rgb(66,72,102)',
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
+  },
+  finishText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+
+  finishButton: {
+    position: 'absolute',
+    bottom: 40,
+    height: 70,
+    width: 120,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    zIndex: 5,
   },
 
   initTextHolder: {
@@ -137,7 +140,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 50,
     width: 200,
-    // backgroundColor: 'yellow',
   },
   initText: {
     fontFamily: FontType.Medium,

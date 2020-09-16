@@ -40,20 +40,11 @@ class Loading extends Component {
       dispatch(anonymousSignup());
     }
     userInfo.userId && analytics().setUserId(userInfo.userId.toString());
+    this.navigate();
   }
 
   render() {
-    return (
-      <View style={styles.loadingContainer}>
-        <LottieView
-          autoSize
-          autoPlay
-          loop={false}
-          source={require('../../assets/anims/hourglass.json')}
-          onAnimationFinish={this.animationFinished}
-        />
-      </View>
-    );
+    return <View style={styles.loadingContainer} />;
   }
 }
 

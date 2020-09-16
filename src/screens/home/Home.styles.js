@@ -12,9 +12,9 @@ const styles = StyleSheet.create({
   musicIconHolder: {
     position: 'absolute',
     top: 40,
-    left: 35,
-    height: 30,
-    width: 30,
+    left: 20,
+    height: 60,
+    width: 60,
     borderRadius: 15,
     zIndex: 5,
     resizeMode: 'contain',

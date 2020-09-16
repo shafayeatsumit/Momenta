@@ -11,6 +11,7 @@ import {
 import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './FixedBreathing.styles';
+import {Colors} from '../../helpers/theme';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import BreathingProgress from './BreathingProgress';
 import ProgressTracker from '../../components/ProgressTracker';
@@ -28,6 +29,7 @@ class FixedBreathing extends Component {
       touchDisabled: false,
       timer: 0,
       showStuffs: false,
+      showAnimation: false,
     };
     this.checkmarkProgress = new Animated.Value(0);
     this.unmounted = false;
@@ -94,16 +96,17 @@ class FixedBreathing extends Component {
       return;
     }
     this.counter += 1;
-    if (this.totalBreaths > this.counter) {
-      this.exhaleStart();
-      this.exhaleHold && this.startExhaleHoldTimer();
-      this.inhaleHold && this.startInhaleHoldTimer();
-      this.startInhaleTimer();
-      this.animate();
-    } else {
+    if (this.counter === this.totalBreaths) {
+      this.removeTimers();
       this.stopWatchId && clearInterval(this.stopWatchId);
-      this.setState({finished: true}, this.finishAnimation);
+      this.setState({finished: true});
     }
+
+    this.exhaleStart();
+    this.exhaleHold && this.startExhaleHoldTimer();
+    this.inhaleHold && this.startInhaleHoldTimer();
+    this.startInhaleTimer();
+    this.animate();
   };
 
   animate = () => {
@@ -158,10 +161,9 @@ class FixedBreathing extends Component {
 
   vibrateLoop = () => {
     const feedbackType = Platform.OS === 'ios' ? 'impactLight' : 'clockTick';
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
     this.vibrateLoopId = setInterval(() => {
       ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-    }, 3);
+    }, 900);
   };
 
   measureTime = (time) => {
@@ -185,14 +187,33 @@ class FixedBreathing extends Component {
     }
   };
 
-  componentWillUnmount() {
+  removeTimers = () => {
     this.unmounted = true;
     this.inhaleHoldTimer && clearTimeout(this.inhaleHoldTimer);
     this.exhaleHoldTimer && clearTimeout(this.exhaleHoldTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.stopWatchId && clearInterval(this.stopWatchId);
     this.vibrateLoopId && clearTimeout(this.vibrateLoopId);
+  };
+  componentWillUnmount() {
+    this.removeTimers();
   }
+
+  getDotStyle = () => {
+    const {circleText} = this.state;
+    if (circleText === 'Hold') {
+      return {backgroundColor: Colors.betterBlueLight};
+    } else if (circleText === 'Inhale') {
+      return {backgroundColor: Colors.buttonBlue};
+    } else {
+      return {backgroundColor: Colors.buttonBlueDeep};
+    }
+  };
+
+  handlePressFinish = () => {
+    this.removeTimers();
+    this.setState({showAnimation: true});
+  };
 
   render() {
     const inputRange = [0, 1];
@@ -204,6 +225,7 @@ class FixedBreathing extends Component {
       started,
       touchDisabled,
       showStuffs,
+      showAnimation,
       timer,
     } = this.state;
     const transform = [{rotate: this.rotate}];
@@ -211,7 +233,7 @@ class FixedBreathing extends Component {
     const {musicOn} = userInfo;
     const {route} = this.props;
 
-    if (finished) {
+    if (showAnimation) {
       return (
         <View style={styles.checkmarkHolder}>
           <LottieView
@@ -221,6 +243,7 @@ class FixedBreathing extends Component {
             style={styles.checkmark}
             resizeMode="cover"
             source={require('../../../assets/anims/check_mark.json')}
+            onAnimationFinish={this.handleFinish}
           />
         </View>
       );
@@ -247,7 +270,7 @@ class FixedBreathing extends Component {
         </View>
         <View style={styles.boxContainer}>
           <Animated.View style={[styles.box, {transform: transform}]}>
-            <View style={styles.dot} />
+            <View style={[styles.dot, this.getDotStyle()]} />
           </Animated.View>
         </View>
         <View style={styles.textContainer}>
@@ -276,7 +299,15 @@ class FixedBreathing extends Component {
             <Text style={styles.quitButtonText}>Quit</Text>
           </TouchableOpacity>
         )}
+        {finished && (
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={this.handlePressFinish}>
+            <Text style={styles.finishText}>Finish</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
+          disabled={finished}
           onPressIn={this.handlePressIn}
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}

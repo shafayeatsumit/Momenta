@@ -19,7 +19,7 @@ class Home extends Component {
       showCutomButtonGroup: false,
       customConfigType: '',
       showCustomInterval: false,
-      showBreathingTypes: true,
+      showBreathingTypes: false,
       showBreathingTime: false,
     };
     this.playingFile1 = false;
@@ -48,13 +48,20 @@ class Home extends Component {
 
   // Music realted
   stopMusic = () => {
-    this.playingFile1 && this.soundFile1.stop();
-    this.playingFile2 && this.soundFile2.stop();
+    // this.playingFile1 && this.soundFile1.stop();
+    // this.playingFile2 && this.soundFile2.stop();
+    this.playingFile1 && this.soundFile1.setVolume(0);
+    this.playingFile2 && this.soundFile2.setVolume(0);
     this.soundTimerOne && clearInterval(this.soundTimerOne);
     this.soundTimerOne && clearInterval(this.soundTimerTwo);
+    this.playingFile1 && this.soundFile1.stop();
+    this.playingFile2 && this.soundFile2.stop();
   };
 
-  startMusic = () => this.playSoundFileOne();
+  startMusic = () => {
+    this.playSoundFileOne();
+    this.soundFile1.setVolume(1);
+  };
 
   handleMusic = () => {
     const {userInfo} = this.props;
@@ -93,6 +100,7 @@ class Home extends Component {
         console.log('sound timer one', seconds);
         if (seconds > 170 && this.playingFile2 === false) {
           this.playSoundFileTwo();
+          this.soundFile2.setVolume(1);
         }
       });
     }, 500);

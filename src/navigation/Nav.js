@@ -11,7 +11,7 @@ import ProfileScreen from '../screens/profile/Profile';
 import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import {Colors} from '../helpers/theme';
 const Stack = createStackNavigator();
 
 class Nav extends Component {
@@ -19,7 +19,35 @@ class Nav extends Component {
     return (
       <NavigationContainer>
         <StatusBar hidden />
-        <Stack.Navigator headerMode="none">
+        <Stack.Navigator
+          headerMode="none"
+          screenOptions={{
+            cardStyle: {backgroundColor: Colors.betterBlue},
+            cardStyleInterpolator: ({current: {progress}}) => ({
+              cardStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 0.5, 0.9, 1],
+                  outputRange: [0, 0.25, 0.7, 1],
+                }),
+                transform: [
+                  {
+                    scale: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.9, 1],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              },
+              overlayStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.5],
+                  extrapolate: 'clamp',
+                }),
+              },
+            }),
+          }}>
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="CheckinTutorial" component={CheckinTutorial} />
 

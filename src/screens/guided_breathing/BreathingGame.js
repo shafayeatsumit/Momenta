@@ -13,6 +13,7 @@ import BreathingStats from './BreathingStats';
 import BreathingGameProgress from './BreathingGameProgress';
 import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
+import {Colors} from '../../helpers/theme';
 import {connect} from 'react-redux';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
@@ -382,7 +383,14 @@ class BreathingGame extends Component {
 
         <View style={styles.boxContainer}>
           <Animated.View style={[styles.box, {transform: transform}]}>
-            <View style={styles.dot} />
+            <View
+              style={[
+                styles.dot,
+                circleText === 'Exhale'
+                  ? {backgroundColor: Colors.buttonBlueDeep}
+                  : {backgroundColor: Colors.buttonBlue},
+              ]}
+            />
           </Animated.View>
         </View>
       </TouchableOpacity>

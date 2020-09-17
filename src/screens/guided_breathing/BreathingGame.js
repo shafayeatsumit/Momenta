@@ -15,6 +15,7 @@ import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {Colors} from '../../helpers/theme';
 import {connect} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
@@ -185,6 +186,7 @@ class BreathingGame extends Component {
 
   animate = (duration) => {
     this.animated.setValue(0);
+    analytics().logEvent('exhale_start');
     Animated.timing(this.animated, {
       toValue: 1,
       duration: duration * 1000,
@@ -211,6 +213,7 @@ class BreathingGame extends Component {
   };
 
   exhaleEndPulse = () => {
+    analytics().logEvent('inhale_start');
     this.setState({circleText: 'Inhale'});
     this.startInhalePulse();
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
@@ -267,14 +270,7 @@ class BreathingGame extends Component {
   };
 
   breathCompleted = () => {
-    const {
-      progressCount,
-      totalInhaleTime,
-      totalExhaleTime,
-      inhaleTimeRecorded,
-      exhaleTimeRecorded,
-    } = this.state;
-
+    const {progressCount, inhaleTimeRecorded, exhaleTimeRecorded} = this.state;
     this.setState({
       progressCount: progressCount + 1,
       totalInhaleTime: inhaleTimeRecorded,
@@ -339,13 +335,7 @@ class BreathingGame extends Component {
       timer,
       targetVisible,
     } = this.state;
-    const {
-      guidedBreathing,
-      finished,
-      handleTap,
-      showStuffs,
-      pressIn,
-    } = this.props;
+    const {guidedBreathing, finished, handleTap, showStuffs} = this.props;
     const {calibrationInhale, calibrationExhale} = guidedBreathing;
     const inputRange = [0, 1];
     const outputRange = ['0deg', '360deg'];
@@ -353,6 +343,7 @@ class BreathingGame extends Component {
     const targetRotation =
       (360 * this.targetExhale) / (this.targetExhale + this.targetInhale);
     const transform = [{rotate: this.rotate}];
+
     return (
       <TouchableOpacity
         style={styles.container}
@@ -362,7 +353,7 @@ class BreathingGame extends Component {
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
-            showTimer={showStuffs && !pressIn}
+            showTimer={showStuffs}
           />
           {finished && (
             <BreathingStats

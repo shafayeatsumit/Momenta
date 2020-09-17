@@ -2,12 +2,14 @@ import React, {Component} from 'react';
 import {View, Text, Easing, Platform, Animated} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
+import analytics from '@react-native-firebase/analytics';
 
 import styles from './CheckInBreath.styles';
 import CheckinProgress from './CheckinProgress';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 
-const INITIAL_MESSAGE = 'Tap and hold when ready to exhale';
+const INITIAL_MESSAGE = 'Hold during your\n next normal';
+const HOLD_END_MESSAGE = 'When done with inhale,\nhold and';
 class CheckInBreath extends Component {
   constructor(props) {
     super(props);
@@ -22,7 +24,7 @@ class CheckInBreath extends Component {
       inhaleCount: 0,
       exhaleCount: 0,
       touchDisabled: false,
-      initiMessage: INITIAL_MESSAGE,
+      initialMessage: INITIAL_MESSAGE,
       instructionText: '',
     };
     this.pressInTime = null;
@@ -125,6 +127,7 @@ class CheckInBreath extends Component {
         measuring: false,
         circleText: '',
         instructionText: errorMessage,
+        initialMessage: INITIAL_MESSAGE,
       });
       this.resetTime();
       clearTimeout(this.tenSecTimer);
@@ -139,7 +142,12 @@ class CheckInBreath extends Component {
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.fadeOutView();
     this.setState(
-      {circleText: '', instructionText: errorMessage, measuring: false},
+      {
+        circleText: '',
+        instructionText: errorMessage,
+        measuring: false,
+        initialMessage: INITIAL_MESSAGE,
+      },
       this.resetTime,
     );
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
@@ -159,7 +167,7 @@ class CheckInBreath extends Component {
       circleText: 'inhale time',
       measuring: true,
       instructionText: '',
-      initiMessage: 'Hold when done inhaling to start',
+      initialMessage: HOLD_END_MESSAGE,
     });
     const timeTakenExhale = this.measureTime(this.pressInTime);
 
@@ -182,7 +190,7 @@ class CheckInBreath extends Component {
       measurementType: 'Exhale',
       circleText: 'exhale time',
       instructionText: '',
-      initiMessage: '',
+      initialMessage: '',
       startedMeasuring: true,
     });
     this.vibrateLoop();
@@ -228,7 +236,7 @@ class CheckInBreath extends Component {
       startedMeasuring,
       instructionText,
       measuring,
-      initiMessage,
+      initialMessage,
     } = this.state;
     return (
       <View style={styles.container}>
@@ -236,9 +244,11 @@ class CheckInBreath extends Component {
           <CheckinProgress breathCount={exhaleCount + inhaleCount} />
         )}
 
-        {!!initiMessage && !instructionText && (
+        {!!initialMessage && (
           <View style={styles.initTextHolder} pointerEvents="none">
-            <Text style={styles.initText}>{initiMessage}</Text>
+            <Text style={styles.initText}>
+              {initialMessage} <Text style={styles.initTextBold}>Exhale</Text>
+            </Text>
           </View>
         )}
         {!!instructionText && (

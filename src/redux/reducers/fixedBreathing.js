@@ -15,6 +15,7 @@ const breathing = (state = initialState, action) => {
         ...state,
         ...action.data,
       };
+
     case 'SELECT_FIXED_TIME':
       return {
         ...state,

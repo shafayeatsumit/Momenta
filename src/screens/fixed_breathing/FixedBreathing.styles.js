@@ -73,6 +73,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  topTouchableArea: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.6,
+    zIndex: 3,
+    backgroundColor: 'yellow',
+  },
   touchableArea: {
     position: 'absolute',
     bottom: 0,
@@ -80,6 +89,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: ScreenHeight * 0.4,
     zIndex: 3,
+    // backgroundColor: 'red',
   },
   musicIcon: {
     height: 30,

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
+import {View, Text, BackHandler, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 import styles from './Home.styles';
 import ButtonBig from './ButtonBig';
 import ButtonGroup from './ButtonGroup';
@@ -30,8 +31,15 @@ class Home extends Component {
 
   switchTab = () => this.props.dispatch({type: 'SWITCH_BREATHING_TYPE'});
 
+  exitApp = () => {
+    if (!this.props.userInfo.onboarded) {
+      return;
+    }
+  };
+
   handleStart = () => {
     const {breathing, navigation, userInfo} = this.props;
+    analytics().logEvent('button_push', {title: 'Start'});
     if (!userInfo.onboarded) {
       const breathingType =
         breathing.type === 'fixed' ? 'FixedBreathing' : 'GuidedBreathing';
@@ -56,11 +64,13 @@ class Home extends Component {
     this.soundTimerOne && clearInterval(this.soundTimerTwo);
     this.playingFile1 && this.soundFile1.stop();
     this.playingFile2 && this.soundFile2.stop();
+    analytics().logEvent('button_push', {title: 'stop_music'});
   };
 
   startMusic = () => {
     this.playSoundFileOne();
     this.soundFile1.setVolume(1);
+    analytics().logEvent('button_push', {title: 'start_music'});
   };
 
   handleMusic = () => {
@@ -84,7 +94,6 @@ class Home extends Component {
     this.playingFile2 = true;
     this.soundTimerTwo = setInterval(() => {
       this.soundFile2.getCurrentTime((seconds, isPlaying) => {
-        console.log('sound timer two', seconds);
         if (seconds > 170 && this.playingFile1 === false) {
           this.playSoundFileOne();
         }
@@ -97,7 +106,6 @@ class Home extends Component {
     this.playingFile1 = true;
     this.soundTimerOne = setInterval(() => {
       this.soundFile1.getCurrentTime((seconds, isPlaying) => {
-        console.log('sound timer one', seconds);
         if (seconds > 170 && this.playingFile2 === false) {
           this.playSoundFileTwo();
           this.soundFile2.setVolume(1);
@@ -116,14 +124,14 @@ class Home extends Component {
     }
   }
 
-  handleTypeSelect = (breating) => {
-    const breathingType = breating.type;
-    const breathingId = breating.id;
+  handleTypeSelect = (breathing) => {
+    const breathingType = breathing.type;
+    const breathingId = breathing.id;
     const {dispatch} = this.props;
     if (breathingType === 'guided') {
-      dispatch({type: 'SELECT_GUIDED_TYPE', data: breating});
+      dispatch({type: 'SELECT_GUIDED_TYPE', data: breathing});
     } else {
-      dispatch({type: 'SELECT_FIXED_TYPE', data: breating});
+      dispatch({type: 'SELECT_FIXED_TYPE', data: breathing});
     }
     this.setState({
       showBreathingTypes: false,
@@ -131,6 +139,7 @@ class Home extends Component {
         ? {showCutomButtonGroup: true}
         : {showCutomButtonGroup: false}),
     });
+    analytics().logEvent('button_push', {title: `${breathing.id}`});
   };
 
   handleTimeSelect = (breathingTime) => {
@@ -141,6 +150,7 @@ class Home extends Component {
       dispatch({type: 'SELECT_FIXED_TIME', breathingTime});
     }
     this.setState({showBreathingTime: false});
+    analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
   };
 
   buttonGroupPress = (breathingId, breathingType) => {
@@ -158,6 +168,8 @@ class Home extends Component {
       showCustomInterval: false,
       showBreathingTypes: false,
       showBreathingTime: false,
+      customConfigType: '',
+      customConfigId: null,
     });
   };
 
@@ -173,10 +185,13 @@ class Home extends Component {
       customType: customConfigType,
       customTime: breathingTime,
     });
+    analytics().logEvent('button_push', {
+      title: `custom_${customConfigType}_${breathingTime}`,
+    });
   };
 
   render() {
-    const {breathing, userInfo, guidedBreathing, fixedBreathing} = this.props;
+    const {breathing, userInfo} = this.props;
     const {musicOn} = userInfo;
     const {
       showCutomButtonGroup,
@@ -217,6 +232,8 @@ class Home extends Component {
           {!hideBreathingType && (
             <ButtonBig
               title={breathing.name}
+              hasIcon={true}
+              isOpen={showBreathingTypes}
               handlePress={() => {
                 this.setState({
                   showBreathingTypes: true,
@@ -228,6 +245,8 @@ class Home extends Component {
 
           {!hideBreathingTime && (
             <ButtonBig
+              hasIcon={true}
+              isOpen={showBreathingTime}
               title={`${breathing.breathingTime} ${minuteText}`}
               handlePress={() => this.setState({showBreathingTime: true})}
             />

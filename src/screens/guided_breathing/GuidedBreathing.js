@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import LottieView from 'lottie-react-native';
 import CheckInBreath from './CheckInBreath';
 import BreathingGame from './BreathingGame';
 import {connect} from 'react-redux';
+import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
 import {FontType, Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
 import MusicIcon from '../../../assets/icons/music.png';
 import NoMusicIcon from '../../../assets/icons/no_music.png';
+import analytics from '@react-native-firebase/analytics';
 class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
@@ -17,36 +20,56 @@ class GuidedBreathing extends Component {
       pressOut: false,
       finished: false,
       showStuffs: false,
+      showAnimation: false,
     };
   }
 
   goHome = () => {
-    this.setState({showBreathingGame: false});
+    this.setState({showBreathingGame: false, showAnimation: true});
     this.props.navigation.pop();
   };
 
   setFinished = () => this.setState({finished: true});
 
-  goToBreathingGame = (avgExhaleTime, avgInhaleTime) => {
-    this.props.dispatch({
+  goToBreathingGame = (exhaleTime, inhaleTime) => {
+    const {dispatch, guidedBreathing} = this.props;
+    dispatch({
       type: 'UPDATE_CALIBRATION_TIME',
-      calibrationExhale: avgExhaleTime,
-      calibrationInhale: avgInhaleTime,
+      calibrationExhale: exhaleTime,
+      calibrationInhale: inhaleTime,
     });
-    this.setState({showCheckInBreath: false, showBreathingGame: true});
+    if (guidedBreathing.dynamicTarget) {
+      dispatch(setDynamicTarget(exhaleTime, inhaleTime)).then(() => {
+        this.setState({showCheckInBreath: false, showBreathingGame: true});
+      });
+    } else {
+      this.setState({showCheckInBreath: false, showBreathingGame: true});
+    }
   };
 
   handlePressIn = () => {
-    this.setState({pressIn: true, pressOut: false});
+    analytics().logEvent('user_hold');
+    this.setState({pressIn: true, pressOut: false, showStuffs: false});
   };
 
   handlePressOut = () => {
+    analytics().logEvent('user_release');
     this.setState({pressIn: false, pressOut: true});
   };
 
   handleTap = () => {
     const {showStuffs} = this.state;
     this.setState({showStuffs: !showStuffs});
+  };
+
+  handleQuit = () => {
+    analytics().logEvent('button_push', {title: 'quit'});
+    this.goHome();
+  };
+
+  handleFinish = () => {
+    this.setState({showAnimation: true});
+    analytics().logEvent('button_push', {title: 'finish'});
   };
 
   render() {
@@ -57,6 +80,7 @@ class GuidedBreathing extends Component {
       pressOut,
       finished,
       showStuffs,
+      showAnimation,
     } = this.state;
     const {userInfo} = this.props;
     const {musicOn} = userInfo;
@@ -64,6 +88,22 @@ class GuidedBreathing extends Component {
     const showQuit = !finished && showBreathingGame && showStuffs;
     const showSoundIcon =
       showCheckInBreath || (showBreathingGame && showStuffs);
+
+    if (showAnimation) {
+      return (
+        <View style={styles.checkmarkHolder}>
+          <LottieView
+            autoSize
+            autoPlay
+            loop={false}
+            style={styles.checkmark}
+            resizeMode="cover"
+            source={require('../../../assets/anims/check_mark.json')}
+            onAnimationFinish={this.goHome}
+          />
+        </View>
+      );
+    }
     return (
       <>
         {showCheckInBreath && (
@@ -90,7 +130,7 @@ class GuidedBreathing extends Component {
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}
         />
-        {showSoundIcon && !pressIn && (
+        {showSoundIcon && (
           <TouchableOpacity
             onPress={route.params.handleMusic}
             style={styles.musicIconHolder}>
@@ -101,13 +141,15 @@ class GuidedBreathing extends Component {
           </TouchableOpacity>
         )}
         {finished && (
-          <TouchableOpacity style={styles.finishButton} onPress={this.goHome}>
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={this.handleFinish}>
             <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         )}
 
-        {showQuit && !pressIn && (
-          <TouchableOpacity style={styles.quitButton} onPress={this.goHome}>
+        {showQuit && (
+          <TouchableOpacity style={styles.quitButton} onPress={this.handleQuit}>
             <Text style={styles.quitButtonText}>Quit</Text>
           </TouchableOpacity>
         )}
@@ -143,7 +185,7 @@ const styles = StyleSheet.create({
   musicIconHolder: {
     position: 'absolute',
     bottom: 30,
-    left: 20,
+    left: 10,
     height: 60,
     width: 60,
     borderRadius: 20,
@@ -182,5 +224,15 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
+  },
+  checkmarkHolder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.betterBlue,
+  },
+  checkmark: {
+    height: 300,
+    width: 300,
   },
 });

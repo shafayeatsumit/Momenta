@@ -17,7 +17,7 @@ class Loading extends Component {
     const {navigation, userInfo} = this.props;
     userInfo.onboarded
       ? navigation.replace('Home')
-      : navigation.navigate('OnboardingIntro');
+      : navigation.replace('OnboardingIntro');
   };
 
   handleAppStateChange = (nextAppState) => {

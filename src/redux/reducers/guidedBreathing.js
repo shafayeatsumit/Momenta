@@ -1,9 +1,11 @@
 const initialState = {
   id: 'calm',
-  numberOfBreaths: 2,
-  targetInhale: 3.5,
-  targetExhale: 3.5,
-  firstThreshold: 120,
+  name: 'Calm',
+  type: 'guided',
+  dynamicTarget: true,
+  targetInhale: 0,
+  targetExhale: 0,
+  firstThreshold: 60,
   secondThreshold: 0,
   secondTargetInhale: 0,
   secondTargetExhale: 0,
@@ -16,6 +18,12 @@ const breathing = (state = initialState, action) => {
       return {
         ...state,
         ...action.data,
+      };
+    case 'SET_DYNAMIC_TARGET':
+      return {
+        ...state,
+        targetInhale: action.targetInhale,
+        targetExhale: action.targetExhale,
       };
     case 'UPDATE_CALIBRATION_TIME':
       return {

@@ -54,21 +54,23 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: 30,
-    // backgroundColor: 'yellow',
+    justifyContent: 'space-between',
   },
   resultTextHolder: {
-    flex: 1,
-    marginLeft: 20,
+    width: ScreenWidth * 0.3,
+    height: 60,
   },
   text: {
     fontFamily: FontType.SemiBold,
     fontSize: 14,
     color: 'white',
+    textAlign: 'left',
   },
   textSm: {
     fontFamily: FontType.SemiBold,
     fontSize: 11,
     color: 'white',
     paddingTop: 3,
+    textAlign: 'left',
   },
 });

@@ -9,7 +9,7 @@ const IntroFlow = (props) => {
   const [showSurvey, setSurvey] = useState(false);
   const handlePress = (goal) => {
     analytics().logEvent('button_push', {title: goal});
-    props.navigation.navigate('Home');
+    props.navigation.replace('Home');
   };
   if (showSurvey) {
     return (

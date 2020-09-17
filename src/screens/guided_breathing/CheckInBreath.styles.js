@@ -36,6 +36,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  boldText: {
+    fontFamily: FontType.ExtraBold,
+    color: Colors.cornflowerBlue,
+  },
   instructionTextHolder: {
     height: 300,
     width: 250,
@@ -56,20 +60,22 @@ const styles = StyleSheet.create({
   },
   initTextHolder: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 15,
     alignSelf: 'center',
-    height: 100,
-    width: 200,
+    height: 90,
+    width: 250,
+    // backgroundColor: 'red',
   },
 
   initText: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
   },
   initTextBold: {
     fontFamily: FontType.ExtraBold,
+    color: Colors.cornflowerBlue,
   },
 });
 export default styles;

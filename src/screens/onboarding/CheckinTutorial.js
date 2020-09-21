@@ -37,7 +37,7 @@ const CheckinTutorial = (props) => {
       return (
         <View style={styles.lottieContainer}>
           <LottieView
-            autoSize
+            autoSize={false}
             resizeMode="cover"
             autoPlay={true}
             loop={false}
@@ -129,14 +129,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   lottieContainer: {
+    // marginTop: 100,
     height: 400,
-    width: 300,
+    width: 330,
+    // backgroundColor: 'yellow',
   },
   lottieFile: {
     alignSelf: 'center',
-    marginTop: 15,
-    height: 300,
-    width: 300,
+    marginTop: 5,
+    height: 360,
+    width: 320,
   },
   main: {
     flex: 1,

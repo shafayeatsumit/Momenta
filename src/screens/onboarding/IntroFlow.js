@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableHighlight, StyleSheet} from 'react-native';
 import {ScreenHeight} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
@@ -7,6 +7,19 @@ import LottieView from 'lottie-react-native';
 
 const IntroFlow = (props) => {
   const [showSurvey, setSurvey] = useState(false);
+  const [showAnimation, setAnimation] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimation(true);
+      clearTimeout(timer);
+    }, 1000);
+    const timerTwo = setTimeout(() => {
+      setSurvey(true);
+      clearTimeout(timerTwo);
+    }, 9400);
+  }, []);
+
   const handlePress = (goal) => {
     analytics().logEvent('button_push', {title: goal});
     props.navigation.replace('Home');
@@ -54,15 +67,17 @@ const IntroFlow = (props) => {
   }
   return (
     <View style={styles.container}>
-      <View style={styles.textAnimation}>
-        <LottieView
-          autoPlay
-          loop={false}
-          resizeMode="contain"
-          source={require('../../../assets/anims/intro_text.json')}
-          onAnimationFinish={() => setSurvey(true)}
-        />
-      </View>
+      {showAnimation && (
+        <View style={styles.textAnimation}>
+          <LottieView
+            autoPlay
+            loop={false}
+            resizeMode="contain"
+            source={require('../../../assets/anims/intro_text.json')}
+            // onAnimationFinish={() => setSurvey(true)}
+          />
+        </View>
+      )}
     </View>
   );
 };

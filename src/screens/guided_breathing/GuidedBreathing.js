@@ -1,8 +1,17 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Platform,
+  Image,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 import CheckInBreath from './CheckInBreath';
 import BreathingGame from './BreathingGame';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
 import {FontType, Colors} from '../../helpers/theme';
@@ -27,6 +36,11 @@ class GuidedBreathing extends Component {
   goHome = () => {
     this.setState({showBreathingGame: false, showAnimation: true});
     this.props.navigation.pop();
+  };
+
+  finishHaptics = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactMedium' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
   setFinished = () => this.setState({finished: true});
@@ -69,6 +83,11 @@ class GuidedBreathing extends Component {
 
   handleFinish = () => {
     this.setState({showAnimation: true});
+    this.hapticsFinisherId = setTimeout(() => {
+      this.finishHaptics();
+      clearTimeout(this.hapticsFinisherId);
+    }, 1500);
+
     analytics().logEvent('button_push', {title: 'finish'});
   };
 

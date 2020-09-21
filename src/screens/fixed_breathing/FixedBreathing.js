@@ -76,6 +76,11 @@ class FixedBreathing extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
+  finishHaptics = () => {
+    const feedbackType = Platform.OS === 'ios' ? 'impactMedium' : 'clockTick';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   startInhaleHoldPulse = () => {
     analytics().logEvent('hold_start');
     const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
@@ -265,6 +270,7 @@ class FixedBreathing extends Component {
   };
 
   handlePressFinish = () => {
+    setTimeout(this.finishHaptics, 1500);
     analytics().logEvent('button_push', {title: 'finish'});
     this.removeTimers();
     this.setState({showAnimation: true});

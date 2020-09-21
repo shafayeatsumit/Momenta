@@ -7,6 +7,7 @@ const Colors = {
   black: '#323643',
   white: '#FFFFFF',
   gray: '#9DA3B4',
+  steel: '#7b9095',
 };
 
 const FontType = {

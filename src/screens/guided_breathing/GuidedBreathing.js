@@ -101,7 +101,7 @@ class GuidedBreathing extends Component {
       showStuffs,
       showAnimation,
     } = this.state;
-    const {userInfo} = this.props;
+    const {userInfo, guidedBreathing} = this.props;
     const {musicOn} = userInfo;
     const {route} = this.props;
     const showQuit = !finished && showBreathingGame && showStuffs;
@@ -132,6 +132,7 @@ class GuidedBreathing extends Component {
             handleMusic={route.params.handleMusic}
             pressIn={pressIn}
             pressOut={pressOut}
+            breathId={guidedBreathing.id}
           />
         )}
         {showBreathingGame && (

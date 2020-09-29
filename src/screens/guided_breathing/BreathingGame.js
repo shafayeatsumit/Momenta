@@ -8,313 +8,191 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import ProgressTracker from '../../components/ProgressTracker';
-import BreathingStats from './BreathingStats';
-import BreathingGameProgress from './BreathingGameProgress';
 import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {Colors} from '../../helpers/theme';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 
+const CIRCLE_MAX_HEIGHT = 220;
+const CIRCLE_MIN_HEIGHT = 0;
+
 const avgInhale = (inhaleTime, targetInhaleTime) =>
-  (inhaleTime + targetInhaleTime) / 2;
+  (inhaleTime + targetInhaleTime) / 2 / 1000;
 
 const avgExhale = (exhaleTime, targetExhaleTime) =>
-  (exhaleTime + targetExhaleTime) / 2;
+  (exhaleTime + targetExhaleTime) / 2 / 1000;
 
 class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      circleText: 'Exhale',
-      inhaleTimeRecorded: 0,
-      exhaleTimeRecorded: 0,
-      totalInhaleTime: 0,
-      totalExhaleTime: 0,
-      progressCount: 0,
-      finalExhaleTime: 0,
-      finalInhaleTime: 0,
-      timer: 0,
-      touchDisabled: false,
-      targetVisible: false,
+      measurementType: 'inhale',
     };
+    this.holdingScreen = false;
     this.pressInTime = null;
     this.pressOutTime = null;
-    this.animated = new Animated.Value(0);
-    // hapticfeedback stuffs
-    this.counter = 0;
-    this.finishBreathingTime = props.guidedBreathing.breathingTime * 60; // in secs
-    this.totalBreathingTime = 0;
-    this.exhaleTime = props.guidedBreathing.calibrationExhale;
-    this.inhaleTime = props.guidedBreathing.calibrationInhale;
-    this.targetExhale = props.guidedBreathing.targetExhale;
-    this.targetInhale = props.guidedBreathing.targetInhale;
+    this.animatedHeight = new Animated.Value(0);
+    this.animatedWidth = new Animated.Value(0);
+    this.animatedRadius = new Animated.Value(0);
+    this.touchEnabled = false;
+    this.secondTargetSetupComplete = false;
+    this.targetExhale = props.guidedBreathing.targetExhale * 1000;
+    this.targetInhale = props.guidedBreathing.targetInhale * 1000;
+    this.exhaleTime = props.guidedBreathing.calibrationExhale * 1000;
+    this.inhaleTime = props.guidedBreathing.calibrationInhale * 1000;
     this.avgExhale = avgExhale(this.exhaleTime, this.targetExhale);
     this.avgInhale = avgInhale(this.inhaleTime, this.targetInhale);
-    this.firstThresholdBreathCount = Math.ceil(
+    this.targetBreathCount = Math.ceil(
       props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
     );
     this.exhlaeIncrementValue =
-      (this.targetExhale - this.exhaleTime) / this.firstThresholdBreathCount;
+      (this.targetExhale - this.exhaleTime) / this.targetBreathCount;
+
     this.inhaleIncrementValue =
-      (this.targetInhale - this.inhaleTime) / this.firstThresholdBreathCount;
+      (this.targetInhale - this.inhaleTime) / this.targetBreathCount;
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
-    this.unmount = false;
-
-    // press in
-    props.pressIn && this.handlePressIn();
-
-    // exhale timer;
-    this.exhalePulseCount = 0;
-    this.exhaleEndTime = null;
-    this.ignoreExhaleCount = true;
+    this.totalBreathTaken = 0;
   }
 
-  startExhalePulse = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  enableTouch = () => {
+    this.touchEnabled = true;
   };
 
-  startInhalePulse = () => {
-    const feedbackType =
-      Platform.OS === 'ios' ? 'impactLight' : 'keyboardRelease';
-    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-  };
-
-  feedbackLoop = (pulse) => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
-    const exhalePulseCount = pulse - 1;
-    this.feedbackLoopId = setTimeout(() => {
-      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-      if (!exhalePulseCount) {
-        clearTimeout(this.feedbackLoopId);
-      } else {
-        this.feedbackLoop(exhalePulseCount);
-      }
-    }, 900);
-  };
-
-  exhaleHoldFeedack = () => {
-    let endTime = this.exhaleEndTime;
-    let exhalePulseCount;
-    let timeDiff;
-    if (endTime) {
-      timeDiff = endTime - new Date();
-      exhalePulseCount = Math.floor(timeDiff / 900) - 1;
-    } else {
-      timeDiff = this.exhaleTime * 1000;
-      exhalePulseCount = Math.floor((this.exhaleTime * 1000) / 900) - 1;
-    }
-    const minimumDiff = 1800; // Timediff
-    if (timeDiff < minimumDiff && this.finishedGame) {
-      return;
-    }
-    this.feedbackLoop(exhalePulseCount);
-  };
-
-  secondThresholdSetup = () => {
-    const {
-      targetInhale,
-      targetExhale,
-      secondTargetInhale,
-      secondTargetExhale,
-      secondThreshold,
-    } = this.props.guidedBreathing;
-    this.avgInhale = avgInhale(targetInhale, secondTargetInhale);
-    this.avgExhale = avgExhale(targetExhale, secondTargetExhale);
-    this.secondThresholdBreathCount = Math.ceil(
+  setSecondTarget = () => {
+    const {guidedBreathing} = this.props;
+    const {calibrationExhale, secondThreshold} = guidedBreathing;
+    const secondTarget = calibrationExhale * 1000;
+    const targetInhale = guidedBreathing.targetInhale * 1000;
+    const targetExhale = guidedBreathing.targetExhale * 1000;
+    this.avgInhale = avgInhale(targetInhale, secondTarget);
+    this.avgExhale = avgExhale(targetExhale, secondTarget);
+    this.targetBreathCount = Math.ceil(
       secondThreshold / (this.avgInhale + this.avgExhale),
     );
     this.inhaleIncrementValue =
-      (secondTargetInhale - targetInhale) / this.secondThresholdBreathCount;
+      (secondTarget - targetInhale) / this.targetBreathCount;
     this.exhlaeIncrementValue =
-      (secondTargetExhale - targetExhale) / this.secondThresholdBreathCount;
-    this.counter = 0;
+      (secondTarget - targetExhale) / this.targetBreathCount;
+    this.secondTargetSetupComplete = true;
+    this.totalBreathTaken = 0;
+    this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
+    this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
+    this.startInhale();
   };
 
-  setExhaleEndTime = () => {
-    const timeObject = new Date();
-    const milliseconds = this.exhaleTime * 1000; // 10000 milliseconds
-    this.exhaleEndTime = new Date(timeObject.getTime() + milliseconds);
+  expand = () => {
+    Animated.parallel([
+      Animated.timing(this.animatedHeight, {
+        toValue: CIRCLE_MAX_HEIGHT,
+        duration: this.inhaleTime,
+      }),
+      Animated.timing(this.animatedWidth, {
+        toValue: CIRCLE_MAX_HEIGHT,
+        duration: this.inhaleTime,
+      }),
+      Animated.timing(this.animatedRadius, {
+        toValue: CIRCLE_MAX_HEIGHT / 2,
+        duration: this.inhaleTime,
+      }),
+    ]).start(this.enableTouch);
   };
 
-  animateCB = (noIncrement = false) => {
-    let finished = false;
-    if (this.unmount) {
-      return;
-    }
-    if (this.totalBreathingTime > this.finishBreathingTime) {
-      this.animateCBFinish();
-      finished = true;
-      this.finishedGame = true;
-    }
-    this.setExhaleEndTime();
-    this.startExhalePulse();
-    this.inhaleTime =
-      noIncrement || finished
-        ? this.inhaleTime
-        : this.inhaleTime + this.inhaleIncrementValue;
-    this.exhaleTime =
-      noIncrement || finished
-        ? this.exhaleTime
-        : this.exhaleTime + this.exhlaeIncrementValue;
-    this.setState({circleText: 'Exhale'});
-
-    const totalTime = this.inhaleTime + this.exhaleTime;
-    this.totalBreathingTime = this.totalBreathingTime + totalTime;
-
-    this.exhaleEndPulseTimer = setTimeout(() => {
-      this.exhaleEndPulse();
-      clearTimeout(this.exhaleEndPulseTimer);
-    }, this.exhaleTime * 1000);
-    this.animate(totalTime);
+  resetCircle = (duration) => {
+    Animated.parallel([
+      Animated.timing(this.animatedHeight, {
+        toValue: CIRCLE_MAX_HEIGHT,
+        duration,
+      }),
+      Animated.timing(this.animatedWidth, {
+        toValue: CIRCLE_MAX_HEIGHT,
+        duration,
+      }),
+      Animated.timing(this.animatedRadius, {
+        toValue: CIRCLE_MAX_HEIGHT / 2,
+        duration,
+      }),
+    ]).start();
   };
 
-  animateCBFinish = () => {
-    const {totalExhaleTime, totalInhaleTime} = this.state;
-    this.props.setFinished();
-    this.setState({
-      touchDisabled: true,
-      circleText: 'Finished',
-      finalInhaleTime: this.inhaleTime,
-      finalExhaleTime: this.exhaleTime,
-    });
-    clearInterval(this.stopWatchId);
+  stop = () => {
+    Animated.parallel([
+      Animated.timing(this.animatedHeight),
+      Animated.timing(this.animatedWidth),
+      Animated.timing(this.animatedRadius),
+    ]).stop();
   };
 
-  animate = (duration) => {
-    this.animated.setValue(0);
-    analytics().logEvent('exhale_start');
-    Animated.timing(this.animated, {
-      toValue: 1,
-      duration: duration * 1000,
-      useNativeDriver: true,
-      easing: Easing.linear,
-    }).start(() => {
-      this.counter += 1;
-      const {secondThreshold} = this.props.guidedBreathing;
-      const {targetVisible} = this.state;
-      if (this.counter < this.firstThresholdBreathCount) {
-        this.animateCB();
-      } else if (secondThreshold) {
-        targetVisible && this.setState({targetVisible: false});
-        !this.secondThresholdBreathCount && this.secondThresholdSetup();
-        this.counter < this.secondThresholdBreathCount
-          ? this.animateCB()
-          : this.animateCB(true);
-      } else {
-        targetVisible && this.setState({targetVisible: false});
-        this.animateCB(true);
-        // continue without increment
-      }
-    });
+  shrink = () => {
+    console.log('shrink', this.exhaleTime);
+    Animated.parallel([
+      Animated.timing(this.animatedHeight, {
+        toValue: CIRCLE_MIN_HEIGHT,
+        duration: this.exhaleTime,
+      }),
+      Animated.timing(this.animatedWidth, {
+        toValue: CIRCLE_MIN_HEIGHT,
+        duration: this.exhaleTime,
+      }),
+      Animated.timing(this.animatedRadius, {
+        toValue: CIRCLE_MIN_HEIGHT / 2,
+        duration: this.exhaleTime,
+      }),
+    ]).start();
   };
-
-  exhaleEndPulse = () => {
-    analytics().logEvent('inhale_start');
-    this.setState({circleText: 'Inhale'});
-    this.startInhalePulse();
-    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
-  };
-
-  startStopWatch = () => {
-    this.stopWatchId = setInterval(() => {
-      if (this.state.timer >= this.finishBreathingTime) {
-        clearInterval(this.stopWatchId);
-        return;
-      }
-      this.setState({timer: this.state.timer + 1});
-    }, 1000);
-  };
-
-  showTarget = (totalTime) => {
-    this.showTargetTimerId = setTimeout(() => {
-      this.setState({targetVisible: true});
-      clearTimeout(this.showTargetTimerId);
-    }, totalTime * 1000 - 500);
-  };
-
-  componentDidMount() {
-    const totalTime = this.inhaleTime + this.exhaleTime;
-    this.totalBreathingTime = this.totalBreathingTime + totalTime;
-    this.animate(totalTime);
-    this.showTarget(totalTime);
-    this.initExhalePulseTimer = setTimeout(() => {
-      this.exhaleEndPulse();
-      clearTimeout(this.initExhalePulseTimer);
-    }, this.exhaleTime * 1000);
-    this.startStopWatch();
-  }
-
-  componentWillUnmount() {
-    this.unmount = true;
-    this.exhaleEndPulseTimer && clearTimeout(this.exhaleEndPulseTimer);
-    this.initExhalePulseTimer && clearTimeout(this.initExhalePulseTimer);
-    this.stopWatchId && clearInterval(this.stopWatchId);
-    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
-  }
 
   resetTime = () => {
     this.pressInTime = null;
     this.pressOutTime = null;
-    this.setState({
-      inhaleTimeRecorded: 0,
-      exhaleTimeRecorded: 0,
-    });
   };
 
-  measureTime = (time) => {
-    return ((new Date() - time) / 1000).toFixed(2);
-  };
+  measureTime = () => new Date() - this.pressInTime;
 
   breathCompleted = () => {
-    const {progressCount, inhaleTimeRecorded, exhaleTimeRecorded} = this.state;
-    this.setState({
-      progressCount: progressCount + 1,
-      totalInhaleTime: inhaleTimeRecorded,
-      totalExhaleTime: exhaleTimeRecorded,
-    });
-  };
-
-  oneSecError = () => {
-    this.resetTime();
+    const {guidedBreathing} = this.props;
+    this.totalBreathTaken = this.totalBreathTaken + 1;
+    const finished = this.targetBreathCount >= this.totalBreathTaken;
+    if (finished) {
+      const needSecondBreathSetup =
+        guidedBreathing.id === 'inner_quiet' && !this.secondTargetSetupComplete;
+      if (needSecondBreathSetup) {
+        this.setSecondTarget();
+      } else {
+        // Game is completed
+        console.log('++++++++++++++this game is over++++++++++++++++++');
+        this.startInhale();
+      }
+    } else {
+      this.startInhale();
+      this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
+      this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
+    }
   };
 
   handlePressOut = () => {
-    // for reset breath
-    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
-    if (!this.pressInTime) {
+    this.holdingScreen = false;
+    const exhaleTimeTaken = this.measureTime();
+    if (exhaleTimeTaken < 2000) {
+      this.resetCircle();
       return;
     }
 
-    const timeTakenExhale = this.measureTime(this.pressInTime);
-    if (timeTakenExhale < 1) {
-      this.oneSecError();
-      timeTakenExhale < 0.2 && this.props.handleTap();
-    } else {
-      this.setState({exhaleTimeRecorded: Number(timeTakenExhale)});
+    const currentCircleHeight = this.animatedHeight.__getValue();
+    if (currentCircleHeight === 0) {
+      this.breathCompleted();
     }
-    this.pressOutTime = new Date();
   };
 
   handlePressIn = () => {
-    this.pressIn = true;
-    const {circleText} = this.state;
-    circleText === 'Exhale' && this.exhaleHoldFeedack();
-    if (this.pressInTime) {
-      const timeTakenInhale = this.measureTime(this.pressOutTime);
-      if (timeTakenInhale < 1) {
-        this.oneSecError();
-      } else {
-        this.setState(
-          {inhaleTimeRecorded: Number(timeTakenInhale)},
-          this.breathCompleted,
-        );
-      }
+    if (!this.touchEnabled) {
+      console.log('inside here');
+      return;
     }
+    this.setState({measurementType: 'exhale'});
+    this.holdingScreen = true;
     this.pressInTime = new Date();
+    this.shrink();
   };
 
   componentDidUpdate(prevProps) {
@@ -327,74 +205,51 @@ class BreathingGame extends Component {
     }
   }
 
-  render() {
-    const {
-      circleText,
-      finalExhaleTime,
-      finalInhaleTime,
-      timer,
-      targetVisible,
-    } = this.state;
-    const {guidedBreathing, finished, handleTap, showStuffs} = this.props;
-    const {calibrationInhale, calibrationExhale} = guidedBreathing;
-    const inputRange = [0, 1];
-    const outputRange = ['0deg', '360deg'];
-    this.rotate = this.animated.interpolate({inputRange, outputRange});
-    const targetRotation =
-      (360 * this.targetExhale) / (this.targetExhale + this.targetInhale);
-    const transform = [{rotate: this.rotate}];
+  startInhale = () => {
+    this.touchEnabled = false;
+    this.setState({measurementType: 'inhale'});
+    this.expand();
+  };
 
+  componentDidMount() {
+    this.startInhale();
+    this.animatedListenerId = this.animatedHeight.addListener(({value}) => {
+      if (value === 0) {
+        !this.holdingScreen && this.breathCompleted();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.animatedHeight.removeListener(this.animatedListenerId);
+  }
+
+  render() {
+    const {measurementType} = this.state;
     return (
       <TouchableOpacity
         style={styles.container}
-        onPress={handleTap}
+        onPress={() => {}}
         activeOpacity={1}>
-        <View style={styles.topView}>
-          <ProgressTracker
-            currentTime={timer}
-            targetTime={this.finishBreathingTime}
-            showTimer={showStuffs}
-          />
-          {finished && (
-            <BreathingStats
-              calibrationExhale={calibrationExhale}
-              calibrationInhale={calibrationInhale}
-              finalInhaleTime={finalInhaleTime}
-              finalExhaleTime={finalExhaleTime}
-            />
-          )}
-        </View>
-        <BreathingGameProgress
-          inhaleTime={this.inhaleTime}
-          exhaleTime={this.exhaleTime}
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>{circleText}</Text>
-        </View>
-        {targetVisible && (
-          <View style={styles.targetBoxContainer}>
-            <Animated.View
-              style={[
-                styles.box,
-                {transform: [{rotate: `${targetRotation}deg`}]},
-              ]}>
-              <View style={[styles.targetLine]} />
-            </Animated.View>
-          </View>
+        {measurementType === 'exhale' && (
+          <Text style={styles.centerText}>Exhale</Text>
         )}
 
-        <View style={styles.boxContainer}>
-          <Animated.View style={[styles.box, {transform: transform}]}>
-            <View
-              style={[
-                styles.dot,
-                circleText === 'Exhale'
-                  ? {backgroundColor: Colors.buttonBlueDeep}
-                  : {backgroundColor: Colors.buttonBlue},
-              ]}
-            />
-          </Animated.View>
+        <View style={styles.circleHolder}>
+          <Animated.View
+            style={[
+              styles.circle,
+              {
+                height: this.animatedHeight,
+                width: this.animatedWidth,
+                borderRadius: this.animatedRadius,
+              },
+            ]}
+          />
         </View>
+        {measurementType === 'inhale' && (
+          <Text style={styles.centerText}>Inhale Slowly</Text>
+        )}
       </TouchableOpacity>
     );
   }

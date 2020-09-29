@@ -47,8 +47,8 @@ export const BREATHING_TYPES = [
     targetExhale: 6,
     firstThreshold: 30,
     secondThreshold: 120,
-    secondTargetInhale: 3.5,
-    secondTargetExhale: 3.5,
+    secondTargetInhale: 5,
+    secondTargetExhale: 5,
     breathingTime: 1,
   },
   // {

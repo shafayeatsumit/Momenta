@@ -5,7 +5,7 @@ const initialState = {
   dynamicTarget: true,
   targetInhale: 0,
   targetExhale: 0,
-  firstThreshold: 60,
+  firstThreshold: 60 * 1000,
   secondThreshold: 0,
   secondTargetInhale: 0,
   secondTargetExhale: 0,
@@ -22,14 +22,14 @@ const breathing = (state = initialState, action) => {
     case 'SET_DYNAMIC_TARGET':
       return {
         ...state,
-        targetInhale: action.targetInhale,
-        targetExhale: action.targetExhale,
+        targetInhale: action.targetInhale * 1000,
+        targetExhale: action.targetExhale * 1000,
       };
     case 'UPDATE_CALIBRATION_TIME':
       return {
         ...state,
-        calibrationExhale: action.calibrationExhale,
-        calibrationInhale: action.calibrationInhale,
+        calibrationExhale: action.calibrationExhale * 1000,
+        calibrationInhale: action.calibrationInhale * 1000,
       };
     case 'SELECT_GUIDED_TIME':
       return {

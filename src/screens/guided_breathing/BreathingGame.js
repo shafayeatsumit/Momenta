@@ -31,7 +31,6 @@ class BreathingGame extends Component {
     };
     this.holdingScreen = false;
     this.pressInTime = null;
-    this.pressOutTime = null;
     this.animatedHeight = new Animated.Value(0);
     this.animatedWidth = new Animated.Value(0);
     this.animatedRadius = new Animated.Value(0);
@@ -46,13 +45,10 @@ class BreathingGame extends Component {
     this.targetBreathCount = Math.ceil(
       props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
     );
-    // increment value per breath
     this.exhlaeIncrementValue =
       (this.targetExhale - this.exhaleTime) / this.targetBreathCount;
-
     this.inhaleIncrementValue =
       (this.targetInhale - this.inhaleTime) / this.targetBreathCount;
-    // increment value per second
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.totalBreathTaken = 0;
@@ -60,6 +56,10 @@ class BreathingGame extends Component {
 
   enableTouch = () => {
     this.touchEnabled = true;
+  };
+
+  disableTouch = () => {
+    this.touchEnabled = false;
   };
 
   setSecondTarget = () => {
@@ -84,6 +84,12 @@ class BreathingGame extends Component {
     this.startInhale();
   };
 
+  circleExpandEnd = () => {
+    ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+    this.setState({measurementType: 'exhale'});
+    this.enableTouch();
+  };
+
   expand = (time) => {
     const duration = time || this.inhaleTime;
     Animated.parallel([
@@ -99,32 +105,7 @@ class BreathingGame extends Component {
         toValue: CIRCLE_MAX_HEIGHT / 2,
         duration,
       }),
-    ]).start(this.enableTouch);
-  };
-
-  resetCircle = (duration) => {
-    Animated.parallel([
-      Animated.timing(this.animatedHeight, {
-        toValue: CIRCLE_MAX_HEIGHT,
-        duration,
-      }),
-      Animated.timing(this.animatedWidth, {
-        toValue: CIRCLE_MAX_HEIGHT,
-        duration,
-      }),
-      Animated.timing(this.animatedRadius, {
-        toValue: CIRCLE_MAX_HEIGHT / 2,
-        duration,
-      }),
-    ]).start();
-  };
-
-  stop = () => {
-    Animated.parallel([
-      Animated.timing(this.animatedHeight),
-      Animated.timing(this.animatedWidth),
-      Animated.timing(this.animatedRadius),
-    ]).stop();
+    ]).start(this.circleExpandEnd);
   };
 
   shrink = () => {
@@ -143,11 +124,6 @@ class BreathingGame extends Component {
         duration: this.exhaleTime,
       }),
     ]).start();
-  };
-
-  resetTime = () => {
-    this.pressInTime = null;
-    this.pressOutTime = null;
   };
 
   measureTime = () => new Date() - this.pressInTime;
@@ -207,12 +183,11 @@ class BreathingGame extends Component {
     const exhaleTimeTaken = this.measureTime();
     if (exhaleTimeTaken < 2000) {
       this.expand(1000);
-
       return;
     }
-
     const currentCircleHeight = this.animatedHeight.__getValue();
-    if (currentCircleHeight === 0) {
+    const takenFullExhale = currentCircleHeight === 0;
+    if (takenFullExhale) {
       this.breathCompleted();
     } else {
       this.startInhale();
@@ -221,14 +196,31 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     if (!this.touchEnabled) {
-      console.log('inside here');
       return;
     }
-    this.exhaleHoldFeedack();
-    this.setState({measurementType: 'exhale'});
-    this.holdingScreen = true;
     this.pressInTime = new Date();
+    this.holdingScreen = true;
+    this.startExhale();
+  };
+
+  startExhale = () => {
+    this.exhaleHoldFeedack();
     this.shrink();
+  };
+
+  startInhale = () => {
+    this.disableTouch();
+    this.expand();
+    this.setState({measurementType: 'inhale'});
+  };
+
+  animatedListener = ({value}) => {
+    console.log('value', value);
+    if (value === 0) {
+      !this.holdingScreen && this.breathCompleted();
+      ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+      this.setState({measurementType: 'exhale'});
+    }
   };
 
   componentDidUpdate(prevProps) {
@@ -241,19 +233,11 @@ class BreathingGame extends Component {
     }
   }
 
-  startInhale = () => {
-    this.touchEnabled = false;
-    this.setState({measurementType: 'inhale'});
-    this.expand();
-  };
-
   componentDidMount() {
     this.startInhale();
-    this.animatedListenerId = this.animatedHeight.addListener(({value}) => {
-      if (value === 0) {
-        !this.holdingScreen && this.breathCompleted();
-      }
-    });
+    this.animatedListenerId = this.animatedHeight.addListener(
+      this.animatedListener,
+    );
   }
 
   componentWillUnmount() {
@@ -267,9 +251,11 @@ class BreathingGame extends Component {
         style={styles.container}
         onPress={() => {}}
         activeOpacity={1}>
-        {measurementType === 'exhale' && (
-          <Text style={styles.centerText}>Exhale</Text>
-        )}
+        <View style={styles.textHolder}>
+          {measurementType === 'exhale' && (
+            <Text style={styles.centerText}>Exhale</Text>
+          )}
+        </View>
 
         <View style={styles.circleHolder}>
           <Animated.View
@@ -283,9 +269,12 @@ class BreathingGame extends Component {
             ]}
           />
         </View>
-        {measurementType === 'inhale' && (
-          <Text style={styles.centerText}>Inhale Slowly</Text>
-        )}
+
+        <View style={styles.textHolder}>
+          {measurementType === 'inhale' && (
+            <Text style={styles.centerText}>Inhale Slowly</Text>
+          )}
+        </View>
       </TouchableOpacity>
     );
   }

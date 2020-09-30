@@ -18,12 +18,16 @@ const styles = StyleSheet.create({
   circle: {
     backgroundColor: Colors.cornflowerBlue,
   },
+  textHolder: {
+    height: 50,
+    width: 220,
+    justifyContent: 'center',
+  },
   centerText: {
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 22,
     textAlign: 'center',
-    marginVertical: 12,
   },
 });
 

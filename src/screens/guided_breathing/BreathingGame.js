@@ -46,11 +46,13 @@ class BreathingGame extends Component {
     this.targetBreathCount = Math.ceil(
       props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
     );
+    // increment value per breath
     this.exhlaeIncrementValue =
       (this.targetExhale - this.exhaleTime) / this.targetBreathCount;
 
     this.inhaleIncrementValue =
       (this.targetInhale - this.inhaleTime) / this.targetBreathCount;
+    // increment value per second
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.totalBreathTaken = 0;
@@ -82,19 +84,20 @@ class BreathingGame extends Component {
     this.startInhale();
   };
 
-  expand = () => {
+  expand = (time) => {
+    const duration = time || this.inhaleTime;
     Animated.parallel([
       Animated.timing(this.animatedHeight, {
         toValue: CIRCLE_MAX_HEIGHT,
-        duration: this.inhaleTime,
+        duration,
       }),
       Animated.timing(this.animatedWidth, {
         toValue: CIRCLE_MAX_HEIGHT,
-        duration: this.inhaleTime,
+        duration,
       }),
       Animated.timing(this.animatedRadius, {
         toValue: CIRCLE_MAX_HEIGHT / 2,
-        duration: this.inhaleTime,
+        duration,
       }),
     ]).start(this.enableTouch);
   };
@@ -149,10 +152,36 @@ class BreathingGame extends Component {
 
   measureTime = () => new Date() - this.pressInTime;
 
+  feedbackLoop = (pulse) => {
+    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
+    const exhalePulseCount = pulse - 1;
+    console.log(`exhalePulseCount ${exhalePulseCount}`);
+    this.feedbackLoopId = setTimeout(() => {
+      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+      if (!exhalePulseCount) {
+        clearTimeout(this.feedbackLoopId);
+      } else {
+        this.feedbackLoop(exhalePulseCount);
+      }
+    }, 900);
+  };
+
+  exhaleHoldFeedack = () => {
+    const timeDiff = this.exhaleTime;
+    const exhalePulseCount = Math.floor(this.exhaleTime / 900) - 1;
+    const minimumDiff = 1800; // Timediff
+    if (timeDiff < minimumDiff && this.finishedGame) {
+      return;
+    }
+    this.feedbackLoop(exhalePulseCount);
+  };
+
   breathCompleted = () => {
     const {guidedBreathing} = this.props;
     this.totalBreathTaken = this.totalBreathTaken + 1;
-    const finished = this.targetBreathCount >= this.totalBreathTaken;
+    const finished =
+      this.inhaleTime >= this.targetInhale &&
+      this.exhaleTime >= this.targetExhale;
     if (finished) {
       const needSecondBreathSetup =
         guidedBreathing.id === 'inner_quiet' && !this.secondTargetSetupComplete;
@@ -161,26 +190,32 @@ class BreathingGame extends Component {
       } else {
         // Game is completed
         console.log('++++++++++++++this game is over++++++++++++++++++');
+        console.log(`exhale ${this.exhaleTime} inhale ${this.inhaleTime}`);
         this.startInhale();
+        this.finishedGame = true;
       }
     } else {
-      this.startInhale();
       this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
       this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
+      this.startInhale();
     }
   };
 
   handlePressOut = () => {
+    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
     if (exhaleTimeTaken < 2000) {
-      this.resetCircle();
+      this.expand(1000);
+
       return;
     }
 
     const currentCircleHeight = this.animatedHeight.__getValue();
     if (currentCircleHeight === 0) {
       this.breathCompleted();
+    } else {
+      this.startInhale();
     }
   };
 
@@ -189,6 +224,7 @@ class BreathingGame extends Component {
       console.log('inside here');
       return;
     }
+    this.exhaleHoldFeedack();
     this.setState({measurementType: 'exhale'});
     this.holdingScreen = true;
     this.pressInTime = new Date();

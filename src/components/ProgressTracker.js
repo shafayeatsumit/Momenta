@@ -6,6 +6,7 @@ import AnimatedProgress from './AnimatedProgress';
 const twoDigitPadding = (num) => String(num).padStart(2, '0');
 
 const ProgressTracker = ({currentTime, targetTime, showTimer}) => {
+  currentTime = currentTime > targetTime ? targetTime : currentTime;
   const currentTimeMin = Math.floor(currentTime / 60);
   const currentTimeSec = currentTime % 60;
   let currentTimePercent = (100 * currentTime) / targetTime;

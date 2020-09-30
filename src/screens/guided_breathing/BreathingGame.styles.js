@@ -35,6 +35,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
+  instructionTextHolder: {
+    height: 80,
+    width: 250,
+    position: 'absolute',
+    bottom: 10,
+  },
+  instructionText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: 25,
+  },
 });
 
 export default styles;

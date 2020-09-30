@@ -24,11 +24,15 @@ const avgInhale = (inhaleTime, targetInhaleTime) =>
 const avgExhale = (exhaleTime, targetExhaleTime) =>
   (exhaleTime + targetExhaleTime) / 2;
 
+const MIN_EXHALE_MSG = 'Exhale must be at least 2 second long';
+const COMPLETE_EXHALE_MSG = 'Hold down to complete each exhale';
+
 class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
       measurementType: 'inhale',
+      instructionText: '',
       timer: 0,
     };
     this.holdingScreen = false;
@@ -95,11 +99,20 @@ class BreathingGame extends Component {
     this.startInhale();
   };
 
+  setNotHoldingError = () => {
+    this.notHoldingErrorId = setTimeout(() => {
+      this.setState({instructionText: COMPLETE_EXHALE_MSG});
+    }, 2000);
+  };
+
   circleExpandEnd = () => {
     ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
     this.setState({measurementType: 'exhale'});
     this.enableTouch();
-    !this.holdingScreen && clearTimeout(this.stopWatchId);
+    if (!this.holdingScreen) {
+      clearInterval(this.stopWatchId);
+      this.setNotHoldingError();
+    }
   };
 
   expand = (time) => {
@@ -137,7 +150,9 @@ class BreathingGame extends Component {
     ]).start();
   };
 
-  measureTime = () => new Date() - this.pressInTime;
+  measureTime = () => {
+    return new Date() - this.pressInTime;
+  };
 
   feedbackLoop = (pulse) => {
     const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
@@ -179,6 +194,7 @@ class BreathingGame extends Component {
         console.log(`exhale ${this.exhaleTime} inhale ${this.inhaleTime}`);
         this.startInhale();
         this.finishedGame = true;
+        this.stopWatchId && clearInterval(this.stopWatchId);
       }
     } else {
       this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
@@ -188,10 +204,15 @@ class BreathingGame extends Component {
   };
 
   handlePressOut = () => {
+    if (this.state.measurementType === 'inhale') {
+      return;
+    }
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
+
     if (exhaleTimeTaken < 2000) {
+      this.setState({instructionText: MIN_EXHALE_MSG});
       this.expand(exhaleTimeTaken / 3);
       return;
     }
@@ -210,9 +231,12 @@ class BreathingGame extends Component {
     }
     const timerOff = !!this.stopWatchId;
     timerOff && this.startStopWatch();
+    this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.startExhale();
+    const {instructionText} = this.state;
+    !!instructionText && this.setState({instructionText: ''});
   };
 
   startExhale = () => {
@@ -260,11 +284,11 @@ class BreathingGame extends Component {
 
   componentWillUnmount() {
     this.animatedHeight.removeListener(this.animatedListenerId);
-    clearTimeout(this.stopWatchId);
+    clearInterval(this.stopWatchId);
   }
 
   render() {
-    const {measurementType, timer} = this.state;
+    const {measurementType, instructionText, timer} = this.state;
     return (
       <TouchableOpacity
         style={styles.container}
@@ -301,6 +325,11 @@ class BreathingGame extends Component {
             <Text style={styles.centerText}>Inhale Slowly</Text>
           )}
         </View>
+        {!!instructionText && (
+          <View style={styles.instructionTextHolder} pointerEvents="none">
+            <Text style={styles.instructionText}>{instructionText}</Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   }

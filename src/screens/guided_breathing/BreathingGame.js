@@ -204,7 +204,7 @@ class BreathingGame extends Component {
   };
 
   handlePressOut = () => {
-    if (this.state.measurementType === 'inhale') {
+    if (this.pressInTime === null) {
       return;
     }
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
@@ -243,12 +243,14 @@ class BreathingGame extends Component {
 
   handlePressIn = () => {
     if (!this.touchEnabled) {
+      this.pressInTime = null;
       return;
     }
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.restartStopWatch();
     this.startExhale();
+    this.clearError();
     this.clearInstruction();
   };
 

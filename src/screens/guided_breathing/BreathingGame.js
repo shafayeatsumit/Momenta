@@ -36,14 +36,21 @@ class BreathingGame extends Component {
     this.animatedRadius = new Animated.Value(0);
     this.touchEnabled = false;
     this.secondTargetSetupComplete = false;
-    this.targetExhale = props.guidedBreathing.targetExhale * 1000;
-    this.targetInhale = props.guidedBreathing.targetInhale * 1000;
-    this.exhaleTime = props.guidedBreathing.calibrationExhale * 1000;
-    this.inhaleTime = props.guidedBreathing.calibrationInhale * 1000;
+    const {
+      targetExhale,
+      targetInhale,
+      calibrationExhale,
+      calibrationInhale,
+      firstThreshold,
+    } = props.guidedBreathing;
+    this.targetExhale = targetExhale * 1000;
+    this.targetInhale = targetInhale * 1000;
+    this.exhaleTime = calibrationExhale * 1000;
+    this.inhaleTime = calibrationInhale * 1000;
     this.avgExhale = avgExhale(this.exhaleTime, this.targetExhale);
     this.avgInhale = avgInhale(this.inhaleTime, this.targetInhale);
     this.targetBreathCount = Math.ceil(
-      props.guidedBreathing.firstThreshold / (this.avgInhale + this.avgExhale),
+      firstThreshold / (this.avgInhale + this.avgExhale),
     );
     this.exhlaeIncrementValue =
       (this.targetExhale - this.exhaleTime) / this.targetBreathCount;

@@ -29,6 +29,12 @@ const styles = StyleSheet.create({
     fontSize: 22,
     textAlign: 'center',
   },
+  progressTrackerContainer: {
+    position: 'absolute',
+    top: 40,
+    left: 0,
+    right: 0,
+  },
 });
 
 export default styles;

@@ -225,18 +225,31 @@ class BreathingGame extends Component {
     }
   };
 
+  clearInstruction = () => {
+    const {instructionText} = this.state;
+    const hasInstructionText = !!instructionText;
+    hasInstructionText && this.setState({instructionText: ''});
+  };
+
+  clearError = () => {
+    const willErrorMsgShowUp = this.notHoldingErrorId;
+    willErrorMsgShowUp && clearTimeout(this.notHoldingErrorId);
+  };
+
+  restartStopWatch = () => {
+    const timerOff = !!this.stopWatchId;
+    timerOff && this.startStopWatch();
+  };
+
   handlePressIn = () => {
     if (!this.touchEnabled) {
       return;
     }
-    const timerOff = !!this.stopWatchId;
-    timerOff && this.startStopWatch();
-    this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
     this.pressInTime = new Date();
     this.holdingScreen = true;
+    this.restartStopWatch();
     this.startExhale();
-    const {instructionText} = this.state;
-    !!instructionText && this.setState({instructionText: ''});
+    this.clearInstruction();
   };
 
   startExhale = () => {

@@ -141,6 +141,7 @@ class GuidedBreathing extends Component {
             showStuffs={showStuffs}
             setFinished={this.setFinished}
             handleTap={this.handleTap}
+            handleQuit={this.handleQuit}
           />
         )}
         <TouchableOpacity

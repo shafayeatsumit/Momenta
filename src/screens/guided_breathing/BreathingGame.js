@@ -6,6 +6,7 @@ import {
   Platform,
   Easing,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './BreathingGame.styles';
@@ -301,7 +302,9 @@ class BreathingGame extends Component {
 
   componentWillUnmount() {
     this.animatedHeight.removeListener(this.animatedListenerId);
-    clearInterval(this.stopWatchId);
+    this.stopWatchId && clearInterval(this.stopWatchId);
+    this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
+    this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
   }
 
   render() {
@@ -316,33 +319,45 @@ class BreathingGame extends Component {
       instructionText === COMPLETE_EXHALE_MSG;
     const showInhaleText = this.breathTaken < 2 && measurementType === 'inhale';
     return (
-      <View style={styles.container}>
-        <View style={styles.progressTrackerContainer}>
+      <>
+        <View style={styles.progressXoutHolder}>
+          <TouchableOpacity
+            style={styles.xoutHolder}
+            onPress={this.props.handleQuit}>
+            <Image
+              source={require('../../../assets/icons/close.png')}
+              style={styles.xout}
+            />
+          </TouchableOpacity>
+
           <ProgressTracker
             currentTime={timer}
             targetTime={this.finishBreathingTime}
             showTimer={true}
           />
         </View>
-        <View style={styles.textHolder}>
-          {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
-        </View>
 
-        <View style={styles.circleHolder}>
-          <Animated.View style={[styles.circle, {...circleStyle}]} />
-        </View>
+        <View style={styles.container}>
+          <View style={styles.textHolder}>
+            {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
+          </View>
 
-        <View style={styles.textHolder}>
-          {showInhaleText && (
-            <Text style={styles.centerText}>Inhale Slowly</Text>
+          <View style={styles.circleHolder}>
+            <Animated.View style={[styles.circle, {...circleStyle}]} />
+          </View>
+
+          <View style={styles.textHolder}>
+            {showInhaleText && (
+              <Text style={styles.centerText}>Inhale Slowly</Text>
+            )}
+          </View>
+          {!!instructionText && (
+            <View style={styles.instructionTextHolder} pointerEvents="none">
+              <Text style={styles.instructionText}>{instructionText}</Text>
+            </View>
           )}
         </View>
-        {!!instructionText && (
-          <View style={styles.instructionTextHolder} pointerEvents="none">
-            <Text style={styles.instructionText}>{instructionText}</Text>
-          </View>
-        )}
-      </View>
+      </>
     );
   }
 }

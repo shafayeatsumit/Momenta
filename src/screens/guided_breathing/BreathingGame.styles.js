@@ -3,11 +3,14 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
+  progressXoutHolder: {
+    height: 120,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.betterBlue,
+    marginTop: -70,
   },
   circleHolder: {
     height: 150,
@@ -31,7 +34,7 @@ const styles = StyleSheet.create({
   },
   progressTrackerContainer: {
     position: 'absolute',
-    top: 40,
+    top: 70,
     left: 0,
     right: 0,
   },
@@ -47,6 +50,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     lineHeight: 25,
+  },
+  xoutHolder: {
+    top: 0,
+    paddingLeft: 10,
+    width: 50,
+    height: 60,
+    justifyContent: 'center',
+  },
+  xout: {
+    height: 25,
+    width: 25,
+    tintColor: 'white',
   },
 });
 

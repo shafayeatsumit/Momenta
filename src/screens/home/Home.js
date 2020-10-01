@@ -22,6 +22,8 @@ class Home extends Component {
       showCustomInterval: false,
       showBreathingTypes: false,
       showBreathingTime: false,
+      showSoundOptions: false,
+      sound: 'Off',
     };
     this.playingFile1 = false;
     this.playingFile2 = false;
@@ -44,14 +46,13 @@ class Home extends Component {
       const breathingType =
         breathing.type === 'fixed' ? 'FixedBreathing' : 'GuidedBreathing';
       navigation.navigate('CheckinTutorial', {
-        handleMusic: this.handleMusic,
         navRoute: breathingType,
       });
       return;
     }
     breathing.type === 'fixed'
-      ? navigation.navigate('FixedBreathing', {handleMusic: this.handleMusic})
-      : navigation.navigate('GuidedBreathing', {handleMusic: this.handleMusic});
+      ? navigation.navigate('FixedBreathing')
+      : navigation.navigate('GuidedBreathing');
   };
 
   // Music realted
@@ -71,12 +72,6 @@ class Home extends Component {
     this.playSoundFileOne();
     this.soundFile1.setVolume(1);
     analytics().logEvent('button_push', {title: 'start_music'});
-  };
-
-  handleMusic = () => {
-    const {userInfo} = this.props;
-    this.props.dispatch({type: 'TOGGLE_MUSIC'});
-    userInfo.musicOn ? this.stopMusic() : this.startMusic();
   };
 
   completedPlayingSoundFile1 = () => {
@@ -153,6 +148,11 @@ class Home extends Component {
     analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
   };
 
+  handleSoundSelect = (optons) => {
+    this.setState({sound: optons, showSoundOptions: false});
+    optons === 'On' ? this.startMusic() : this.stopMusic();
+  };
+
   buttonGroupPress = (breathingId, breathingType) => {
     this.setState({
       customConfigId: breathingId,
@@ -160,6 +160,7 @@ class Home extends Component {
       showCustomInterval: true,
       showBreathingTypes: false,
       showBreathingTime: false,
+      showSoundOptions: false,
     });
   };
 
@@ -168,6 +169,7 @@ class Home extends Component {
       showCustomInterval: false,
       showBreathingTypes: false,
       showBreathingTime: false,
+      showSoundOptions: false,
       customConfigType: '',
       customConfigId: null,
     });
@@ -200,25 +202,24 @@ class Home extends Component {
       showBreathingTime,
       customConfigType,
       customConfigId,
+      sound,
+      showSoundOptions,
     } = this.state;
     const hideBreathingType = showCustomInterval;
     const hideBreathingTime = showCustomInterval || showBreathingTypes;
-    const hideStart =
+    const hideSoundOptions =
       showCustomInterval || showBreathingTypes || showBreathingTime;
+    const hideStart =
+      showCustomInterval ||
+      showBreathingTypes ||
+      showBreathingTime ||
+      showSoundOptions;
     const minuteText = breathing.breathingTime > 1 ? 'minutes' : 'minute';
     return (
       <TouchableOpacity
         style={styles.container}
         activeOpacity={1}
         onPress={this.closeOptions}>
-        <TouchableOpacity
-          onPress={this.handleMusic}
-          style={styles.musicIconHolder}>
-          <Image
-            style={styles.musicIcon}
-            source={musicOn ? MusicIcon : NoMusicIcon}
-          />
-        </TouchableOpacity>
         <View style={styles.insideContainer}>
           {showCutomButtonGroup ? (
             <ButtonGroup
@@ -226,7 +227,7 @@ class Home extends Component {
               customConfigType={customConfigType}
             />
           ) : (
-            <View style={{height: 95}} />
+            <View style={styles.spacer} />
           )}
 
           {!hideBreathingType && (
@@ -238,6 +239,7 @@ class Home extends Component {
                 this.setState({
                   showBreathingTypes: true,
                   showBreathingTime: false,
+                  showSoundOptions: false,
                 });
               }}
             />
@@ -248,7 +250,21 @@ class Home extends Component {
               hasIcon={true}
               isOpen={showBreathingTime}
               title={`${breathing.breathingTime} ${minuteText}`}
-              handlePress={() => this.setState({showBreathingTime: true})}
+              handlePress={() => {
+                this.setState({
+                  showBreathingTime: true,
+                  showSoundOptions: false,
+                });
+              }}
+            />
+          )}
+
+          {!hideSoundOptions && (
+            <ButtonBig
+              hasIcon={true}
+              isOpen={showSoundOptions}
+              title={`Sound ${sound}`}
+              handlePress={() => this.setState({showSoundOptions: true})}
             />
           )}
           {!hideStart && (
@@ -277,6 +293,9 @@ class Home extends Component {
               type={'breathing_time'}
               handlePress={this.handleTimeSelect}
             />
+          )}
+          {showSoundOptions && (
+            <Options type={'sound'} handlePress={this.handleSoundSelect} />
           )}
         </View>
       </TouchableOpacity>

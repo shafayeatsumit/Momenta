@@ -15,7 +15,7 @@ import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
 
-const CIRCLE_MAX_HEIGHT = 220;
+const CIRCLE_MAX_HEIGHT = 150;
 const CIRCLE_MIN_HEIGHT = 0;
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
@@ -66,7 +66,8 @@ class BreathingGame extends Component {
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.finishBreathingTime = breathingTime * 60;
-    this.totalBreathTaken = 0;
+    this.fullBreathTaken = 0;
+    this.breathTaken = 0;
   }
 
   enableTouch = () => {
@@ -93,7 +94,7 @@ class BreathingGame extends Component {
     this.exhlaeIncrementValue =
       (secondTarget - targetExhale) / this.targetBreathCount;
     this.secondTargetSetupComplete = true;
-    this.totalBreathTaken = 0;
+    this.fullBreathTaken = 0; // fullbreathTaken
     this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
     this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
     this.startInhale();
@@ -178,8 +179,8 @@ class BreathingGame extends Component {
 
   breathCompleted = () => {
     const {guidedBreathing} = this.props;
-    this.totalBreathTaken = this.totalBreathTaken + 1;
-    const finished = this.totalBreathTaken === this.targetBreathCount;
+    this.fullBreathTaken = this.fullBreathTaken + 1;
+    const finished = this.fullBreathTaken === this.targetBreathCount;
     if (finished) {
       const needSecondBreathSetup =
         guidedBreathing.id === 'inner_quiet' && !this.secondTargetSetupComplete;
@@ -223,6 +224,7 @@ class BreathingGame extends Component {
     } else {
       this.startInhale(exhaleTimeTaken);
     }
+    this.breathTaken = this.breathTaken + 1;
   };
 
   clearInstruction = () => {
@@ -304,11 +306,17 @@ class BreathingGame extends Component {
 
   render() {
     const {measurementType, instructionText, timer} = this.state;
+    const circleStyle = {
+      height: this.animatedHeight,
+      width: this.animatedWidth,
+      borderRadius: this.animatedRadius,
+    };
+    const showExhaleText =
+      (this.breathTaken < 2 && measurementType === 'exhale') ||
+      instructionText === COMPLETE_EXHALE_MSG;
+    const showInhaleText = this.breathTaken < 2 && measurementType === 'inhale';
     return (
-      <TouchableOpacity
-        style={styles.container}
-        onPress={() => {}}
-        activeOpacity={1}>
+      <View style={styles.container}>
         <View style={styles.progressTrackerContainer}>
           <ProgressTracker
             currentTime={timer}
@@ -317,26 +325,15 @@ class BreathingGame extends Component {
           />
         </View>
         <View style={styles.textHolder}>
-          {measurementType === 'exhale' && (
-            <Text style={styles.centerText}>Exhale</Text>
-          )}
+          {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
         </View>
 
         <View style={styles.circleHolder}>
-          <Animated.View
-            style={[
-              styles.circle,
-              {
-                height: this.animatedHeight,
-                width: this.animatedWidth,
-                borderRadius: this.animatedRadius,
-              },
-            ]}
-          />
+          <Animated.View style={[styles.circle, {...circleStyle}]} />
         </View>
 
         <View style={styles.textHolder}>
-          {measurementType === 'inhale' && (
+          {showInhaleText && (
             <Text style={styles.centerText}>Inhale Slowly</Text>
           )}
         </View>
@@ -345,7 +342,7 @@ class BreathingGame extends Component {
             <Text style={styles.instructionText}>{instructionText}</Text>
           </View>
         )}
-      </TouchableOpacity>
+      </View>
     );
   }
 }

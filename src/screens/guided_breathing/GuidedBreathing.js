@@ -103,7 +103,6 @@ class GuidedBreathing extends Component {
     } = this.state;
     const {userInfo, guidedBreathing} = this.props;
     const {musicOn} = userInfo;
-    const {route} = this.props;
     const showQuit = !finished && showBreathingGame && showStuffs;
     const showSoundIcon =
       showCheckInBreath || (showBreathingGame && showStuffs);
@@ -129,7 +128,6 @@ class GuidedBreathing extends Component {
           <CheckInBreath
             goToBreathingGame={this.goToBreathingGame}
             musicOn={musicOn}
-            handleMusic={route.params.handleMusic}
             pressIn={pressIn}
             pressOut={pressOut}
             breathId={guidedBreathing.id}
@@ -150,16 +148,7 @@ class GuidedBreathing extends Component {
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}
         />
-        {showSoundIcon && (
-          <TouchableOpacity
-            onPress={route.params.handleMusic}
-            style={styles.musicIconHolder}>
-            <Image
-              style={styles.musicIcon}
-              source={musicOn ? MusicIcon : NoMusicIcon}
-            />
-          </TouchableOpacity>
-        )}
+
         {finished && (
           <TouchableOpacity
             style={styles.finishButton}

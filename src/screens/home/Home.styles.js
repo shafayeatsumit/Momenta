@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
     tintColor: '#F5F5F5',
     resizeMode: 'contain',
   },
+  spacer: {
+    height: 95,
+  },
 });
 
 export default styles;

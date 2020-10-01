@@ -50,6 +50,23 @@ const Options = ({type, handlePress, customConfigId}) => {
   const ListOfOptions =
     type === 'breathing_type' ? BREATHING_TYPES : getOptions();
 
+  const SoundOptions = ['On', 'Off'];
+
+  const minuteOrMinutes = (number) => (number >= 2 ? 'minutes' : 'minute');
+
+  if (type === 'sound') {
+    return (
+      <View style={[styles.container, {height: 90}]}>
+        <ScrollView style={styles.scrollView} indicatorStyle={'white'}>
+          {SoundOptions.map((item) => (
+            <TouchableOpacity key={item} onPress={() => handlePress(item)}>
+              <Text style={[styles.text]}>{item}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} indicatorStyle={'white'}>
@@ -64,7 +81,10 @@ const Options = ({type, handlePress, customConfigId}) => {
                   color: Colors.cornflowerBlue,
                 },
               ]}>
-              {item.name || item}
+              {item.name || item}{' '}
+              <Text style={styles.textSm}>
+                {typeof item === 'number' && minuteOrMinutes(item)}
+              </Text>
             </Text>
           </TouchableOpacity>
         ))}
@@ -95,5 +115,8 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     paddingLeft: 22,
     paddingVertical: 7,
+  },
+  textSm: {
+    fontSize: 16,
   },
 });

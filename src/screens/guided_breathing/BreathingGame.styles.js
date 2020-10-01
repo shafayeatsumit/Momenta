@@ -10,8 +10,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.betterBlue,
   },
   circleHolder: {
-    height: 220,
-    width: 220,
+    height: 150,
+    width: 150,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   centerText: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'center',
   },
   progressTrackerContainer: {

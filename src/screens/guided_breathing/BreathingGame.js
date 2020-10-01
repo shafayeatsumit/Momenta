@@ -34,7 +34,7 @@ class BreathingGame extends Component {
     this.state = {
       measurementType: 'inhale',
       instructionText: '',
-      timer: 0,
+      timer: props.guidedBreathing.breathingTime * 60,
     };
     this.holdingScreen = false;
     this.pressInTime = null;
@@ -278,7 +278,12 @@ class BreathingGame extends Component {
 
   startStopWatch = () => {
     this.stopWatchId = setInterval(() => {
-      this.setState({timer: this.state.timer + 1});
+      const {timer} = this.state;
+      if (timer === 0) {
+        clearInterval(this.stopWatchId);
+        return;
+      }
+      this.setState({timer: timer - 1});
     }, 1000);
   };
 

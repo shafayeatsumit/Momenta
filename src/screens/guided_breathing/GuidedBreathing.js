@@ -157,12 +157,6 @@ class GuidedBreathing extends Component {
             <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         )}
-
-        {showQuit && (
-          <TouchableOpacity style={styles.quitButton} onPress={this.handleQuit}>
-            <Text style={styles.quitButtonText}>Quit</Text>
-          </TouchableOpacity>
-        )}
       </>
     );
   }

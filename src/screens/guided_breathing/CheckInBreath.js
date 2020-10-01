@@ -81,8 +81,8 @@ class CheckInBreath extends Component {
     }, 10000);
   };
 
-  twoSecsError = () => {
-    const errorMessage = 'Exhale must be at least 2 second long';
+  threeSecsError = () => {
+    const errorMessage = 'Exhale must be at least 3 seconds long';
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.setState(
@@ -114,8 +114,9 @@ class CheckInBreath extends Component {
     this.moreThanTenSec();
     const timeTakenExhale = Number(this.measureTime(this.pressInTime));
     // here I have to work
-    if (timeTakenExhale < 2) {
-      this.twoSecsError();
+    if (timeTakenExhale < 3) {
+      this.threeSecsError();
+      return;
     }
     const calibrationInhale = this.getCalibratoinInhale(timeTakenExhale);
     this.measurmentCompleted(timeTakenExhale, calibrationInhale);

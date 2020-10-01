@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   instructionTextHolder: {
     height: 300,
     width: 250,
+    justifyContent: 'center',
   },
   instructionText: {
     fontFamily: FontType.SemiBold,

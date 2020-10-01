@@ -63,6 +63,20 @@ const styles = StyleSheet.create({
     width: 25,
     tintColor: 'white',
   },
+  finishButton: {
+    position: 'absolute',
+    bottom: 0,
+    height: 60,
+    width: 100,
+    right: 30,
+    zIndex: 5,
+  },
+  finishText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+  },
 });
 
 export default styles;

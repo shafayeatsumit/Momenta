@@ -9,8 +9,8 @@ const ProgressTracker = ({currentTime, targetTime, showTimer}) => {
   const currentTimeMin = Math.floor(currentTime / 60);
   const currentTimeSec = currentTime % 60;
   let currentTimePercent = 100 - (100 * currentTime) / targetTime;
-  const targetTimeMin = targetTime / 60;
-  const targetTimeSec = targetTime % 60;
+  // const targetTimeMin = targetTime / 60;
+  // const targetTimeSec = targetTime % 60;
   currentTimePercent = currentTimePercent > 100 ? 100 : currentTimePercent;
   return (
     <View style={styles.container}>

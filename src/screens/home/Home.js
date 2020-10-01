@@ -109,15 +109,7 @@ class Home extends Component {
     }, 500);
   };
 
-  componentDidMount() {
-    const {userInfo} = this.props;
-    if (userInfo.musicOn) {
-      this.startTimer = setTimeout(() => {
-        this.startMusic();
-        clearTimeout(this.startTimer);
-      }, 2000);
-    }
-  }
+  componentDidMount() {}
 
   handleTypeSelect = (breathing) => {
     const breathingType = breathing.type;

@@ -16,8 +16,6 @@ import {connect} from 'react-redux';
 import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
 import {FontType, Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
-import MusicIcon from '../../../assets/icons/music.png';
-import NoMusicIcon from '../../../assets/icons/no_music.png';
 import analytics from '@react-native-firebase/analytics';
 class GuidedBreathing extends Component {
   constructor(props) {
@@ -43,8 +41,6 @@ class GuidedBreathing extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
-  setFinished = () => this.setState({finished: true});
-
   goToBreathingGame = (exhaleTime, inhaleTime) => {
     const {dispatch, guidedBreathing} = this.props;
     dispatch({
@@ -61,6 +57,11 @@ class GuidedBreathing extends Component {
     }
   };
 
+  handleQuit = () => {
+    analytics().logEvent('button_push', {title: 'quit'});
+    this.goHome();
+  };
+
   handlePressIn = () => {
     analytics().logEvent('user_hold');
     this.setState({pressIn: true, pressOut: false, showStuffs: false});
@@ -69,16 +70,6 @@ class GuidedBreathing extends Component {
   handlePressOut = () => {
     analytics().logEvent('user_release');
     this.setState({pressIn: false, pressOut: true});
-  };
-
-  handleTap = () => {
-    const {showStuffs} = this.state;
-    this.setState({showStuffs: !showStuffs});
-  };
-
-  handleQuit = () => {
-    analytics().logEvent('button_push', {title: 'quit'});
-    this.goHome();
   };
 
   handleFinish = () => {
@@ -97,15 +88,10 @@ class GuidedBreathing extends Component {
       showBreathingGame,
       pressIn,
       pressOut,
-      finished,
-      showStuffs,
       showAnimation,
     } = this.state;
     const {userInfo, guidedBreathing} = this.props;
     const {musicOn} = userInfo;
-    const showQuit = !finished && showBreathingGame && showStuffs;
-    const showSoundIcon =
-      showCheckInBreath || (showBreathingGame && showStuffs);
 
     if (showAnimation) {
       return (
@@ -137,11 +123,8 @@ class GuidedBreathing extends Component {
           <BreathingGame
             pressIn={pressIn}
             pressOut={pressOut}
-            finished={finished}
-            showStuffs={showStuffs}
-            setFinished={this.setFinished}
-            handleTap={this.handleTap}
             handleQuit={this.handleQuit}
+            handleFinish={this.handleFinish}
           />
         )}
         <TouchableOpacity
@@ -149,14 +132,6 @@ class GuidedBreathing extends Component {
           onPressOut={this.handlePressOut}
           style={styles.touchableArea}
         />
-
-        {finished && (
-          <TouchableOpacity
-            style={styles.finishButton}
-            onPress={this.handleFinish}>
-            <Text style={styles.finishText}>Finish</Text>
-          </TouchableOpacity>
-        )}
       </>
     );
   }
@@ -178,56 +153,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.4,
-  },
-  musicIcon: {
-    height: 30,
-    width: 30,
-    borderRadius: 20,
-    tintColor: '#F5F5F5',
-    resizeMode: 'contain',
-  },
-  musicIconHolder: {
-    position: 'absolute',
-    bottom: 30,
-    left: 10,
-    height: 60,
-    width: 60,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 5,
-  },
-  quitButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    height: 60,
-    width: 60,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 5,
-  },
-  quitButtonText: {
-    fontFamily: FontType.SemiBold,
-    color: 'rgb(66,72,102)',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  finishButton: {
-    position: 'absolute',
-    bottom: 30,
-    height: 60,
-    width: 120,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    zIndex: 5,
-  },
-  finishText: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 20,
-    textAlign: 'center',
   },
   checkmarkHolder: {
     flex: 1,

@@ -35,6 +35,7 @@ class BreathingGame extends Component {
       measurementType: 'inhale',
       instructionText: '',
       timer: props.guidedBreathing.breathingTime * 60,
+      finished: false,
     };
     this.holdingScreen = false;
     this.pressInTime = null;
@@ -108,12 +109,13 @@ class BreathingGame extends Component {
   };
 
   circleExpandEnd = () => {
+    const {finished} = this.state;
     ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
     this.setState({measurementType: 'exhale'});
     this.enableTouch();
     if (!this.holdingScreen) {
       clearInterval(this.stopWatchId);
-      this.setNotHoldingError();
+      !finished && this.setNotHoldingError();
     }
   };
 
@@ -281,6 +283,7 @@ class BreathingGame extends Component {
       const {timer} = this.state;
       if (timer === 0) {
         clearInterval(this.stopWatchId);
+        this.setState({finished: true});
         return;
       }
       this.setState({timer: timer - 1});
@@ -313,12 +316,13 @@ class BreathingGame extends Component {
   }
 
   render() {
-    const {measurementType, instructionText, timer} = this.state;
+    const {measurementType, instructionText, timer, finished} = this.state;
     const circleStyle = {
       height: this.animatedHeight,
       width: this.animatedWidth,
       borderRadius: this.animatedRadius,
     };
+    const showFinish = finished && !this.holdingScreen;
     const showExhaleText =
       (this.breathTaken < 2 && measurementType === 'exhale') ||
       instructionText === COMPLETE_EXHALE_MSG;
@@ -362,6 +366,13 @@ class BreathingGame extends Component {
             </View>
           )}
         </View>
+        {showFinish && (
+          <TouchableOpacity
+            style={styles.finishButton}
+            onPress={this.props.handleFinish}>
+            <Text style={styles.finishText}>Finish</Text>
+          </TouchableOpacity>
+        )}
       </>
     );
   }

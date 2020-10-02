@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Platform,
-  Image,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, Platform, TouchableOpacity} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 import CheckInBreath from './CheckInBreath';
@@ -14,7 +7,7 @@ import BreathingGame from './BreathingGame';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
-import {FontType, Colors} from '../../helpers/theme';
+import {Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
 import analytics from '@react-native-firebase/analytics';
 class GuidedBreathing extends Component {

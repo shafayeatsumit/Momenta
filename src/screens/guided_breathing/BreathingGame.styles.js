@@ -4,7 +4,11 @@ import {FontType, Colors} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
   progressXoutHolder: {
-    height: 120,
+    marginTop: 20,
+    height: 70,
+  },
+  topSpacer: {
+    height: 20,
   },
   container: {
     flex: 1,
@@ -52,16 +56,20 @@ const styles = StyleSheet.create({
     lineHeight: 25,
   },
   xoutHolder: {
-    top: 0,
-    paddingLeft: 10,
+    marginTop: 40,
+    paddingLeft: 15,
     width: 50,
-    height: 60,
+    height: 50,
     justifyContent: 'center',
+    position: 'absolute',
+    zIndex: 99,
+    // backgroundColor: 'red',
   },
   xout: {
-    height: 25,
-    width: 25,
-    tintColor: 'white',
+    height: 22,
+    width: 22,
+    tintColor: '#554f4f',
+    zIndex: 10,
   },
   finishButton: {
     position: 'absolute',

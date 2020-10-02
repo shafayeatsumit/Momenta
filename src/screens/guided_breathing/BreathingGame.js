@@ -34,7 +34,7 @@ class BreathingGame extends Component {
     this.state = {
       measurementType: 'inhale',
       instructionText: '',
-      timer: props.guidedBreathing.breathingTime * 60,
+      timer: 0,
       finished: false,
     };
     this.holdingScreen = false;
@@ -281,12 +281,12 @@ class BreathingGame extends Component {
   startStopWatch = () => {
     this.stopWatchId = setInterval(() => {
       const {timer} = this.state;
-      if (timer === 0) {
+      if (timer === this.finishBreathingTime) {
         clearInterval(this.stopWatchId);
         this.setState({finished: true});
         return;
       }
-      this.setState({timer: timer - 1});
+      this.setState({timer: timer + 1});
     }, 1000);
   };
 
@@ -324,27 +324,25 @@ class BreathingGame extends Component {
     };
     const showFinish = finished && !this.holdingScreen;
     const showExhaleText =
-      (this.breathTaken < 2 && measurementType === 'exhale') ||
+      (this.breathTaken < 5 && measurementType === 'exhale') ||
       instructionText === COMPLETE_EXHALE_MSG;
-    const showInhaleText = this.breathTaken < 2 && measurementType === 'inhale';
+    const showInhaleText = this.breathTaken < 5 && measurementType === 'inhale';
     return (
       <>
-        <View style={styles.progressXoutHolder}>
-          <TouchableOpacity
-            style={styles.xoutHolder}
-            onPress={this.props.handleQuit}>
-            <Image
-              source={require('../../../assets/icons/close.png')}
-              style={styles.xout}
-            />
-          </TouchableOpacity>
-
-          <ProgressTracker
-            currentTime={timer}
-            targetTime={this.finishBreathingTime}
-            showTimer={true}
+        <View style={styles.topSpacer} />
+        <TouchableOpacity
+          style={styles.xoutHolder}
+          onPress={this.props.handleQuit}>
+          <Image
+            source={require('../../../assets/icons/close.png')}
+            style={styles.xout}
           />
-        </View>
+        </TouchableOpacity>
+        <ProgressTracker
+          currentTime={timer}
+          targetTime={this.finishBreathingTime}
+          showTimer={true}
+        />
 
         <View style={styles.container}>
           <View style={styles.textHolder}>

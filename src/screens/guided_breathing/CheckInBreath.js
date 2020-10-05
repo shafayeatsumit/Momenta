@@ -13,7 +13,7 @@ import {
   inhaleInnterQuiet,
 } from '../../helpers/checkinInhale';
 
-const INITIAL_MESSAGE = 'Hold during your\n next normal';
+const INITIAL_MESSAGE = 'Hold during your\n next';
 
 class CheckInBreath extends Component {
   constructor(props) {

@@ -36,6 +36,7 @@ class BreathingGame extends Component {
       instructionText: '',
       timer: 0,
       finished: false,
+      timerAndQuitVisible: false,
     };
     this.holdingScreen = false;
     this.pressInTime = null;
@@ -104,7 +105,10 @@ class BreathingGame extends Component {
 
   setNotHoldingError = () => {
     this.notHoldingErrorId = setTimeout(() => {
-      this.setState({instructionText: COMPLETE_EXHALE_MSG});
+      this.setState({
+        instructionText: COMPLETE_EXHALE_MSG,
+        timerAndQuitVisible: true,
+      });
     }, 2000);
   };
 
@@ -251,6 +255,7 @@ class BreathingGame extends Component {
       this.pressInTime = null;
       return;
     }
+    this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.restartStopWatch();
@@ -316,7 +321,13 @@ class BreathingGame extends Component {
   }
 
   render() {
-    const {measurementType, instructionText, timer, finished} = this.state;
+    const {
+      measurementType,
+      instructionText,
+      timer,
+      timerAndQuitVisible,
+      finished,
+    } = this.state;
     const circleStyle = {
       height: this.animatedHeight,
       width: this.animatedWidth,
@@ -330,18 +341,20 @@ class BreathingGame extends Component {
     return (
       <>
         <View style={styles.topSpacer} />
-        <TouchableOpacity
-          style={styles.xoutHolder}
-          onPress={this.props.handleQuit}>
-          <Image
-            source={require('../../../assets/icons/close.png')}
-            style={styles.xout}
-          />
-        </TouchableOpacity>
+        {timerAndQuitVisible && (
+          <TouchableOpacity
+            style={styles.xoutHolder}
+            onPress={this.props.handleQuit}>
+            <Image
+              source={require('../../../assets/icons/close.png')}
+              style={styles.xout}
+            />
+          </TouchableOpacity>
+        )}
         <ProgressTracker
           currentTime={timer}
           targetTime={this.finishBreathingTime}
-          showTimer={true}
+          showTimer={timerAndQuitVisible}
         />
 
         <View style={styles.container}>

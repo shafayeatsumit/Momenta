@@ -103,11 +103,11 @@ class BreathingGame extends Component {
     this.startInhale();
   };
 
-  setNotHoldingError = () => {
+  setNotHoldingError = (showTimer = true) => {
     this.notHoldingErrorId = setTimeout(() => {
       this.setState({
         instructionText: COMPLETE_EXHALE_MSG,
-        timerAndQuitVisible: true,
+        ...(showTimer && {timerAndQuitVisible: true}),
       });
     }, 2000);
   };
@@ -313,6 +313,7 @@ class BreathingGame extends Component {
     this.animatedListenerId = this.animatedHeight.addListener(
       this.animatedListener,
     );
+    this.setNotHoldingError(false);
   }
 
   componentWillUnmount() {

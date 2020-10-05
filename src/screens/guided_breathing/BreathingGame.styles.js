@@ -11,10 +11,13 @@ const styles = StyleSheet.create({
     height: 20,
   },
   container: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -70,
   },
   circleHolder: {
     height: 150,

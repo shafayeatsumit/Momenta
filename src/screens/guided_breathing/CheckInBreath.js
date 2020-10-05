@@ -172,17 +172,9 @@ class CheckInBreath extends Component {
           <View style={styles.contentContainer}>
             <View style={styles.containerBox}>
               <Text style={styles.text}>Measuring Exhale Time</Text>
-              {/* <LottieView
-                autoSize
-                autoPlay
-                loop
-                style={styles.wave}
-                source={require('../../../assets/anims/wave.json')}
-              /> */}
             </View>
           </View>
         )}
-        <View style={{height: 130}} />
       </View>
     );
   }

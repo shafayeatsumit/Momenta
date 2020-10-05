@@ -56,8 +56,8 @@ class CustomExerciseBuilder extends Component {
             ]}
             animated={true}
           />
+          <View style={{height: 50}} />
         </View>
-        <View style={{height: 130}} />
       </View>
     );
   }
@@ -73,7 +73,11 @@ export default connect(mapStateToProps)(CustomExerciseBuilder);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -87,8 +91,14 @@ const styles = StyleSheet.create({
     borderColor: Colors.cornflowerBlue,
     overflow: 'hidden',
   },
+  // circleHolder: {
+  //   height: 150,
+  //   width: 150,
+  //   borderRadius: 75,
+  //   backgroundColor: 'red',
+  // },
   textHolder: {
-    height: 100,
+    height: 90,
     width: 220,
     justifyContent: 'center',
   },

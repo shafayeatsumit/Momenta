@@ -63,11 +63,11 @@ class FixedBreathing extends Component {
     this.touchEnabled = false;
   };
 
-  setNotHoldingError = () => {
+  setNotHoldingError = (showTimer = true) => {
     this.notHoldingErrorId = setTimeout(() => {
       this.setState({
         instructionText: COMPLETE_EXHALE_MSG,
-        timerAndQuitVisible: true,
+        ...(showTimer && {timerAndQuitVisible: true}),
       });
     }, 2000);
   };
@@ -337,7 +337,7 @@ class FixedBreathing extends Component {
     this.animatedListenerId = this.animatedHeight.addListener(
       this.animatedListener,
     );
-    // this.setNotHoldingError();
+    this.setNotHoldingError(false);
   }
 
   render() {

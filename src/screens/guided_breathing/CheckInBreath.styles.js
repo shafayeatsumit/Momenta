@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerBox: {
-    height: 150,
+    height: 250,
     width: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   text: {
     fontFamily: FontType.SemiBold,

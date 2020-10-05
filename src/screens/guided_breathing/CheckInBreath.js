@@ -110,6 +110,7 @@ class CheckInBreath extends Component {
   };
 
   handlePressOut = () => {
+    analytics().logEvent('user_release');
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     const timeTakenExhale = Number(this.measureTime(this.pressInTime));
@@ -125,6 +126,7 @@ class CheckInBreath extends Component {
   };
 
   handlePressIn = () => {
+    analytics().logEvent('user_hold');
     this.setState({
       measuring: true,
       instructionText: '',

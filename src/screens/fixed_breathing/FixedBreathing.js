@@ -32,6 +32,7 @@ class FixedBreathing extends Component {
       instructionText: '',
       finished: false,
       measurementType: 'exhale',
+      timerAndQuitVisible: false,
     };
     this.holdingScreen = false;
     this.pressInTime = null;
@@ -64,7 +65,10 @@ class FixedBreathing extends Component {
 
   setNotHoldingError = () => {
     this.notHoldingErrorId = setTimeout(() => {
-      this.setState({instructionText: COMPLETE_EXHALE_MSG});
+      this.setState({
+        instructionText: COMPLETE_EXHALE_MSG,
+        timerAndQuitVisible: true,
+      });
     }, 2000);
   };
 
@@ -207,6 +211,7 @@ class FixedBreathing extends Component {
   };
 
   handlePressOut = () => {
+    analytics().logEvent('user_release');
     if (this.pressInTime === null) {
       return;
     }
@@ -269,10 +274,13 @@ class FixedBreathing extends Component {
   };
 
   handlePressIn = () => {
+    analytics().logEvent('user_hold');
     if (!this.touchEnabled) {
       this.pressInTime = null;
       return;
     }
+
+    this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.restartStopWatch();
@@ -296,10 +304,12 @@ class FixedBreathing extends Component {
 
   handleFinish = () => {
     this.setState({showAnimation: true});
+    analytics().logEvent('button_push', {title: 'finish'});
   };
 
   handleClose = () => {
     this.props.navigation.goBack();
+    analytics().logEvent('button_push', {title: 'quit'});
   };
 
   startStopWatch = () => {
@@ -327,6 +337,7 @@ class FixedBreathing extends Component {
     this.animatedListenerId = this.animatedHeight.addListener(
       this.animatedListener,
     );
+    // this.setNotHoldingError();
   }
 
   render() {
@@ -337,6 +348,7 @@ class FixedBreathing extends Component {
       timer,
       finished,
       holdTime,
+      timerAndQuitVisible,
       showHoldTime,
     } = this.state;
     if (showAnimation) {
@@ -373,16 +385,20 @@ class FixedBreathing extends Component {
     return (
       <>
         <View style={styles.topSpacer} />
-        <TouchableOpacity style={styles.xoutHolder} onPress={this.handleClose}>
-          <Image
-            source={require('../../../assets/icons/close.png')}
-            style={styles.xout}
-          />
-        </TouchableOpacity>
+        {timerAndQuitVisible && (
+          <TouchableOpacity
+            style={styles.xoutHolder}
+            onPress={this.handleClose}>
+            <Image
+              source={require('../../../assets/icons/close.png')}
+              style={styles.xout}
+            />
+          </TouchableOpacity>
+        )}
         <ProgressTracker
           currentTime={timer}
           targetTime={this.finishBreathingTime}
-          showTimer={true}
+          showTimer={timerAndQuitVisible}
         />
 
         <View style={styles.container}>

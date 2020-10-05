@@ -9,6 +9,7 @@ import {connect} from 'react-redux';
 import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
 import {Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
+import CustomExerciseBuilder from './CustomExerciseBuilder';
 import analytics from '@react-native-firebase/analytics';
 class GuidedBreathing extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class GuidedBreathing extends Component {
     this.state = {
       showCheckInBreath: true,
       showBreathingGame: false,
+      buildingCustomExercise: false,
       pressIn: false,
       pressOut: false,
       finished: false,
@@ -34,7 +36,11 @@ class GuidedBreathing extends Component {
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 
-  goToBreathingGame = (exhaleTime, inhaleTime) => {
+  showBreathingGame = () => {
+    this.setState({buildingCustomExercise: false, showBreathingGame: true});
+  };
+
+  buildCustomExercise = (exhaleTime, inhaleTime) => {
     const {dispatch, guidedBreathing} = this.props;
     dispatch({
       type: 'UPDATE_CALIBRATION_TIME',
@@ -43,10 +49,10 @@ class GuidedBreathing extends Component {
     });
     if (guidedBreathing.dynamicTarget) {
       dispatch(setDynamicTarget(exhaleTime, inhaleTime)).then(() => {
-        this.setState({showCheckInBreath: false, showBreathingGame: true});
+        this.setState({showCheckInBreath: false, buildingCustomExercise: true});
       });
     } else {
-      this.setState({showCheckInBreath: false, showBreathingGame: true});
+      this.setState({showCheckInBreath: false, buildingCustomExercise: true});
     }
   };
 
@@ -82,6 +88,7 @@ class GuidedBreathing extends Component {
       pressIn,
       pressOut,
       showAnimation,
+      buildingCustomExercise,
     } = this.state;
     const {userInfo, guidedBreathing} = this.props;
     const {musicOn} = userInfo;
@@ -105,12 +112,15 @@ class GuidedBreathing extends Component {
       <>
         {showCheckInBreath && (
           <CheckInBreath
-            goToBreathingGame={this.goToBreathingGame}
+            buildCustomExercise={this.buildCustomExercise}
             musicOn={musicOn}
             pressIn={pressIn}
             pressOut={pressOut}
             breathId={guidedBreathing.id}
           />
+        )}
+        {buildingCustomExercise && (
+          <CustomExerciseBuilder showBreathingGame={this.showBreathingGame} />
         )}
         {showBreathingGame && (
           <BreathingGame

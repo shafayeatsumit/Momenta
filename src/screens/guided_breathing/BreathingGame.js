@@ -32,7 +32,7 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      measurementType: 'inhale',
+      measurementType: 'exhale',
       instructionText: '',
       timer: 0,
       finished: false,
@@ -40,10 +40,10 @@ class BreathingGame extends Component {
     };
     this.holdingScreen = false;
     this.pressInTime = null;
-    this.animatedHeight = new Animated.Value(0);
-    this.animatedWidth = new Animated.Value(0);
-    this.animatedRadius = new Animated.Value(0);
-    this.touchEnabled = false;
+    this.animatedHeight = new Animated.Value(CIRCLE_MAX_HEIGHT);
+    this.animatedWidth = new Animated.Value(CIRCLE_MAX_HEIGHT);
+    this.animatedRadius = new Animated.Value(CIRCLE_MAX_HEIGHT / 2);
+    this.touchEnabled = true;
     this.secondTargetSetupComplete = false;
     const {
       targetExhale,
@@ -199,7 +199,7 @@ class BreathingGame extends Component {
         console.log(
           `target exhale inhale ${this.targetExhale} ${this.targetInhale}`,
         );
-        console.log(`exhale ${this.exhaleTime} inhale ${this.inhaleTime}`);
+
         this.startInhale();
         this.finishedGame = true;
         this.stopWatchId && clearInterval(this.stopWatchId);
@@ -246,6 +246,10 @@ class BreathingGame extends Component {
   };
 
   restartStopWatch = () => {
+    if (this.state.timer === 0) {
+      this.startStopWatch();
+      return;
+    }
     const timerOff = !!this.stopWatchId;
     timerOff && this.startStopWatch();
   };
@@ -306,11 +310,9 @@ class BreathingGame extends Component {
   }
 
   componentDidMount() {
-    this.startInhale();
     this.animatedListenerId = this.animatedHeight.addListener(
       this.animatedListener,
     );
-    this.startStopWatch();
   }
 
   componentWillUnmount() {

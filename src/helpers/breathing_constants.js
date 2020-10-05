@@ -154,8 +154,8 @@ export const CUSTOM_CONFIG = {
   custom_inhale_hold: {
     id: 'custom_inhale_hold',
     min: 0,
-    max: 10,
-    interval: 0.5,
+    max: 5,
+    interval: 1,
   },
   custom_exhale: {
     id: 'custom_exhale',
@@ -166,7 +166,7 @@ export const CUSTOM_CONFIG = {
   custom_exhale_hold: {
     id: 'custom_exhale_hold',
     min: 0,
-    max: 10,
-    interval: 0.5,
+    max: 5,
+    interval: 1,
   },
 };

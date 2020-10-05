@@ -53,6 +53,7 @@ const Options = ({type, handlePress, customConfigId}) => {
   const SoundOptions = ['On', 'Off'];
 
   const minuteOrMinutes = (number) => (number >= 2 ? 'minutes' : 'minute');
+  const secOrSeconds = (number) => (number <= 1 ? 'second' : 'seconds');
 
   if (type === 'sound') {
     return (
@@ -83,7 +84,12 @@ const Options = ({type, handlePress, customConfigId}) => {
               ]}>
               {item.name || item}{' '}
               <Text style={styles.textSm}>
-                {typeof item === 'number' && minuteOrMinutes(item)}
+                {typeof item === 'number' &&
+                  type === 'breathing_time' &&
+                  minuteOrMinutes(item)}
+                {typeof item === 'number' &&
+                  type === 'custom_interval' &&
+                  secOrSeconds(item)}
               </Text>
             </Text>
           </TouchableOpacity>

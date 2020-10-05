@@ -3,162 +3,96 @@ import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
+  progressXoutHolder: {
+    marginTop: 20,
+    height: 70,
+  },
+  topSpacer: {
+    height: 20,
+  },
   container: {
     flex: 1,
-    backgroundColor: Colors.betterBlue,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: -70,
   },
-  circleContainer: {
-    transform: [{rotateZ: '270deg'}],
-  },
-  progressTrackerContainer: {
-    position: 'absolute',
-    top: 40,
-    left: 0,
-    right: 0,
-  },
-  boxContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{rotateZ: '45deg'}],
-  },
-  dot: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.buttonBlueDeep,
-  },
-  box: {
-    width: 160,
-    height: 160,
-  },
-  textContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
+  circleHolder: {
+    height: 150,
+    width: 150,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
-
-  text: {
+  circle: {
+    backgroundColor: Colors.cornflowerBlue,
+  },
+  holdTimerContainer: {
+    position: 'absolute',
+    top: 64,
+  },
+  holdTime: {
     fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 16,
+    fontSize: 22,
     textAlign: 'center',
   },
-
-  resultContainer: {
-    position: 'absolute',
-    top: 0,
-    marginTop: 50,
-    height: 120,
-    width: ScreenWidth,
-    flexDirection: 'row',
+  textHolder: {
+    height: 50,
+    width: 220,
+    justifyContent: 'center',
   },
-  resultTextHolder: {
-    flex: 1,
-    justifyContent: 'space-around',
-  },
-  textSm: {
-    fontFamily: FontType.Regular,
+  centerText: {
+    fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
   },
-  topTouchableArea: {
+  progressTrackerContainer: {
     position: 'absolute',
-    top: 0,
+    top: 70,
     left: 0,
     right: 0,
-    height: ScreenHeight * 0.6,
-    zIndex: 3,
-    backgroundColor: 'yellow',
   },
-  touchableArea: {
+  instructionTextHolder: {
+    height: 80,
+    width: 250,
+    position: 'absolute',
+    bottom: 10,
+  },
+  instructionText: {
+    fontFamily: FontType.SemiBold,
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    lineHeight: 25,
+  },
+  xoutHolder: {
+    marginTop: 40,
+    paddingLeft: 15,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    position: 'absolute',
+    zIndex: 99,
+  },
+  xout: {
+    height: 22,
+    width: 22,
+    tintColor: '#554f4f',
+    zIndex: 10,
+  },
+  finishButton: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: ScreenHeight * 0.4,
-    zIndex: 3,
-    // backgroundColor: 'red',
-  },
-  musicIcon: {
-    height: 30,
-    width: 30,
-    borderRadius: 15,
-    tintColor: '#F5F5F5',
-    resizeMode: 'contain',
-  },
-  musicIconHolder: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
     height: 60,
-    width: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 15,
+    width: 100,
+    right: 30,
     zIndex: 5,
-    resizeMode: 'contain',
-  },
-  quitButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 20,
-    height: 60,
-    width: 60,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 5,
-  },
-  quitButtonText: {
-    fontFamily: FontType.SemiBold,
-    color: 'rgb(66,72,102)',
-    fontSize: 15,
-    textAlign: 'center',
   },
   finishText: {
     fontFamily: FontType.SemiBold,
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
-  },
-
-  finishButton: {
-    position: 'absolute',
-    bottom: 30,
-    height: 70,
-    width: 120,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    zIndex: 5,
-  },
-
-  initTextHolder: {
-    position: 'absolute',
-    bottom: 50,
-    alignSelf: 'center',
-    height: 50,
-    width: 200,
-  },
-  initText: {
-    fontFamily: FontType.Medium,
-    color: 'white',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  initTextBold: {
-    fontFamily: FontType.ExtraBold,
   },
   checkmarkHolder: {
     flex: 1,
@@ -169,6 +103,13 @@ const styles = StyleSheet.create({
   checkmark: {
     height: 300,
     width: 300,
+  },
+  touchableArea: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.4,
   },
 });
 

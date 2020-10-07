@@ -3,11 +3,6 @@ import {View, Text, BackHandler, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import styles from './Home.styles';
-import ButtonBig from './ButtonBig';
-import ButtonGroup from './ButtonGroup';
-import Options from './Options';
-import MusicIcon from '../../../assets/icons/music.png';
-import NoMusicIcon from '../../../assets/icons/no_music.png';
 
 const Sound = require('react-native-sound');
 const soundFile = 'loop.mp3';
@@ -16,29 +11,12 @@ Sound.setCategory('Playback');
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showCutomButtonGroup: false,
-      customConfigType: '',
-      showCustomInterval: false,
-      showBreathingTypes: false,
-      showBreathingTime: false,
-      showSoundOptions: false,
-      sound: 'Off',
-    };
+    this.state = {sound: 'Off'};
     this.playingFile1 = false;
     this.playingFile2 = false;
     this.soundFile1 = new Sound(soundFile, Sound.MAIN_BUNDLE, (error) => {});
     this.soundFile2 = new Sound(soundFile, Sound.MAIN_BUNDLE, (error) => {});
   }
-
-  switchTab = () => this.props.dispatch({type: 'SWITCH_BREATHING_TYPE'});
-
-  exitApp = () => {
-    if (!this.props.userInfo.onboarded) {
-      return;
-    }
-  };
-
   handleStart = () => {
     const {breathing, navigation, userInfo} = this.props;
     analytics().logEvent('button_push', {title: 'Start'});
@@ -109,8 +87,6 @@ class Home extends Component {
     }, 500);
   };
 
-  componentDidMount() {}
-
   handleTypeSelect = (breathing) => {
     const breathingType = breathing.type;
     const breathingId = breathing.id;
@@ -145,153 +121,8 @@ class Home extends Component {
     optons === 'On' ? this.startMusic() : this.stopMusic();
   };
 
-  buttonGroupPress = (breathingId, breathingType) => {
-    this.setState({
-      customConfigId: breathingId,
-      customConfigType: breathingType,
-      showCustomInterval: true,
-      showBreathingTypes: false,
-      showBreathingTime: false,
-      showSoundOptions: false,
-    });
-  };
-
-  closeOptions = () => {
-    this.setState({
-      showCustomInterval: false,
-      showBreathingTypes: false,
-      showBreathingTime: false,
-      showSoundOptions: false,
-      customConfigType: '',
-      customConfigId: null,
-    });
-  };
-
-  buttonGroupOptionSelect = (breathingTime) => {
-    const {customConfigType} = this.state;
-    this.setState({
-      customConfigType: '',
-      customConfigId: null,
-      showCustomInterval: false,
-    });
-    this.props.dispatch({
-      type: 'SELECT_CUSTOM_TIME',
-      customType: customConfigType,
-      customTime: breathingTime,
-    });
-    analytics().logEvent('button_push', {
-      title: `custom_${customConfigType}_${breathingTime}`,
-    });
-  };
-
   render() {
-    const {breathing, userInfo} = this.props;
-    const {musicOn} = userInfo;
-    const {
-      showCutomButtonGroup,
-      showCustomInterval,
-      showBreathingTypes,
-      showBreathingTime,
-      customConfigType,
-      customConfigId,
-      sound,
-      showSoundOptions,
-    } = this.state;
-    const hideBreathingType = showCustomInterval;
-    const hideBreathingTime = showCustomInterval || showBreathingTypes;
-    const hideSoundOptions =
-      showCustomInterval || showBreathingTypes || showBreathingTime;
-    const hideStart =
-      showCustomInterval ||
-      showBreathingTypes ||
-      showBreathingTime ||
-      showSoundOptions;
-    const minuteText = breathing.breathingTime > 1 ? 'minutes' : 'minute';
-    return (
-      <TouchableOpacity
-        style={styles.container}
-        activeOpacity={1}
-        onPress={this.closeOptions}>
-        <View style={styles.insideContainer}>
-          {showCutomButtonGroup ? (
-            <ButtonGroup
-              handlePress={this.buttonGroupPress}
-              customConfigType={customConfigType}
-            />
-          ) : (
-            <View style={styles.spacer} />
-          )}
-
-          {!hideBreathingType && (
-            <ButtonBig
-              title={breathing.name}
-              hasIcon={true}
-              isOpen={showBreathingTypes}
-              handlePress={() => {
-                this.setState({
-                  showBreathingTypes: true,
-                  showBreathingTime: false,
-                  showSoundOptions: false,
-                });
-              }}
-            />
-          )}
-
-          {!hideBreathingTime && (
-            <ButtonBig
-              hasIcon={true}
-              isOpen={showBreathingTime}
-              title={`${breathing.breathingTime} ${minuteText}`}
-              handlePress={() => {
-                this.setState({
-                  showBreathingTime: true,
-                  showSoundOptions: false,
-                });
-              }}
-            />
-          )}
-
-          {!hideSoundOptions && (
-            <ButtonBig
-              hasIcon={true}
-              isOpen={showSoundOptions}
-              title={`Sound ${sound}`}
-              handlePress={() => this.setState({showSoundOptions: true})}
-            />
-          )}
-          {!hideStart && (
-            <ButtonBig
-              title={'Start'}
-              buttonColor={'#3c71de'}
-              handlePress={this.handleStart}
-            />
-          )}
-
-          {showCustomInterval && (
-            <Options
-              type={'custom_interval'}
-              customConfigId={customConfigId}
-              handlePress={this.buttonGroupOptionSelect}
-            />
-          )}
-          {showBreathingTypes && (
-            <Options
-              type={'breathing_type'}
-              handlePress={this.handleTypeSelect}
-            />
-          )}
-          {showBreathingTime && (
-            <Options
-              type={'breathing_time'}
-              handlePress={this.handleTimeSelect}
-            />
-          )}
-          {showSoundOptions && (
-            <Options type={'sound'} handlePress={this.handleSoundSelect} />
-          )}
-        </View>
-      </TouchableOpacity>
-    );
+    return <View />;
   }
 }
 

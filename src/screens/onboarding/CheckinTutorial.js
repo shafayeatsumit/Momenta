@@ -3,7 +3,7 @@ import analytics from '@react-native-firebase/analytics';
 import {ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 import {View, Text, StyleSheet} from 'react-native';
-import ButtonBig from '../home/ButtonBig';
+import ButtonBig from '../../components/ButtonBig';
 import {useDispatch} from 'react-redux';
 
 const CheckinTutorial = (props) => {

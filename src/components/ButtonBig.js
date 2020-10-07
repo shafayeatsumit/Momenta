@@ -1,13 +1,18 @@
 import React from 'react';
 import {TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
-import {FontType, Colors} from '../../helpers/theme';
-import arrow_down from '../../../assets/icons/arrow_down.png';
+import {FontType, Colors} from '../helpers/theme';
+
 const ButtonBig = ({handlePress, title, buttonColor, hasIcon, isOpen}) => (
   <TouchableOpacity
     style={[styles.container, buttonColor && {backgroundColor: buttonColor}]}
     onPress={handlePress}>
     <Text style={styles.text}>{title}</Text>
-    {hasIcon && !isOpen && <Image style={styles.arrow} source={arrow_down} />}
+    {hasIcon && !isOpen && (
+      <Image
+        style={styles.arrow}
+        source={require('../../assets/icons/arrow_down.png')}
+      />
+    )}
   </TouchableOpacity>
 );
 export default ButtonBig;

@@ -59,6 +59,12 @@ const styles = StyleSheet.create({
     right: 0,
     height: ScreenHeight * 0.4,
   },
+  textHolder: {
+    height: 90,
+    width: 220,
+    position: 'absolute',
+    bottom: ScreenHeight / 2 + 50,
+  },
   initTextHolder: {
     position: 'absolute',
     bottom: 15,

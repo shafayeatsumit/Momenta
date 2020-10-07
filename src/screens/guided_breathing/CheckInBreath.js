@@ -164,7 +164,7 @@ class CheckInBreath extends Component {
           </View>
         )}
         {!!instructionText && (
-          <View style={styles.instructionTextHolder} pointerEvents="none">
+          <View style={styles.textHolder} pointerEvents="none">
             <Text style={styles.instructionText}>{instructionText}</Text>
           </View>
         )}

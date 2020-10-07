@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   textHolder: {
     height: 50,
-    width: 220,
+    width: 270,
     justifyContent: 'center',
   },
   centerText: {

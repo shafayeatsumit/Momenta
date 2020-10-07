@@ -193,7 +193,6 @@ class FixedBreathing extends Component {
 
   holdTimer = () => {
     const {holdTime, measurementType} = this.state;
-    console.log('hold time', holdTime);
 
     if (holdTime === 0) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
@@ -219,6 +218,8 @@ class FixedBreathing extends Component {
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
     const oneSecond = 1000;
+    const {gameStarted} = this.state;
+    !gameStarted && this.setState({gameStarted: true});
     //TODO: we might need to change it later
     if (this.exhaleHold === 0 && exhaleTimeTaken > oneSecond) {
       this.startInhale();
@@ -307,6 +308,10 @@ class FixedBreathing extends Component {
     analytics().logEvent('button_push', {title: 'finish'});
   };
 
+  handleAnimationFinish = () => {
+    this.props.navigation.goBack();
+  };
+
   handleClose = () => {
     this.props.navigation.goBack();
     analytics().logEvent('button_push', {title: 'quit'});
@@ -348,6 +353,7 @@ class FixedBreathing extends Component {
       timer,
       finished,
       holdTime,
+      gameStarted,
       timerAndQuitVisible,
       showHoldTime,
     } = this.state;
@@ -361,7 +367,7 @@ class FixedBreathing extends Component {
             style={styles.checkmark}
             resizeMode="cover"
             source={require('../../../assets/anims/check_mark.json')}
-            onAnimationFinish={this.handleFinish}
+            onAnimationFinish={this.handleAnimationFinish}
           />
         </View>
       );
@@ -403,7 +409,11 @@ class FixedBreathing extends Component {
 
         <View style={styles.container}>
           <View style={styles.textHolder}>
-            {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
+            {showExhaleText && (
+              <Text style={styles.centerText}>
+                {gameStarted ? 'Exhale' : 'Exhale to Start Exercise'}
+              </Text>
+            )}
             {showExhaleHoldText && <Text style={styles.centerText}>Hold</Text>}
           </View>
 

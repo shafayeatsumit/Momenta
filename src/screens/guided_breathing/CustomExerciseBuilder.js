@@ -3,6 +3,9 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Colors, FontType} from '../../helpers/theme';
 import WaveView from '../../components/WaveView';
 import {connect} from 'react-redux';
+import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
+import {hapticFeedbackOptions} from '../../helpers/constants/common';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 class CustomExerciseBuilder extends Component {
   constructor(props) {
@@ -17,6 +20,10 @@ class CustomExerciseBuilder extends Component {
     this.intervalId = setInterval(() => {
       if (this.state.waterHeight > 150) {
         clearInterval(this.intervalId);
+        ReactNativeHapticFeedback.trigger(
+          'impactMedium',
+          hapticFeedbackOptions,
+        );
         this.props.showBreathingGame();
         return;
       }
@@ -56,7 +63,6 @@ class CustomExerciseBuilder extends Component {
             ]}
             animated={true}
           />
-          <View style={{height: 50}} />
         </View>
       </View>
     );
@@ -73,17 +79,19 @@ export default connect(mapStateToProps)(CustomExerciseBuilder);
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    flex: 1,
+
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
   waveBall: {
     width: 150,
-    // height:150,
+    height: 150,
 
     aspectRatio: 1,
     borderRadius: 75,
@@ -95,12 +103,13 @@ const styles = StyleSheet.create({
   //   height: 150,
   //   width: 150,
   //   borderRadius: 75,
-  //   backgroundColor: 'red',
+  //   backgroundColor: Colors.cornflowerBlue,
   // },
   textHolder: {
     height: 90,
     width: 220,
-    justifyContent: 'center',
+    position: 'absolute',
+    bottom: ScreenHeight / 2 + 50,
   },
   centerText: {
     fontFamily: FontType.SemiBold,

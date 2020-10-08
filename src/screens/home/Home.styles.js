@@ -1,36 +1,15 @@
 import {StyleSheet} from 'react-native';
 import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {Colors} from '../../helpers/theme';
+import {Colors, FontType} from '../../helpers/theme';
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.betterBlue,
-    zIndex: -1,
-  },
-  insideContainer: {
-    alignItems: 'center',
-    marginTop: ScreenHeight / 2 - 195,
-  },
-  musicIconHolder: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    height: 60,
-    width: 60,
-    borderRadius: 15,
-    zIndex: 5,
-    resizeMode: 'contain',
-    // backgroundColor: 'red',
-  },
-  musicIcon: {
-    height: 30,
-    width: 30,
-    borderRadius: 15,
-    tintColor: '#F5F5F5',
-    resizeMode: 'contain',
-  },
-  spacer: {
-    height: 95,
+  tilesContainer: {
+    paddingTop: 20,
+    paddingBottom: 10,
+    flexGrow: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginHorizontal: ScreenWidth * 0.05,
   },
 });
 

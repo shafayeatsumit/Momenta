@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     height: 90,
     width: 250,
-    // backgroundColor: 'red',
   },
 
   initText: {

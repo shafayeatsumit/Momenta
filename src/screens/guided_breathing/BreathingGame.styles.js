@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     zIndex: 99,
-    // backgroundColor: 'red',
   },
   xout: {
     height: 22,

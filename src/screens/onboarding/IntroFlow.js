@@ -122,7 +122,6 @@ const styles = StyleSheet.create({
     height: 200,
     width: 284,
     justifyContent: 'space-around',
-    // backgroundColor: 'red',
   },
   text: {
     fontFamily: FontType.Regular,

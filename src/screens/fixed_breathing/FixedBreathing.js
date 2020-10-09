@@ -18,7 +18,7 @@ import BreathingProgress from './BreathingProgress';
 import ProgressTracker from '../../components/ProgressTracker';
 import {connect} from 'react-redux';
 
-const COMPLETE_EXHALE_MSG = 'Hold down to complete each exhale';
+const COMPLETE_EXHALE_MSG = 'Hold screen as you exhale';
 const CIRCLE_MAX_HEIGHT = 150;
 const CIRCLE_MIN_HEIGHT = 0;
 

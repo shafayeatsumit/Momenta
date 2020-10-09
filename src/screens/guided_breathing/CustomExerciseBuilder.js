@@ -16,7 +16,8 @@ class CustomExerciseBuilder extends Component {
   }
 
   startAnimation = (exhaleTime) => {
-    const interval = exhaleTime / 100;
+    // changed it from 100 to 150;
+    const interval = exhaleTime / 150;
     this.intervalId = setInterval(() => {
       if (this.state.waterHeight > 150) {
         clearInterval(this.intervalId);
@@ -47,20 +48,16 @@ class CustomExerciseBuilder extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.textHolder}>
-          <Text style={styles.centerText}>Building your</Text>
-          <Text style={styles.centerText}>custom exercise</Text>
+          <Text style={styles.centerText}>Creating your exercise</Text>
+          {/* <Text style={styles.centerText}>custom exercise</Text> */}
         </View>
 
-        <View style={styles.circleHolder}>
+        <View>
           <WaveView
             ref={(ref) => (this._waveRect = ref)}
             style={styles.waveBall}
             H={this.state.waterHeight}
-            waveParams={[
-              {A: 12, T: 220, fill: Colors.cornflowerBlue},
-              // {A: 15, T: 200, fill: '#0087dc'},
-              // {A: 20, T: 180, fill: '#1aa7ff'},
-            ]}
+            waveParams={[{A: 12, T: 220, fill: Colors.cornflowerBlue}]}
             animated={true}
           />
         </View>
@@ -80,12 +77,6 @@ export default connect(mapStateToProps)(CustomExerciseBuilder);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-    // position: 'absolute',
-    // top: 0,
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -99,12 +90,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.cornflowerBlue,
     overflow: 'hidden',
   },
-  // circleHolder: {
-  //   height: 150,
-  //   width: 150,
-  //   borderRadius: 75,
-  //   backgroundColor: Colors.cornflowerBlue,
-  // },
   textHolder: {
     height: 90,
     width: 220,

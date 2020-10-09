@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import styles from './BreathingType.styles';
+import Settings from './Settings';
 import BackButton from '../../../assets/icons/arrow_left.png';
 import RightArrow from '../../../assets/icons/arrow_right.png';
 import analytics from '@react-native-firebase/analytics';
@@ -113,9 +114,11 @@ class BreathingType extends Component {
     this.props.navigation.goBack();
   };
 
-  handleSoundSelect = (optons) => {
-    this.setState({sound: optons, showSoundOptions: false});
-    optons === 'On' ? this.startMusic() : this.stopMusic();
+  handleSoundSelect = () => {
+    const {sound} = this.state;
+    const option = sound === 'On' ? 'Off' : 'On';
+    option === 'On' ? this.startMusic() : this.stopMusic();
+    this.setState({sound: option});
   };
 
   showSoundSettings = () =>
@@ -130,36 +133,66 @@ class BreathingType extends Component {
       settingsType: 'duration',
     });
 
+  hideSettings = () => this.setState({settingsVisible: false});
+
   render() {
+    const {settingsVisible, settingsType, sound} = this.state;
+    const {breathing} = this.props;
     const {breathingType} = this.props.route.params;
-    const {image} = breathingType;
+    const {background} = breathingType;
+    const minOrMins = breathing.breathingTime > 1 ? 'mins' : 'min';
+    if (settingsVisible) {
+      return (
+        <Settings
+          type={settingsType}
+          sound={sound}
+          handleSoundSelect={this.handleSoundSelect}
+          goBack={this.hideSettings}
+        />
+      );
+    }
     return (
-      <ImageBackground source={image} style={styles.background}>
+      <ImageBackground source={background} style={styles.background}>
+        <View style={styles.titleBox}>
+          <Text style={styles.titleSm}>{breathing.name_line_one}</Text>
+          <Text style={styles.title}>{breathing.name_line_two}</Text>
+        </View>
+
+        <View style={styles.descriptionBox}>
+          <Text style={styles.descriptionText}>{breathing.description}</Text>
+        </View>
         <TouchableOpacity style={styles.backbuttonHolder} onPress={this.goBack}>
           <Image source={BackButton} style={styles.backbutton} />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.buttonTransparent]}
+            onPress={this.showDurationSettings}
             activeOpacity={0.8}>
             <Text style={styles.buttonText}>Duration</Text>
             <View>
-              <Text style={styles.buttonTextRight}>10 min</Text>
-              <Text style={[styles.buttonTextRight, {fontSize: 8}]}>
-                Recommended
+              <Text style={styles.buttonTextRight}>
+                {breathing.breathingTime} {minOrMins}
               </Text>
+              {breathing.breathingTime === breathing.recommendedTime && (
+                <Text style={[styles.buttonTextRight, {fontSize: 8}]}>
+                  Recommended
+                </Text>
+              )}
             </View>
             <Image style={styles.rightButton} source={RightArrow} />
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={this.showSoundSettings}
             style={[styles.button, styles.buttonTransparent]}
             activeOpacity={0.8}>
             <Text style={styles.buttonText}>Sound</Text>
-            <Text style={styles.buttonTextRight}>On</Text>
+            <Text style={styles.buttonTextRight}>{sound}</Text>
             <Image style={styles.rightButton} source={RightArrow} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.buttonBlue]}
+            onPress={this.handleStart}
             activeOpacity={0.8}>
             <Text style={styles.buttonText}>Start</Text>
           </TouchableOpacity>
@@ -172,8 +205,6 @@ class BreathingType extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     breathing: state.breathing,
-    guidedBreathing: state.guidedBreathing,
-    fixedBreathing: state.fixedBreathing,
     userInfo: state.userInfo,
   };
 };

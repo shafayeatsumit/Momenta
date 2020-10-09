@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     textAlign: 'center',
-    fontFamily: FontType.Monospace,
+    fontFamily: FontType.BradleyBold,
+    fontSize: 22,
   },
   textBold: {
     fontSize: 22,

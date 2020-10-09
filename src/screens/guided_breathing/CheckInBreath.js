@@ -119,6 +119,9 @@ class CheckInBreath extends Component {
       this.threeSecsError();
       return;
     }
+    if (timeTakenExhale > 10) {
+      return;
+    }
     const calibrationInhale = this.getCalibratoinInhale(timeTakenExhale);
     this.measurmentCompleted(timeTakenExhale, calibrationInhale);
     this.pressOutTime = new Date();
@@ -168,10 +171,22 @@ class CheckInBreath extends Component {
             <Text style={styles.instructionText}>{instructionText}</Text>
           </View>
         )}
+        <View style={styles.circleHolder}>
+          <View style={styles.circle}>
+            {measuring && (
+              <LottieView
+                source={require('../../../assets/anims/measuring.json')}
+                autoPlay
+                loop
+                style={styles.animation}
+              />
+            )}
+          </View>
+        </View>
         {measuring && (
           <View style={styles.contentContainer}>
             <View style={styles.containerBox}>
-              <Text style={styles.text}>Measuring Exhale Time</Text>
+              <Text style={styles.text}>Measuring Your Exhale Time</Text>
             </View>
           </View>
         )}

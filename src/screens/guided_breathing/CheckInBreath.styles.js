@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   containerBox: {
-    height: 250,
-    width: 150,
+    height: 280,
+    width: 200,
     // justifyContent: 'center',
     // alignItems: 'center',
   },
@@ -82,6 +82,29 @@ const styles = StyleSheet.create({
   initTextBold: {
     fontFamily: FontType.ExtraBold,
     color: Colors.cornflowerBlue,
+  },
+  circleHolder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circle: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 0.2,
+    borderColor: Colors.cornflowerBlue,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  animation: {
+    height: 80,
+    width: 80,
   },
 });
 export default styles;

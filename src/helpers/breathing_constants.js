@@ -10,10 +10,14 @@ export const BREATHING_TYPES = [
     secondThreshold: 0,
     secondTargetInhale: 0,
     secondTargetExhale: 0,
-    breathingTime: 1,
+    breathingTime: 2,
+    recommendedTime: 2,
     image: require('../../assets/images/calm.jpg'),
+    background: require('../../assets/images/calm_home.jpg'),
     name_line_one: null,
     name_line_two: 'Calm',
+    description:
+      'rebalances and extends your breathing patterns to bring you natural calmness and clarity',
   },
   {
     id: 'inner_quiet',
@@ -26,10 +30,14 @@ export const BREATHING_TYPES = [
     secondThreshold: 120 * 1000,
     secondTargetInhale: 5 * 1000,
     secondTargetExhale: 5 * 1000,
-    breathingTime: 1,
+    breathingTime: 2,
+    recommendedTime: 2,
     image: require('../../assets/images/inner_quiet.jpg'),
+    background: require('../../assets/images/inner_quiet_home.jpg'),
     name_line_one: 'Inner',
     name_line_two: 'Quiet',
+    description:
+      'quickly shifts your inhale, exhale patterns so you regain control and quiet the mind',
   },
   {
     id: 'relax',
@@ -42,10 +50,14 @@ export const BREATHING_TYPES = [
     secondThreshold: 0,
     secondTargetInhale: 0,
     secondTargetExhale: 0,
-    breathingTime: 1,
+    breathingTime: 2,
+    recommendedTime: 2,
     image: require('../../assets/images/relax.jpg'),
+    background: require('../../assets/images/relax_home.jpg'),
     name_line_one: null,
     name_line_two: 'Relax',
+    description:
+      'gently extends your exhale relative to your inhale to let your body know its time to relax',
   },
   {
     id: 'prepare_for_sleep',
@@ -59,9 +71,13 @@ export const BREATHING_TYPES = [
     secondTargetInhale: 0,
     secondTargetExhale: 0,
     breathingTime: 5,
+    recommendedTime: 5,
     image: require('../../assets/images/prepare_for_sleep.jpg'),
+    background: require('../../assets/images/prepare_for_sleep_home.jpg'),
     name_line_one: 'Prepare for',
     name_line_two: 'Sleep',
+    description:
+      "shifts breathing to longer, slower exhaling which tells your body that it's time to sleep",
   },
   {
     id: 'four_seven_eight',
@@ -71,10 +87,14 @@ export const BREATHING_TYPES = [
     inhaleHold: 7,
     exhale: 8,
     exhaleHold: 0,
-    breathingTime: 1,
+    breathingTime: 2,
+    recommendedTime: 2,
     image: require('../../assets/images/four_seven_eight.jpg'),
+    background: require('../../assets/images/four_seven_eight_home.jpg'),
     name_line_one: 'Four seven',
     name_line_two: 'Eight',
+    description:
+      'fixed interval exercise known as the "Relaxing Breath". Note this can tougher for beginners',
   },
 
   {
@@ -85,10 +105,14 @@ export const BREATHING_TYPES = [
     inhaleHold: 4,
     exhale: 4,
     exhaleHold: 4,
-    breathingTime: 1,
+    breathingTime: 2,
+    recommendedTime: 2,
     image: require('../../assets/images/box_breath.jpg'),
+    background: require('../../assets/images/box_breath_home.jpg'),
     name_line_one: 'Box',
     name_line_two: 'Breath',
+    description:
+      'fixed interval breathing popularized by the Navy SEALS, and produces focus and calm',
   },
 ];
 
@@ -129,8 +153,8 @@ export const BREATHING_TIME = {
     max: 30,
     interval: 1,
   },
-  '4-7-8': {
-    id: '4-7-8',
+  four_seven_eight: {
+    id: 'four_seven_eight',
     min: 1,
     max: 30,
     interval: 1,

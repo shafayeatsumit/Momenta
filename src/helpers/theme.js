@@ -18,6 +18,8 @@ const FontType = {
   ExtraBold: 'Montserrat-ExtraBold',
   Light: 'Montserrat-Light',
   Monospace: 'AlNile-Bold',
+  // Monospace: 'Cousine-Regular',
+  BradleyBold: 'BradleyHandITCTT-Bold',
 };
 
 const sizes = {

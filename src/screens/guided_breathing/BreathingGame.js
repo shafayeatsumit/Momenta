@@ -26,7 +26,7 @@ const avgExhale = (exhaleTime, targetExhaleTime) =>
   (exhaleTime + targetExhaleTime) / 2;
 
 const MIN_EXHALE_MSG = 'Exhale must be at least 2 second long';
-const COMPLETE_EXHALE_MSG = 'Hold down to complete each exhale';
+const COMPLETE_EXHALE_MSG = 'Hold screen as you exhale';
 
 class BreathingGame extends Component {
   constructor(props) {

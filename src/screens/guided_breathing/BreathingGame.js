@@ -212,11 +212,11 @@ class BreathingGame extends Component {
   };
 
   handlePressOut = () => {
-    analytics().logEvent('user_release');
-    console.log('user release');
     if (this.pressInTime === null) {
       return;
     }
+    analytics().logEvent('user_release');
+    console.log('user release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
@@ -257,12 +257,12 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
-    analytics().logEvent('user_hold');
-    console.log('user hold');
     if (!this.touchEnabled) {
       this.pressInTime = null;
       return;
     }
+    analytics().logEvent('user_hold');
+    console.log('user hold');
     this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;

@@ -31,7 +31,7 @@ class GuidedBreathing extends Component {
   };
 
   finishHaptics = () => {
-    const feedbackType = Platform.OS === 'ios' ? 'impactMedium' : 'clockTick';
+    const feedbackType = 'impactMedium';
     ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
   };
 

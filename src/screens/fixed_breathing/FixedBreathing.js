@@ -212,11 +212,11 @@ class FixedBreathing extends Component {
   };
 
   handlePressOut = () => {
-    analytics().logEvent('user_release');
-    console.log('user_release');
     if (this.pressInTime === null) {
       return;
     }
+    analytics().logEvent('user_release');
+    console.log('user_release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
@@ -235,7 +235,9 @@ class FixedBreathing extends Component {
       this.reset(exhaleTimeTaken / 3);
       return;
     }
+
     if (this.exhaleHold) {
+      this.disableTouch();
       this.setState({
         holdTime: this.exhaleHold / 1000,
         measurementType: '',
@@ -278,13 +280,12 @@ class FixedBreathing extends Component {
   };
 
   handlePressIn = () => {
-    analytics().logEvent('user_hold');
-    console.log('user_hold');
     if (!this.touchEnabled) {
       this.pressInTime = null;
       return;
     }
-
+    analytics().logEvent('user_hold');
+    console.log('user_hold');
     this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
@@ -307,10 +308,19 @@ class FixedBreathing extends Component {
     }
   };
 
+  finishHaptics = () => {
+    const feedbackType = 'impactMedium';
+    ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
+  };
+
   handleFinish = () => {
     this.setState({showAnimation: true});
     analytics().logEvent('button_push', {title: 'finish'});
     console.log('button_push finish');
+    this.hapticsFinisherId = setTimeout(() => {
+      this.finishHaptics();
+      clearTimeout(this.hapticsFinisherId);
+    }, 1500);
   };
 
   handleAnimationFinish = () => {

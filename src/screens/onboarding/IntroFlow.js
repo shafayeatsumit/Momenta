@@ -22,9 +22,9 @@ const IntroFlow = (props) => {
 
   const handlePress = (goal) => {
     analytics().logEvent('button_push', {title: goal});
-    console.log('button push', goal);
     props.navigation.replace('Home');
   };
+
   if (showSurvey) {
     return (
       <View style={styles.container}>

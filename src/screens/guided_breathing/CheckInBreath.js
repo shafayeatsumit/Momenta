@@ -8,7 +8,7 @@ import styles from './CheckInBreath.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {
   inhaleCalm,
-  inhaleRelaxed,
+  inhaleRelax,
   inhalePrepForSleep,
   inhaleInnterQuiet,
 } from '../../helpers/checkinInhale';
@@ -100,8 +100,8 @@ class CheckInBreath extends Component {
     const {breathingId} = this.props;
     if (breathingId === 'calm') {
       return inhaleCalm(exhaleTime);
-    } else if (breathingId === 'relaxed') {
-      return inhaleRelaxed(exhaleTime);
+    } else if (breathingId === 'relax') {
+      return inhaleRelax(exhaleTime);
     } else if (breathingId === 'inner_quiet') {
       return inhaleInnterQuiet(exhaleTime);
     } else {
@@ -111,7 +111,6 @@ class CheckInBreath extends Component {
 
   handlePressOut = () => {
     analytics().logEvent('calibration_release');
-    console.log('calibration -release');
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     const timeTakenExhale = Number(this.measureTime(this.pressInTime));
@@ -131,7 +130,6 @@ class CheckInBreath extends Component {
 
   handlePressIn = () => {
     analytics().logEvent('calibration_hold');
-    console.log('calib_user_hold');
     this.setState({
       measuring: true,
       instructionText: '',

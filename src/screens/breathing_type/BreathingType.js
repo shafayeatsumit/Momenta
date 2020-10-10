@@ -31,13 +31,11 @@ class BreathingType extends Component {
     }
     this.setState({showBreathingTime: false});
     analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
-    console.log(`button push duration_${breathingTime}`);
   };
 
   goBack = () => {
     this.props.navigation.goBack();
     analytics().logEvent('button_push', {title: 'backto_thumbnails'});
-    console.log('button push backto thumbnails');
   };
 
   showSoundSettings = () =>
@@ -57,7 +55,6 @@ class BreathingType extends Component {
   handleStart = () => {
     const {breathing, navigation, userInfo} = this.props;
     analytics().logEvent('button_push', {title: 'Start'});
-    console.log('start button push');
     if (!userInfo.onboarded) {
       const breathingType =
         breathing.type === 'fixed' ? 'FixedBreathing' : 'GuidedBreathing';

@@ -11,7 +11,7 @@ export const calmTarget = (calibExhale, calibInhale) => {
   }
 };
 
-export const relaxedTarget = (calibExhale, calibInhale) => {
+export const relaxTarget = (calibExhale, calibInhale) => {
   const maxCalibValue = Math.max(calibExhale, calibInhale);
   const value = 6;
   if (maxCalibValue * 2 > value) {

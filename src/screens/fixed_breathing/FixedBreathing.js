@@ -216,7 +216,6 @@ class FixedBreathing extends Component {
       return;
     }
     analytics().logEvent('user_release');
-    console.log('user_release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
@@ -285,7 +284,6 @@ class FixedBreathing extends Component {
       return;
     }
     analytics().logEvent('user_hold');
-    console.log('user_hold');
     this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
@@ -316,7 +314,6 @@ class FixedBreathing extends Component {
   handleFinish = () => {
     this.setState({showAnimation: true});
     analytics().logEvent('button_push', {title: 'finish'});
-    console.log('button_push finish');
     this.hapticsFinisherId = setTimeout(() => {
       this.finishHaptics();
       clearTimeout(this.hapticsFinisherId);
@@ -330,7 +327,6 @@ class FixedBreathing extends Component {
   handleClose = () => {
     this.props.navigation.goBack();
     analytics().logEvent('button_push', {title: 'quit'});
-    console.log('button push quit');
   };
 
   startStopWatch = () => {

@@ -24,7 +24,6 @@ const CheckinTutorial = (props) => {
             navigation.replace(navRoute);
             dispatch({type: 'ONBOARDING_DONE'});
             analytics().logEvent('button_push', {title: 'I am ready'});
-            console.log('button_push I am ready');
           }}
           title="I am ready"
           buttonColor={Colors.cornflowerBlue}

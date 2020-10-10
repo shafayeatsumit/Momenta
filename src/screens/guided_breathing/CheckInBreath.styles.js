@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   instructionTextHolder: {
     height: 300,
-    width: 250,
+    width: 300,
     justifyContent: 'center',
   },
   instructionText: {

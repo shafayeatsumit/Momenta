@@ -19,8 +19,8 @@ const guidedBreathingProperties = {
     secondTargetInhale: 0,
     secondTargetExhale: 0,
   },
-  relaxed: {
-    id: 'relaxed',
+  relax: {
+    id: 'relax',
     numberOfBreaths: 5,
     minNumberOfBreaths: 5,
     targetInhale: 5,
@@ -91,7 +91,7 @@ const fixedBreathingProperties = {
 
 const GUIDED_BREATHINGS = [
   {id: 'calm', name: 'Calm'},
-  {id: 'relaxed', name: 'Relaxed'},
+  {id: 'relax', name: 'Relax'},
   {id: 'inner_quiet', name: 'Inner Quiet'},
   {id: 'prepare_for_sleep', name: 'Prepare For Sleep'},
 ];

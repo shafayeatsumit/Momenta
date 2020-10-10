@@ -37,25 +37,21 @@ const Settings = ({type, goBack}) => {
       dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
     }
     analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
-    console.log(`button_push duration_${duration}`);
   };
 
   const handleGoBack = () => {
     analytics().logEvent('button_push', {title: 'go back'});
-    console.log('button push go back');
     goBack();
   };
 
   const handleSoundOn = () => {
     dispatch({type: 'START_SOUND'});
     analytics().logEvent('button_push', {title: 'sound_on'});
-    console.log('button push sound_on');
   };
 
   const handleSoundOff = () => {
     dispatch({type: 'STOP_SOUND'});
     analytics().logEvent('button_push', {title: 'sound_off'});
-    console.log('button push sound_off');
   };
 
   return (

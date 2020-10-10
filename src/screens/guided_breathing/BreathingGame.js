@@ -216,7 +216,6 @@ class BreathingGame extends Component {
       return;
     }
     analytics().logEvent('user_release');
-    console.log('user release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
@@ -262,7 +261,6 @@ class BreathingGame extends Component {
       return;
     }
     analytics().logEvent('user_hold');
-    console.log('user hold');
     this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;

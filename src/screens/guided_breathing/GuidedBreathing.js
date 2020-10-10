@@ -59,7 +59,6 @@ class GuidedBreathing extends Component {
     const {buildingCustomExercise} = this.state;
     if (!buildingCustomExercise) {
       analytics().logEvent('button_push', {title: 'quit'});
-      console.log('button push quit');
     }
     this.goHome();
   };

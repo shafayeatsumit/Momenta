@@ -26,7 +26,7 @@ export const relaxedTarget = (calibExhale, calibInhale) => {
 
 export const prepareForSleepTarget = (calibExhale, calibInhale) => {
   const maxCalibValue = Math.max(calibExhale, calibInhale);
-  const value = 8;
+  const value = 7;
   if (maxCalibValue * 3 > value) {
     return {targetInhale: value / 2.75, targetExhale: value};
   } else {

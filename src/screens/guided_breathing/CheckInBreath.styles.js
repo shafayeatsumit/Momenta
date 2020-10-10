@@ -106,5 +106,12 @@ const styles = StyleSheet.create({
     height: 80,
     width: 80,
   },
+  touchableArea: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.4,
+  },
 });
 export default styles;

@@ -98,7 +98,7 @@ export const BREATHING_TYPES = [
   },
 
   {
-    id: 'box_breath',
+    id: 'box',
     name: 'Box',
     type: 'fixed',
     inhale: 4,
@@ -123,8 +123,8 @@ export const BREATHING_TIME = {
     max: 30,
     interval: 1,
   },
-  relaxed: {
-    id: 'relaxed',
+  relax: {
+    id: 'relax',
     min: 1,
     max: 30,
     interval: 1,

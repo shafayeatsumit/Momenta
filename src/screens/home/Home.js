@@ -17,6 +17,7 @@ const Home = ({navigation}) => {
     }
     navigation.navigate('BreathingType', {breathingType: breathing});
     analytics().logEvent('button_push', {title: `${breathing.id}`});
+    console.log('button push title ', breathing.id);
   };
   return (
     <ScrollView contentContainerStyle={styles.tilesContainer}>

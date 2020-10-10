@@ -11,6 +11,7 @@ import {Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
 import CustomExerciseBuilder from './CustomExerciseBuilder';
 import analytics from '@react-native-firebase/analytics';
+import SoundOptions from '../../helpers/soundOptions';
 class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
@@ -18,12 +19,10 @@ class GuidedBreathing extends Component {
       showCheckInBreath: true,
       showBreathingGame: false,
       buildingCustomExercise: false,
-      pressIn: false,
-      pressOut: false,
       finished: false,
-      showStuffs: false,
       showAnimation: false,
     };
+    this.sound = new SoundOptions();
   }
 
   goHome = () => {
@@ -57,18 +56,12 @@ class GuidedBreathing extends Component {
   };
 
   handleQuit = () => {
-    analytics().logEvent('button_push', {title: 'quit'});
+    const {buildingCustomExercise} = this.state;
+    if (!buildingCustomExercise) {
+      analytics().logEvent('button_push', {title: 'quit'});
+      console.log('button push quit');
+    }
     this.goHome();
-  };
-
-  handlePressIn = () => {
-    analytics().logEvent('user_hold');
-    this.setState({pressIn: true, pressOut: false, showStuffs: false});
-  };
-
-  handlePressOut = () => {
-    analytics().logEvent('user_release');
-    this.setState({pressIn: false, pressOut: true});
   };
 
   handleFinish = () => {
@@ -81,18 +74,28 @@ class GuidedBreathing extends Component {
     analytics().logEvent('button_push', {title: 'finish'});
   };
 
+  componentDidMount() {
+    const {userInfo} = this.props;
+    if (userInfo.soundOn) {
+      this.startTimer = setTimeout(() => {
+        this.sound.startMusic();
+        clearTimeout(this.startTimer);
+      }, 2000);
+    }
+  }
+
+  componentWillUnmount() {
+    this.sound.stopMusic();
+  }
+
   render() {
     const {
       showCheckInBreath,
       showBreathingGame,
-      pressIn,
-      pressOut,
       showAnimation,
       buildingCustomExercise,
     } = this.state;
-    const {userInfo, guidedBreathing} = this.props;
-    const {musicOn} = userInfo;
-
+    const {guidedBreathing} = this.props;
     if (showAnimation) {
       return (
         <View style={styles.checkmarkHolder}>
@@ -113,9 +116,6 @@ class GuidedBreathing extends Component {
         {showCheckInBreath && (
           <CheckInBreath
             buildCustomExercise={this.buildCustomExercise}
-            musicOn={musicOn}
-            pressIn={pressIn}
-            pressOut={pressOut}
             breathId={guidedBreathing.id}
           />
         )}
@@ -124,17 +124,10 @@ class GuidedBreathing extends Component {
         )}
         {showBreathingGame && (
           <BreathingGame
-            pressIn={pressIn}
-            pressOut={pressOut}
             handleQuit={this.handleQuit}
             handleFinish={this.handleFinish}
           />
         )}
-        <TouchableOpacity
-          onPressIn={this.handlePressIn}
-          onPressOut={this.handlePressOut}
-          style={styles.touchableArea}
-        />
       </>
     );
   }

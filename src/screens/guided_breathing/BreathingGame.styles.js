@@ -87,6 +87,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
   },
+  touchableArea: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.35,
+    // backgroundColor: 'yellow',
+  },
 });
 
 export default styles;

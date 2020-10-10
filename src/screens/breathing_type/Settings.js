@@ -13,8 +13,9 @@ import BackButton from '../../../assets/icons/arrow_left.png';
 import {useSelector, useDispatch} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 
-const Settings = ({type, sound, goBack, handleSoundSelect}) => {
+const Settings = ({type, goBack}) => {
   const breathing = useSelector((state) => state.breathing);
+  const soundStatus = useSelector((state) => state.userInfo.soundOn);
   const dispatch = useDispatch();
   const {id: breathingId, breathingTime} = breathing;
   const getBreathingTime = () => {
@@ -36,6 +37,25 @@ const Settings = ({type, sound, goBack, handleSoundSelect}) => {
       dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
     }
     analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
+    console.log(`button_push duration_${duration}`);
+  };
+
+  const handleGoBack = () => {
+    analytics().logEvent('button_push', {title: 'go back'});
+    console.log('button push go back');
+    goBack();
+  };
+
+  const handleSoundOn = () => {
+    dispatch({type: 'START_SOUND'});
+    analytics().logEvent('button_push', {title: 'sound_on'});
+    console.log('button push sound_on');
+  };
+
+  const handleSoundOff = () => {
+    dispatch({type: 'STOP_SOUND'});
+    analytics().logEvent('button_push', {title: 'sound_off'});
+    console.log('button push sound_off');
   };
 
   return (
@@ -45,7 +65,7 @@ const Settings = ({type, sound, goBack, handleSoundSelect}) => {
           {type === 'duration' ? 'Duration' : 'Sound'}
         </Text>
       </View>
-      <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
+      <TouchableOpacity style={styles.backbuttonHolder} onPress={handleGoBack}>
         <Image source={BackButton} style={styles.backbutton} />
       </TouchableOpacity>
       {type === 'duration' ? (
@@ -71,13 +91,13 @@ const Settings = ({type, sound, goBack, handleSoundSelect}) => {
         </View>
       ) : (
         <View style={styles.box}>
-          <TouchableOpacity onPress={handleSoundSelect}>
-            <Text style={[styles.text, sound === 'On' && styles.textBold]}>
+          <TouchableOpacity onPress={handleSoundOn}>
+            <Text style={[styles.text, soundStatus && styles.textBold]}>
               On
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleSoundSelect}>
-            <Text style={[styles.text, sound === 'Off' && styles.textBold]}>
+          <TouchableOpacity onPress={handleSoundOff}>
+            <Text style={[styles.text, !soundStatus && styles.textBold]}>
               Off
             </Text>
           </TouchableOpacity>

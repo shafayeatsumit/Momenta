@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, Platform} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 import analytics from '@react-native-firebase/analytics';
@@ -110,7 +110,8 @@ class CheckInBreath extends Component {
   };
 
   handlePressOut = () => {
-    analytics().logEvent('user_release');
+    analytics().logEvent('calibration_release');
+    console.log('calibration -release');
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
     const timeTakenExhale = Number(this.measureTime(this.pressInTime));
@@ -129,7 +130,8 @@ class CheckInBreath extends Component {
   };
 
   handlePressIn = () => {
-    analytics().logEvent('user_hold');
+    analytics().logEvent('calibration_hold');
+    console.log('calib_user_hold');
     this.setState({
       measuring: true,
       instructionText: '',
@@ -190,6 +192,11 @@ class CheckInBreath extends Component {
             </View>
           </View>
         )}
+        <TouchableOpacity
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}
+          style={styles.touchableArea}
+        />
       </View>
     );
   }

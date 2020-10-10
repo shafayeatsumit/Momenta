@@ -212,6 +212,8 @@ class BreathingGame extends Component {
   };
 
   handlePressOut = () => {
+    analytics().logEvent('user_release');
+    console.log('user release');
     if (this.pressInTime === null) {
       return;
     }
@@ -255,6 +257,8 @@ class BreathingGame extends Component {
   };
 
   handlePressIn = () => {
+    analytics().logEvent('user_hold');
+    console.log('user hold');
     if (!this.touchEnabled) {
       this.pressInTime = null;
       return;
@@ -298,16 +302,6 @@ class BreathingGame extends Component {
       this.setState({timer: timer + 1});
     }, 1000);
   };
-
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.pressIn !== prevProps.pressIn ||
-      this.props.pressOut !== prevProps.pressOut
-    ) {
-      this.props.pressIn && this.handlePressIn();
-      this.props.pressOut && this.handlePressOut();
-    }
-  }
 
   componentDidMount() {
     this.animatedListenerId = this.animatedHeight.addListener(
@@ -391,6 +385,11 @@ class BreathingGame extends Component {
             <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+          onPressIn={this.handlePressIn}
+          onPressOut={this.handlePressOut}
+          style={styles.touchableArea}
+        />
       </>
     );
   }

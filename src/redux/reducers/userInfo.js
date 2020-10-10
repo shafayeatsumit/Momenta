@@ -3,7 +3,7 @@ const INIT_STATE = {
   email: null,
   userId: null,
   name: null,
-  musicOn: true,
+  soundOn: true,
   onboarded: false,
 };
 
@@ -18,10 +18,15 @@ const loginInfo = (state = INIT_STATE, action) => {
         name,
         userId,
       };
-    case 'TOGGLE_MUSIC':
+    case 'START_SOUND':
       return {
         ...state,
-        musicOn: !state.musicOn,
+        soundOn: true,
+      };
+    case 'STOP_SOUND':
+      return {
+        ...state,
+        soundOn: false,
       };
     case 'ONBOARDING_DONE':
       return {

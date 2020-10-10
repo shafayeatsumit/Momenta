@@ -17,6 +17,7 @@ import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import BreathingProgress from './BreathingProgress';
 import ProgressTracker from '../../components/ProgressTracker';
 import {connect} from 'react-redux';
+import SoundOptions from '../../helpers/soundOptions';
 
 const COMPLETE_EXHALE_MSG = 'Hold screen as you exhale';
 const CIRCLE_MAX_HEIGHT = 150;
@@ -34,6 +35,7 @@ class FixedBreathing extends Component {
       measurementType: 'exhale',
       timerAndQuitVisible: false,
     };
+    this.sound = new SoundOptions();
     this.holdingScreen = false;
     this.pressInTime = null;
     this.animatedHeight = new Animated.Value(CIRCLE_MAX_HEIGHT);
@@ -211,6 +213,7 @@ class FixedBreathing extends Component {
 
   handlePressOut = () => {
     analytics().logEvent('user_release');
+    console.log('user_release');
     if (this.pressInTime === null) {
       return;
     }
@@ -276,6 +279,7 @@ class FixedBreathing extends Component {
 
   handlePressIn = () => {
     analytics().logEvent('user_hold');
+    console.log('user_hold');
     if (!this.touchEnabled) {
       this.pressInTime = null;
       return;
@@ -306,6 +310,7 @@ class FixedBreathing extends Component {
   handleFinish = () => {
     this.setState({showAnimation: true});
     analytics().logEvent('button_push', {title: 'finish'});
+    console.log('button_push finish');
   };
 
   handleAnimationFinish = () => {
@@ -315,6 +320,7 @@ class FixedBreathing extends Component {
   handleClose = () => {
     this.props.navigation.goBack();
     analytics().logEvent('button_push', {title: 'quit'});
+    console.log('button push quit');
   };
 
   startStopWatch = () => {
@@ -336,6 +342,8 @@ class FixedBreathing extends Component {
     this.exhaleHoldTimerId && clearTimeout(this.exhaleHoldTimerId);
     this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     this.holdTimerId && clearTimeout(this.holdTimerId);
+
+    this.sound.stopMusic();
   }
 
   componentDidMount() {
@@ -343,6 +351,13 @@ class FixedBreathing extends Component {
       this.animatedListener,
     );
     this.setNotHoldingError(false);
+    const {userInfo} = this.props;
+    if (userInfo.soundOn) {
+      this.startTimer = setTimeout(() => {
+        this.sound.startMusic();
+        clearTimeout(this.startTimer);
+      }, 2000);
+    }
   }
 
   render() {

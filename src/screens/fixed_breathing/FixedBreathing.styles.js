@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   textHolder: {
-    height: 50,
+    height: 80,
     width: 270,
     justifyContent: 'center',
   },

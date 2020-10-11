@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   textHolder: {
     height: 90,
-    width: 220,
+    width: 300,
     position: 'absolute',
     bottom: ScreenHeight / 2 + 50,
   },
@@ -105,13 +105,6 @@ const styles = StyleSheet.create({
   animation: {
     height: 80,
     width: 80,
-  },
-  touchableArea: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: ScreenHeight * 0.4,
   },
 });
 export default styles;

@@ -172,16 +172,16 @@ class CheckInBreath extends Component {
           </View>
         )}
         <View style={styles.circleHolder}>
-          <View style={styles.circle}>
-            {measuring && (
+          {measuring && (
+            <View style={styles.circle}>
               <LottieView
                 source={require('../../../assets/anims/measuring.json')}
                 autoPlay
                 loop
                 style={styles.animation}
               />
-            )}
-          </View>
+            </View>
+          )}
         </View>
         {measuring && (
           <View style={styles.contentContainer}>

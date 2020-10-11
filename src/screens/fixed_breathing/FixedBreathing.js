@@ -432,7 +432,9 @@ class FixedBreathing extends Component {
           <View style={styles.textHolder}>
             {showExhaleText && (
               <Text style={styles.centerText}>
-                {gameStarted ? 'Exhale' : 'Exhale to Start Exercise'}
+                {gameStarted
+                  ? 'Exhale'
+                  : 'Hold as you exhale to start exercise'}
               </Text>
             )}
             {showExhaleHoldText && <Text style={styles.centerText}>Hold</Text>}

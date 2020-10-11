@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   textHolder: {
-    height: 90,
-    width: 220,
+    height: 70,
+    width: 300,
     position: 'absolute',
     bottom: ScreenHeight / 2 + 50,
   },

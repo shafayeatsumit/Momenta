@@ -353,10 +353,12 @@ class BreathingGame extends Component {
         />
 
         <View style={styles.container}>
-          <View style={styles.textHolder}>
+          <View style={[styles.textHolder]}>
             {showExhaleText && (
               <Text style={styles.centerText}>
-                {this.breathTaken > 0 ? 'Exhale' : 'Exhale to Start Exercise'}
+                {this.breathTaken > 0
+                  ? 'Exhale'
+                  : 'Hold as you exhale to start exercise'}
               </Text>
             )}
           </View>

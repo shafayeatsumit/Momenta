@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cornflowerBlue,
   },
   textHolder: {
-    height: 50,
+    height: 90,
     width: 270,
     justifyContent: 'center',
   },

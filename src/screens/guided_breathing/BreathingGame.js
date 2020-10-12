@@ -11,7 +11,6 @@ import {
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './BreathingGame.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
-import {Colors} from '../../helpers/theme';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';

@@ -4,7 +4,6 @@ import {
   Animated,
   Text,
   Platform,
-  Easing,
   TouchableOpacity,
   Image,
 } from 'react-native';
@@ -14,6 +13,7 @@ import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
+import InhaleExhaleSound from '../../helpers/inhaleExhaleSound';
 
 const CIRCLE_MAX_HEIGHT = 150;
 const CIRCLE_MIN_HEIGHT = 0;
@@ -37,6 +37,7 @@ class BreathingGame extends Component {
       finished: false,
       timerAndQuitVisible: false,
     };
+    this.sound = new InhaleExhaleSound();
     this.holdingScreen = false;
     this.pressInTime = null;
     this.animatedHeight = new Animated.Value(CIRCLE_MAX_HEIGHT);
@@ -214,6 +215,7 @@ class BreathingGame extends Component {
     if (this.pressInTime === null) {
       return;
     }
+    this.stopSound();
     analytics().logEvent('user_release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
@@ -259,6 +261,7 @@ class BreathingGame extends Component {
       this.pressInTime = null;
       return;
     }
+    this.startSound();
     analytics().logEvent('user_hold');
     this.setState({timerAndQuitVisible: false});
     this.pressInTime = new Date();
@@ -274,9 +277,23 @@ class BreathingGame extends Component {
     this.shrink();
   };
 
-  startInhale = (exhaleTime) => {
+  startSound = () => {
+    this.startSoundId = setTimeout(() => {
+      this.sound.startSound();
+      clearTimeout(this.startSoundId);
+    }, 250);
+  };
+
+  stopSound = () => {
+    this.startSoundId && clearTimeout(this.startSoundId);
+    this.sound.stopSound();
+  };
+
+  startInhale = () => {
+    this.startSound();
+
     this.disableTouch();
-    this.expand(exhaleTime);
+    this.expand();
     this.setState({measurementType: 'inhale'});
   };
 
@@ -284,7 +301,11 @@ class BreathingGame extends Component {
     if (value === 0) {
       !this.holdingScreen && this.breathCompleted();
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+      this.stopSound();
       this.setState({measurementType: 'exhale'});
+    }
+    if (value === 150) {
+      this.stopSound();
     }
   };
 

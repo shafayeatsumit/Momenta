@@ -93,18 +93,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   circle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 0.2,
-    borderColor: Colors.cornflowerBlue,
-    overflow: 'hidden',
+    position: 'absolute',
+    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+    height: 240,
+    width: 240,
+    borderRadius: 120,
+    backgroundColor: '#1b1f37',
+    // zIndex: 55,
   },
   animation: {
-    height: 80,
-    width: 80,
+    height: 100,
+    width: 100,
   },
 });
 export default styles;

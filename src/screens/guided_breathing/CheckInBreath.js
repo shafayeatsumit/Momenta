@@ -172,24 +172,27 @@ class CheckInBreath extends Component {
           </View>
         )}
         <View style={styles.circleHolder}>
+          <View style={styles.circle} />
+
           {measuring && (
-            <View style={styles.circle}>
+            <>
+              <Text style={styles.text}>Measuring{'\n'}Your Exhale Time</Text>
               <LottieView
                 source={require('../../../assets/anims/measuring.json')}
                 autoPlay
                 loop
                 style={styles.animation}
               />
-            </View>
+            </>
           )}
         </View>
-        {measuring && (
+        {/* {measuring && (
           <View style={styles.contentContainer}>
             <View style={styles.containerBox}>
               <Text style={styles.text}>Measuring Your Exhale Time</Text>
             </View>
           </View>
-        )}
+        )} */}
         <TouchableOpacity
           onPressIn={this.handlePressIn}
           onPressOut={this.handlePressOut}

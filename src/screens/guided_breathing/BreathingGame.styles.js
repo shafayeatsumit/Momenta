@@ -20,13 +20,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   circleHolder: {
-    height: 150,
-    width: 150,
-    justifyContent: 'flex-end',
+    height: 240,
+    width: 240,
+    borderRadius: 120,
+    borderWidth: 0.8,
+    borderColor: Colors.cornflowerBlue,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  innerCircle: {
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    backgroundColor: '#1b1f37',
+    zIndex: 55,
   },
   circle: {
     backgroundColor: Colors.cornflowerBlue,
+    height: 240,
+    width: 240,
+    borderRadius: 120,
   },
   textHolder: {
     height: 90,
@@ -34,9 +51,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   centerText: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
   },
   progressTrackerContainer: {
@@ -50,6 +67,7 @@ const styles = StyleSheet.create({
     width: 250,
     position: 'absolute',
     bottom: 10,
+    alignSelf: 'center',
   },
   instructionText: {
     fontFamily: FontType.SemiBold,

@@ -17,9 +17,9 @@ class CustomExerciseBuilder extends Component {
 
   startAnimation = (exhaleTime) => {
     // changed it from 100 to 150;
-    const interval = exhaleTime / 150;
+    const interval = exhaleTime / 240;
     this.intervalId = setInterval(() => {
-      if (this.state.waterHeight > 150) {
+      if (this.state.waterHeight > 240) {
         clearInterval(this.intervalId);
         ReactNativeHapticFeedback.trigger(
           'impactMedium',
@@ -81,11 +81,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   waveBall: {
-    width: 150,
-    height: 150,
-
+    height: 240,
+    width: 240,
+    borderRadius: 120,
+    backgroundColor: '#1b1f37',
     aspectRatio: 1,
-    borderRadius: 75,
     borderWidth: 0.2,
     borderColor: Colors.cornflowerBlue,
     overflow: 'hidden',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     height: 70,
     width: 300,
     position: 'absolute',
-    bottom: ScreenHeight / 2 + 50,
+    bottom: ScreenHeight / 2 + 100,
   },
   centerText: {
     fontFamily: FontType.SemiBold,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 import analytics from '@react-native-firebase/analytics';
@@ -68,7 +68,7 @@ class CheckInBreath extends Component {
 
   moreThanTenSec = () => {
     this.tenSecTimer = setTimeout(() => {
-      const errorMessage = 'Exhale must be less than 10 seconds';
+      const errorMessage = 'Exhale must\nbe less than 10 seconds';
       this.setState({
         measuring: false,
         circleText: '',
@@ -82,7 +82,8 @@ class CheckInBreath extends Component {
   };
 
   threeSecsError = () => {
-    const errorMessage = 'Exhale must be at least 3 seconds long';
+    const errorMessage = 'Exhale must be\nat least 3 seconds long';
+
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.setState(
@@ -135,6 +136,7 @@ class CheckInBreath extends Component {
       instructionText: '',
       initialMessage: '',
     });
+    this.animation.play();
     this.vibrateLoop();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec();
@@ -157,42 +159,48 @@ class CheckInBreath extends Component {
 
   render() {
     const {instructionText, measuring, initialMessage} = this.state;
+    const hasInstruction = !!instructionText;
     return (
       <View style={styles.container}>
+        <View style={styles.circleHolder}>
+          <View style={styles.circle}>
+            {hasInstruction ? (
+              <View style={styles.instructionTextHolder}>
+                <Text style={styles.instructionText}>{instructionText}</Text>
+              </View>
+            ) : (
+              <>
+                {measuring ? (
+                  <Text style={styles.text}>
+                    Measuring{'\n'}your exhale time
+                  </Text>
+                ) : (
+                  <Text style={styles.text}>Ready to{'\n'}measure exhlae</Text>
+                )}
+              </>
+            )}
+            <LottieView
+              source={require('../../../assets/anims/measuring.json')}
+              autoPlay={false}
+              loop
+              style={styles.animation}
+              ref={(animation) => {
+                this.animation = animation;
+              }}
+            />
+          </View>
+        </View>
         {!!initialMessage && (
           <View style={styles.initTextHolder} pointerEvents="none">
             <Text style={styles.initText}>
               {initialMessage} <Text style={styles.initTextBold}>exhale</Text>
             </Text>
+            <Image
+              style={styles.targetIcon}
+              source={require('../../../assets/icons/target.png')}
+            />
           </View>
         )}
-        {!!instructionText && (
-          <View style={styles.textHolder} pointerEvents="none">
-            <Text style={styles.instructionText}>{instructionText}</Text>
-          </View>
-        )}
-        <View style={styles.circleHolder}>
-          <View style={styles.circle} />
-
-          {measuring && (
-            <>
-              <Text style={styles.text}>Measuring{'\n'}Your Exhale Time</Text>
-              <LottieView
-                source={require('../../../assets/anims/measuring.json')}
-                autoPlay
-                loop
-                style={styles.animation}
-              />
-            </>
-          )}
-        </View>
-        {/* {measuring && (
-          <View style={styles.contentContainer}>
-            <View style={styles.containerBox}>
-              <Text style={styles.text}>Measuring Your Exhale Time</Text>
-            </View>
-          </View>
-        )} */}
         <TouchableOpacity
           onPressIn={this.handlePressIn}
           onPressOut={this.handlePressOut}

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {ScreenHeight} from '../../helpers/constants/common';
+import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
 import {FontType, Colors} from '../../helpers/theme';
 
 const styles = StyleSheet.create({
@@ -27,30 +27,37 @@ const styles = StyleSheet.create({
   containerBox: {
     height: 280,
     width: 200,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   text: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 20,
+    fontSize: 14,
     textAlign: 'center',
+    marginTop: 5,
   },
   boldText: {
     fontFamily: FontType.ExtraBold,
     color: Colors.cornflowerBlue,
   },
   instructionTextHolder: {
-    height: 300,
-    width: 300,
+    height: 160,
+    width: 160,
+    // backgroundColor: Colors.betterBlue,
     justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 80,
+    backgroundColor: '#1b1f37',
+    position: 'absolute',
+    zIndex: 3,
   },
   instructionText: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 20,
+    fontSize: 14,
     textAlign: 'center',
-    lineHeight: 25,
+    padding: 10,
+    lineHeight: 20,
   },
   touchableArea: {
     position: 'absolute',
@@ -63,16 +70,21 @@ const styles = StyleSheet.create({
     height: 90,
     width: 300,
     position: 'absolute',
-    bottom: ScreenHeight / 2 + 50,
+    bottom: ScreenHeight / 2 + 80,
   },
   initTextHolder: {
     position: 'absolute',
     bottom: 15,
     alignSelf: 'center',
-    height: 90,
-    width: 250,
+    height: 160,
+    width: ScreenWidth,
   },
-
+  targetIcon: {
+    alignSelf: 'center',
+    height: 80,
+    width: 80,
+    marginTop: 15,
+  },
   initText: {
     fontFamily: FontType.Medium,
     color: 'white',
@@ -93,19 +105,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   circle: {
-    position: 'absolute',
     alignSelf: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    height: 240,
-    width: 240,
-    borderRadius: 120,
+    height: 150,
+    width: 150,
+    borderRadius: 75,
     backgroundColor: '#1b1f37',
-    // zIndex: 55,
+    bottom: 20,
+    zIndex: 5,
   },
   animation: {
-    height: 100,
-    width: 100,
+    height: 50,
+    width: 50,
+    alignSelf: 'center',
   },
 });
 export default styles;

@@ -1,38 +1,37 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import {Colors, FontType} from '../../helpers/theme';
-import WaveView from '../../components/WaveView';
+
 import {connect} from 'react-redux';
-import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
+
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+import Svg, {Circle, G} from 'react-native-svg';
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+
+const CircleCircumference = 2 * Math.PI * 150;
 
 class CustomExerciseBuilder extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      waterHeight: 0,
-    };
+    this.animatedOffSet = new Animated.Value(CircleCircumference);
+    this.animatedRadius = new Animated.Value(75);
   }
 
   startAnimation = (exhaleTime) => {
-    // changed it from 100 to 150;
-    const interval = exhaleTime / 240;
-    this.intervalId = setInterval(() => {
-      if (this.state.waterHeight > 240) {
-        clearInterval(this.intervalId);
-        ReactNativeHapticFeedback.trigger(
-          'impactMedium',
-          hapticFeedbackOptions,
-        );
-        this.props.showBreathingGame();
-        return;
-      }
-      this.setState((state) => ({
-        waterHeight: state.waterHeight + 1,
-      }));
-      this._waveRect.setWaterHeight(this.state.waterHeight);
-    }, interval);
+    Animated.parallel([
+      Animated.timing(this.animatedOffSet, {
+        toValue: 0,
+        duration: exhaleTime,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.animatedRadius, {
+        toValue: 148,
+        duration: exhaleTime,
+        useNativeDriver: true,
+      }),
+    ]).start(this.props.showBreathingGame);
   };
 
   componentDidMount() {
@@ -45,21 +44,48 @@ class CustomExerciseBuilder extends Component {
   }
 
   render() {
+    const circleCircumference = 2 * Math.PI * 150;
+
     return (
       <View style={styles.container}>
-        <View style={styles.textHolder}>
-          <Text style={styles.centerText}>Creating your exercise</Text>
-          {/* <Text style={styles.centerText}>custom exercise</Text> */}
-        </View>
+        <Text style={styles.text}>
+          Building your{'\n'}
+          exercise
+        </Text>
 
-        <View>
-          <WaveView
-            ref={(ref) => (this._waveRect = ref)}
-            style={styles.waveBall}
-            H={this.state.waterHeight}
-            waveParams={[{A: 12, T: 220, fill: Colors.cornflowerBlue}]}
-            animated={true}
-          />
+        <View style={styles.svgHolder}>
+          <Svg height="100%" width="100%" style={styles.svg}>
+            <G rotation="-90" origin={('150', '150')}>
+              <AnimatedCircle
+                cx="145"
+                cy="155"
+                r="150"
+                stroke="#447d70"
+                strokeWidth="2"
+                fill="none"
+                strokeDasharray={circleCircumference}
+                strokeDashoffset={this.animatedOffSet}
+              />
+              <AnimatedCircle
+                cx="145"
+                cy="155"
+                r={this.animatedRadius}
+                strokeWidth="0"
+                fill={Colors.cornflowerBlue}
+                strokeDasharray={circleCircumference}
+                strokeDashoffset={this.animatedOffSet}
+              />
+              <Circle
+                cx="145"
+                cy="155"
+                r="75"
+                strokeWidth="0"
+                fill={'#13172f'}
+                strokeDasharray={circleCircumference}
+                strokeDashoffset={this.animatedOffSet}
+              />
+            </G>
+          </Svg>
         </View>
       </View>
     );
@@ -76,30 +102,27 @@ export default connect(mapStateToProps)(CustomExerciseBuilder);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
     justifyContent: 'center',
+  },
+  svgHolder: {
+    height: 310,
+    width: 310,
+    marginBottom: 20,
     alignItems: 'center',
   },
-  waveBall: {
-    height: 240,
-    width: 240,
-    borderRadius: 120,
-    backgroundColor: '#1b1f37',
-    aspectRatio: 1,
-    borderWidth: 0.2,
-    borderColor: Colors.cornflowerBlue,
-    overflow: 'hidden',
+  svg: {
+    marginBottom: 20,
   },
-  textHolder: {
-    height: 70,
-    width: 300,
-    position: 'absolute',
-    bottom: ScreenHeight / 2 + 100,
-  },
-  centerText: {
-    fontFamily: FontType.SemiBold,
+  text: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     textAlign: 'center',
+    fontFamily: FontType.Medium,
+    position: 'absolute',
+    alignSelf: 'center',
+    zIndex: 100,
+    paddingBottom: 12,
   },
 });

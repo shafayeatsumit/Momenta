@@ -23,6 +23,7 @@ class Nav extends Component {
         <Stack.Navigator
           headerMode="none"
           screenOptions={{
+            gestureEnabled: false,
             cardStyle: {backgroundColor: Colors.betterBlue},
             cardStyleInterpolator: ({current: {progress}}) => ({
               cardStyle: {

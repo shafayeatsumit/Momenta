@@ -36,16 +36,15 @@ import Svg, {
   Pattern,
   Mask,
 } from 'react-native-svg';
+import {ScreenWidth} from '../../helpers/constants/common';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-const CircleCircumference = 2 * Math.PI * 150;
+const CircleCircumference = 2 * Math.PI * 160;
 export default class Example extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
-
     this.animatedOffSet = new Animated.Value(CircleCircumference);
-    this.animatedRadius = new Animated.Value(75);
+    this.animatedRadius = new Animated.Value(85);
   }
 
   animate = () => {
@@ -56,11 +55,10 @@ export default class Example extends React.Component {
         useNativeDriver: true,
       }),
       Animated.timing(this.animatedRadius, {
-        toValue: 148,
+        toValue: 158,
         duration: 3000,
         useNativeDriver: true,
       }),
-      ,
     ]).start();
   };
 
@@ -69,46 +67,43 @@ export default class Example extends React.Component {
   }
 
   render() {
-    const circleCircumference = 2 * Math.PI * 150;
-    const strokeDashoffset =
-      circleCircumference - (circleCircumference * 99) / 100;
-    console.log(`strokeDashoffset ${strokeDashoffset}`);
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>
-          Building your{'\n'}
-          exercise
-        </Text>
-
         <View style={styles.svgHolder}>
+          <View style={styles.textHolder}>
+            <Text style={styles.text}>
+              Building your{'\n'}
+              exercise
+            </Text>
+          </View>
           <Svg height="100%" width="100%" style={styles.svg}>
-            <G rotation="-90" origin={('150', '150')}>
+            <G rotation="-90" origin={('160', '160')}>
               <AnimatedCircle
-                cx="145"
-                cy="155"
-                r="150"
+                cx="158"
+                cy="162"
+                r="160"
                 stroke="#447d70"
                 strokeWidth="2"
                 fill="none"
-                strokeDasharray={circleCircumference}
+                strokeDasharray={CircleCircumference}
                 strokeDashoffset={this.animatedOffSet}
               />
               <AnimatedCircle
-                cx="145"
-                cy="155"
+                cx="158"
+                cy="162"
                 r={this.animatedRadius}
                 strokeWidth="0"
                 fill={Colors.cornflowerBlue}
-                strokeDasharray={circleCircumference}
+                strokeDasharray={CircleCircumference}
                 strokeDashoffset={this.animatedOffSet}
               />
               <Circle
-                cx="145"
-                cy="155"
-                r="75"
+                cx="158"
+                cy="162"
+                r="85"
                 strokeWidth="0"
                 fill={'#13172f'}
-                strokeDasharray={circleCircumference}
+                strokeDasharray={CircleCircumference}
                 strokeDashoffset={this.animatedOffSet}
               />
             </G>
@@ -126,22 +121,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   svgHolder: {
-    height: 310,
-    width: 310,
-    marginBottom: 20,
+    height: 324,
+    width: 324,
+    marginBottom: 80,
     alignItems: 'center',
+    // backgroundColor: 'red',
   },
-  svg: {
-    marginBottom: 20,
+  textHolder: {
+    height: 170,
+    width: 170,
+    borderRadius: 85,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    zIndex: 33,
+    bottom: 75,
+    // backgroundColor: 'red',
   },
   text: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
-    fontFamily: FontType.Medium,
-    position: 'absolute',
-    alignSelf: 'center',
-    zIndex: 100,
-    paddingBottom: 12,
+    fontFamily: FontType.SemiBold,
   },
 });

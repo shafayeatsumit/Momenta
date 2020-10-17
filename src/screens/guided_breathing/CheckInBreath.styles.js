@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
     textAlign: 'center',
-    padding: 10,
+    paddingTop: 12,
     lineHeight: 20,
   },
   touchableArea: {
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width: 170,
     borderRadius: 170 / 2,
     backgroundColor: '#1b1f37',
-    bottom: 80,
+    marginBottom: 80,
     zIndex: 5,
   },
   animation: {

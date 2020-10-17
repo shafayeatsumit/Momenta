@@ -33,10 +33,11 @@ class BreathingGame extends Component {
       timer: 0,
       finished: false,
       timerAndQuitVisible: false,
+      bullsEyeVisible: false,
     };
     this.holdingScreen = false;
     this.pressInTime = null;
-    this.animatedCircleRadius = new Animated.Value(148);
+    this.animatedCircleRadius = new Animated.Value(158);
     this.touchEnabled = true;
     this.secondTargetSetupComplete = false;
     const {
@@ -99,6 +100,7 @@ class BreathingGame extends Component {
 
   setNotHoldingError = (showTimer = true) => {
     this.notHoldingErrorId = setTimeout(() => {
+      this.showBullsEye();
       this.setState({
         instructionText: COMPLETE_EXHALE_MSG,
         ...(showTimer && {timerAndQuitVisible: true}),
@@ -120,7 +122,7 @@ class BreathingGame extends Component {
   expand = (time) => {
     const duration = time || this.inhaleTime;
     Animated.timing(this.animatedCircleRadius, {
-      toValue: 148,
+      toValue: 158,
       duration,
       useNativeDriver: true,
     }).start(this.circleExpandEnd);
@@ -128,7 +130,7 @@ class BreathingGame extends Component {
 
   shrink = () => {
     Animated.timing(this.animatedCircleRadius, {
-      toValue: 75,
+      toValue: 85,
       duration: this.exhaleTime,
       useNativeDriver: true,
     }).start();
@@ -239,7 +241,7 @@ class BreathingGame extends Component {
       return;
     }
     analytics().logEvent('user_hold');
-    this.setState({timerAndQuitVisible: false});
+    this.setState({timerAndQuitVisible: false, bullsEyeVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.restartStopWatch();
@@ -260,7 +262,7 @@ class BreathingGame extends Component {
   };
 
   animatedListener = ({value}) => {
-    if (value === 75) {
+    if (value === 85) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
     }
   };
@@ -277,10 +279,19 @@ class BreathingGame extends Component {
     }, 1000);
   };
 
+  showBullsEye = () => {
+    this.showBullsEyeId = setTimeout(() => {
+      const notHoldingScreen = !this.holdingScreen;
+      notHoldingScreen && this.setState({bullsEyeVisible: true});
+      clearTimeout(this.showBullsEyeId);
+    }, 2500);
+  };
+
   componentDidMount() {
     this.animatedListenerId = this.animatedCircleRadius.addListener(
       this.animatedListener,
     );
+    this.showBullsEye();
   }
 
   componentWillUnmount() {
@@ -288,6 +299,7 @@ class BreathingGame extends Component {
     this.stopWatchId && clearInterval(this.stopWatchId);
     this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
+    this.showBullsEyeId && clearTimeout(this.showBullsEyeId);
   }
 
   render() {
@@ -298,6 +310,7 @@ class BreathingGame extends Component {
       timerAndQuitVisible,
       errorText,
       finished,
+      bullsEyeVisible,
     } = this.state;
     const showFinish = finished && !this.holdingScreen;
     const showExhaleText = measurementType === 'exhale';
@@ -325,10 +338,10 @@ class BreathingGame extends Component {
         />
 
         <BreathingGameCircle animatedRadius={this.animatedCircleRadius} />
-        <View style={styles.centerTextHolder}>
+        <View style={styles.container}>
           {showErrorMsg ? (
-            <View style={styles.errorHolder}>
-              <Text style={styles.centerText}>{errorText}</Text>
+            <View style={styles.errorTextHolder}>
+              <Text style={styles.errorText}>{errorText}</Text>
             </View>
           ) : (
             <>
@@ -345,14 +358,16 @@ class BreathingGame extends Component {
             </Text>
           </View>
         )}
-        {!!instructionText && (
-          <View style={styles.initTextHolder} pointerEvents="none">
+        {!!instructionText && !showInitMsg && (
+          <View
+            style={[styles.initTextHolder, {paddingTop: 30}]}
+            pointerEvents="none">
             <Text style={styles.initText}>
               {instructionText} <Text style={styles.initTextBold}>exhale</Text>
             </Text>
           </View>
         )}
-        {showInitMsg || !!instructionText ? (
+        {bullsEyeVisible ? (
           <Image
             style={styles.targetIcon}
             source={require('../../../assets/icons/target.png')}

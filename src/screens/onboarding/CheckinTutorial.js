@@ -12,8 +12,8 @@ const CheckinTutorial = (props) => {
     <View style={styles.container}>
       <View style={styles.centerTextHolder}>
         <Text style={styles.text}>
-          Hold the screen during <Text style={styles.textBold}>exhales</Text>,
-          and the exercise will adapt to your breathing.
+          This exercise is interactive and adapts to your breathing. Hold the
+          screen during each <Text style={styles.textBold}>exhale</Text>.
         </Text>
       </View>
       <View style={styles.buttonContainer}>

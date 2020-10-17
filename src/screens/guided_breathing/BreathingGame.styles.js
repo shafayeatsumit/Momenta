@@ -19,20 +19,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  centerTextHolder: {
-    ...StyleSheet.absoluteFill,
-    alignItems: 'center',
+  errorTextHolder: {
+    height: 160,
+    width: 160,
     justifyContent: 'center',
+    marginBottom: 80,
   },
   centerText: {
-    fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
-    position: 'absolute',
-    alignSelf: 'center',
-    zIndex: 100,
-    paddingBottom: 12,
+    fontFamily: FontType.SemiBold,
+    marginBottom: 80,
   },
 
   instructionTextHolder: {
@@ -90,6 +88,14 @@ const styles = StyleSheet.create({
     width: 140,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  errorText: {
+    fontFamily: FontType.Medium,
+    color: 'white',
+    fontSize: 15,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    lineHeight: 20,
   },
   // bottom
   initTextHolder: {

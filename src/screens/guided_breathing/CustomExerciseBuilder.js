@@ -80,7 +80,7 @@ class CustomExerciseBuilder extends Component {
                 cy="155"
                 r="75"
                 strokeWidth="0"
-                fill={'#13172f'}
+                fill={'#1b1f37'}
                 strokeDasharray={circleCircumference}
                 strokeDashoffset={this.animatedOffSet}
               />

@@ -19,35 +19,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  circleHolder: {
-    height: 240,
-    width: 240,
-    borderRadius: 120,
-    borderWidth: 0.8,
-    borderColor: Colors.cornflowerBlue,
-    justifyContent: 'center',
+  centerTextHolder: {
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
-  },
-  innerCircle: {
-    position: 'absolute',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 120,
-    width: 120,
-    borderRadius: 60,
-    backgroundColor: '#1b1f37',
-    zIndex: 55,
-  },
-  circle: {
-    backgroundColor: Colors.cornflowerBlue,
-    height: 240,
-    width: 240,
-    borderRadius: 120,
-  },
-  textHolder: {
-    height: 90,
-    width: 270,
     justifyContent: 'center',
   },
   centerText: {
@@ -55,13 +29,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     textAlign: 'center',
-  },
-  progressTrackerContainer: {
     position: 'absolute',
-    top: 70,
-    left: 0,
-    right: 0,
+    alignSelf: 'center',
+    zIndex: 100,
+    paddingBottom: 12,
   },
+
   instructionTextHolder: {
     height: 80,
     width: 250,
@@ -111,7 +84,38 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.35,
-    // backgroundColor: 'yellow',
+  },
+  errorHolder: {
+    height: 140,
+    width: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // bottom
+  initTextHolder: {
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center',
+    height: 160,
+    width: ScreenWidth,
+    // backgroundColor: 'red',
+  },
+  initTextBold: {
+    fontFamily: FontType.ExtraBold,
+    color: Colors.cornflowerBlue,
+  },
+  targetIcon: {
+    alignSelf: 'center',
+    height: 200,
+    width: 200,
+    position: 'absolute',
+    bottom: -110,
+  },
+  initText: {
+    fontFamily: FontType.Medium,
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 

@@ -175,7 +175,7 @@ class CheckInBreath extends Component {
                     Measuring{'\n'}your exhale time
                   </Text>
                 ) : (
-                  <Text style={styles.text}>Ready to{'\n'}measure exhlae</Text>
+                  <Text style={styles.text}>Ready</Text>
                 )}
               </>
             )}

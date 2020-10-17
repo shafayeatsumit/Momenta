@@ -9,13 +9,11 @@ import {
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import styles from './BreathingGame.styles';
+import BreathingGameCircle from './BreathingGameCircle';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
-
-const CIRCLE_MAX_HEIGHT = 240;
-const CIRCLE_MIN_HEIGHT = 100;
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
@@ -23,8 +21,8 @@ const avgInhale = (inhaleTime, targetInhaleTime) =>
 const avgExhale = (exhaleTime, targetExhaleTime) =>
   (exhaleTime + targetExhaleTime) / 2;
 
-const MIN_EXHALE_MSG = 'Exhale must be at least 2 second long';
-const COMPLETE_EXHALE_MSG = 'Hold screen as you exhale';
+const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
+const COMPLETE_EXHALE_MSG = 'Hold as you';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -38,10 +36,7 @@ class BreathingGame extends Component {
     };
     this.holdingScreen = false;
     this.pressInTime = null;
-    this.animatedScale = new Animated.Value(1);
-    this.animatedHeight = new Animated.Value(CIRCLE_MAX_HEIGHT);
-    this.animatedWidth = new Animated.Value(CIRCLE_MAX_HEIGHT);
-    this.animatedRadius = new Animated.Value(CIRCLE_MAX_HEIGHT / 2);
+    this.animatedCircleRadius = new Animated.Value(148);
     this.touchEnabled = true;
     this.secondTargetSetupComplete = false;
     const {
@@ -124,16 +119,16 @@ class BreathingGame extends Component {
 
   expand = (time) => {
     const duration = time || this.inhaleTime;
-    Animated.timing(this.animatedScale, {
-      toValue: 1,
+    Animated.timing(this.animatedCircleRadius, {
+      toValue: 148,
       duration,
       useNativeDriver: true,
     }).start(this.circleExpandEnd);
   };
 
   shrink = () => {
-    Animated.timing(this.animatedScale, {
-      toValue: 0.5,
+    Animated.timing(this.animatedCircleRadius, {
+      toValue: 75,
       duration: this.exhaleTime,
       useNativeDriver: true,
     }).start();
@@ -202,12 +197,12 @@ class BreathingGame extends Component {
     const exhaleTimeTaken = this.measureTime();
 
     if (exhaleTimeTaken < 2000) {
-      this.setState({instructionText: MIN_EXHALE_MSG});
+      this.setState({errorText: MIN_EXHALE_MSG});
       this.expand(exhaleTimeTaken / 3);
       return;
     }
-    const currentCircleHeight = this.animatedScale.__getValue();
-    const takenFullExhale = currentCircleHeight === 0.5;
+    const currentCircleHeight = this.animatedCircleRadius.__getValue();
+    const takenFullExhale = currentCircleHeight === 75;
     console.log('taken full exhale', currentCircleHeight);
     if (takenFullExhale) {
       this.breathCompleted();
@@ -218,9 +213,11 @@ class BreathingGame extends Component {
   };
 
   clearInstruction = () => {
-    const {instructionText} = this.state;
+    const {instructionText, errorText} = this.state;
     const hasInstructionText = !!instructionText;
+    const hasErrorText = !!errorText;
     hasInstructionText && this.setState({instructionText: ''});
+    hasErrorText && this.setState({errorText: ''});
   };
 
   clearError = () => {
@@ -264,7 +261,7 @@ class BreathingGame extends Component {
   };
 
   animatedListener = ({value}) => {
-    if (value === 0.5) {
+    if (value === 75) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
     }
   };
@@ -282,14 +279,13 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    this.animatedListenerId = this.animatedScale.addListener(
+    this.animatedListenerId = this.animatedCircleRadius.addListener(
       this.animatedListener,
     );
-    this.setNotHoldingError(false);
   }
 
   componentWillUnmount() {
-    this.animatedHeight.removeListener(this.animatedListenerId);
+    this.animatedCircleRadius.removeListener(this.animatedListenerId);
     this.stopWatchId && clearInterval(this.stopWatchId);
     this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
@@ -301,19 +297,14 @@ class BreathingGame extends Component {
       instructionText,
       timer,
       timerAndQuitVisible,
+      errorText,
       finished,
     } = this.state;
-    const circleStyle = {
-      height: this.animatedHeight,
-      width: this.animatedWidth,
-      borderRadius: this.animatedRadius,
-    };
     const showFinish = finished && !this.holdingScreen;
-    const showExhaleText =
-      (this.breathTaken < 5 && measurementType === 'exhale') ||
-      instructionText === COMPLETE_EXHALE_MSG;
-    const showInhaleText = this.breathTaken < 5 && measurementType === 'inhale';
-
+    const showExhaleText = measurementType === 'exhale';
+    const showInhaleText = measurementType === 'inhale';
+    const showInitMsg = !this.holdingScreen && this.breathTaken === 0;
+    const showErrorMsg = !!errorText;
     return (
       <>
         <View style={styles.topSpacer} />
@@ -327,37 +318,48 @@ class BreathingGame extends Component {
             />
           </TouchableOpacity>
         )}
+
         <ProgressTracker
           currentTime={timer}
           targetTime={this.finishBreathingTime}
           showTimer={timerAndQuitVisible}
         />
 
-        <View style={styles.container}>
-          <View style={styles.circleHolder}>
-            <View style={styles.innerCircle}>
+        <BreathingGameCircle animatedRadius={this.animatedCircleRadius} />
+        <View style={styles.centerTextHolder}>
+          {showErrorMsg ? (
+            <View style={styles.errorHolder}>
+              <Text style={styles.centerText}>{errorText}</Text>
+            </View>
+          ) : (
+            <>
               {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
               {showInhaleText && <Text style={styles.centerText}>Inhale</Text>}
-            </View>
-            <Animated.View
-              style={[
-                styles.circle,
-                {
-                  transform: [
-                    {
-                      scale: this.animatedScale,
-                    },
-                  ],
-                },
-              ]}
-            />
-          </View>
+            </>
+          )}
         </View>
-        {!!instructionText && (
-          <View style={styles.instructionTextHolder} pointerEvents="none">
-            <Text style={styles.instructionText}>{instructionText}</Text>
+        {showInitMsg && (
+          <View style={styles.initTextHolder} pointerEvents="none">
+            <Text style={styles.initText}>
+              Hold as you <Text style={styles.initTextBold}>exhale</Text>
+              {'\n'}to start exercise
+            </Text>
           </View>
         )}
+        {!!instructionText && (
+          <View style={styles.initTextHolder} pointerEvents="none">
+            <Text style={styles.initText}>
+              {instructionText} <Text style={styles.initTextBold}>exhale</Text>
+            </Text>
+          </View>
+        )}
+        {showInitMsg || !!instructionText ? (
+          <Image
+            style={styles.targetIcon}
+            source={require('../../../assets/icons/target.png')}
+          />
+        ) : null}
+
         {showFinish && (
           <TouchableOpacity
             style={styles.finishButton}

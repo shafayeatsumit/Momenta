@@ -81,9 +81,10 @@ const styles = StyleSheet.create({
   },
   targetIcon: {
     alignSelf: 'center',
-    height: 80,
-    width: 80,
-    marginTop: 15,
+    height: 200,
+    width: 200,
+    position: 'absolute',
+    bottom: -120,
   },
   initText: {
     fontFamily: FontType.Medium,

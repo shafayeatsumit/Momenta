@@ -191,9 +191,9 @@ class CheckInBreath extends Component {
           </View>
         </View>
         {!!initialMessage && (
-          <View style={styles.initTextHolder} pointerEvents="none">
-            <Text style={styles.initText}>
-              {initialMessage} <Text style={styles.initTextBold}>exhale</Text>
+          <View style={styles.bottomTextHolder} pointerEvents="none">
+            <Text style={styles.bottomText}>
+              {initialMessage} <Text style={styles.bottomTextBold}>exhale</Text>
             </Text>
             <Image
               style={styles.targetIcon}

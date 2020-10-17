@@ -53,11 +53,8 @@ class Nav extends Component {
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />
-
           <Stack.Screen name="CheckinTutorial" component={CheckinTutorial} />
-
           <Stack.Screen name="OnboardingIntro" component={OnboardingIntro} />
-
           <Stack.Screen
             name="GuidedBreathing"
             component={GuidedBreathingScreen}

@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   wave: {
     marginTop: 3,
     height: 20,
@@ -29,9 +28,9 @@ const styles = StyleSheet.create({
     width: 200,
   },
   text: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'center',
     marginTop: 5,
   },
@@ -40,13 +39,12 @@ const styles = StyleSheet.create({
     color: Colors.cornflowerBlue,
   },
   instructionTextHolder: {
-    height: 160,
-    width: 160,
-    // backgroundColor: Colors.betterBlue,
+    height: 170,
+    width: 170,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    borderRadius: 80,
+    borderRadius: 170 / 2,
     backgroundColor: '#1b1f37',
     position: 'absolute',
     zIndex: 3,
@@ -54,7 +52,7 @@ const styles = StyleSheet.create({
   instructionText: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
     padding: 10,
     lineHeight: 20,
@@ -64,35 +62,29 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: ScreenHeight * 0.4,
+    height: ScreenHeight * 0.3,
   },
-  textHolder: {
-    height: 90,
-    width: 300,
+  bottomTextHolder: {
     position: 'absolute',
-    bottom: ScreenHeight / 2 + 80,
-  },
-  initTextHolder: {
-    position: 'absolute',
-    bottom: 15,
     alignSelf: 'center',
+    bottom: 0,
     height: 160,
     width: ScreenWidth,
   },
   targetIcon: {
     alignSelf: 'center',
-    height: 200,
-    width: 200,
+    height: 220,
+    width: 220,
     position: 'absolute',
     bottom: -120,
   },
-  initText: {
+  bottomText: {
     fontFamily: FontType.Medium,
     color: 'white',
     fontSize: 18,
     textAlign: 'center',
   },
-  initTextBold: {
+  bottomTextBold: {
     fontFamily: FontType.ExtraBold,
     color: Colors.cornflowerBlue,
   },
@@ -108,11 +100,11 @@ const styles = StyleSheet.create({
   circle: {
     alignSelf: 'center',
     justifyContent: 'center',
-    height: 150,
-    width: 150,
-    borderRadius: 75,
+    height: 170,
+    width: 170,
+    borderRadius: 170 / 2,
     backgroundColor: '#1b1f37',
-    bottom: 20,
+    bottom: 80,
     zIndex: 5,
   },
   animation: {

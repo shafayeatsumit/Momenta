@@ -203,7 +203,6 @@ class BreathingGame extends Component {
     }
     const currentCircleHeight = this.animatedCircleRadius.__getValue();
     const takenFullExhale = currentCircleHeight === 75;
-    console.log('taken full exhale', currentCircleHeight);
     if (takenFullExhale) {
       this.breathCompleted();
     } else {

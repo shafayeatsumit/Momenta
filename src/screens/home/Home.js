@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {ScrollView} from 'react-native';
+import React, {useEffect} from 'react';
+import {ScrollView, BackHandler} from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import Thumbnail from './Thumbnail';
 import styles from './Home.styles';
@@ -18,6 +18,19 @@ const Home = ({navigation}) => {
     navigation.navigate('BreathingType', {breathingType: breathing});
     analytics().logEvent('button_push', {title: `${breathing.id}`});
   };
+  useEffect(() => {
+    const backAction = () => {
+      analytics().logEvent('button_push', {title: 'android_back_button'});
+      return false;
+    };
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <ScrollView contentContainerStyle={styles.tilesContainer}>
       {BREATHING_TYPES.map((type) => (

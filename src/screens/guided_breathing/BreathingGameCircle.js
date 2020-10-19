@@ -6,7 +6,7 @@ import {Colors, FontType} from '../../helpers/theme';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const CircleCircumference = 2 * Math.PI * 160;
 
-const BreathingGameCircle = ({animatedRadius}) => (
+const BreathingGameCircle = ({animatedRadius, animatedOffSet}) => (
   <View style={styles.container}>
     <View style={styles.svgHolder}>
       <Svg height="100%" width="100%" style={styles.svg}>
@@ -18,6 +18,8 @@ const BreathingGameCircle = ({animatedRadius}) => (
             stroke="#447d70"
             strokeWidth="2"
             fill="none"
+            strokeDasharray={CircleCircumference}
+            strokeDashoffset={animatedOffSet}
           />
           <AnimatedCircle
             cx="158"
@@ -26,7 +28,6 @@ const BreathingGameCircle = ({animatedRadius}) => (
             strokeWidth="0"
             fill={Colors.cornflowerBlue}
             strokeDasharray={CircleCircumference}
-            strokeDashoffset={this.animatedOffSet}
           />
           <Circle
             cx="158"
@@ -35,7 +36,6 @@ const BreathingGameCircle = ({animatedRadius}) => (
             strokeWidth="0"
             fill={'#1b1f37'}
             strokeDasharray={CircleCircumference}
-            strokeDashoffset={this.animatedOffSet}
           />
         </G>
       </Svg>

@@ -23,6 +23,7 @@ const avgExhale = (exhaleTime, targetExhaleTime) =>
 
 const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
 const COMPLETE_EXHALE_MSG = 'Hold as you';
+const CircleCircumference = 2 * Math.PI * 160;
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ class BreathingGame extends Component {
     };
     this.holdingScreen = false;
     this.pressInTime = null;
+    this.animatedOffSet = new Animated.Value(0);
     this.animatedCircleRadius = new Animated.Value(158);
     this.touchEnabled = true;
     this.secondTargetSetupComplete = false;
@@ -121,19 +123,33 @@ class BreathingGame extends Component {
 
   expand = (time) => {
     const duration = time || this.inhaleTime;
-    Animated.timing(this.animatedCircleRadius, {
-      toValue: 158,
-      duration,
-      useNativeDriver: true,
-    }).start(this.circleExpandEnd);
+    Animated.parallel([
+      Animated.timing(this.animatedCircleRadius, {
+        toValue: 158,
+        duration,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.animatedOffSet, {
+        toValue: 0,
+        duration,
+        useNativeDriver: true,
+      }),
+    ]).start(this.circleExpandEnd);
   };
 
   shrink = () => {
-    Animated.timing(this.animatedCircleRadius, {
-      toValue: 85,
-      duration: this.exhaleTime,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(this.animatedCircleRadius, {
+        toValue: 85,
+        duration: this.exhaleTime,
+        useNativeDriver: true,
+      }),
+      Animated.timing(this.animatedOffSet, {
+        toValue: CircleCircumference,
+        duration: this.exhaleTime,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
 
   measureTime = () => {
@@ -337,7 +353,10 @@ class BreathingGame extends Component {
           showTimer={timerAndQuitVisible}
         />
 
-        <BreathingGameCircle animatedRadius={this.animatedCircleRadius} />
+        <BreathingGameCircle
+          animatedRadius={this.animatedCircleRadius}
+          animatedOffSet={this.animatedOffSet}
+        />
         <View style={styles.container}>
           {showErrorMsg ? (
             <View style={styles.errorTextHolder}>

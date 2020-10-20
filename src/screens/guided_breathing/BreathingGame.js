@@ -129,11 +129,11 @@ class BreathingGame extends Component {
         duration,
         useNativeDriver: true,
       }),
-      Animated.timing(this.animatedOffSet, {
-        toValue: 0,
-        duration,
-        useNativeDriver: true,
-      }),
+      // Animated.timing(this.animatedOffSet, {
+      //   toValue: 0,
+      //   duration,
+      //   useNativeDriver: true,
+      // }),
     ]).start(this.circleExpandEnd);
   };
 
@@ -144,11 +144,11 @@ class BreathingGame extends Component {
         duration: this.exhaleTime,
         useNativeDriver: true,
       }),
-      Animated.timing(this.animatedOffSet, {
-        toValue: CircleCircumference,
-        duration: this.exhaleTime,
-        useNativeDriver: true,
-      }),
+      // Animated.timing(this.animatedOffSet, {
+      //   toValue: CircleCircumference,
+      //   duration: this.exhaleTime,
+      //   useNativeDriver: true,
+      // }),
     ]).start();
   };
 
@@ -220,7 +220,8 @@ class BreathingGame extends Component {
       return;
     }
     const currentCircleHeight = this.animatedCircleRadius.__getValue();
-    const takenFullExhale = currentCircleHeight === 75;
+    const takenFullExhale = currentCircleHeight === 85;
+    console.log('full exhale', takenFullExhale);
     if (takenFullExhale) {
       this.breathCompleted();
     } else {
@@ -278,7 +279,7 @@ class BreathingGame extends Component {
   };
 
   animatedListener = ({value}) => {
-    if (value === 85) {
+    if (value === 85 && this.holdingScreen) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
     }
   };

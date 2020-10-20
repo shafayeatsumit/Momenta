@@ -43,10 +43,10 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontFamily: FontType.BradleyBold,
-    fontSize: 22,
+    fontSize: 25,
   },
   textBold: {
-    fontSize: 22,
+    fontSize: 25,
     fontFamily: FontType.ExtraBold,
     color: 'white',
     textAlign: 'center',

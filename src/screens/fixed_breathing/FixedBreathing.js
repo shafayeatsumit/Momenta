@@ -12,6 +12,7 @@ import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import analytics from '@react-native-firebase/analytics';
 import styles from './FixedBreathing.styles';
+import BreathingGameCircle from '../../components/BreathingGameCircle';
 import {Colors} from '../../helpers/theme';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import BreathingProgress from './BreathingProgress';
@@ -19,9 +20,9 @@ import ProgressTracker from '../../components/ProgressTracker';
 import {connect} from 'react-redux';
 import SoundOptions from '../../helpers/soundOptions';
 
-const COMPLETE_EXHALE_MSG = 'Hold screen as you exhale';
-const CIRCLE_MAX_HEIGHT = 150;
-const CIRCLE_MIN_HEIGHT = 0;
+const COMPLETE_EXHALE_MSG = 'Hold as you exhale';
+const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
+const CircleCircumference = 2 * Math.PI * 160;
 
 class FixedBreathing extends Component {
   constructor(props) {
@@ -34,13 +35,13 @@ class FixedBreathing extends Component {
       finished: false,
       measurementType: 'exhale',
       timerAndQuitVisible: false,
+      bullsEyeVisible: false,
     };
     this.sound = new SoundOptions();
     this.holdingScreen = false;
     this.pressInTime = null;
-    this.animatedHeight = new Animated.Value(CIRCLE_MAX_HEIGHT);
-    this.animatedWidth = new Animated.Value(CIRCLE_MAX_HEIGHT);
-    this.animatedRadius = new Animated.Value(CIRCLE_MAX_HEIGHT / 2);
+    this.animatedOffSet = new Animated.Value(0);
+    this.animatedCircleRadius = new Animated.Value(158);
     this.breathTaken = 0;
     this.touchEnabled = true;
     const {
@@ -67,6 +68,7 @@ class FixedBreathing extends Component {
 
   setNotHoldingError = (showTimer = true) => {
     this.notHoldingErrorId = setTimeout(() => {
+      this.showBullsEye();
       this.setState({
         instructionText: COMPLETE_EXHALE_MSG,
         ...(showTimer && {timerAndQuitVisible: true}),
@@ -88,6 +90,7 @@ class FixedBreathing extends Component {
   inhaleHoldStart = () => {
     this.setState({
       holdTime: this.inhaleHold / 1000,
+      showHoldTime: false,
       measurementType: '',
     });
     this.inhaleHoldTimerId = setTimeout(() => {
@@ -109,18 +112,16 @@ class FixedBreathing extends Component {
   expand = () => {
     const duration = this.inhaleTime;
     Animated.parallel([
-      Animated.timing(this.animatedHeight, {
-        toValue: CIRCLE_MAX_HEIGHT,
+      Animated.timing(this.animatedCircleRadius, {
+        toValue: 158,
         duration,
+        useNativeDriver: true,
       }),
-      Animated.timing(this.animatedWidth, {
-        toValue: CIRCLE_MAX_HEIGHT,
-        duration,
-      }),
-      Animated.timing(this.animatedRadius, {
-        toValue: CIRCLE_MAX_HEIGHT / 2,
-        duration,
-      }),
+      // Animated.timing(this.animatedOffSet, {
+      //   toValue: 0,
+      //   duration,
+      //   useNativeDriver: true,
+      // }),
     ]).start(this.inhaleEnd);
   };
 
@@ -135,35 +136,31 @@ class FixedBreathing extends Component {
 
   reset = (duration) => {
     Animated.parallel([
-      Animated.timing(this.animatedHeight, {
-        toValue: CIRCLE_MAX_HEIGHT,
+      Animated.timing(this.animatedCircleRadius, {
+        toValue: 158,
         duration,
+        useNativeDriver: true,
       }),
-      Animated.timing(this.animatedWidth, {
-        toValue: CIRCLE_MAX_HEIGHT,
-        duration,
-      }),
-      Animated.timing(this.animatedRadius, {
-        toValue: CIRCLE_MAX_HEIGHT / 2,
-        duration,
-      }),
+      // Animated.timing(this.animatedOffSet, {
+      //   toValue: 0,
+      //   duration,
+      //   useNativeDriver: true,
+      // }),
     ]).start(this.resetEnd);
   };
 
   shrink = () => {
     Animated.parallel([
-      Animated.timing(this.animatedHeight, {
-        toValue: CIRCLE_MIN_HEIGHT,
+      Animated.timing(this.animatedCircleRadius, {
+        toValue: 85,
         duration: this.exhaleTime,
+        useNativeDriver: true,
       }),
-      Animated.timing(this.animatedWidth, {
-        toValue: CIRCLE_MIN_HEIGHT,
-        duration: this.exhaleTime,
-      }),
-      Animated.timing(this.animatedRadius, {
-        toValue: CIRCLE_MIN_HEIGHT / 2,
-        duration: this.exhaleTime,
-      }),
+      // Animated.timing(this.animatedOffSet, {
+      //   toValue: CircleCircumference,
+      //   duration: this.exhaleTime,
+      //   useNativeDriver: true,
+      // }),
     ]).start();
   };
 
@@ -197,7 +194,7 @@ class FixedBreathing extends Component {
     const {holdTime, measurementType} = this.state;
 
     if (holdTime === 0) {
-      ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+      // ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
       measurementType === 'exhale_hold'
         ? this.startInhale()
         : this.startExhale();
@@ -205,7 +202,8 @@ class FixedBreathing extends Component {
       return;
     }
     this.holdTimerId = setTimeout(() => {
-      this.setState({holdTime: holdTime - 1, showHoldTime: true});
+      const updatedHoldTime = holdTime - 1;
+      this.setState({showHoldTime: true, holdTime: updatedHoldTime});
       clearTimeout(this.holdTimerId);
       this.holdTimer();
     }, 1000);
@@ -220,8 +218,6 @@ class FixedBreathing extends Component {
     this.holdingScreen = false;
     const exhaleTimeTaken = this.measureTime();
     const oneSecond = 1000;
-    const {gameStarted} = this.state;
-    !gameStarted && this.setState({gameStarted: true});
     //TODO: we might need to change it later
     if (this.exhaleHold === 0 && exhaleTimeTaken > oneSecond) {
       this.startInhale();
@@ -240,6 +236,7 @@ class FixedBreathing extends Component {
       this.setState({
         holdTime: this.exhaleHold / 1000,
         measurementType: '',
+        showHoldTime: false,
       });
 
       this.exhaleHoldTimerId = setTimeout(() => {
@@ -284,7 +281,7 @@ class FixedBreathing extends Component {
       return;
     }
     analytics().logEvent('user_hold');
-    this.setState({timerAndQuitVisible: false});
+    this.setState({timerAndQuitVisible: false, bullsEyeVisible: false});
     this.pressInTime = new Date();
     this.holdingScreen = true;
     this.restartStopWatch();
@@ -298,12 +295,6 @@ class FixedBreathing extends Component {
     this.disableTouch();
     this.expand();
     this.setState({measurementType: 'inhale'});
-  };
-
-  animatedListener = ({value}) => {
-    if (value === 0) {
-      ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
-    }
   };
 
   finishHaptics = () => {
@@ -341,6 +332,12 @@ class FixedBreathing extends Component {
     }, 1000);
   };
 
+  animatedListener = ({value}) => {
+    if (value === 85 && this.holdingScreen) {
+      ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+    }
+  };
+
   componentWillUnmount() {
     this.stopWatchId && clearInterval(this.stopWatchId);
     this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
@@ -348,15 +345,12 @@ class FixedBreathing extends Component {
     this.exhaleHoldTimerId && clearTimeout(this.exhaleHoldTimerId);
     this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     this.holdTimerId && clearTimeout(this.holdTimerId);
-
+    this.showBullsEyeId && clearTimeout(this.showBullsEyeId);
+    this.animatedCircleRadius.removeListener(this.animatedListenerId);
     this.sound.stopMusic();
   }
 
-  componentDidMount() {
-    this.animatedListenerId = this.animatedHeight.addListener(
-      this.animatedListener,
-    );
-    this.setNotHoldingError(false);
+  playMusic = () => {
     const {userInfo} = this.props;
     if (userInfo.soundOn) {
       this.startTimer = setTimeout(() => {
@@ -364,6 +358,23 @@ class FixedBreathing extends Component {
         clearTimeout(this.startTimer);
       }, 2000);
     }
+  };
+
+  showBullsEye = () => {
+    this.showBullsEyeId = setTimeout(() => {
+      const notHoldingScreen = !this.holdingScreen;
+      notHoldingScreen && this.setState({bullsEyeVisible: true});
+      clearTimeout(this.showBullsEyeId);
+    }, 2500);
+  };
+
+  componentDidMount() {
+    this.animatedListenerId = this.animatedCircleRadius.addListener(
+      this.animatedListener,
+    );
+    this.setNotHoldingError(false);
+    this.playMusic();
+    this.showBullsEye();
   }
 
   render() {
@@ -374,7 +385,7 @@ class FixedBreathing extends Component {
       timer,
       finished,
       holdTime,
-      gameStarted,
+      bullsEyeVisible,
       timerAndQuitVisible,
       showHoldTime,
     } = this.state;
@@ -394,16 +405,13 @@ class FixedBreathing extends Component {
       );
     }
 
-    const circleStyle = {
-      height: this.animatedHeight,
-      width: this.animatedWidth,
-      borderRadius: this.animatedRadius,
-    };
     const showFinish = finished && this.holdingScreen === false;
+    const showInitMsg = !this.holdingScreen && this.breathTaken === 0;
     const showInhaleText = measurementType === 'inhale';
     const showExhaleText = measurementType === 'exhale';
     const showInhaleHoldText = measurementType === 'inhale_hold';
     const showExhaleHoldText = measurementType === 'exhale_hold';
+    const showHoldText = showInhaleHoldText || showExhaleHoldText;
     const holdTimerVisible =
       (measurementType === 'inhale_hold' ||
         measurementType === 'exhale_hold') &&
@@ -429,37 +437,44 @@ class FixedBreathing extends Component {
         />
 
         <View style={styles.container}>
-          <View style={styles.textHolder}>
-            {showExhaleText && (
-              <Text style={styles.centerText}>
-                {gameStarted
-                  ? 'Exhale'
-                  : 'Hold as you exhale to start exercise'}
+          <BreathingGameCircle
+            animatedRadius={this.animatedCircleRadius}
+            animatedOffSet={this.animatedOffSet}
+          />
+          <View style={styles.container}>
+            <View style={styles.centerTextHolder}>
+              {showExhaleText && <Text style={styles.centerText}>Exhale</Text>}
+              {showInhaleText && <Text style={styles.centerText}>Inhale</Text>}
+              {showHoldText && <Text style={styles.centerText}>Hold</Text>}
+              {holdTimerVisible && (
+                <Text style={styles.holdTimer}>{holdTime}</Text>
+              )}
+            </View>
+          </View>
+          {!!instructionText && !showInitMsg && (
+            <View
+              style={[styles.initTextHolder, {paddingTop: 30}]}
+              pointerEvents="none">
+              <Text style={styles.initText}>
+                {instructionText}{' '}
+                <Text style={styles.initTextBold}>exhale</Text>
               </Text>
-            )}
-            {showExhaleHoldText && <Text style={styles.centerText}>Hold</Text>}
-          </View>
-
-          <View style={styles.circleHolder}>
-            <Animated.View style={[styles.circle, {...circleStyle}]} />
-            {holdTimerVisible && (
-              <View style={styles.holdTimerContainer}>
-                <Text style={styles.holdTime}>{holdTime}</Text>
-              </View>
-            )}
-          </View>
-
-          <View style={styles.textHolder}>
-            {showInhaleText && (
-              <Text style={styles.centerText}>Inhale Slowly</Text>
-            )}
-            {showInhaleHoldText && <Text style={styles.centerText}>Hold</Text>}
-          </View>
-          {!!instructionText && (
-            <View style={styles.instructionTextHolder} pointerEvents="none">
-              <Text style={styles.instructionText}>{instructionText}</Text>
             </View>
           )}
+          {showInitMsg && (
+            <View style={styles.initTextHolder} pointerEvents="none">
+              <Text style={styles.initText}>
+                Hold as you <Text style={styles.initTextBold}>exhale</Text>
+                {'\n'}to start exercise
+              </Text>
+            </View>
+          )}
+          {bullsEyeVisible ? (
+            <Image
+              style={styles.targetIcon}
+              source={require('../../../assets/icons/target.png')}
+            />
+          ) : null}
         </View>
         {showFinish && (
           <TouchableOpacity

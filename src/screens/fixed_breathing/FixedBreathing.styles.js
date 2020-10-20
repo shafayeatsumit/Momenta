@@ -43,12 +43,6 @@ const styles = StyleSheet.create({
     width: 270,
     justifyContent: 'center',
   },
-  centerText: {
-    fontFamily: FontType.SemiBold,
-    color: 'white',
-    fontSize: 20,
-    textAlign: 'center',
-  },
   progressTrackerContainer: {
     position: 'absolute',
     top: 70,
@@ -113,6 +107,54 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight * 0.4,
+  },
+  centerTextHolder: {
+    height: 160,
+    width: 160,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 80,
+  },
+  centerText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: FontType.SemiBold,
+    // marginBottom: 80,
+  },
+  holdTimer: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    position: 'absolute',
+    fontFamily: FontType.SemiBold,
+    bottom: 40,
+  },
+  // init text
+  initTextHolder: {
+    position: 'absolute',
+    bottom: 0,
+    alignSelf: 'center',
+    height: 160,
+    width: ScreenWidth,
+    // backgroundColor: 'red',
+  },
+  initTextBold: {
+    fontFamily: FontType.ExtraBold,
+    color: Colors.cornflowerBlue,
+  },
+  targetIcon: {
+    alignSelf: 'center',
+    height: 200,
+    width: 200,
+    position: 'absolute',
+    bottom: -110,
+  },
+  initText: {
+    fontFamily: FontType.Medium,
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 

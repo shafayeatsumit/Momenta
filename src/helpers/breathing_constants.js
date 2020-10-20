@@ -17,7 +17,7 @@ export const BREATHING_TYPES = [
     name_line_one: null,
     name_line_two: 'Calm',
     description:
-      'rebalances and extends your breathing patterns to bring you natural calmness and clarity',
+      'Adaptive exercise that rebalances your breathing patterns to bring you into natural calmness and clarity.',
   },
   {
     id: 'inner_quiet',
@@ -37,7 +37,7 @@ export const BREATHING_TYPES = [
     name_line_one: 'Inner',
     name_line_two: 'Quiet',
     description:
-      'quickly shifts your inhale, exhale patterns so you regain control and quiet the mind',
+      'Adaptive exercise that quickly shifts inhale, exhale patterns so you regain control and quiet the mind.',
   },
   {
     id: 'relax',
@@ -57,7 +57,7 @@ export const BREATHING_TYPES = [
     name_line_one: null,
     name_line_two: 'Relax',
     description:
-      'gently extends your exhale relative to your inhale to let your body know its time to relax',
+      "Adaptive exercise that gently extends your exhale to let your body know it's time to relax.",
   },
   {
     id: 'prepare_for_sleep',
@@ -77,7 +77,7 @@ export const BREATHING_TYPES = [
     name_line_one: 'Prepare for',
     name_line_two: 'Sleep',
     description:
-      "shifts breathing to longer, slower exhaling which tells your body that it's time to sleep",
+      'Adaptive exercise that shifts breathing to longer, slower exhaling, which mimics how we breathe as we sleep.',
   },
   {
     id: 'four_seven_eight',
@@ -94,7 +94,7 @@ export const BREATHING_TYPES = [
     name_line_one: 'Four seven',
     name_line_two: 'Eight',
     description:
-      'fixed interval exercise known as the "Relaxing Breath". Note this can tougher for beginners',
+      'Fixed interval breathing exercise known as the "Relaxing Breath". Note this can be tougher for beginners',
   },
 
   {
@@ -112,7 +112,7 @@ export const BREATHING_TYPES = [
     name_line_one: 'Box',
     name_line_two: 'Breath',
     description:
-      'fixed interval breathing popularized by the Navy SEALS, and produces focus and calm',
+      'Fixed interval breathing popularized by the Navy SEALS. Produces focus and calm',
   },
 ];
 

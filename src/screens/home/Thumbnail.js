@@ -6,17 +6,21 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import {ScreenHeight, ScreenWidth} from '../../helpers/constants/common';
-import {Colors, FontType} from '../../helpers/theme';
+import {ScreenWidth} from '../../helpers/constants/common';
+import {FontType} from '../../helpers/theme';
 
 const Thumbnail = ({breathingType, handleBreathTypeSelect}) => {
+  const hasLineOne = breathingType.name_line_one;
   return (
     <TouchableOpacity
       style={styles.tiles}
       activeOpacity={0.8}
       onPress={() => handleBreathTypeSelect(breathingType)}>
       <ImageBackground source={breathingType.image} style={styles.thumbnail}>
-        <Text style={styles.text}>{breathingType.name_line_one}</Text>
+        {hasLineOne && (
+          <Text style={styles.text}>{breathingType.name_line_one}</Text>
+        )}
+
         <Text style={styles.textBold}>{breathingType.name_line_two}</Text>
       </ImageBackground>
     </TouchableOpacity>
@@ -43,10 +47,10 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontFamily: FontType.BradleyBold,
-    fontSize: 25,
+    fontSize: 24,
   },
   textBold: {
-    fontSize: 25,
+    fontSize: 24,
     fontFamily: FontType.ExtraBold,
     color: 'white',
     textAlign: 'center',

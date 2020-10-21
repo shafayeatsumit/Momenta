@@ -14,6 +14,7 @@ import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
+import InteractiveSound from '../../helpers/interactiveSound';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
@@ -24,6 +25,12 @@ const avgExhale = (exhaleTime, targetExhaleTime) =>
 const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
 const COMPLETE_EXHALE_MSG = 'Hold as you';
 const CircleCircumference = 2 * Math.PI * 160;
+const Audio_Files = {
+  inner_quiet: ['swell_inhale.mp3', 'swell_exhale.mp3'],
+  calm: ['swell_inhale_two.mp3', 'swell_exhale_two.mp3'],
+  relax: ['swell_inhale_three.mp3', 'swell_exhale_three.mp3'],
+  prepare_for_sleep: ['swell_inhale.mp3', 'swell_exhale.mp3'],
+};
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -36,6 +43,11 @@ class BreathingGame extends Component {
       timerAndQuitVisible: false,
       bullsEyeVisible: false,
     };
+    const {guidedBreathing} = props;
+    this.sound = new InteractiveSound(
+      Audio_Files[guidedBreathing.id][0],
+      Audio_Files[guidedBreathing.id][1],
+    );
     this.holdingScreen = false;
     this.pressInTime = null;
     this.animatedOffSet = new Animated.Value(0);
@@ -113,6 +125,7 @@ class BreathingGame extends Component {
   circleExpandEnd = () => {
     const {finished} = this.state;
     ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+    this.stopInhaleSound();
     this.setState({measurementType: 'exhale'});
     this.enableTouch();
     if (!this.holdingScreen) {
@@ -154,6 +167,30 @@ class BreathingGame extends Component {
 
   measureTime = () => {
     return new Date() - this.pressInTime;
+  };
+
+  startInhaleSound = () => {
+    this.startInhaleSoundId = setTimeout(() => {
+      this.sound.startInhaleSound();
+      clearTimeout(this.startInhaleSoundId);
+    }, 250);
+  };
+
+  stopInhaleSound = () => {
+    this.startSoundId && clearTimeout(this.startSoundId);
+    this.sound.stopInhaleSound();
+  };
+
+  startExhaleSound = () => {
+    this.startExhaleSoundId = setTimeout(() => {
+      this.sound.startExhaleSound();
+      clearTimeout(this.startExhaleSoundId);
+    }, 250);
+  };
+
+  stopExhaleSound = () => {
+    this.startExhaleSoundId && clearTimeout(this.startExhaleSoundId);
+    this.sound.stopExhaleSound();
   };
 
   feedbackLoop = (pulse) => {
@@ -209,6 +246,7 @@ class BreathingGame extends Component {
     if (this.pressInTime === null) {
       return;
     }
+    this.stopExhaleSound();
     analytics().logEvent('user_release');
     this.feedbackLoopId && clearInterval(this.feedbackLoopId);
     this.holdingScreen = false;
@@ -257,6 +295,7 @@ class BreathingGame extends Component {
       this.pressInTime = null;
       return;
     }
+    this.startExhaleSound();
     analytics().logEvent('user_hold');
     this.setState({timerAndQuitVisible: false, bullsEyeVisible: false});
     this.pressInTime = new Date();
@@ -275,12 +314,14 @@ class BreathingGame extends Component {
   startInhale = (exhaleTime) => {
     this.disableTouch();
     this.expand(exhaleTime);
+    this.startInhaleSound();
     this.setState({measurementType: 'inhale'});
   };
 
   animatedListener = ({value}) => {
     if (value === 85 && this.holdingScreen) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
+      this.stopExhaleSound();
     }
   };
 

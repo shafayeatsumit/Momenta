@@ -169,10 +169,10 @@ class BreathingGame extends Component {
     return new Date() - this.pressInTime;
   };
 
-  startInhaleSound = () => {
-    this.startInhaleSoundId = setTimeout(() => {
-      this.sound.startInhaleSound();
+  startInhaleSound = () => {    
+    this.startInhaleSoundId = setTimeout(() => {      
       clearTimeout(this.startInhaleSoundId);
+      this.sound.startInhaleSound();
     }, 250);
   };
 
@@ -181,7 +181,7 @@ class BreathingGame extends Component {
     this.sound.stopInhaleSound();
   };
 
-  startExhaleSound = () => {
+  startExhaleSound = () => {    
     this.startExhaleSoundId = setTimeout(() => {
       this.sound.startExhaleSound();
       clearTimeout(this.startExhaleSoundId);

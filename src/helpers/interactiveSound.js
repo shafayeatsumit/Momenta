@@ -22,19 +22,63 @@ export default class InhaleExhaleSound {
     );
   }
 
-  startInhaleSound = () => {
+  startInhaleSound = () => {        
     this.inhaleSound.play();
+    this.fadeIn(250,this.inhaleSound)
   };
 
-  stopExhaleSound = () => {
-    this.exhaleSound.stop();
+  stopExhaleSound = () => {        
+    this.fadeOut(250, this.exhaleSound)
   };
 
-  startExhaleSound = () => {
+  startExhaleSound = () => {    
     this.exhaleSound.play();
+    this.fadeIn(250, this.exhaleSound);
   };
 
-  stopInhaleSound = () => {
-    this.inhaleSound.stop();
+  stopInhaleSound = () => {        
+    this.fadeOut(250, this.inhaleSound)
   };
+
+  fadeOut(duration ,file) {
+    const end = new Date().getTime() + duration;
+    const doFadeOut = () => {      
+      const current = new Date().getTime();
+      const remaining = end - current;
+      if (remaining < 0) {
+        // End animation here as there's less than 0 milliseconds left        
+        file.stop()        
+        return;
+      }
+      // Change player volume
+      const volume = remaining / duration
+      // console.log(val)
+      file.setVolume(volume)      
+      requestAnimationFrame(doFadeOut);
+    }
+    doFadeOut();  
+  }
+
+  fadeIn(duration, file){
+    const end = new Date().getTime() + duration;
+    const doFadeIn = () => { 
+      const current = new Date().getTime();
+      const remaining = end - current;
+      if (remaining < 0) {
+        // End animation here as there's less than 0 milliseconds left                
+        return;
+      }
+      // Change player volume
+      const volume = 1 - (remaining / duration);
+      // console.log(val)
+      file.setVolume(volume)      
+      requestAnimationFrame(doFadeIn);      
+    }
+    doFadeIn();
+  }
+
 }
+
+
+
+

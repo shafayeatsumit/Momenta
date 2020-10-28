@@ -22,63 +22,58 @@ export default class InhaleExhaleSound {
     );
   }
 
-  startInhaleSound = () => {        
+  startInhaleSound = () => {
     this.inhaleSound.play();
-    this.fadeIn(250,this.inhaleSound)
+    this.fadeIn(250, this.inhaleSound);
   };
 
-  stopExhaleSound = () => {        
-    this.fadeOut(250, this.exhaleSound)
+  stopExhaleSound = () => {
+    this.fadeOut(250, this.exhaleSound);
   };
 
-  startExhaleSound = () => {    
+  startExhaleSound = () => {
     this.exhaleSound.play();
     this.fadeIn(250, this.exhaleSound);
   };
 
-  stopInhaleSound = () => {        
-    this.fadeOut(250, this.inhaleSound)
+  stopInhaleSound = () => {
+    this.fadeOut(250, this.inhaleSound);
   };
 
-  fadeOut(duration ,file) {
+  fadeOut(duration, file) {
     const end = new Date().getTime() + duration;
-    const doFadeOut = () => {      
+    const doFadeOut = () => {
       const current = new Date().getTime();
       const remaining = end - current;
       if (remaining < 0) {
-        // End animation here as there's less than 0 milliseconds left        
-        file.stop()        
+        // End animation here as there's less than 0 milliseconds left
+        file.stop();
         return;
       }
       // Change player volume
-      const volume = remaining / duration
+      const volume = remaining / duration;
       // console.log(val)
-      file.setVolume(volume)      
+      file.setVolume(volume);
       requestAnimationFrame(doFadeOut);
-    }
-    doFadeOut();  
+    };
+    doFadeOut();
   }
 
-  fadeIn(duration, file){
+  fadeIn(duration, file) {
     const end = new Date().getTime() + duration;
-    const doFadeIn = () => { 
+    const doFadeIn = () => {
       const current = new Date().getTime();
       const remaining = end - current;
       if (remaining < 0) {
-        // End animation here as there's less than 0 milliseconds left                
+        // End animation here as there's less than 0 milliseconds left
         return;
       }
       // Change player volume
-      const volume = 1 - (remaining / duration);
+      const volume = 1 - remaining / duration;
       // console.log(val)
-      file.setVolume(volume)      
-      requestAnimationFrame(doFadeIn);      
-    }
+      file.setVolume(volume);
+      requestAnimationFrame(doFadeIn);
+    };
     doFadeIn();
   }
-
 }
-
-
-
-

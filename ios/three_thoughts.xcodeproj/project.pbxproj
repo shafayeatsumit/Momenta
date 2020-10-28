@@ -15,6 +15,7 @@
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* three_thoughtsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* three_thoughtsTests.m */; };
+		3106E89D2548661800D9A9F1 /* flute.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3106E89C2548661800D9A9F1 /* flute.mp3 */; };
 		3122B03424339B40001C2A30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3122B03324339B40001C2A30 /* Assets.xcassets */; };
 		31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31822BCB24D14DE800C41C29 /* Montserrat-Light.ttf */; };
 		318DC6E1253032CC00D3795E /* BradleyHandITCTT-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */; };
@@ -73,6 +74,7 @@
 		1A9C07169F9842AA97645A77 /* ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = ionicons.ttf; path = ../assets/fonts/ionicons.ttf; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* three_thoughts-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "three_thoughts-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* three_thoughts-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "three_thoughts-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3106E89C2548661800D9A9F1 /* flute.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = flute.mp3; sourceTree = "<group>"; };
 		3122B03324339B40001C2A30 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		316BFC582431D3D90083A48C /* Fontisto.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fontisto.ttf; sourceTree = "<group>"; };
 		316BFC592431D3D90083A48C /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 		13B07FAE1A68108700A75B9A /* three_thoughts */ = {
 			isa = PBXGroup;
 			children = (
+				3106E89C2548661800D9A9F1 /* flute.mp3 */,
 				31FE813E25401824005E1BCC /* swell_inhale_two.mp3 */,
 				31FE813425400C9A005E1BCC /* swell_exhale_three.mp3 */,
 				31FE813625400C9B005E1BCC /* swell_exhale_two.mp3 */,
@@ -472,6 +475,7 @@
 				3122B03424339B40001C2A30 /* Assets.xcassets in Resources */,
 				31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */,
 				31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */,
+				3106E89D2548661800D9A9F1 /* flute.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -801,7 +805,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = Z29R57WNL2;
 				INFOPLIST_FILE = three_thoughts/Info.plist;
@@ -882,7 +886,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = Z29R57WNL2;
 				INFOPLIST_FILE = three_thoughts/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

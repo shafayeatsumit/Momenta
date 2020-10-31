@@ -24,7 +24,6 @@ const avgExhale = (exhaleTime, targetExhaleTime) =>
 
 const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
 const COMPLETE_EXHALE_MSG = 'Hold as you';
-const CircleCircumference = 2 * Math.PI * 160;
 const Audio_Files = {
   inner_quiet: ['swell_inhale.mp3', 'swell_exhale.mp3'],
   calm: ['swell_inhale_two.mp3', 'swell_exhale_two.mp3'],
@@ -169,8 +168,8 @@ class BreathingGame extends Component {
     return new Date() - this.pressInTime;
   };
 
-  startInhaleSound = () => {    
-    this.startInhaleSoundId = setTimeout(() => {      
+  startInhaleSound = () => {
+    this.startInhaleSoundId = setTimeout(() => {
       clearTimeout(this.startInhaleSoundId);
       this.sound.startInhaleSound();
     }, 250);
@@ -181,7 +180,7 @@ class BreathingGame extends Component {
     this.sound.stopInhaleSound();
   };
 
-  startExhaleSound = () => {    
+  startExhaleSound = () => {
     this.startExhaleSoundId = setTimeout(() => {
       this.sound.startExhaleSound();
       clearTimeout(this.startExhaleSoundId);

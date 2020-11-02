@@ -15,21 +15,13 @@ import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
 import InteractiveSound from '../../helpers/interactiveSound';
+import LoopSound from '../../helpers/loopSound';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
 
 const avgExhale = (exhaleTime, targetExhaleTime) =>
   (exhaleTime + targetExhaleTime) / 2;
-
-const MIN_EXHALE_MSG = 'Exhale must be  2 second long';
-const COMPLETE_EXHALE_MSG = 'Hold as you';
-const Audio_Files = {
-  inner_quiet: ['swell_inhale.mp3', 'swell_exhale.mp3'],
-  calm: ['swell_inhale_two.mp3', 'swell_exhale_two.mp3'],
-  relax: ['swell_inhale_three.mp3', 'swell_exhale_three.mp3'],
-  prepare_for_sleep: ['swell_inhale.mp3', 'swell_exhale.mp3'],
-};
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -40,19 +32,18 @@ class BreathingGame extends Component {
       timer: 0,
       finished: false,
       timerAndQuitVisible: false,
-      bullsEyeVisible: false,
     };
-    const {guidedBreathing} = props;
-    this.sound = new InteractiveSound(
-      Audio_Files[guidedBreathing.id][0],
-      Audio_Files[guidedBreathing.id][1],
-    );
+    const {sound} = props;
+    this.sound =
+      sound.soundType === 'background_music'
+        ? new LoopSound(sound.backgroundMusic)
+        : new InteractiveSound(sound.inhaleFile, sound.exhaleFile);
+
     this.holdingScreen = false;
     this.pressInTime = null;
     this.animatedOffSet = new Animated.Value(0);
     this.animatedCircleRadius = new Animated.Value(158);
     this.touchEnabled = true;
-    this.secondTargetSetupComplete = false;
     const {
       targetExhale,
       targetInhale,
@@ -79,89 +70,34 @@ class BreathingGame extends Component {
     this.finishBreathingTime = breathingTime * 60;
     this.fullBreathTaken = 0;
     this.breathTaken = 0;
+    this.unmounted = false;
   }
 
-  enableTouch = () => {
-    this.touchEnabled = true;
-  };
-
-  disableTouch = () => {
-    this.touchEnabled = false;
-  };
-
-  setSecondTarget = () => {
-    const {guidedBreathing} = this.props;
-    const {calibrationExhale, secondThreshold} = guidedBreathing;
-    const secondTarget = calibrationExhale;
-    const targetInhale = guidedBreathing.targetInhale;
-    const targetExhale = guidedBreathing.targetExhale;
-    this.avgInhale = avgInhale(targetInhale, secondTarget);
-    this.avgExhale = avgExhale(targetExhale, secondTarget);
-    this.targetBreathCount = Math.ceil(
-      secondThreshold / (this.avgInhale + this.avgExhale),
-    );
-    this.inhaleIncrementValue =
-      (secondTarget - targetInhale) / this.targetBreathCount;
-    this.exhlaeIncrementValue =
-      (secondTarget - targetExhale) / this.targetBreathCount;
-    this.secondTargetSetupComplete = true;
-    this.fullBreathTaken = 0; // fullbreathTaken
-    this.exhaleTime = this.exhaleTime + this.exhlaeIncrementValue;
-    this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
-    this.startInhale();
-  };
-
-  setNotHoldingError = (showTimer = true) => {
-    this.notHoldingErrorId = setTimeout(() => {
-      this.showBullsEye();
-      this.setState({
-        instructionText: COMPLETE_EXHALE_MSG,
-        ...(showTimer && {timerAndQuitVisible: true}),
-      });
-    }, 2000);
-  };
-
   circleExpandEnd = () => {
-    const {finished} = this.state;
     ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
-    this.stopInhaleSound();
+    this.startExhale();
     this.setState({measurementType: 'exhale'});
-    this.enableTouch();
-    if (!this.holdingScreen) {
-      clearInterval(this.stopWatchId);
-      !finished && this.setNotHoldingError();
-    }
   };
 
-  expand = (time) => {
-    const duration = time || this.inhaleTime;
-    Animated.parallel([
-      Animated.timing(this.animatedCircleRadius, {
-        toValue: 158,
-        duration,
-        useNativeDriver: true,
-      }),
-      // Animated.timing(this.animatedOffSet, {
-      //   toValue: 0,
-      //   duration,
-      //   useNativeDriver: true,
-      // }),
-    ]).start(this.circleExpandEnd);
+  expand = () => {
+    Animated.timing(this.animatedCircleRadius, {
+      toValue: 158,
+      duration: this.inhaleTime,
+      useNativeDriver: true,
+    }).start(this.circleExpandEnd);
+  };
+
+  exhaleCompleted = () => {
+    this.breathCompleted();
+    this.breathTaken = this.breathTaken + 1;
   };
 
   shrink = () => {
-    Animated.parallel([
-      Animated.timing(this.animatedCircleRadius, {
-        toValue: 85,
-        duration: this.exhaleTime,
-        useNativeDriver: true,
-      }),
-      // Animated.timing(this.animatedOffSet, {
-      //   toValue: CircleCircumference,
-      //   duration: this.exhaleTime,
-      //   useNativeDriver: true,
-      // }),
-    ]).start();
+    Animated.timing(this.animatedCircleRadius, {
+      toValue: 85,
+      duration: this.exhaleTime,
+      useNativeDriver: true,
+    }).start(this.exhaleCompleted);
   };
 
   measureTime = () => {
@@ -169,49 +105,19 @@ class BreathingGame extends Component {
   };
 
   startInhaleSound = () => {
-    this.startInhaleSoundId = setTimeout(() => {
-      clearTimeout(this.startInhaleSoundId);
-      this.sound.startInhaleSound();
-    }, 250);
-  };
-
-  stopInhaleSound = () => {
-    this.startSoundId && clearTimeout(this.startSoundId);
-    this.sound.stopInhaleSound();
+    this.inhaleSoundId = setTimeout(() => {
+      this.sound.stopInhaleSound();
+      clearInterval(this.inhaleSoundId);
+    }, this.inhaleTime - 250);
+    this.sound.startInhaleSound();
   };
 
   startExhaleSound = () => {
-    this.startExhaleSoundId = setTimeout(() => {
-      this.sound.startExhaleSound();
-      clearTimeout(this.startExhaleSoundId);
-    }, 250);
-  };
-
-  stopExhaleSound = () => {
-    this.startExhaleSoundId && clearTimeout(this.startExhaleSoundId);
-    this.sound.stopExhaleSound();
-  };
-
-  feedbackLoop = (pulse) => {
-    const feedbackType = Platform.OS === 'ios' ? 'selection' : 'keyboardPress';
-    const exhalePulseCount = pulse - 1;
-    this.feedbackLoopId = setTimeout(() => {
-      ReactNativeHapticFeedback.trigger(feedbackType, hapticFeedbackOptions);
-      if (!exhalePulseCount) {
-        clearTimeout(this.feedbackLoopId);
-      } else {
-        this.feedbackLoop(exhalePulseCount);
-      }
-    }, 900);
-  };
-
-  exhaleHoldFeedack = () => {
-    const exhalePulseCount = Math.floor(this.exhaleTime / 900) - 1;
-    const minimumDiff = 1800; // Timediff
-    if (this.exhaleTime < minimumDiff && this.finishedGame) {
-      return;
-    }
-    this.feedbackLoop(exhalePulseCount);
+    this.exhaleSoundId = setTimeout(() => {
+      this.sound.stopExhaleSound();
+      clearTimeout(this.exhaleSoundId);
+    }, this.exhaleTime - 250);
+    this.sound.startExhaleSound();
   };
 
   breathCompleted = () => {
@@ -241,43 +147,12 @@ class BreathingGame extends Component {
     }
   };
 
-  handlePressOut = () => {
-    if (this.pressInTime === null) {
-      return;
-    }
-    this.stopExhaleSound();
-    analytics().logEvent('user_release');
-    this.feedbackLoopId && clearInterval(this.feedbackLoopId);
-    this.holdingScreen = false;
-    const exhaleTimeTaken = this.measureTime();
-
-    if (exhaleTimeTaken < 2000) {
-      this.setState({errorText: MIN_EXHALE_MSG});
-      this.expand(exhaleTimeTaken / 3);
-      return;
-    }
-    const currentCircleHeight = this.animatedCircleRadius.__getValue();
-    const takenFullExhale = currentCircleHeight === 85;
-    console.log('full exhale', takenFullExhale);
-    if (takenFullExhale) {
-      this.breathCompleted();
-    } else {
-      this.startInhale(exhaleTimeTaken);
-    }
-    this.breathTaken = this.breathTaken + 1;
-  };
-
   clearInstruction = () => {
     const {instructionText, errorText} = this.state;
     const hasInstructionText = !!instructionText;
     const hasErrorText = !!errorText;
     hasInstructionText && this.setState({instructionText: ''});
     hasErrorText && this.setState({errorText: ''});
-  };
-
-  clearError = () => {
-    const willErrorMsgShowUp = this.notHoldingErrorId;
-    willErrorMsgShowUp && clearTimeout(this.notHoldingErrorId);
   };
 
   restartStopWatch = () => {
@@ -289,38 +164,30 @@ class BreathingGame extends Component {
     timerOff && this.startStopWatch();
   };
 
-  handlePressIn = () => {
-    if (!this.touchEnabled) {
-      this.pressInTime = null;
+  startExhale = () => {
+    if (this.unmounted) {
       return;
     }
-    this.startExhaleSound();
-    analytics().logEvent('user_hold');
-    this.setState({timerAndQuitVisible: false, bullsEyeVisible: false});
-    this.pressInTime = new Date();
-    this.holdingScreen = true;
-    this.restartStopWatch();
-    this.startExhale();
-    this.clearError();
-    this.clearInstruction();
-  };
-
-  startExhale = () => {
-    this.exhaleHoldFeedack();
     this.shrink();
+    const {sound} = this.props;
+    sound.soundType !== 'background_music' && this.startExhaleSound();
   };
 
   startInhale = (exhaleTime) => {
-    this.disableTouch();
+    console.log('start INhlae');
+    if (this.unmounted) {
+      return;
+    }
     this.expand(exhaleTime);
-    this.startInhaleSound();
+
     this.setState({measurementType: 'inhale'});
+    const {sound} = this.props;
+    sound.soundType !== 'background_music' && this.startInhaleSound();
   };
 
   animatedListener = ({value}) => {
     if (value === 85 && this.holdingScreen) {
       ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
-      this.stopExhaleSound();
     }
   };
 
@@ -336,62 +203,65 @@ class BreathingGame extends Component {
     }, 1000);
   };
 
-  showBullsEye = () => {
-    this.showBullsEyeId = setTimeout(() => {
-      const notHoldingScreen = !this.holdingScreen;
-      notHoldingScreen && this.setState({bullsEyeVisible: true});
-      clearTimeout(this.showBullsEyeId);
-    }, 2500);
+  playSound = () => {
+    const {sound} = this.props;
+    sound.soundType === 'background_music' ? this.sound.start() : null;
   };
 
   componentDidMount() {
     this.animatedListenerId = this.animatedCircleRadius.addListener(
       this.animatedListener,
     );
-    this.showBullsEye();
+    setTimeout(this.startExhale, 1000);
+    setTimeout(this.playSound, 1000);
   }
 
   componentWillUnmount() {
+    const {sound} = this.props;
+    this.unmounted = true;
     this.animatedCircleRadius.removeListener(this.animatedListenerId);
     this.stopWatchId && clearInterval(this.stopWatchId);
     this.feedbackLoopId && clearTimeout(this.feedbackLoopId);
     this.notHoldingErrorId && clearTimeout(this.notHoldingErrorId);
-    this.showBullsEyeId && clearTimeout(this.showBullsEyeId);
+    if (sound.soundType === 'background_music') {
+      this.sound.stop();
+    } else {
+      this.sound.stopAllSound();
+    }
+    clearTimeout(this.exhaleSoundId);
+    clearInterval(this.inhaleSoundId);
   }
 
   render() {
     const {
       measurementType,
-      instructionText,
       timer,
       timerAndQuitVisible,
       errorText,
       finished,
-      bullsEyeVisible,
     } = this.state;
+    console.log('render');
     const showFinish = finished && !this.holdingScreen;
     const showExhaleText = measurementType === 'exhale';
     const showInhaleText = measurementType === 'inhale';
-    const showInitMsg = !this.holdingScreen && this.breathTaken === 0;
     const showErrorMsg = !!errorText;
     return (
       <>
         <View style={styles.topSpacer} />
-        {timerAndQuitVisible && (
-          <TouchableOpacity
-            style={styles.xoutHolder}
-            onPress={this.props.handleQuit}>
-            <Image
-              source={require('../../../assets/icons/close.png')}
-              style={styles.xout}
-            />
-          </TouchableOpacity>
-        )}
+
+        <TouchableOpacity
+          style={styles.xoutHolder}
+          onPress={this.props.handleQuit}>
+          <Image
+            source={require('../../../assets/icons/close.png')}
+            style={styles.xout}
+          />
+        </TouchableOpacity>
 
         <ProgressTracker
           currentTime={timer}
           targetTime={this.finishBreathingTime}
-          showTimer={timerAndQuitVisible}
+          showTimer={true}
         />
 
         <BreathingGameCircle
@@ -410,29 +280,6 @@ class BreathingGame extends Component {
             </>
           )}
         </View>
-        {showInitMsg && (
-          <View style={styles.initTextHolder} pointerEvents="none">
-            <Text style={styles.initText}>
-              Hold as you <Text style={styles.initTextBold}>exhale</Text>
-              {'\n'}to start exercise
-            </Text>
-          </View>
-        )}
-        {!!instructionText && !showInitMsg && (
-          <View
-            style={[styles.initTextHolder, {paddingTop: 30}]}
-            pointerEvents="none">
-            <Text style={styles.initText}>
-              {instructionText} <Text style={styles.initTextBold}>exhale</Text>
-            </Text>
-          </View>
-        )}
-        {bullsEyeVisible ? (
-          <Image
-            style={styles.targetIcon}
-            source={require('../../../assets/icons/target.png')}
-          />
-        ) : null}
 
         {showFinish && (
           <TouchableOpacity
@@ -441,11 +288,6 @@ class BreathingGame extends Component {
             <Text style={styles.finishText}>Finish</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          onPressIn={this.handlePressIn}
-          onPressOut={this.handlePressOut}
-          style={styles.touchableArea}
-        />
       </>
     );
   }
@@ -454,6 +296,7 @@ class BreathingGame extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     guidedBreathing: state.guidedBreathing,
+    sound: state.sound,
   };
 };
 

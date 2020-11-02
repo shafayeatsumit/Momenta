@@ -22,6 +22,11 @@ export default class InhaleExhaleSound {
     );
   }
 
+  stopAllSound = () => {
+    this.inhaleSound.stop();
+    this.exhaleSound.stop();
+  };
+
   startInhaleSound = () => {
     this.inhaleSound.play();
     this.fadeIn(250, this.inhaleSound);

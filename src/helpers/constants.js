@@ -103,6 +103,41 @@ const FIXED_BREATHINGS = [
   {id: 'custom', name: 'Custom'},
 ];
 
+const SOUND_OPTIONS = [
+  {
+    id: 'swell_one',
+    inhaleFile: 'swell_exhale.mp3',
+    exhaleFile: 'swell_inhale.mp3',
+    name: 'Swell One',
+    soundType: 'inhale_exhale',
+    backgroundMusic: null,
+  },
+  {
+    id: 'swell_two',
+    inhaleFile: 'swell_inhale_two.mp3',
+    exhaleFile: 'swell_exhale_two.mp3',
+    name: 'Swell Two',
+    soundType: 'inhale_exhale',
+    backgroundMusic: null,
+  },
+  {
+    id: 'swell_three',
+    inhaleFile: 'swell_inhale_three.mp3',
+    exhaleFile: 'swell_exhale_three.mp3',
+    name: 'Swell Three',
+    soundType: 'inhale_exhale',
+    backgroundMusic: null,
+  },
+  {
+    id: 'flying',
+    backgroundMusic: 'loop.mp3',
+    name: 'Flying',
+    inhaleFile: null,
+    exhaleFile: null,
+    soundType: 'background_music',
+  },
+];
+
 export {
   ScreenWidth,
   ScreenHeight,
@@ -111,4 +146,5 @@ export {
   hapticFeedbackOptions,
   fixedBreathingProperties,
   guidedBreathingProperties,
+  SOUND_OPTIONS,
 };

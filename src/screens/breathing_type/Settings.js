@@ -12,10 +12,10 @@ import {BREATHING_TIME} from '../../helpers/breathing_constants';
 import BackButton from '../../../assets/icons/arrow_left.png';
 import {useSelector, useDispatch} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
+import {SOUND_OPTIONS} from '../../helpers/constants';
 
-const Settings = ({type, goBack}) => {
+const Settings = ({type, goBack, sound}) => {
   const breathing = useSelector((state) => state.breathing);
-  const soundStatus = useSelector((state) => state.userInfo.soundOn);
   const dispatch = useDispatch();
   const {id: breathingId, breathingTime} = breathing;
   const getBreathingTime = () => {
@@ -39,19 +39,13 @@ const Settings = ({type, goBack}) => {
     analytics().logEvent('button_push', {title: `duration_${breathingTime}`});
   };
 
+  const handleSoundSelect = (soundOption) => {
+    dispatch({type: 'UPDATE_SOUND', ...soundOption});
+  };
+
   const handleGoBack = () => {
     analytics().logEvent('button_push', {title: 'go back'});
     goBack();
-  };
-
-  const handleSoundOn = () => {
-    dispatch({type: 'START_SOUND'});
-    analytics().logEvent('button_push', {title: 'sound_on'});
-  };
-
-  const handleSoundOff = () => {
-    dispatch({type: 'STOP_SOUND'});
-    analytics().logEvent('button_push', {title: 'sound_off'});
   };
 
   return (
@@ -87,16 +81,23 @@ const Settings = ({type, goBack}) => {
         </View>
       ) : (
         <View style={styles.box}>
-          <TouchableOpacity onPress={handleSoundOn}>
-            <Text style={[styles.text, soundStatus && styles.textBold]}>
-              On
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSoundOff}>
-            <Text style={[styles.text, !soundStatus && styles.textBold]}>
-              Off
-            </Text>
-          </TouchableOpacity>
+          <FlatList
+            data={SOUND_OPTIONS}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.button}
+                key={item.fileName}
+                onPress={() => handleSoundSelect(item)}>
+                <Text
+                  style={[
+                    styles.text,
+                    sound.id === item.id && styles.textBold,
+                  ]}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            )}
+          />
         </View>
       )}
     </View>
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     height: 30,
     width: 200,
     alignSelf: 'center',
-
     alignItems: 'center',
   },
   title: {
@@ -125,10 +125,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
   },
-
   box: {
-    height: 100,
-    width: 100,
+    height: 250,
+    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   textBold: {
-    fontFamily: FontType.ExtraBold,
+    fontFamily: FontType.Bold,
     color: 'white',
     fontSize: 22,
   },

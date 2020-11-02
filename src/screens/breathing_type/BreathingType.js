@@ -70,13 +70,18 @@ class BreathingType extends Component {
 
   render() {
     const {settingsVisible, settingsType} = this.state;
-    const {breathing, userInfo} = this.props;
+    const {breathing, sound} = this.props;
     const {breathingType} = this.props.route.params;
     const {background} = breathingType;
     const minOrMins = breathing.breathingTime > 1 ? 'mins' : 'min';
-    const soundStatus = userInfo.soundOn ? 'On' : 'Off';
     if (settingsVisible) {
-      return <Settings type={settingsType} goBack={this.hideSettings} />;
+      return (
+        <Settings
+          type={settingsType}
+          goBack={this.hideSettings}
+          sound={sound}
+        />
+      );
     }
     return (
       <ImageBackground source={background} style={styles.background}>
@@ -114,7 +119,7 @@ class BreathingType extends Component {
             style={[styles.button, styles.buttonTransparent]}
             activeOpacity={0.8}>
             <Text style={styles.buttonText}>Sound</Text>
-            <Text style={styles.buttonTextRight}>{soundStatus}</Text>
+            <Text style={styles.buttonTextRight}>{sound.name}</Text>
             <Image style={styles.rightButton} source={RightArrow} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -133,6 +138,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     breathing: state.breathing,
     userInfo: state.userInfo,
+    sound: state.sound,
   };
 };
 

@@ -83,21 +83,9 @@ export const BREATHING_TIME = {
     max: 30,
     interval: 1,
   },
-  relax: {
-    id: 'relax',
-    min: 1,
-    max: 30,
-    interval: 1,
-  },
   prepare_for_sleep: {
     id: 'prepare_for_sleep',
     min: 5,
-    max: 30,
-    interval: 1,
-  },
-  inner_quiet: {
-    id: 'inner_quiet',
-    min: 1,
     max: 30,
     interval: 1,
   },

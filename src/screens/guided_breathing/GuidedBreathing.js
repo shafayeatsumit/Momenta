@@ -75,12 +75,6 @@ class GuidedBreathing extends Component {
 
   componentDidMount() {
     const {userInfo} = this.props;
-    if (userInfo.soundOn) {
-      this.startTimer = setTimeout(() => {
-        this.sound.startMusic();
-        clearTimeout(this.startTimer);
-      }, 2000);
-    }
   }
 
   componentWillUnmount() {

@@ -48,6 +48,13 @@ const Settings = ({type, goBack, sound}) => {
     goBack();
   };
 
+  const selectFadeoutTime = (duration) => {
+    console.log('select ++++>', duration);
+    dispatch({type: 'UPDATE_FADE_OUT', duration});
+  };
+
+  const fadoutDuration = sound.fadeOutDuration;
+  console.log('fadeout duration', fadoutDuration);
   return (
     <View style={styles.container}>
       <View style={styles.titleBox}>
@@ -85,7 +92,7 @@ const Settings = ({type, goBack, sound}) => {
             data={SOUND_OPTIONS}
             renderItem={({item}) => (
               <TouchableOpacity
-                style={styles.button}
+                style={[styles.button]}
                 key={item.fileName}
                 onPress={() => handleSoundSelect(item)}>
                 <Text
@@ -98,6 +105,52 @@ const Settings = ({type, goBack, sound}) => {
               </TouchableOpacity>
             )}
           />
+          <View style={styles.timeHolder}>
+            <TouchableOpacity
+              style={styles.timeBtn}
+              onPress={() => selectFadeoutTime(1000)}>
+              <Text
+                style={[
+                  styles.timeText,
+                  fadoutDuration === 1000 && styles.timeTextBold,
+                ]}>
+                1 s
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.timeBtn}
+              onPress={() => selectFadeoutTime(1250)}>
+              <Text
+                style={[
+                  styles.timeText,
+                  fadoutDuration === 1250 && styles.timeTextBold,
+                ]}>
+                1.25 s
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.timeBtn}
+              onPress={() => selectFadeoutTime(1500)}>
+              <Text
+                style={[
+                  styles.timeText,
+                  fadoutDuration === 1500 && styles.timeTextBold,
+                ]}>
+                1.5 s
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.timeBtn}
+              onPress={() => selectFadeoutTime(1750)}>
+              <Text
+                style={[
+                  styles.timeText,
+                  fadoutDuration === 1750 && styles.timeTextBold,
+                ]}>
+                1.75 s
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
@@ -126,11 +179,43 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   box: {
-    height: 250,
-    width: 150,
+    height: 350,
+    width: 350,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+  },
+  timeHolder: {
+    height: 80,
+    width: 450,
+    // backgroundColor: 'yellow',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  timeBtn: {
+    height: 40,
+    width: 60,
+    marginHorizontal: 8,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  timeText: {
+    fontFamily: FontType.Medium,
+    fontSize: 15,
+    textAlign: 'center',
+    color: 'white',
+  },
+  timeTextBold: {
+    fontFamily: FontType.ExtraBold,
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'white',
+  },
+
   scrollableBox: {
     height: 250,
     width: 100,
@@ -146,9 +231,9 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
   },
   textBold: {
-    fontFamily: FontType.Bold,
+    fontFamily: FontType.ExtraBold,
     color: 'white',
-    fontSize: 22,
+    fontSize: 23,
   },
   backbuttonHolder: {
     position: 'absolute',

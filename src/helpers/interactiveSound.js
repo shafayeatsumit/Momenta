@@ -29,20 +29,22 @@ export default class InhaleExhaleSound {
 
   startInhaleSound = () => {
     this.inhaleSound.play();
-    this.fadeIn(250, this.inhaleSound);
+    this.inhaleSound.setVolume(1);
+    // this.fadeIn(10, this.inhaleSound);
   };
 
-  stopExhaleSound = () => {
-    this.fadeOut(250, this.exhaleSound);
+  stopExhaleSound = (duration) => {
+    this.fadeOut(duration, this.exhaleSound);
   };
 
   startExhaleSound = () => {
     this.exhaleSound.play();
-    this.fadeIn(250, this.exhaleSound);
+    this.exhaleSound.setVolume(1);
+    // this.fadeIn(10, this.exhaleSound);
   };
 
-  stopInhaleSound = () => {
-    this.fadeOut(250, this.inhaleSound);
+  stopInhaleSound = (duration) => {
+    this.fadeOut(duration, this.inhaleSound);
   };
 
   fadeOut(duration, file) {

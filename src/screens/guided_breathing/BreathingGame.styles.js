@@ -23,14 +23,14 @@ const styles = StyleSheet.create({
     height: 160,
     width: 160,
     justifyContent: 'center',
-    marginBottom: 80,
+    // marginBottom: 80,
   },
   centerText: {
     color: 'white',
     fontSize: 16,
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
-    marginBottom: 80,
+    // marginBottom: 80,
   },
 
   instructionTextHolder: {

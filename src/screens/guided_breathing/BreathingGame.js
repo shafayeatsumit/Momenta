@@ -5,9 +5,12 @@ import {
   Text,
   Platform,
   TouchableOpacity,
+  Easing,
   Image,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import LottieView from 'lottie-react-native';
+
 import styles from './BreathingGame.styles';
 import BreathingGameCircle from './BreathingGameCircle';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
@@ -27,7 +30,7 @@ class BreathingGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      measurementType: 'exhale',
+      measurementType: 'inhale',
       instructionText: '',
       timer: 0,
       finished: false,
@@ -71,6 +74,7 @@ class BreathingGame extends Component {
     this.fullBreathTaken = 0;
     this.breathTaken = 0;
     this.unmounted = false;
+    this.animatedProgress = new Animated.Value(0);
   }
 
   circleExpandEnd = () => {
@@ -80,24 +84,34 @@ class BreathingGame extends Component {
   };
 
   expand = () => {
-    Animated.timing(this.animatedCircleRadius, {
-      toValue: 158,
+    // Animated.timing(this.animatedCircleRadius, {
+    //   toValue: 158,
+    //   duration: this.inhaleTime,
+    //   useNativeDriver: true,
+    // }).start(this.circleExpandEnd);
+    Animated.timing(this.animatedProgress, {
+      toValue: 0.5,
       duration: this.inhaleTime,
-      useNativeDriver: true,
+      easing: Easing.linear,
     }).start(this.circleExpandEnd);
   };
 
-  exhaleCompleted = () => {
+  circleShrinkEnd = () => {
     this.breathCompleted();
     this.breathTaken = this.breathTaken + 1;
   };
 
   shrink = () => {
-    Animated.timing(this.animatedCircleRadius, {
-      toValue: 85,
+    // Animated.timing(this.animatedCircleRadius, {
+    //   toValue: 85,
+    //   duration: this.exhaleTime,
+    //   useNativeDriver: true,
+    // }).start(this.circleShrinkEnd);
+    Animated.timing(this.animatedProgress, {
+      toValue: 1,
       duration: this.exhaleTime,
-      useNativeDriver: true,
-    }).start(this.exhaleCompleted);
+      easing: Easing.linear,
+    }).start(this.circleShrinkEnd);
   };
 
   measureTime = () => {
@@ -106,17 +120,17 @@ class BreathingGame extends Component {
 
   startInhaleSound = () => {
     this.inhaleSoundId = setTimeout(() => {
-      this.sound.stopInhaleSound();
+      this.sound.stopInhaleSound(this.props.sound.fadeOutDuration);
       clearInterval(this.inhaleSoundId);
-    }, this.inhaleTime - 250);
+    }, this.inhaleTime);
     this.sound.startInhaleSound();
   };
 
   startExhaleSound = () => {
     this.exhaleSoundId = setTimeout(() => {
-      this.sound.stopExhaleSound();
+      this.sound.stopExhaleSound(this.props.sound.fadeOutDuration);
       clearTimeout(this.exhaleSoundId);
-    }, this.exhaleTime - 250);
+    }, this.exhaleTime);
     this.sound.startExhaleSound();
   };
 
@@ -174,7 +188,6 @@ class BreathingGame extends Component {
   };
 
   startInhale = (exhaleTime) => {
-    console.log('start INhlae');
     if (this.unmounted) {
       return;
     }
@@ -212,7 +225,8 @@ class BreathingGame extends Component {
     this.animatedListenerId = this.animatedCircleRadius.addListener(
       this.animatedListener,
     );
-    setTimeout(this.startExhale, 1000);
+    this.startStopWatch();
+    setTimeout(this.startInhale, 1000);
     setTimeout(this.playSound, 1000);
   }
 
@@ -240,7 +254,6 @@ class BreathingGame extends Component {
       errorText,
       finished,
     } = this.state;
-    console.log('render');
     const showFinish = finished && !this.holdingScreen;
     const showExhaleText = measurementType === 'exhale';
     const showInhaleText = measurementType === 'inhale';
@@ -257,17 +270,13 @@ class BreathingGame extends Component {
             style={styles.xout}
           />
         </TouchableOpacity>
+        <View style={styles.container}>
+          <LottieView
+            source={require('../../../assets/anims/breath.json')}
+            progress={this.animatedProgress}
+          />
+        </View>
 
-        <ProgressTracker
-          currentTime={timer}
-          targetTime={this.finishBreathingTime}
-          showTimer={true}
-        />
-
-        <BreathingGameCircle
-          animatedRadius={this.animatedCircleRadius}
-          animatedOffSet={this.animatedOffSet}
-        />
         <View style={styles.container}>
           {showErrorMsg ? (
             <View style={styles.errorTextHolder}>

@@ -88,7 +88,8 @@ class ProgressBar extends React.Component {
           borderWidth: this.props.borderWidth,
           borderColor: this.props.borderColor,
           borderRadius: this.props.borderRadius,
-          backgroundColor: this.props.underlyingColor,
+          // backgroundColor: this.props.underlyingColor,
+          backgroundColor: '#151830',
         }}>
         <Animated.View
           style={{
@@ -148,10 +149,10 @@ ProgressBar.defaultProps = {
   barEasing: 'linear',
   barAnimationDuration: 1000,
   backgroundAnimationDuration: 1000,
-  height: 5,
+  height: 3,
   backgroundColor: Colors.buttonBlueDeep,
   backgroundColorOnComplete: null,
-
+  underlyingColor: '#151830',
   borderWidth: 0,
   borderColor: 'transparent',
   borderRadius: 0,

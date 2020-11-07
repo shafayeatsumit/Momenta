@@ -3,7 +3,7 @@ const Colors = {
   // betterBlue: '#13172f',
   betterBlue: '#1B1F37',
   betterBlueLight: '#252a43',
-  buttonBlue: '#528ce2',
+  buttonBlue: '#3C71DE',
   buttonBlueDeep: '#2153cf',
   black: '#323643',
   white: '#FFFFFF',

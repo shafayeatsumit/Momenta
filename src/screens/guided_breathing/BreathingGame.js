@@ -17,6 +17,7 @@ import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
+import ExerciseSettings from '../ExerciseSettings';
 
 class BreathingGame extends Component {
   constructor(props) {
@@ -57,13 +58,20 @@ class BreathingGame extends Component {
   render() {
     const {timer} = this.state;
     return (
-      <View>
+      <View style={{flex: 1}}>
         <ProgressTracker
           currentTime={timer}
           targetTime={this.finishDuration}
           showTimer={true}
           close={this.props.handleQuit}
         />
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 0,
+          }}>
+          <ExerciseSettings />
+        </View>
       </View>
     );
   }

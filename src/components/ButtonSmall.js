@@ -2,28 +2,28 @@ import React from 'react';
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {Colors, FontType} from '../helpers/theme';
 
-const BigButton = ({title, containerStyle, titleStyle, handlePress}) => (
+const ButtonSmall = ({title, containerStyle, titleStyle, handlePress}) => (
   <TouchableOpacity
-    style={StyleSheet.flatten([styles.bigButton, containerStyle])}
+    style={StyleSheet.flatten([styles.buttonSmall, containerStyle])}
     onPress={handlePress}>
     <Text style={StyleSheet.flatten([styles.title, titleStyle])}>{title}</Text>
   </TouchableOpacity>
 );
-export default BigButton;
+export default ButtonSmall;
 
 const styles = StyleSheet.create({
-  bigButton: {
+  buttonSmall: {
     height: 48,
-    width: 263,
-    borderRadius: 8,
+    width: 93,
+    borderRadius: 7,
     backgroundColor: Colors.buttonBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 17,
+    fontSize: 16,
     textAlign: 'center',
   },
 });

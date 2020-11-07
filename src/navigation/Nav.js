@@ -2,14 +2,11 @@ import React, {Component} from 'react';
 import {StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/home/Home';
-import OnboardingIntro from '../screens/onboarding/IntroFlow';
-import CheckinTutorial from '../screens/onboarding/CheckinTutorial';
 import FixedBreathingScreen from '../screens/fixed_breathing/FixedBreathing';
 
 import BreathingTypeScreen from '../screens/breathing_type/BreathingType';
 import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
-import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Colors} from '../helpers/theme';
@@ -54,8 +51,6 @@ class Nav extends Component {
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />
-          <Stack.Screen name="CheckinTutorial" component={CheckinTutorial} />
-          <Stack.Screen name="OnboardingIntro" component={OnboardingIntro} />
           <Stack.Screen
             name="GuidedBreathing"
             component={GuidedBreathingScreen}

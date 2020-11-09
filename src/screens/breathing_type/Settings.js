@@ -31,6 +31,7 @@ const Settings = ({type, goBack, sound}) => {
   };
 
   const handleTimeSelect = (duration) => {
+    console.log('duration _LLLL', duration);
     if (breathing.type === 'guided') {
       dispatch({type: 'SELECT_GUIDED_TIME', breathingTime: duration});
     } else {

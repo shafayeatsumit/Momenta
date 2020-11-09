@@ -6,12 +6,7 @@ import analytics from '@react-native-firebase/analytics';
 
 import styles from './CheckInBreath.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
-import {
-  inhaleCalm,
-  inhaleRelax,
-  inhalePrepForSleep,
-  inhaleInnterQuiet,
-} from '../../helpers/checkinInhale';
+import {inhaleCalm, inhalePrepForSleep} from '../../helpers/checkinInhale';
 
 const INITIAL_MESSAGE = 'Hold below during your\n next';
 
@@ -101,10 +96,6 @@ class CheckInBreath extends Component {
     const {breathingId} = this.props;
     if (breathingId === 'calm') {
       return inhaleCalm(exhaleTime);
-    } else if (breathingId === 'relax') {
-      return inhaleRelax(exhaleTime);
-    } else if (breathingId === 'inner_quiet') {
-      return inhaleInnterQuiet(exhaleTime);
     } else {
       return inhalePrepForSleep(exhaleTime);
     }

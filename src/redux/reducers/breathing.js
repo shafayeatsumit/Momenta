@@ -3,7 +3,6 @@ const initialState = {
   name: 'Calm',
   type: 'guided',
   breathingTime: 1,
-  recommendedTime: 1,
 };
 
 const breathing = (state = initialState, action) => {
@@ -15,7 +14,6 @@ const breathing = (state = initialState, action) => {
         name,
         type,
         breathingTime,
-        recommendedTime,
         name_line_one,
         name_line_two,
         description,
@@ -26,7 +24,6 @@ const breathing = (state = initialState, action) => {
         name,
         type,
         breathingTime,
-        recommendedTime,
         name_line_one,
         name_line_two,
         description,

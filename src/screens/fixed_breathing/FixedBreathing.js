@@ -17,7 +17,7 @@ import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import ProgressTracker from '../../components/ProgressTracker';
 import {connect} from 'react-redux';
 import SoundOptions from '../../helpers/soundOptions';
-import InteractiveSound from '../../helpers/interactiveSound';
+import InteractiveSound from '../../helpers/SoundPlayer';
 
 class FixedBreathing extends Component {
   constructor(props) {

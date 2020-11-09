@@ -2,10 +2,11 @@ const Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 
 export default class InhaleExhaleSound {
-  constructor(inhaleSound, exhaleSound) {
-    this.inhaleSoundFile = inhaleSound;
-    this.exhaleSoundFile = exhaleSound;
-
+  constructor() {
+    this.inhaleSoundFile = 'swell_inhale_three.mp3';
+    this.exhaleSoundFile = 'swell_exhale_three.mp3';
+    this.mute = false;
+    this.started = false;
     this.inhaleSound = new Sound(
       this.inhaleSoundFile,
       Sound.MAIN_BUNDLE,
@@ -22,29 +23,48 @@ export default class InhaleExhaleSound {
     );
   }
 
-  stopAllSound = () => {
-    this.inhaleSound.stop();
-    this.exhaleSound.stop();
+  startInhaleSound = () => {
+    if (this.mute) {
+      this.inhaleSound.setVolume(0);
+      console.log('mute inhale start');
+    } else {
+      this.inhaleSound.setVolume(1);
+      this.inhaleSound.play();
+      console.log('on inhale start');
+    }
   };
 
-  startInhaleSound = () => {
-    this.inhaleSound.play();
-    this.inhaleSound.setVolume(1);
-    // this.fadeIn(10, this.inhaleSound);
+  startExhaleSound = () => {
+    if (this.mute) {
+      this.exhaleSound.setVolume(0);
+      console.log('mute exhale start');
+    } else {
+      this.exhaleSound.setVolume(1);
+      this.exhaleSound.play();
+      console.log('on exhale start');
+    }
   };
 
   stopExhaleSound = (duration) => {
     this.fadeOut(duration, this.exhaleSound);
   };
 
-  startExhaleSound = () => {
-    this.exhaleSound.play();
-    this.exhaleSound.setVolume(1);
-    // this.fadeIn(10, this.exhaleSound);
-  };
-
   stopInhaleSound = (duration) => {
     this.fadeOut(duration, this.inhaleSound);
+  };
+
+  setVolumeToZero = () => {
+    this.mute = true;
+    this.exhaleSound.setVolume(0);
+    this.inhaleSound.setVolume(0);
+    // this.exhaleSound.stop();
+    // this.inhaleSound.stop();
+  };
+
+  setVolumeToOne = () => {
+    this.mute = false;
+    this.exhaleSound.setVolume(1);
+    this.inhaleSound.setVolume(1);
   };
 
   fadeOut(duration, file) {
@@ -59,11 +79,10 @@ export default class InhaleExhaleSound {
       }
       // Change player volume
       const volume = remaining / duration;
-      // console.log(val)
       file.setVolume(volume);
       requestAnimationFrame(doFadeOut);
     };
-    doFadeOut();
+    !this.mute && doFadeOut();
   }
 
   fadeIn(duration, file) {

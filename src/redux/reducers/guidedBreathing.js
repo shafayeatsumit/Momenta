@@ -6,9 +6,6 @@ const initialState = {
   targetInhale: 0,
   targetExhale: 0,
   firstThreshold: 60 * 1000,
-  secondThreshold: 0,
-  secondTargetInhale: 0,
-  secondTargetExhale: 0,
   breathingTime: 1,
 };
 

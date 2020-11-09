@@ -7,7 +7,13 @@ import AnimatedProgress from './AnimatedProgress';
 
 const twoDigitPadding = (num) => String(num).padStart(2, '0');
 
-const ProgressTracker = ({currentTime, targetTime, showTimer, close}) => {
+const ProgressTracker = ({
+  currentTime,
+  targetTime,
+  showTimer,
+  close,
+  title,
+}) => {
   const currentTimeMin = Math.floor(currentTime / 60);
   const currentTimeSec = currentTime % 60;
   let currentTimePercent = (100 * currentTime) / targetTime;
@@ -24,7 +30,7 @@ const ProgressTracker = ({currentTime, targetTime, showTimer, close}) => {
           />
         </TouchableOpacity>
         <View style={styles.titleHolder}>
-          <Text style={styles.title}>Calm</Text>
+          <Text style={styles.title}>{title}</Text>
         </View>
 
         <View style={styles.timerContainer}>
@@ -65,10 +71,11 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'white',
-    fontSize: 18,
-    fontFamily: FontType.Medium,
+    fontSize: 15,
+    fontFamily: FontType.Regular,
     width: '100%',
     textAlign: 'center',
+    paddingRight: 5,
   },
   time: {
     color: 'rgb(120,121,137)',

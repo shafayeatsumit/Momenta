@@ -55,14 +55,7 @@ class BreathingType extends Component {
   handleStart = () => {
     const {breathing, navigation, userInfo} = this.props;
     analytics().logEvent('button_push', {title: 'Start'});
-    if (!userInfo.onboarded) {
-      const breathingType =
-        breathing.type === 'fixed' ? 'FixedBreathing' : 'GuidedBreathing';
-      navigation.navigate('CheckinTutorial', {
-        navRoute: breathingType,
-      });
-      return;
-    }
+
     breathing.type === 'fixed'
       ? navigation.navigate('FixedBreathing')
       : navigation.navigate('GuidedBreathing');

@@ -4,15 +4,6 @@ const calmTarget = (calibExhale) => {
   return {targetInhale, targetExhale};
 };
 
-const relaxTarget = (calibExhale) => {
-  const targetExhale = Math.min(calibExhale * 2.5, 6);
-  const targetInhale = targetExhale / 1.75;
-  return {
-    targetInhale,
-    targetExhale,
-  };
-};
-
 const prepareForSleepTarget = (calibExhale) => {
   const targetExhale = Math.min(calibExhale * 3, 8);
   const targetInhale = targetExhale / 2.75;
@@ -28,8 +19,6 @@ export const setDynamicTarget = (exhale, inhale) => (dispatch, getState) => {
   let target;
   if (guidedBreathing.id === 'calm') {
     target = calmTarget(exhale);
-  } else if (guidedBreathing.id === 'relax') {
-    target = relaxTarget(exhale);
   } else if (guidedBreathing.id === 'prepare_for_sleep') {
     target = prepareForSleepTarget(exhale);
   }

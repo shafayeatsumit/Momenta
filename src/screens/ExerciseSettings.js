@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import ButtonBig from '../components/ButtonBig';
 import ButtonSmall from '../components/ButtonSmall';
 import {useSelector, useDispatch} from 'react-redux';
 import {ScreenWidth} from '../helpers/constants/common';
+import {FontType, Colors} from '../helpers/theme';
 
 const ExerciseSettings = ({
   playButtonTitle,
@@ -11,6 +12,7 @@ const ExerciseSettings = ({
   soundStatus,
   timesUp,
   handleMusicButton,
+  goToCalibration,
 }) => {
   const breathing = useSelector((state) => state.breathing);
   const dispatch = useDispatch();
@@ -20,8 +22,17 @@ const ExerciseSettings = ({
       : dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
   };
   const showTimePicker = playButtonTitle.toLowerCase() === 'start';
+  const showCalibration = breathing.type === 'guided' && showTimePicker;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, showCalibration && {height: 220}]}>
+      {showCalibration && (
+        <TouchableOpacity
+          style={styles.calibrateTextHolder}
+          onPress={goToCalibration}>
+          <Text style={styles.calibrateText}>Calibrate this exercise</Text>
+        </TouchableOpacity>
+      )}
       {showTimePicker && (
         <View style={styles.smallButtonContainer}>
           <ButtonSmall title="1 min" handlePress={() => handleTimeSelect(1)} />
@@ -51,11 +62,25 @@ export default ExerciseSettings;
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
+    height: 180,
     width: ScreenWidth,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-around',
     // backgroundColor: 'yellow',
+  },
+  calibrateTextHolder: {
+    height: 40,
+    width: 180,
+    alignSelf: 'center',
+    // backgroundColor: 'yellow',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  calibrateText: {
+    fontSize: 14,
+    fontFamily: FontType.Regular,
+    color: Colors.buttonBlue,
   },
   smallButtonContainer: {
     height: 50,

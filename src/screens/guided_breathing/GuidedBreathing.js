@@ -16,8 +16,8 @@ class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCheckInBreath: true,
-      showBreathingGame: false,
+      showCheckInBreath: false,
+      showBreathingGame: true,
       buildingCustomExercise: false,
       finished: false,
       showAnimation: false,
@@ -36,7 +36,15 @@ class GuidedBreathing extends Component {
   };
 
   showBreathingGame = () => {
-    this.setState({buildingCustomExercise: false, showBreathingGame: true});
+    this.setState({
+      buildingCustomExercise: false,
+      showCheckInBreath: false,
+      showBreathingGame: true,
+    });
+  };
+
+  showCalibration = () => {
+    this.setState({showBreathingGame: false, showCheckInBreath: true});
   };
 
   buildCustomExercise = (exhaleTime, inhaleTime) => {
@@ -110,6 +118,7 @@ class GuidedBreathing extends Component {
           <CheckInBreath
             buildCustomExercise={this.buildCustomExercise}
             breathId={guidedBreathing.id}
+            goBack={this.showBreathingGame}
           />
         )}
         {buildingCustomExercise && (
@@ -119,6 +128,7 @@ class GuidedBreathing extends Component {
           <BreathingGame
             handleQuit={this.handleQuit}
             handleFinish={this.handleFinish}
+            goToCalibration={this.showCalibration}
           />
         )}
       </>

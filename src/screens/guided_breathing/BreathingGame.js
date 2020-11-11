@@ -89,6 +89,7 @@ class BreathingGame extends Component {
 
   startExhaleSound = () => {
     const fadeOutDuration = 1000;
+    console.log('inhale', this.exhaleTime);
     this.exhaleSoundId = setTimeout(() => {
       this.sound.stopExhaleSound(fadeOutDuration);
       clearTimeout(this.exhaleSoundId);
@@ -134,6 +135,7 @@ class BreathingGame extends Component {
   startInhale = () => {
     this.setState({breathingType: 'inhale'});
     this.startInhaleSound();
+    console.log('inhale', this.inhaleTime);
     Animated.timing(this.animatedProgress, {
       toValue: 1,
       duration: this.inhaleTime,
@@ -168,6 +170,7 @@ class BreathingGame extends Component {
       this.startTimer();
       if (playButtonTitle === 'continue') {
         this.resumeExercise();
+        this.handleMusicButton();
         this.sound.setVolumeToOne();
       }
     } else {
@@ -203,7 +206,7 @@ class BreathingGame extends Component {
       playButtonTitle,
       timeIsUp,
     } = this.state;
-    const {guidedBreathing} = this.props;
+    const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
     const centerText =
       breathingType[0].toUpperCase() + breathingType.substring(1);
@@ -240,6 +243,7 @@ class BreathingGame extends Component {
             soundStatus={soundStatus}
             handleMusicButton={this.handleMusicButton}
             timeIsUp={timeIsUp}
+            goToCalibration={goToCalibration}
           />
         </View>
       </View>

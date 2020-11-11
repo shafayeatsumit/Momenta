@@ -3,10 +3,12 @@ import {View, Text, TouchableOpacity, Image, Platform} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 import analytics from '@react-native-firebase/analytics';
-
+import BullsEye from '../../components/BullsEye';
 import styles from './CheckInBreath.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {inhaleCalm, inhalePrepForSleep} from '../../helpers/checkinInhale';
+import CheckinError from './CheckinError';
+import CheckinResult from './CheckinResult';
 
 const INITIAL_MESSAGE = 'Hold below during your\n next';
 
@@ -18,8 +20,9 @@ class CheckInBreath extends Component {
       inhaleTimeRecorded: 0,
       exhaleTimeRecorded: 0,
       touchDisabled: false,
-      initialMessage: INITIAL_MESSAGE,
-      instructionText: '',
+      centerText: INITIAL_MESSAGE,
+      error: '',
+      showResult: false,
     };
     this.pressInTime = null;
     this.pressOutTime = null;
@@ -35,18 +38,22 @@ class CheckInBreath extends Component {
     });
   };
 
-  measureTime = (time) => {
-    return ((new Date() - time) / 1000).toFixed(2);
-  };
-
-  measurmentCompleted = (exhaleTime, inhaleTime) => {
-    this.exhaleTimer && clearTimeout(this.exhaleTimer);
-    this.tenSecTimer && clearTimeout(this.tenSecTimer);
+  resetCalibration = () => {
+    this.pressInTime = null;
+    this.pressOutTime = null;
     this.setState({
       measuring: false,
-      touchDisabled: true,
+      inhaleTimeRecorded: 0,
+      exhaleTimeRecorded: 0,
+      touchDisabled: false,
+      centerText: INITIAL_MESSAGE,
+      error: '',
+      showResult: false,
     });
-    this.props.buildCustomExercise(exhaleTime, inhaleTime);
+  };
+
+  measureTime = (time) => {
+    return ((new Date() - time) / 1000).toFixed(2);
   };
 
   startExhalePulse = () => {
@@ -61,14 +68,14 @@ class CheckInBreath extends Component {
     }, 900);
   };
 
-  moreThanTenSec = () => {
+  moreThanTenSec = (breathingType) => {
     this.tenSecTimer = setTimeout(() => {
-      const errorMessage = 'Exhale must\nbe less than 10 seconds';
+      const errorMessage = `${breathingType} must\nbe less than 10 seconds`;
       this.setState({
         measuring: false,
         circleText: '',
-        instructionText: errorMessage,
-        initialMessage: INITIAL_MESSAGE,
+        error: errorMessage,
+        centerText: INITIAL_MESSAGE,
       });
       this.resetTime();
       clearTimeout(this.tenSecTimer);
@@ -76,16 +83,15 @@ class CheckInBreath extends Component {
     }, 10000);
   };
 
-  threeSecsError = () => {
-    const errorMessage = 'Exhale must be\nat least 3 seconds long';
-
+  twoSecsError = (breathingType) => {
+    const errorMessage = `${breathingType} must be\nat least 2 seconds long`;
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.exhaleTimer && clearTimeout(this.exhaleTimer);
     this.setState(
       {
-        instructionText: errorMessage,
+        error: errorMessage,
         measuring: false,
-        initialMessage: INITIAL_MESSAGE,
+        centerText: INITIAL_MESSAGE,
       },
       this.resetTime,
     );
@@ -104,34 +110,68 @@ class CheckInBreath extends Component {
   handlePressOut = () => {
     analytics().logEvent('calibration_release');
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
-    this.moreThanTenSec();
+    this.moreThanTenSec('Inhale');
     const timeTakenExhale = Number(this.measureTime(this.pressInTime));
     // here I have to work
-    if (timeTakenExhale < 3) {
-      this.threeSecsError();
+    if (timeTakenExhale < 2) {
+      this.twoSecsError('Exhale');
       return;
     }
     if (timeTakenExhale > 10) {
       return;
     }
-    const calibrationInhale = this.getCalibratoinInhale(timeTakenExhale);
-    this.measurmentCompleted(timeTakenExhale, calibrationInhale);
     this.pressOutTime = new Date();
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
+    console.log('time taken exhale', timeTakenExhale);
+    this.setState({
+      exhaleTimeRecorded: timeTakenExhale,
+      // centerText: INHALE_MEASUREMENT_MSG,
+    });
+  };
+
+  buildExercise = () => {
+    const {exhaleTimeRecorded} = this.state;
+    const inhaleTime = this.getCalibratoinInhale(exhaleTimeRecorded);
+    console.log('building exercise', inhaleTime, exhaleTimeRecorded);
+    this.props.buildCustomExercise(exhaleTimeRecorded, inhaleTime);
+  };
+
+  measureInhaleTime = () => {
+    const timeTakenInhale = Number(this.measureTime(this.pressOutTime));
+
+    if (timeTakenInhale < 2) {
+      this.twoSecsError('Inhale');
+      return;
+    }
+    if (timeTakenInhale > 10) {
+      return;
+    }
+    this.tenSecTimer && clearTimeout(this.tenSecTimer);
+    this.setState({
+      inhaleTimeRecorded: timeTakenInhale,
+      showResult: true,
+      measuring: false,
+    });
+    // clear timers;
+    this.exhaleTimer && clearTimeout(this.exhaleTimer);
+    this.tenSecTimer && clearTimeout(this.tenSecTimer);
   };
 
   handlePressIn = () => {
     analytics().logEvent('calibration_hold');
     this.setState({
       measuring: true,
-      instructionText: '',
-      initialMessage: '',
+      error: '',
+      centerText: '',
     });
     this.animation.play();
     this.vibrateLoop();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
-    this.moreThanTenSec();
+    this.moreThanTenSec('Exhale');
     this.pressInTime = new Date();
+    if (this.pressOutTime) {
+      this.measureInhaleTime();
+    }
   };
 
   componentDidUpdate(prevProps) {
@@ -149,49 +189,80 @@ class CheckInBreath extends Component {
   }
 
   render() {
-    const {instructionText, measuring, initialMessage} = this.state;
-    const hasInstruction = !!instructionText;
+    const {
+      error,
+      measuring,
+      centerText,
+      exhaleTimeRecorded,
+      inhaleTimeRecorded,
+      showResult,
+    } = this.state;
+    const {goBack} = this.props;
+    const hasError = !!error;
+    const showInhaleInstruction = measuring && exhaleTimeRecorded;
+    const showExhaleInsturction = measuring && !exhaleTimeRecorded;
+
+    if (hasError) {
+      return (
+        <CheckinError
+          error={error}
+          handleRedo={this.resetCalibration}
+          handleSkip={goBack}
+        />
+      );
+    }
+
+    if (showResult) {
+      return (
+        <CheckinResult
+          inhaleTime={inhaleTimeRecorded}
+          exhaleTime={exhaleTimeRecorded}
+          handleRedo={this.resetCalibration}
+          handleUse={this.buildExercise}
+        />
+      );
+    }
+
     return (
       <View style={styles.container}>
-        <View style={styles.circleHolder}>
-          <View style={styles.circle}>
-            {hasInstruction ? (
-              <View style={styles.instructionTextHolder}>
-                <Text style={styles.instructionText}>{instructionText}</Text>
-              </View>
-            ) : (
-              <>
-                {measuring ? (
-                  <Text style={styles.text}>
-                    Measuring{'\n'}your exhale time
-                  </Text>
-                ) : (
-                  <Text style={styles.text}>Ready</Text>
-                )}
-              </>
-            )}
-            <LottieView
-              source={require('../../../assets/anims/measuring.json')}
-              autoPlay={false}
-              loop
-              style={styles.animation}
-              ref={(animation) => {
-                this.animation = animation;
-              }}
-            />
-          </View>
+        <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
+          <Image
+            source={require('../../../assets/icons/arrow_left.png')}
+            style={styles.backbutton}
+          />
+        </TouchableOpacity>
+
+        {showInhaleInstruction ? (
+          <Text style={styles.text}>Tap When done inhaling</Text>
+        ) : null}
+        {showExhaleInsturction ? (
+          <Text style={styles.text}>
+            Release when done <Text style={styles.boldText}>exhaling</Text>
+          </Text>
+        ) : null}
+        <LottieView
+          source={require('../../../assets/anims/measuring.json')}
+          autoPlay={false}
+          loop
+          style={styles.animation}
+          ref={(animation) => {
+            this.animation = animation;
+          }}
+        />
+        <View style={styles.absolutePosition}>
+          {!measuring && <View style={styles.animationHide} />}
         </View>
-        {!!initialMessage && (
-          <View style={styles.bottomTextHolder} pointerEvents="none">
-            <Text style={styles.bottomText}>
-              {initialMessage} <Text style={styles.bottomTextBold}>exhale</Text>
+        <View style={styles.absolutePosition}>
+          {centerText ? (
+            <Text style={styles.text}>
+              Hold below during your {'\n'}next
+              <Text style={styles.boldText}> exhale</Text>
             </Text>
-            <Image
-              style={styles.targetIcon}
-              source={require('../../../assets/icons/target.png')}
-            />
-          </View>
-        )}
+          ) : null}
+        </View>
+
+        <BullsEye />
+
         <TouchableOpacity
           onPressIn={this.handlePressIn}
           onPressOut={this.handlePressOut}

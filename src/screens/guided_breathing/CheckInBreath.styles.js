@@ -9,12 +9,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  wave: {
-    marginTop: 3,
-    height: 20,
-    width: 20,
-  },
-  contentContainer: {
+  absolutePosition: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -23,40 +18,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  containerBox: {
-    height: 280,
+  animation: {
+    height: 80,
+    width: 80,
+    alignSelf: 'center',
+  },
+  animationHide: {
+    height: 200,
     width: 200,
+    alignSelf: 'center',
+    backgroundColor: Colors.betterBlue,
+    zIndex: 10,
   },
   text: {
-    fontFamily: FontType.SemiBold,
+    fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 16,
+    fontSize: 17,
     textAlign: 'center',
     marginTop: 5,
   },
   boldText: {
-    fontFamily: FontType.ExtraBold,
+    fontFamily: FontType.SemiBold,
     color: Colors.cornflowerBlue,
   },
-  instructionTextHolder: {
-    height: 170,
-    width: 170,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    borderRadius: 170 / 2,
-    backgroundColor: '#1b1f37',
-    position: 'absolute',
-    zIndex: 3,
-  },
-  instructionText: {
-    fontFamily: FontType.Medium,
-    color: 'white',
-    fontSize: 15,
-    textAlign: 'center',
-    paddingTop: 12,
-    lineHeight: 20,
-  },
+
   touchableArea: {
     position: 'absolute',
     bottom: 0,
@@ -64,53 +49,18 @@ const styles = StyleSheet.create({
     right: 0,
     height: ScreenHeight * 0.3,
   },
-  bottomTextHolder: {
+  backbuttonHolder: {
     position: 'absolute',
-    alignSelf: 'center',
-    bottom: 0,
-    height: 160,
-    width: ScreenWidth,
+    top: 20,
+    left: 20,
+    height: 45,
+    width: 45,
+    zIndex: 10,
   },
-  targetIcon: {
-    alignSelf: 'center',
-    height: 220,
-    width: 220,
-    position: 'absolute',
-    bottom: -120,
-  },
-  bottomText: {
-    fontFamily: FontType.Medium,
-    color: 'white',
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  bottomTextBold: {
-    fontFamily: FontType.ExtraBold,
-    color: Colors.cornflowerBlue,
-  },
-  circleHolder: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circle: {
-    alignSelf: 'center',
-    justifyContent: 'center',
-    height: 170,
-    width: 170,
-    borderRadius: 170 / 2,
-    backgroundColor: '#1b1f37',
-    marginBottom: 80,
-    zIndex: 5,
-  },
-  animation: {
-    height: 50,
-    width: 50,
-    alignSelf: 'center',
+  backbutton: {
+    height: 18,
+    width: 18,
+    tintColor: 'white',
   },
 });
 export default styles;

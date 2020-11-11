@@ -14,8 +14,8 @@ export default ButtonSmall;
 const styles = StyleSheet.create({
   buttonSmall: {
     height: 48,
-    width: 93,
-    borderRadius: 7,
+    width: 100,
+    borderRadius: 5,
     backgroundColor: Colors.buttonBlue,
     justifyContent: 'center',
     alignItems: 'center',

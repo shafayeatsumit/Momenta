@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   Easing,
   Image,
+  Modal,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 
 import styles from './BreathingGame.styles';
 import BreathingGameCircle from './BreathingGameCircle';
+import BreathingSettings from '../BreathingSettings';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
@@ -34,7 +36,7 @@ class BreathingGame extends Component {
       breathingType: 'exhale',
       timeIsUp: false,
       playButtonTitle: 'start',
-      soundStatus: true,
+      showSettings: false,
     };
     const {
       targetExhale,
@@ -162,6 +164,12 @@ class BreathingGame extends Component {
     this.props.handleFinish();
   };
 
+  handleSettings = () => {
+    this.setState((prevState) => ({
+      showSettings: !prevState.showSettings,
+    }));
+  };
+
   handlePlayPause = () => {
     const {playButtonTitle} = this.state;
     playButtonTitle === 'start' && this.startExhale();
@@ -170,7 +178,7 @@ class BreathingGame extends Component {
       this.startTimer();
       if (playButtonTitle === 'continue') {
         this.resumeExercise();
-        this.handleMusicButton();
+
         this.sound.setVolumeToOne();
       }
     } else {
@@ -178,17 +186,6 @@ class BreathingGame extends Component {
       this.stopTimer();
       this.pauseExercise();
       this.sound.setVolumeToZero();
-    }
-  };
-
-  handleMusicButton = () => {
-    const {soundStatus} = this.state;
-    if (soundStatus) {
-      this.setState({soundStatus: false});
-      this.sound.setVolumeToZero();
-    } else {
-      this.setState({soundStatus: true});
-      this.sound.setVolumeToOne();
     }
   };
 
@@ -201,17 +198,27 @@ class BreathingGame extends Component {
   render() {
     const {
       timer,
-      soundStatus,
       breathingType,
       playButtonTitle,
       timeIsUp,
+      showSettings,
     } = this.state;
+    console.log('show settings', showSettings);
     const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
     const centerText =
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
+
+    if (showSettings) {
+      return (
+        <Modal animationType="slide" transparent={true} visible={showSettings}>
+          <BreathingSettings close={this.handleSettings} />
+        </Modal>
+      );
+    }
+
     return (
       <View style={styles.main}>
         <ProgressTracker
@@ -240,10 +247,9 @@ class BreathingGame extends Component {
             handlePlayPause={
               timeIsUp ? this.handleFinish : this.handlePlayPause
             }
-            soundStatus={soundStatus}
-            handleMusicButton={this.handleMusicButton}
             timeIsUp={timeIsUp}
             goToCalibration={goToCalibration}
+            showSettings={this.handleSettings}
           />
         </View>
       </View>

@@ -9,10 +9,8 @@ import {FontType, Colors} from '../helpers/theme';
 const ExerciseSettings = ({
   playButtonTitle,
   handlePlayPause,
-  soundStatus,
-  timesUp,
-  handleMusicButton,
   goToCalibration,
+  showSettings,
 }) => {
   const breathing = useSelector((state) => state.breathing);
   const dispatch = useDispatch();
@@ -22,8 +20,14 @@ const ExerciseSettings = ({
       : dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
   };
   const showTimePicker = playButtonTitle.toLowerCase() === 'start';
+  const showOptions = playButtonTitle.toLowerCase() !== 'finish';
   const showCalibration = breathing.type === 'guided' && showTimePicker;
-
+  const bigButtonColor =
+    playButtonTitle.toLowerCase() === 'start'
+      ? Colors.buttonBlue
+      : Colors.betterBlue;
+  const bigButtonTitleColor =
+    playButtonTitle.toLowerCase() === 'start' ? 'white' : Colors.buttonBlue;
   return (
     <View style={[styles.container, showCalibration && {height: 220}]}>
       {showCalibration && (
@@ -41,19 +45,22 @@ const ExerciseSettings = ({
         </View>
       )}
       <View style={styles.bottomHolder}>
-        <ButtonBig title={playButtonTitle} handlePress={handlePlayPause} />
-        <TouchableOpacity
-          style={styles.soundHolder}
-          onPress={handleMusicButton}>
-          <Image
-            style={styles.sound}
-            source={
-              soundStatus
-                ? require('../../assets/icons/music.png')
-                : require('../../assets/icons/no_music.png')
-            }
-          />
-        </TouchableOpacity>
+        {showOptions ? (
+          <TouchableOpacity style={styles.optionsHolder} onPress={showSettings}>
+            <Image
+              style={styles.options}
+              source={require('../../assets/icons/options.png')}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.optionsHolder} />
+        )}
+        <ButtonBig
+          title={playButtonTitle}
+          handlePress={handlePlayPause}
+          containerStyle={[styles.bigButton, {backgroundColor: bigButtonColor}]}
+          titleStyle={{color: bigButtonTitleColor}}
+        />
       </View>
     </View>
   );
@@ -84,31 +91,34 @@ const styles = StyleSheet.create({
   },
   smallButtonContainer: {
     height: 50,
-    width: ScreenWidth * 0.85,
+    width: ScreenWidth * 0.8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignSelf: 'center',
+    // backgroundColor: 'red',
+  },
+  bigButton: {
+    width: 220,
   },
   bottomHolder: {
     flexDirection: 'row',
     alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     bottom: 35,
+    width: ScreenWidth * 0.8,
     position: 'absolute',
+    // backgroundColor: 'red',
   },
-  soundHolder: {
-    height: 60,
-    width: 60,
-    alignSelf: 'center',
+  optionsHolder: {
+    height: 50,
+    width: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 10,
-    // backgroundColor: 'yellow',
   },
-  sound: {
-    height: 25,
+  options: {
     width: 25,
-    tintColor: 'white',
+    resizeMode: 'contain',
+    height: 25,
+    tintColor: '#D8D8D8',
   },
 });

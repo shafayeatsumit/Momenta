@@ -5,6 +5,14 @@ const INIT_STATE = {
   name: null,
   soundOn: true,
   onboarded: false,
+  calm_sound: true,
+  calm_vibration: true,
+  prepare_for_sleep_sound: true,
+  prepare_for_sleep_vibration: true,
+  box_sound: true,
+  box_vibration: true,
+  four_seven_eight_sound: true,
+  four_seven_eight_vibration: true,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -18,20 +26,17 @@ const loginInfo = (state = INIT_STATE, action) => {
         name,
         userId,
       };
-    case 'START_SOUND':
+    case 'TOGGLE_SOUND':
+      const soundName = action.name;
       return {
         ...state,
-        soundOn: true,
+        [soundName]: !state[soundName],
       };
-    case 'STOP_SOUND':
+    case 'TOGGLE_VIBRATION':
+      const vibrationName = action.name;
       return {
         ...state,
-        soundOn: false,
-      };
-    case 'ONBOARDING_DONE':
-      return {
-        ...state,
-        onboarded: true,
+        [vibrationName]: !state[vibrationName],
       };
     default:
       return state;

@@ -30,18 +30,15 @@ export default class InhaleExhaleSound {
     } else {
       this.inhaleSound.setVolume(1);
       this.inhaleSound.play();
-      console.log('on inhale start');
     }
   };
 
   startExhaleSound = () => {
     if (this.mute) {
       this.exhaleSound.setVolume(0);
-      console.log('mute exhale start');
     } else {
       this.exhaleSound.setVolume(1);
       this.exhaleSound.play();
-      console.log('on exhale start');
     }
   };
 
@@ -53,18 +50,18 @@ export default class InhaleExhaleSound {
     this.fadeOut(duration, this.inhaleSound);
   };
 
-  setVolumeToZero = () => {
+  muteSound = () => {
     this.mute = true;
     this.exhaleSound.setVolume(0);
     this.inhaleSound.setVolume(0);
-    // this.exhaleSound.stop();
-    // this.inhaleSound.stop();
+    this.exhaleSound.stop();
+    this.inhaleSound.stop();
   };
 
-  setVolumeToOne = () => {
+  unmuteSound = () => {
     this.mute = false;
-    this.exhaleSound.setVolume(1);
-    this.inhaleSound.setVolume(1);
+    // this.exhaleSound.setVolume(1);
+    // this.inhaleSound.setVolume(1);
   };
 
   fadeOut(duration, file) {
@@ -92,11 +89,11 @@ export default class InhaleExhaleSound {
       const remaining = end - current;
       if (remaining < 0) {
         // End animation here as there's less than 0 milliseconds left
+        // file.stop();
         return;
       }
       // Change player volume
       const volume = 1 - remaining / duration;
-      // console.log(val)
       file.setVolume(volume);
       requestAnimationFrame(doFadeIn);
     };

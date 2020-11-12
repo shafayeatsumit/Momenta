@@ -6,9 +6,11 @@ import {
   Platform,
   TouchableOpacity,
   Easing,
+  NativeModules,
   Image,
   Modal,
 } from 'react-native';
+import moment from 'moment';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 
@@ -64,7 +66,25 @@ class BreathingGame extends Component {
     this.stopAnimation = false;
     this.animatedProgress = new Animated.Value(0);
     this.sound = new SoundPlayer();
+    // inhlae or exhale estimated end time.
+    this.breathingWillEnd = null;
+    this.pauseTime = null;
+    // sound & vibration settings
   }
+
+  getSoundStatus = () => {
+    const {userInfo} = this.props;
+    const breathingId = this.props.guidedBreathing.id;
+    const soundStatus = userInfo[`${breathingId}_sound`];
+    return soundStatus;
+  };
+
+  getVibrationStatus = () => {
+    const {userInfo} = this.props;
+    const breathingId = this.props.guidedBreathing.id;
+    const vibrationStatus = userInfo[`${breathingId}_vibration`];
+    return vibrationStatus;
+  };
 
   startTimer = () => {
     this.timerId = setInterval(() => {
@@ -90,7 +110,7 @@ class BreathingGame extends Component {
 
   startExhaleSound = () => {
     const fadeOutDuration = 1000;
-    console.log('inhale', this.exhaleTime);
+
     this.exhaleSoundId = setTimeout(() => {
       this.sound.stopExhaleSound(fadeOutDuration);
       clearTimeout(this.exhaleSoundId);
@@ -98,12 +118,19 @@ class BreathingGame extends Component {
     this.sound.startExhaleSound();
   };
 
-  startExhale = () => {
+  startExhale = (resumeDuration) => {
+    this.breathingWillEnd = moment().add(this.exhaleTime, 'milliseconds');
     this.setState({breathingType: 'exhale'});
-    this.startExhaleSound();
+    const soundStatus = this.getSoundStatus();
+    const souldPlaySound = soundStatus && !resumeDuration;
+    souldPlaySound && this.startExhaleSound();
+    const vibrationStatus =
+      this.getVibrationStatus() && Platform.OS === 'android';
+    const duration = resumeDuration || this.exhaleTime;
+    vibrationStatus && NativeModules.AndroidVibration.show(duration, 20);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
-      duration: this.exhaleTime,
+      duration,
       easing: Easing.linear,
     }).start(this.exhaleEnd);
   };
@@ -133,13 +160,18 @@ class BreathingGame extends Component {
     this.sound.startInhaleSound();
   };
 
-  startInhale = () => {
+  startInhale = (resumeDuration) => {
     this.setState({breathingType: 'inhale'});
-    this.startInhaleSound();
-    console.log('inhale', this.inhaleTime);
+    const soundStatus = this.getSoundStatus();
+    // sound enbled and not resumed.
+    const shouldPlaySound = soundStatus && !resumeDuration;
+    shouldPlaySound && this.startInhaleSound();
+    const duration = resumeDuration || this.inhaleTime;
+
+    this.breathingWillEnd = moment().add(this.inhaleTime, 'milliseconds');
     Animated.timing(this.animatedProgress, {
       toValue: 1,
-      duration: this.inhaleTime,
+      duration,
       easing: Easing.linear,
     }).start(this.inhaleEnd);
   };
@@ -151,12 +183,29 @@ class BreathingGame extends Component {
   pauseExercise = () => {
     this.stopAnimation = true;
     Animated.timing(this.animatedProgress).stop();
+    this.sound.muteSound();
+    this.pauseTime = moment();
+    this.setState({playButtonTitle: 'continue'});
+    this.stopTimer();
   };
 
   resumeExercise = () => {
     this.stopAnimation = false;
     const {breathingType} = this.state;
-    breathingType === 'exhale' ? this.startExhale() : this.startInhale();
+    this.setState({playButtonTitle: 'pause'});
+    this.startTimer();
+    this.sound.unmuteSound();
+    // difference between pause and end time.
+    const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
+    breathingType === 'exhale'
+      ? this.startExhale(resumeDuration)
+      : this.startInhale(resumeDuration);
+  };
+
+  startExercise = () => {
+    this.setState({playButtonTitle: 'pause'});
+    this.startTimer();
+    this.startExhale();
   };
 
   handleFinish = () => {
@@ -164,6 +213,10 @@ class BreathingGame extends Component {
   };
 
   handleSettings = () => {
+    const {showSettings} = this.state;
+    if (!showSettings) {
+      this.pauseExercise();
+    }
     this.setState((prevState) => ({
       showSettings: !prevState.showSettings,
     }));
@@ -171,26 +224,23 @@ class BreathingGame extends Component {
 
   handlePlayPause = () => {
     const {playButtonTitle} = this.state;
-    playButtonTitle === 'start' && this.startExhale();
-    if (playButtonTitle === 'start' || playButtonTitle === 'continue') {
-      this.setState({playButtonTitle: 'pause'});
-      this.startTimer();
-      if (playButtonTitle === 'continue') {
-        this.resumeExercise();
-
-        this.sound.setVolumeToOne();
-      }
+    const start = playButtonTitle === 'start';
+    const play = playButtonTitle === 'continue';
+    if (start) {
+      // start exercise
+      this.startExercise();
+    } else if (play) {
+      // resume/continue exercise
+      this.resumeExercise();
     } else {
-      this.setState({playButtonTitle: 'continue'});
-      this.stopTimer();
+      // pause exercise
       this.pauseExercise();
-      this.sound.setVolumeToZero();
     }
   };
 
   componentWillUnmount() {
     clearInterval(this.timerId);
-    this.sound.setVolumeToZero();
+    this.sound.muteSound();
     this.stopAnimation = true;
   }
 
@@ -202,7 +252,6 @@ class BreathingGame extends Component {
       timeIsUp,
       showSettings,
     } = this.state;
-    console.log('show settings', showSettings);
     const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
     const centerText =
@@ -259,6 +308,7 @@ class BreathingGame extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     guidedBreathing: state.guidedBreathing,
+    userInfo: state.userInfo,
   };
 };
 

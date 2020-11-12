@@ -14,7 +14,7 @@ export default ButtonSmall;
 const styles = StyleSheet.create({
   buttonSmall: {
     height: 48,
-    width: 100,
+    width: 90,
     borderRadius: 5,
     backgroundColor: Colors.buttonBlue,
     justifyContent: 'center',
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 16,
+    fontSize: 13,
     textAlign: 'center',
   },
 });

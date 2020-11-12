@@ -20,7 +20,9 @@ const ExerciseSettings = ({
       : dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
   };
   const showTimePicker = playButtonTitle.toLowerCase() === 'start';
-  const showOptions = playButtonTitle.toLowerCase() !== 'finish';
+  const showOptions =
+    playButtonTitle.toLowerCase() !== 'finish' &&
+    playButtonTitle.toLowerCase() !== 'pause';
   const showCalibration = breathing.type === 'guided' && showTimePicker;
   const bigButtonColor =
     playButtonTitle.toLowerCase() === 'start'

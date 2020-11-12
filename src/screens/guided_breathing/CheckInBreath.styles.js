@@ -24,18 +24,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   animationHide: {
-    height: 200,
-    width: 200,
+    height: 300,
+    width: 300,
     alignSelf: 'center',
     backgroundColor: Colors.betterBlue,
     zIndex: 10,
   },
+
   text: {
     fontFamily: FontType.Regular,
     color: 'white',
     fontSize: 17,
     textAlign: 'center',
     marginTop: 5,
+    zIndex: 12,
   },
   boldText: {
     fontFamily: FontType.SemiBold,

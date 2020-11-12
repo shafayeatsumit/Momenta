@@ -13,7 +13,6 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
 
 import styles from './BreathingGame.styles';
-import BreathingGameCircle from './BreathingGameCircle';
 import BreathingSettings from '../BreathingSettings';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';

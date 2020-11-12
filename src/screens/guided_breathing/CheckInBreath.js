@@ -233,7 +233,7 @@ class CheckInBreath extends Component {
         </TouchableOpacity>
 
         {showInhaleInstruction ? (
-          <Text style={styles.text}>Tap When done inhaling</Text>
+          <Text style={styles.text}>Tap when done inhaling</Text>
         ) : null}
         {showExhaleInsturction ? (
           <Text style={styles.text}>

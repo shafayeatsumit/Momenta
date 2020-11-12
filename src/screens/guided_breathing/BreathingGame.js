@@ -118,6 +118,12 @@ class BreathingGame extends Component {
     this.sound.startExhaleSound();
   };
 
+  pauseVibration = () => {
+    const vibrationStatus =
+      this.getVibrationStatus() && Platform.OS === 'android';
+    vibrationStatus && NativeModules.AndroidVibration.cancelVibration();
+  };
+
   startExhale = (resumeDuration) => {
     this.breathingWillEnd = moment().add(this.exhaleTime, 'milliseconds');
     this.setState({breathingType: 'exhale'});
@@ -127,7 +133,8 @@ class BreathingGame extends Component {
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
     const duration = resumeDuration || this.exhaleTime;
-    vibrationStatus && NativeModules.AndroidVibration.show(duration, 20);
+    vibrationStatus &&
+      NativeModules.AndroidVibration.startVibration(duration, 20);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -187,6 +194,7 @@ class BreathingGame extends Component {
     this.pauseTime = moment();
     this.setState({playButtonTitle: 'continue'});
     this.stopTimer();
+    this.pauseVibration();
   };
 
   resumeExercise = () => {

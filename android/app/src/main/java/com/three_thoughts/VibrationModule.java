@@ -34,7 +34,7 @@ public class VibrationModule extends ReactContextBaseJavaModule {
     return "AndroidVibration";
   }  
   @ReactMethod
-  public void show( int duration, int amplitude) {
+  public void startVibration( int duration, int amplitude) {
       Vibrator v = (Vibrator) reactContext.getSystemService(Context.VIBRATOR_SERVICE);
       if (Build.VERSION.SDK_INT >= 26 ) {
           v.vibrate(VibrationEffect.createOneShot(duration, amplitude));
@@ -42,4 +42,11 @@ public class VibrationModule extends ReactContextBaseJavaModule {
           v.vibrate(duration);
       }    
   }  
+
+  @ReactMethod
+  public void cancelVibration() {
+    Vibrator v = (Vibrator) reactContext.getSystemService(Context.VIBRATOR_SERVICE);
+    v.cancel();
+  }  
+
 }

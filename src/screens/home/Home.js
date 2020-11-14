@@ -10,13 +10,15 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const handleBreathTypeSelect = (breathing) => {
     const breathingType = breathing.type;
+    analytics().logEvent('button_push', {title: `${breathing.id}`});
     if (breathingType === 'guided') {
       dispatch({type: 'SELECT_GUIDED_TYPE', data: breathing});
     } else {
       dispatch({type: 'SELECT_FIXED_TYPE', data: breathing});
     }
-    navigation.navigate('BreathingType', {breathingType: breathing});
-    analytics().logEvent('button_push', {title: `${breathing.id}`});
+    breathing.type === 'fixed'
+      ? navigation.navigate('FixedBreathing')
+      : navigation.navigate('GuidedBreathing');
   };
   useEffect(() => {
     const backAction = () => {

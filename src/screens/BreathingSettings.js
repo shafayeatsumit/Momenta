@@ -1,6 +1,13 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {View, Text, Switch, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  Platform,
+  Switch,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import {Colors, FontType} from '../helpers/theme';
 import ButtonBig from '../components/ButtonBig';
 import {ScreenWidth} from '../helpers/constants/common';
@@ -59,16 +66,18 @@ const BreathingSettings = ({close}) => {
             value={soundStatus}
           />
         </View>
-        <View style={styles.toggleHolder}>
-          <Text style={styles.toggleText}>VIBRATION</Text>
-          <Switch
-            trackColor={{false: '#252A43', true: '#252A43'}}
-            thumbColor={Colors.buttonBlue}
-            ios_backgroundColor="#252A43"
-            onValueChange={toggleVibration}
-            value={vibrationStatus}
-          />
-        </View>
+        {Platform.OS === 'android' && (
+          <View style={styles.toggleHolder}>
+            <Text style={styles.toggleText}>VIBRATION</Text>
+            <Switch
+              trackColor={{false: '#252A43', true: '#252A43'}}
+              thumbColor={Colors.buttonBlue}
+              ios_backgroundColor="#252A43"
+              onValueChange={toggleVibration}
+              value={vibrationStatus}
+            />
+          </View>
+        )}
       </View>
       <View style={styles.buttonHolder}>
         <ButtonBig

@@ -245,6 +245,7 @@ class BreathingGame extends Component {
     clearInterval(this.timerId);
     this.sound.muteSound();
     this.stopAnimation = true;
+    this.pauseVibration();
   }
 
   render() {
@@ -265,7 +266,6 @@ class BreathingGame extends Component {
       guidedBreathing.id === 'calm'
         ? require('../../../assets/anims/breath_two_sec.json')
         : require('../../../assets/anims/breath_later_opacity.json');
-    console.log('+++++++++++++>', guidedBreathing.id);
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>

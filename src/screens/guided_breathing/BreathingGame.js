@@ -11,12 +11,9 @@ import {
   Modal,
 } from 'react-native';
 import moment from 'moment';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import LottieView from 'lottie-react-native';
-
 import styles from './BreathingGame.styles';
 import BreathingSettings from '../BreathingSettings';
-import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import {connect} from 'react-redux';
 import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
@@ -104,18 +101,25 @@ class BreathingGame extends Component {
     if (this.stopAnimation) {
       return;
     }
-    // one full breath completed
     this.startInhale();
   };
 
   startExhaleSound = () => {
-    const fadeOutDuration = 1000;
-
+    const fadeOutDuration = 1250;
     this.exhaleSoundId = setTimeout(() => {
       this.sound.stopExhaleSound(fadeOutDuration);
       clearTimeout(this.exhaleSoundId);
     }, this.exhaleTime - fadeOutDuration);
     this.sound.startExhaleSound();
+  };
+
+  startInhaleSound = () => {
+    const fadeOutDuration = 1250;
+    this.inhaleSoundId = setTimeout(() => {
+      this.sound.stopInhaleSound(fadeOutDuration);
+      clearInterval(this.inhaleSoundId);
+    }, this.inhaleTime - fadeOutDuration);
+    this.sound.startInhaleSound();
   };
 
   pauseVibration = () => {
@@ -156,15 +160,6 @@ class BreathingGame extends Component {
       this.inhaleTime = this.inhaleTime + this.inhaleIncrementValue;
       this.startExhale();
     }
-  };
-
-  startInhaleSound = () => {
-    const fadeOutDuration = 1000;
-    this.inhaleSoundId = setTimeout(() => {
-      this.sound.stopInhaleSound(fadeOutDuration);
-      clearInterval(this.inhaleSoundId);
-    }, this.inhaleTime - fadeOutDuration);
-    this.sound.startInhaleSound();
   };
 
   startInhale = (resumeDuration) => {
@@ -266,7 +261,11 @@ class BreathingGame extends Component {
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-
+    const lottieFile =
+      guidedBreathing.id === 'calm'
+        ? require('../../../assets/anims/breath_two_sec.json')
+        : require('../../../assets/anims/breath_later_opacity.json');
+    console.log('+++++++++++++>', guidedBreathing.id);
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -286,7 +285,7 @@ class BreathingGame extends Component {
         />
         <View style={styles.absoluteContainer}>
           <LottieView
-            source={require('../../../assets/anims/breath.json')}
+            source={lottieFile}
             progress={this.animatedProgress}
             style={styles.lottieFile}
             ref={(animation) => {

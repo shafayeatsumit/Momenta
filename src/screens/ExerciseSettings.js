@@ -24,12 +24,11 @@ const ExerciseSettings = ({
     playButtonTitle.toLowerCase() !== 'finish' &&
     playButtonTitle.toLowerCase() !== 'pause';
   const showCalibration = breathing.type === 'guided' && showTimePicker;
-  const bigButtonColor =
-    playButtonTitle.toLowerCase() === 'start'
-      ? Colors.buttonBlue
-      : Colors.betterBlue;
+  const buttonTitle = playButtonTitle.toLowerCase();
   const bigButtonTitleColor =
-    playButtonTitle.toLowerCase() === 'start' ? 'white' : Colors.buttonBlue;
+    buttonTitle === 'pause' || buttonTitle === 'finish'
+      ? Colors.buttonBlue
+      : 'white';
   return (
     <View style={[styles.container, showCalibration && {height: 220}]}>
       {showCalibration && (
@@ -46,21 +45,28 @@ const ExerciseSettings = ({
           <ButtonSmall title="5 min" handlePress={() => handleTimeSelect(5)} />
         </View>
       )}
-      <View style={styles.bottomHolder}>
-        {showOptions ? (
+      <View
+        style={[
+          styles.bottomHolder,
+          buttonTitle === 'finish' && {justifyContent: 'center'},
+          buttonTitle === 'pause' && {justifyContent: 'center'},
+        ]}>
+        {showOptions && (
           <TouchableOpacity style={styles.optionsHolder} onPress={showSettings}>
             <Image
               style={styles.options}
               source={require('../../assets/icons/options.png')}
             />
           </TouchableOpacity>
-        ) : (
-          <View style={styles.optionsHolder} />
         )}
         <ButtonBig
           title={playButtonTitle}
           handlePress={handlePlayPause}
-          containerStyle={[styles.bigButton, {backgroundColor: bigButtonColor}]}
+          containerStyle={[
+            styles.bigButton,
+            buttonTitle === 'pause' && {backgroundColor: Colors.betterBlue},
+            buttonTitle === 'finish' && {backgroundColor: Colors.betterBlue},
+          ]}
           titleStyle={{color: bigButtonTitleColor}}
         />
       </View>
@@ -74,14 +80,11 @@ const styles = StyleSheet.create({
     height: 180,
     width: ScreenWidth,
     alignItems: 'center',
-    // justifyContent: 'space-around',
-    // backgroundColor: 'yellow',
   },
   calibrateTextHolder: {
     height: 40,
     width: 180,
     alignSelf: 'center',
-    // backgroundColor: 'yellow',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -97,7 +100,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignSelf: 'center',
-    // backgroundColor: 'red',
   },
   bigButton: {
     width: 220,
@@ -106,10 +108,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     bottom: 35,
     width: ScreenWidth * 0.8,
     position: 'absolute',
-    // backgroundColor: 'red',
   },
   optionsHolder: {
     height: 50,
@@ -121,6 +123,5 @@ const styles = StyleSheet.create({
     width: 25,
     resizeMode: 'contain',
     height: 25,
-    tintColor: '#D8D8D8',
   },
 });

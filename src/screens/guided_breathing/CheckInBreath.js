@@ -70,7 +70,7 @@ class CheckInBreath extends Component {
 
   moreThanTenSec = (breathingType) => {
     this.tenSecTimer = setTimeout(() => {
-      const errorMessage = `${breathingType} must\nbe less than 10 seconds`;
+      const errorMessage = `${breathingType} must\nbe less than 8 seconds`;
       this.setState({
         measuring: false,
         circleText: '',
@@ -117,7 +117,7 @@ class CheckInBreath extends Component {
       this.twoSecsError('Exhale');
       return;
     }
-    if (timeTakenExhale > 10) {
+    if (timeTakenExhale > 8) {
       return;
     }
     this.pressOutTime = new Date();
@@ -143,7 +143,7 @@ class CheckInBreath extends Component {
       this.twoSecsError('Inhale');
       return;
     }
-    if (timeTakenInhale > 10) {
+    if (timeTakenInhale > 8) {
       return;
     }
     this.tenSecTimer && clearTimeout(this.tenSecTimer);

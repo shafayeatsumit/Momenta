@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import {Colors, FontType} from '../../helpers/theme';
+import LottieView from 'lottie-react-native';
 
 import {connect} from 'react-redux';
 
@@ -15,8 +16,7 @@ const CircleCircumference = 2 * Math.PI * 160;
 class CustomExerciseBuilder extends Component {
   constructor(props) {
     super(props);
-    this.animatedOffSet = new Animated.Value(CircleCircumference);
-    this.animatedRadius = new Animated.Value(85);
+    this.animatedProgress = new Animated.Value(0);
   }
 
   animationEnd = () => {
@@ -25,18 +25,10 @@ class CustomExerciseBuilder extends Component {
   };
 
   startAnimation = (exhaleTime) => {
-    Animated.parallel([
-      Animated.timing(this.animatedOffSet, {
-        toValue: 0,
-        duration: exhaleTime,
-        useNativeDriver: true,
-      }),
-      Animated.timing(this.animatedRadius, {
-        toValue: 158,
-        duration: exhaleTime,
-        useNativeDriver: true,
-      }),
-    ]).start(this.animationEnd);
+    Animated.timing(this.animatedProgress, {
+      toValue: 1,
+      duration: 4000,
+    }).start(this.animationEnd);
   };
 
   componentDidMount() {
@@ -51,45 +43,12 @@ class CustomExerciseBuilder extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.svgHolder}>
-          <View style={styles.textHolder}>
-            <Text style={styles.text}>
-              Building your{'\n'}
-              exercise
-            </Text>
-          </View>
-          <Svg height="100%" width="100%" style={styles.svg}>
-            <G rotation="-90" origin={('160', '160')}>
-              <AnimatedCircle
-                cx="158"
-                cy="162"
-                r="160"
-                stroke="#447d70"
-                strokeWidth="2"
-                fill="none"
-                strokeDasharray={CircleCircumference}
-                strokeDashoffset={this.animatedOffSet}
-              />
-              <AnimatedCircle
-                cx="158"
-                cy="162"
-                r={this.animatedRadius}
-                strokeWidth="0"
-                fill={Colors.cornflowerBlue}
-                strokeDasharray={CircleCircumference}
-                strokeDashoffset={this.animatedOffSet}
-              />
-              <Circle
-                cx="158"
-                cy="162"
-                r="85"
-                strokeWidth="0"
-                fill={'#1b1f37'}
-                strokeDasharray={CircleCircumference}
-                strokeDashoffset={this.animatedOffSet}
-              />
-            </G>
-          </Svg>
+        <View style={styles.absoluteContainer}>
+          <LottieView
+            source={require('../../../assets/anims/building_exercise.json')}
+            progress={this.animatedProgress}
+            style={styles.lottieFile}
+          />
         </View>
       </View>
     );
@@ -110,23 +69,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  svgHolder: {
-    height: 324,
-    width: 324,
-    marginBottom: 80,
-    alignItems: 'center',
-    // backgroundColor: 'red',
-  },
-  textHolder: {
-    ...StyleSheet.absoluteFill,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 33,
-  },
-  text: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-    fontFamily: FontType.SemiBold,
+  lottieFile: {
+    alignSelf: 'center',
+    height: 300,
+    width: 300,
+    marginBottom: 100,
   },
 });

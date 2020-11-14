@@ -4,11 +4,9 @@ import {
   Animated,
   Text,
   Platform,
-  Image,
   Easing,
   Modal,
   NativeModules,
-  TouchableOpacity,
 } from 'react-native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
@@ -20,7 +18,6 @@ import ExerciseSettings from '../ExerciseSettings';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
 import ProgressTracker from '../../components/ProgressTracker';
 import {connect} from 'react-redux';
-import InteractiveSound from '../../helpers/SoundPlayer';
 import SoundPlayer from '../../helpers/SoundPlayer';
 
 class FixedBreathing extends Component {
@@ -289,7 +286,7 @@ class FixedBreathing extends Component {
       showSettings,
       holdTime,
     } = this.state;
-    const {fixedBreathing, goToCalibration} = this.props;
+    const {fixedBreathing} = this.props;
     const finishDuration = fixedBreathing.breathingTime * 60;
     const centerText =
       breathingType[0].toUpperCase() + breathingType.substring(1);

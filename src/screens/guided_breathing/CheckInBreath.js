@@ -165,7 +165,8 @@ class CheckInBreath extends Component {
       centerText: '',
     });
     this.animation.play();
-    this.vibrateLoop();
+    const playVibrationLoop = !this.pressOutTime;
+    playVibrationLoop && this.vibrateLoop();
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec('Exhale');
     this.pressInTime = new Date();

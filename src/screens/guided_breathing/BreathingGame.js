@@ -288,9 +288,6 @@ class BreathingGame extends Component {
             source={lottieFile}
             progress={this.animatedProgress}
             style={styles.lottieFile}
-            ref={(animation) => {
-              this.animationRef = animation;
-            }}
           />
         </View>
         <View style={styles.absoluteContainer}>

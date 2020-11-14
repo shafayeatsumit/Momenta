@@ -7,6 +7,7 @@ import FixedBreathingScreen from '../screens/fixed_breathing/FixedBreathing';
 import BreathingTypeScreen from '../screens/breathing_type/BreathingType';
 import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
+import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Colors} from '../helpers/theme';
@@ -47,6 +48,7 @@ class Nav extends Component {
               },
             }),
           }}>
+          <Stack.Screen name="Content" component={ContentScreen} />
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />

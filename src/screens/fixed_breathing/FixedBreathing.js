@@ -50,8 +50,6 @@ class FixedBreathing extends Component {
 
   startExhale = () => {
     ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
-    Platform.OS === 'android' &&
-      NativeModules.AndroidVibration.show(this.exhaleTime, 20);
 
     this.setState({measurementType: 'exhale'});
     this.shrink();
@@ -169,8 +167,7 @@ class FixedBreathing extends Component {
   startInhale = () => {
     this.expand();
     this.setState({measurementType: 'inhale'});
-    Platform.OS === 'android' &&
-      NativeModules.AndroidVibration.show(this.inhaleTime, 20);
+
     this.inhaleFluteId = setTimeout(() => {
       this.sound.stopInhaleSound();
       clearInterval(this.inhaleFluteId);

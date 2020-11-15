@@ -55,10 +55,12 @@ class BreathingType extends Component {
   handleStart = () => {
     const {breathing, navigation, userInfo} = this.props;
     analytics().logEvent('button_push', {title: 'Start'});
-
-    breathing.type === 'fixed'
-      ? navigation.navigate('FixedBreathing')
-      : navigation.navigate('GuidedBreathing');
+    if (userInfo.showExerciseExplainer) {
+    } else {
+      breathing.type === 'fixed'
+        ? navigation.navigate('FixedBreathing')
+        : navigation.navigate('GuidedBreathing');
+    }
   };
 
   render() {

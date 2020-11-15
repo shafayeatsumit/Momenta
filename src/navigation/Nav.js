@@ -9,6 +9,7 @@ import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
 import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
+import ExerciseExplainerScreen from '../screens/ExerciseExplainer';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Colors} from '../helpers/theme';
 const Stack = createStackNavigator();
@@ -51,6 +52,10 @@ class Nav extends Component {
           {/* <Stack.Screen name="Content" component={ContentScreen} /> */}
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="ExerciseExplainer"
+            component={ExerciseExplainerScreen}
+          />
           <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />
           <Stack.Screen
             name="GuidedBreathing"

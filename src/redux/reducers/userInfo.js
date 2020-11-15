@@ -13,6 +13,8 @@ const INIT_STATE = {
   box_vibration: true,
   four_seven_eight_sound: true,
   four_seven_eight_vibration: true,
+  showExerciseExplainer: true,
+  showCalibrationExplainer: true,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -37,6 +39,16 @@ const loginInfo = (state = INIT_STATE, action) => {
       return {
         ...state,
         [vibrationName]: !state[vibrationName],
+      };
+    case 'HIDE_EXERCISE_EXPLAINER':
+      return {
+        ...state,
+        showExerciseExplainer: false,
+      };
+    case 'HIDE_CALIBRATION_EXPLAINER':
+      return {
+        ...state,
+        showCalibrationExplainer: false,
       };
     default:
       return state;

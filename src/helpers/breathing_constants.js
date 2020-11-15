@@ -11,7 +11,7 @@ export const BREATHING_TYPES = [
     firstThreshold: 60 * 1000,
     breathingTime: 5,
     image: require('../../assets/images/calm.jpg'),
-    background: require('../../assets/images/calm_home.jpg'),
+
     name_line_one: null,
     name_line_two: 'Calm',
     description:
@@ -29,7 +29,6 @@ export const BREATHING_TYPES = [
     firstThreshold: 240 * 1000,
     breathingTime: 5,
     image: require('../../assets/images/prepare_for_sleep.jpg'),
-    background: require('../../assets/images/prepare_for_sleep_home.jpg'),
     name_line_one: 'Prepare for',
     name_line_two: 'Sleep',
     description:
@@ -45,7 +44,6 @@ export const BREATHING_TYPES = [
     exhaleHold: 0,
     breathingTime: 5,
     image: require('../../assets/images/four_seven_eight.jpg'),
-    background: require('../../assets/images/four_seven_eight_home.jpg'),
     name_line_one: 'Four seven',
     name_line_two: 'Eight',
     description:
@@ -62,7 +60,6 @@ export const BREATHING_TYPES = [
     exhaleHold: 4,
     breathingTime: 5,
     image: require('../../assets/images/box_breath.jpg'),
-    background: require('../../assets/images/box_breath_home.jpg'),
     name_line_one: 'Box',
     name_line_two: 'Breath',
     description:

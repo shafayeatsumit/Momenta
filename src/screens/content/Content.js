@@ -14,59 +14,7 @@ import {
 import LottieView from 'lottie-react-native';
 
 const Content = ({navigation}) => {
-  const animatedProgress = new Animated.Value(0);
-
-  const shrink = () => {
-    Animated.timing(animatedProgress, {
-      toValue: 1,
-      duration: 4000,
-      easing: Easing.linear,
-    }).start(expand);
-  };
-
-  const expand = () => {
-    Animated.timing(animatedProgress, {
-      toValue: 0.5,
-      duration: 4000,
-      easing: Easing.linear,
-    }).start(shrink);
-  };
-
-  useEffect(() => {
-    shrink();
-  }, []);
-  return (
-    <View style={styles.container}>
-      <View style={styles.a}>
-        <LottieView
-          source={require('../../../assets/anims/breath.json')}
-          progress={animatedProgress}
-          style={styles.lottieFile}
-        />
-      </View>
-      <View style={styles.b}>
-        <LottieView
-          source={require('../../../assets/anims/breath_later_opacity.json')}
-          progress={animatedProgress}
-          style={styles.lottieFile}
-        />
-      </View>
-      <View style={styles.c}>
-        <LottieView
-          source={require('../../../assets/anims/breath_two_sec.json')}
-          progress={animatedProgress}
-          style={styles.lottieFile}
-        />
-      </View>
-      <View style={styles.buttonHolder}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.text}>Home</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  return <View style={styles.container} />;
 };
 export default Content;
 

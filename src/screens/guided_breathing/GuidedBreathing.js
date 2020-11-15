@@ -10,6 +10,7 @@ import {setDynamicTarget} from '../../redux/actions/guidedBreathing';
 import {Colors} from '../../helpers/theme';
 import {ScreenHeight} from '../../helpers/constants/common';
 import CustomExerciseBuilder from './CustomExerciseBuilder';
+import CalibrationExplainer from './CalibrationExplainer';
 import analytics from '@react-native-firebase/analytics';
 import SoundOptions from '../../helpers/soundOptions';
 class GuidedBreathing extends Component {
@@ -18,6 +19,7 @@ class GuidedBreathing extends Component {
     this.state = {
       showCheckInBreath: false,
       showBreathingGame: true,
+      showCalibrationExplainer: false,
       buildingCustomExercise: false,
       finished: false,
       showAnimation: false,
@@ -44,7 +46,24 @@ class GuidedBreathing extends Component {
   };
 
   showCalibration = () => {
-    this.setState({showBreathingGame: false, showCheckInBreath: true});
+    const {userInfo} = this.props;
+    if (userInfo.showCalibrationExplainer) {
+      this.setState({showBreathingGame: false, showCalibrationExplainer: true});
+    } else {
+      this.setState({
+        showBreathingGame: false,
+        showCalibrationExplainer: false,
+        showCheckInBreath: true,
+      });
+    }
+  };
+
+  goToCalibration = () => {
+    this.setState({
+      showBreathingGame: false,
+      showCalibrationExplainer: false,
+      showCheckInBreath: true,
+    });
   };
 
   buildCustomExercise = (exhaleTime, inhaleTime) => {
@@ -81,10 +100,6 @@ class GuidedBreathing extends Component {
     analytics().logEvent('button_push', {title: 'finish'});
   };
 
-  componentDidMount() {
-    const {userInfo} = this.props;
-  }
-
   componentWillUnmount() {
     this.sound.stopMusic();
   }
@@ -95,6 +110,7 @@ class GuidedBreathing extends Component {
       showBreathingGame,
       showAnimation,
       buildingCustomExercise,
+      showCalibrationExplainer,
     } = this.state;
     const {guidedBreathing} = this.props;
     if (showAnimation) {
@@ -120,6 +136,9 @@ class GuidedBreathing extends Component {
             breathId={guidedBreathing.id}
             goBack={this.showBreathingGame}
           />
+        )}
+        {showCalibrationExplainer && (
+          <CalibrationExplainer goToCalibration={this.goToCalibration} />
         )}
         {buildingCustomExercise && (
           <CustomExerciseBuilder showBreathingGame={this.showBreathingGame} />

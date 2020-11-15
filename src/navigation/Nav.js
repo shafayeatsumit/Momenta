@@ -4,7 +4,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/home/Home';
 import FixedBreathingScreen from '../screens/fixed_breathing/FixedBreathing';
 
-import BreathingTypeScreen from '../screens/breathing_type/BreathingType';
 import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
 import ContentScreen from '../screens/content/Content';
@@ -56,7 +55,6 @@ class Nav extends Component {
             name="ExerciseExplainer"
             component={ExerciseExplainerScreen}
           />
-          <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />
           <Stack.Screen
             name="GuidedBreathing"
             component={GuidedBreathingScreen}

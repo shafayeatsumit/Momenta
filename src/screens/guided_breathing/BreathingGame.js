@@ -262,10 +262,6 @@ class BreathingGame extends Component {
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-    const lottieFile =
-      guidedBreathing.id === 'calm'
-        ? require('../../../assets/anims/breath_two_sec.json')
-        : require('../../../assets/anims/breath_later_opacity.json');
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -285,7 +281,7 @@ class BreathingGame extends Component {
         />
         <View style={styles.absoluteContainer}>
           <LottieView
-            source={lottieFile}
+            source={require('../../../assets/anims/breath.json')}
             progress={this.animatedProgress}
             style={styles.lottieFile}
           />

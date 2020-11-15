@@ -48,7 +48,7 @@ class Nav extends Component {
               },
             }),
           }}>
-          <Stack.Screen name="Content" component={ContentScreen} />
+          {/* <Stack.Screen name="Content" component={ContentScreen} /> */}
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="BreathingType" component={BreathingTypeScreen} />

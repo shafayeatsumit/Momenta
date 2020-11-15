@@ -31,7 +31,6 @@ const ExerciseExplainer = ({navigation}) => {
   };
   return (
     <View style={styles.slide1}>
-      <Text style={styles.title}>Calibration</Text>
       <TouchableOpacity style={styles.backbuttonHolder}>
         <Image
           source={require('../../assets/icons/arrow_left.png')}
@@ -46,8 +45,8 @@ const ExerciseExplainer = ({navigation}) => {
           showsButtons={false}
           ref={scrollRef}
           showsPagination={false}>
-          <View style={{flex: 1, marginTop: 50}}>
-            <Text style={styles.text}>
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <Text style={[styles.text]}>
               Focus on your <Text style={styles.exhales}>exhales</Text>
             </Text>
 
@@ -56,8 +55,8 @@ const ExerciseExplainer = ({navigation}) => {
               <View style={styles.indecatorInactive} />
             </View>
           </View>
-          <View style={{flex: 1}}>
-            <Text style={styles.text}>
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <Text style={[styles.text, {marginBottom: 50}]}>
               The sign of good, calm{'\n'}breathing is long, slow, easy{'\n'}
               <Text style={styles.exhales}>exhaling</Text>.
             </Text>

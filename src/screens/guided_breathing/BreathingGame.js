@@ -215,6 +215,7 @@ class BreathingGame extends Component {
   };
 
   startCountDown = () => {
+    this.setState({playButtonTitle: 'starting'});
     this.initialTimerId = setInterval(() => {
       if (this.state.initialTimer === 0) {
         clearInterval(this.initialTimerId);

@@ -35,7 +35,9 @@ const ExerciseSettings = ({
     handleTimeSelect(duration);
     analytics().logEvent('button_push', {title: `duration_${duration}`});
   };
-
+  if (buttonTitle === 'starting') {
+    return <View />;
+  }
   const selectedTime = breathing.breathingTime;
   return (
     <View style={[styles.container, showCalibration && {height: 220}]}>

@@ -38,6 +38,7 @@ class CheckInBreath extends Component {
   };
 
   resetCalibration = () => {
+    analytics().logEvent('button_push', {title: 'redo'});
     this.pressInTime = null;
     this.pressOutTime = null;
     this.setState({
@@ -118,10 +119,9 @@ class CheckInBreath extends Component {
   };
 
   buildExercise = () => {
+    analytics().logEvent('button_push', {title: 'use_calibration'});
     const {exhaleTimeRecorded} = this.state;
-
     const inhaleTime = Math.max(exhaleTimeRecorded, 3);
-    console.log('building exercise', inhaleTime, exhaleTimeRecorded);
     this.props.buildCustomExercise(exhaleTimeRecorded, inhaleTime);
   };
 
@@ -147,7 +147,6 @@ class CheckInBreath extends Component {
   };
 
   handlePressIn = () => {
-    analytics().logEvent('calibration_hold');
     this.setState({
       measuring: true,
       error: '',
@@ -159,6 +158,7 @@ class CheckInBreath extends Component {
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
     this.moreThanTenSec('Exhale');
     this.pressInTime = new Date();
+    analytics().logEvent('calibration_hold');
     if (this.pressOutTime) {
       this.measureInhaleTime();
     }
@@ -178,6 +178,16 @@ class CheckInBreath extends Component {
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   }
 
+  handleXout = () => {
+    this.props.goBack();
+    analytics().logEvent('button_push', {title: 'quit'});
+  };
+
+  handleSkipCalibration = () => {
+    this.props.goBack();
+    analytics().logEvent('button_push', {title: 'skip_calibration'});
+  };
+
   render() {
     const {
       error,
@@ -187,7 +197,6 @@ class CheckInBreath extends Component {
       inhaleTimeRecorded,
       showResult,
     } = this.state;
-    const {goBack} = this.props;
     const hasError = !!error;
     const showInhaleInstruction = measuring && exhaleTimeRecorded;
     const showExhaleInsturction = measuring && !exhaleTimeRecorded;
@@ -197,7 +206,7 @@ class CheckInBreath extends Component {
         <CheckinError
           error={error}
           handleRedo={this.resetCalibration}
-          handleSkip={goBack}
+          handleSkip={this.handleSkipCalibration}
         />
       );
     }
@@ -215,7 +224,9 @@ class CheckInBreath extends Component {
 
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
+        <TouchableOpacity
+          style={styles.backbuttonHolder}
+          onPress={this.handleXout}>
           <Image
             source={require('../../../assets/icons/arrow_left.png')}
             style={styles.backbutton}

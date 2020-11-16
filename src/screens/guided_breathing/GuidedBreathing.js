@@ -60,6 +60,7 @@ class GuidedBreathing extends Component {
   };
 
   goToCalibration = () => {
+    analytics().logEvent('button_push', {title: 'calibration'});
     this.setState({
       showBreathingGame: false,
       showCalibrationExplainer: false,

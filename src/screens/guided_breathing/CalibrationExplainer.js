@@ -12,6 +12,7 @@ import {Colors, FontType} from '../../helpers/theme';
 import Button from '../../components/ButtonBig';
 import Swiper from 'react-native-swiper';
 import {useDispatch, useSelector} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 
 const CalibrationExplainer = ({goToCalibration, goBack}) => {
   const [index, setIndex] = useState(0);
@@ -26,10 +27,16 @@ const CalibrationExplainer = ({goToCalibration, goBack}) => {
       goToCalibration();
     }
   };
+
+  const handleXout = () => {
+    analytics().logEvent('button_push', {title: 'quit'});
+    goBack();
+  };
+
   return (
     <View style={styles.slide1}>
       <Text style={styles.title}>Calibration</Text>
-      <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
+      <TouchableOpacity style={styles.backbuttonHolder} onPress={handleXout}>
         <Image
           source={require('../../../assets/icons/arrow_left.png')}
           style={styles.backbutton}

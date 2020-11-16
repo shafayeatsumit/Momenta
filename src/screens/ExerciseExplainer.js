@@ -12,6 +12,7 @@ import {Colors, FontType} from '../helpers/theme';
 import Button from '../components/ButtonBig';
 import Swiper from 'react-native-swiper';
 import {useDispatch, useSelector} from 'react-redux';
+import analytics from '@react-native-firebase/analytics';
 
 const ExerciseExplainer = ({navigation}) => {
   const [index, setIndex] = useState(0);
@@ -29,12 +30,15 @@ const ExerciseExplainer = ({navigation}) => {
         : navigation.replace('GuidedBreathing');
     }
   };
+  const handleXout = () => {
+    navigation.goBack();
+    analytics().logEvent('button_push', {title: 'quit'});
+  };
+
   const buttonTitle = index === 0 ? 'NEXT' : "I'M READY";
   return (
     <View style={styles.slide1}>
-      <TouchableOpacity
-        style={styles.backbuttonHolder}
-        onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backbuttonHolder} onPress={handleXout}>
         <Image
           source={require('../../assets/icons/arrow_left.png')}
           style={styles.backbutton}

@@ -11,6 +11,7 @@ import {
 import {Colors, FontType} from '../helpers/theme';
 import ButtonBig from '../components/ButtonBig';
 import {ScreenWidth} from '../helpers/constants/common';
+import analytics from '@react-native-firebase/analytics';
 
 const BreathingSettings = ({close}) => {
   const breathing = useSelector((state) => state.breathing);
@@ -21,13 +22,18 @@ const BreathingSettings = ({close}) => {
   const vibrationStatus = userInfo[`${breathingId}_vibration`];
   const toggleSound = () => {
     dispatch({type: 'TOGGLE_SOUND', name: `${breathingId}_sound`});
+    analytics().logEvent('button_push', {
+      title: `sound_on_${!soundStatus}`,
+    });
   };
 
   const toggleVibration = () => {
+    analytics().logEvent('button_push', {
+      title: `vibration_on_${!vibrationStatus}`,
+    });
     dispatch({type: 'TOGGLE_VIBRATION', name: `${breathingId}_vibration`});
   };
 
-  console.log('sound status==>', vibrationStatus);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{breathing.name}</Text>

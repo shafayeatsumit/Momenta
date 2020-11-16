@@ -229,6 +229,7 @@ class BreathingGame extends Component {
 
   handleFinish = () => {
     this.props.handleFinish();
+    analytics().logEvent('button_push', {title: 'finish'});
   };
 
   handleSettings = () => {
@@ -236,6 +237,9 @@ class BreathingGame extends Component {
     if (!showSettings) {
       this.pauseExercise();
     }
+    analytics().logEvent('button_push', {
+      title: `show_options_${!showSettings}`,
+    });
     this.setState((prevState) => ({
       showSettings: !prevState.showSettings,
     }));
@@ -248,12 +252,15 @@ class BreathingGame extends Component {
     if (start) {
       // start exercise
       this.startCountDown();
+      analytics().logEvent('button_push', {title: 'start'});
     } else if (play) {
       // resume/continue exercise
+      analytics().logEvent('button_push', {title: 'continue'});
       this.resumeExercise();
     } else {
       // pause exercise
       this.pauseExercise();
+      analytics().logEvent('button_push', {title: 'pause'});
     }
   };
 
@@ -280,7 +287,6 @@ class BreathingGame extends Component {
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-    console.log('start timer', initialTimer);
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>

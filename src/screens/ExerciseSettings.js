@@ -5,6 +5,7 @@ import ButtonSmall from '../components/ButtonSmall';
 import {useSelector, useDispatch} from 'react-redux';
 import {ScreenWidth} from '../helpers/constants/common';
 import {FontType, Colors} from '../helpers/theme';
+import analytics from '@react-native-firebase/analytics';
 
 const ExerciseSettings = ({
   playButtonTitle,
@@ -30,6 +31,11 @@ const ExerciseSettings = ({
       ? Colors.buttonBlue
       : 'white';
 
+  const selectTime = (duration) => {
+    handleTimeSelect(duration);
+    analytics().logEvent('button_push', {title: `duration_${duration}`});
+  };
+
   const selectedTime = breathing.breathingTime;
   return (
     <View style={[styles.container, showCalibration && {height: 220}]}>
@@ -48,7 +54,7 @@ const ExerciseSettings = ({
               selectedTime !== 1 && {backgroundColor: Colors.betterBlue},
             ]}
             title="1 min"
-            handlePress={() => handleTimeSelect(1)}
+            handlePress={() => selectTime(1)}
           />
           <ButtonSmall
             titleStyle={[selectedTime !== 3 && {color: Colors.buttonBlue}]}
@@ -56,7 +62,7 @@ const ExerciseSettings = ({
               selectedTime !== 3 && {backgroundColor: Colors.betterBlue},
             ]}
             title="3 min"
-            handlePress={() => handleTimeSelect(3)}
+            handlePress={() => selectTime(3)}
           />
           <ButtonSmall
             titleStyle={[selectedTime !== 5 && {color: Colors.buttonBlue}]}
@@ -64,7 +70,7 @@ const ExerciseSettings = ({
               selectedTime !== 5 && {backgroundColor: Colors.betterBlue},
             ]}
             title="5 min"
-            handlePress={() => handleTimeSelect(5)}
+            handlePress={() => selectTime(5)}
           />
         </View>
       )}

@@ -213,17 +213,23 @@ class FixedBreathing extends Component {
     this.pauseTime = moment();
     this.setState({playButtonTitle: 'continue'});
     this.stopTimer();
+    clearInterval(this.holdTimerId);
     this.pauseVibration();
   };
 
   resumeExercise = () => {
     this.stopAnimation = false;
-    const {breathingType} = this.state;
+    const {breathingType, holdTime, holdType} = this.state;
     this.setState({playButtonTitle: 'pause'});
     this.startTimer();
     this.sound.unmuteSound();
     // difference between pause and end time.
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
+    if (holdTime) {
+      this.setState({holdTime: 0});
+      holdType === 'exhale_hold' ? this.startInhale() : this.startExhale();
+      return;
+    }
     breathingType === 'exhale'
       ? this.startExhale(resumeDuration)
       : this.startInhale(resumeDuration);

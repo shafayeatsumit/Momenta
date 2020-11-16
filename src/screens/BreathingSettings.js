@@ -60,7 +60,7 @@ const BreathingSettings = ({close}) => {
           <Text style={styles.toggleText}>SOUND</Text>
           <Switch
             trackColor={{false: '#252A43', true: '#252A43'}}
-            thumbColor={Colors.buttonBlue}
+            thumbColor={soundStatus ? Colors.buttonBlue : '#787989'}
             ios_backgroundColor="#252A43"
             onValueChange={toggleSound}
             value={soundStatus}
@@ -71,7 +71,7 @@ const BreathingSettings = ({close}) => {
             <Text style={styles.toggleText}>VIBRATION</Text>
             <Switch
               trackColor={{false: '#252A43', true: '#252A43'}}
-              thumbColor={Colors.buttonBlue}
+              thumbColor={vibrationStatus ? Colors.buttonBlue : '#787989'}
               ios_backgroundColor="#252A43"
               onValueChange={toggleVibration}
               value={vibrationStatus}

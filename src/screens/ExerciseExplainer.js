@@ -29,9 +29,12 @@ const ExerciseExplainer = ({navigation}) => {
         : navigation.replace('GuidedBreathing');
     }
   };
+  const buttonTitle = index === 0 ? 'NEXT' : "I'M READY";
   return (
     <View style={styles.slide1}>
-      <TouchableOpacity style={styles.backbuttonHolder}>
+      <TouchableOpacity
+        style={styles.backbuttonHolder}
+        onPress={() => navigation.goBack()}>
         <Image
           source={require('../../assets/icons/arrow_left.png')}
           style={styles.backbutton}
@@ -46,9 +49,11 @@ const ExerciseExplainer = ({navigation}) => {
           ref={scrollRef}
           showsPagination={false}>
           <View style={{flex: 1, justifyContent: 'center'}}>
-            <Text style={[styles.text]}>
-              Focus on your <Text style={styles.exhales}>exhales</Text>
-            </Text>
+            <View style={styles.textHolderBox}>
+              <Text style={[styles.text]}>
+                Focus on your <Text style={styles.exhales}>exhales</Text>
+              </Text>
+            </View>
 
             <View style={styles.slideIndecator}>
               <View style={styles.indecatorActive} />
@@ -56,10 +61,12 @@ const ExerciseExplainer = ({navigation}) => {
             </View>
           </View>
           <View style={{flex: 1, justifyContent: 'center'}}>
-            <Text style={[styles.text, {marginBottom: 50}]}>
-              The sign of good, calm{'\n'}breathing is long, slow, easy{'\n'}
-              <Text style={styles.exhales}>exhaling</Text>.
-            </Text>
+            <View style={styles.textHolderBox}>
+              <Text style={styles.text}>
+                The sign of good, calm{'\n'}breathing is long, slow, easy{'\n'}
+                <Text style={styles.exhales}>exhaling</Text>
+              </Text>
+            </View>
             <View style={styles.slideIndecator}>
               <View style={styles.indecatorInactive} />
               <View style={styles.indecatorActive} />
@@ -69,7 +76,7 @@ const ExerciseExplainer = ({navigation}) => {
       </View>
 
       <Button
-        title="Next"
+        title={buttonTitle}
         containerStyle={styles.button}
         handlePress={handleButtonPress}
       />
@@ -107,6 +114,12 @@ const styles = StyleSheet.create({
     height: 18,
     width: 18,
     tintColor: 'white',
+  },
+  textHolderBox: {
+    height: 180,
+    width: '100%',
+    position: 'absolute',
+    bottom: 200,
   },
   text: {
     paddingHorizontal: 25,

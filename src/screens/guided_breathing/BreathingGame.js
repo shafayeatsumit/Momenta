@@ -31,7 +31,8 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       timer: 0,
-      breathingType: 'exhale',
+      initialTimer: 4,
+      breathingType: 'ready',
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
@@ -183,11 +184,13 @@ class BreathingGame extends Component {
   };
 
   pauseExercise = () => {
+    const {timer} = this.state;
+    const playButtonTitle = timer ? 'continue' : 'start';
     this.stopAnimation = true;
     Animated.timing(this.animatedProgress).stop();
     this.sound.muteSound();
     this.pauseTime = moment();
-    this.setState({playButtonTitle: 'continue'});
+    this.setState({playButtonTitle});
     this.stopTimer();
     this.pauseVibration();
   };
@@ -211,6 +214,19 @@ class BreathingGame extends Component {
     this.startExhale();
   };
 
+  startCountDown = () => {
+    this.initialTimerId = setInterval(() => {
+      if (this.state.initialTimer === 0) {
+        clearInterval(this.initialTimerId);
+        this.startExercise();
+        return;
+      }
+      this.setState((prevState) => ({
+        initialTimer: prevState.initialTimer - 1,
+      }));
+    }, 1000);
+  };
+
   handleFinish = () => {
     this.props.handleFinish();
   };
@@ -231,7 +247,7 @@ class BreathingGame extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.startExercise();
+      this.startCountDown();
     } else if (play) {
       // resume/continue exercise
       this.resumeExercise();
@@ -246,6 +262,7 @@ class BreathingGame extends Component {
     this.sound.muteSound();
     this.stopAnimation = true;
     this.pauseVibration();
+    clearInterval(this.initialTimerId);
   }
 
   render() {
@@ -255,6 +272,7 @@ class BreathingGame extends Component {
       playButtonTitle,
       timeIsUp,
       showSettings,
+      initialTimer,
     } = this.state;
     const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
@@ -262,6 +280,7 @@ class BreathingGame extends Component {
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
+    console.log('start timer', initialTimer);
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -286,9 +305,15 @@ class BreathingGame extends Component {
             style={styles.lottieFile}
           />
         </View>
+
         <View style={styles.absoluteContainer}>
-          <Text style={styles.centerText}>{centerText}</Text>
+          {breathingType === 'ready' && initialTimer < 4 ? (
+            <Text style={styles.centerText}>{initialTimer}</Text>
+          ) : (
+            <Text style={styles.centerText}>{centerText}</Text>
+          )}
         </View>
+
         <View style={styles.bottom}>
           <ExerciseSettings
             playButtonTitle={buttonTitle}

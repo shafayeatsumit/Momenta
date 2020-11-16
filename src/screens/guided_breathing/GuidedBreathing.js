@@ -42,6 +42,7 @@ class GuidedBreathing extends Component {
       buildingCustomExercise: false,
       showCheckInBreath: false,
       showBreathingGame: true,
+      showCalibrationExplainer: false,
     });
   };
 
@@ -138,7 +139,10 @@ class GuidedBreathing extends Component {
           />
         )}
         {showCalibrationExplainer && (
-          <CalibrationExplainer goToCalibration={this.goToCalibration} />
+          <CalibrationExplainer
+            goToCalibration={this.goToCalibration}
+            goBack={this.showBreathingGame}
+          />
         )}
         {buildingCustomExercise && (
           <CustomExerciseBuilder showBreathingGame={this.showBreathingGame} />

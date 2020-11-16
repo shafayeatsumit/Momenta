@@ -6,7 +6,6 @@ import analytics from '@react-native-firebase/analytics';
 import BullsEye from '../../components/BullsEye';
 import styles from './CheckInBreath.styles';
 import {hapticFeedbackOptions} from '../../helpers/constants/common';
-import {inhaleCalm, inhalePrepForSleep} from '../../helpers/checkinInhale';
 import CheckinError from './CheckinError';
 import CheckinResult from './CheckinResult';
 
@@ -98,15 +97,6 @@ class CheckInBreath extends Component {
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
   };
 
-  getCalibratoinInhale = (exhaleTime) => {
-    const {breathingId} = this.props;
-    if (breathingId === 'calm') {
-      return inhaleCalm(exhaleTime);
-    } else {
-      return inhalePrepForSleep(exhaleTime);
-    }
-  };
-
   handlePressOut = () => {
     analytics().logEvent('calibration_release');
     this.tenSecTimer && clearTimeout(this.tenSecTimer);
@@ -122,16 +112,15 @@ class CheckInBreath extends Component {
     }
     this.pressOutTime = new Date();
     this.vibrateLoopId && clearInterval(this.vibrateLoopId);
-    console.log('time taken exhale', timeTakenExhale);
     this.setState({
       exhaleTimeRecorded: timeTakenExhale,
-      // centerText: INHALE_MEASUREMENT_MSG,
     });
   };
 
   buildExercise = () => {
     const {exhaleTimeRecorded} = this.state;
-    const inhaleTime = this.getCalibratoinInhale(exhaleTimeRecorded);
+
+    const inhaleTime = Math.max(exhaleTimeRecorded, 3);
     console.log('building exercise', inhaleTime, exhaleTimeRecorded);
     this.props.buildCustomExercise(exhaleTimeRecorded, inhaleTime);
   };

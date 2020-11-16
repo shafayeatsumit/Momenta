@@ -29,6 +29,8 @@ const ExerciseSettings = ({
     buttonTitle === 'pause' || buttonTitle === 'finish'
       ? Colors.buttonBlue
       : 'white';
+
+  const selectedTime = breathing.breathingTime;
   return (
     <View style={[styles.container, showCalibration && {height: 220}]}>
       {showCalibration && (
@@ -40,9 +42,30 @@ const ExerciseSettings = ({
       )}
       {showTimePicker && (
         <View style={styles.smallButtonContainer}>
-          <ButtonSmall title="1 min" handlePress={() => handleTimeSelect(1)} />
-          <ButtonSmall title="3 min" handlePress={() => handleTimeSelect(3)} />
-          <ButtonSmall title="5 min" handlePress={() => handleTimeSelect(5)} />
+          <ButtonSmall
+            titleStyle={[selectedTime !== 1 && {color: Colors.buttonBlue}]}
+            containerStyle={[
+              selectedTime !== 1 && {backgroundColor: Colors.betterBlue},
+            ]}
+            title="1 min"
+            handlePress={() => handleTimeSelect(1)}
+          />
+          <ButtonSmall
+            titleStyle={[selectedTime !== 3 && {color: Colors.buttonBlue}]}
+            containerStyle={[
+              selectedTime !== 3 && {backgroundColor: Colors.betterBlue},
+            ]}
+            title="3 min"
+            handlePress={() => handleTimeSelect(3)}
+          />
+          <ButtonSmall
+            titleStyle={[selectedTime !== 5 && {color: Colors.buttonBlue}]}
+            containerStyle={[
+              selectedTime !== 5 && {backgroundColor: Colors.betterBlue},
+            ]}
+            title="5 min"
+            handlePress={() => handleTimeSelect(5)}
+          />
         </View>
       )}
       <View
@@ -77,21 +100,22 @@ export default ExerciseSettings;
 
 const styles = StyleSheet.create({
   container: {
-    height: 180,
+    height: 160,
     width: ScreenWidth,
     alignItems: 'center',
   },
   calibrateTextHolder: {
-    height: 40,
-    width: 180,
+    height: 50,
+    width: 280,
     alignSelf: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     marginBottom: 10,
+    // backgroundColor: 'yellow',
   },
   calibrateText: {
-    fontSize: 14,
-    fontFamily: FontType.Regular,
+    fontSize: 18,
+    fontFamily: FontType.Medium,
     color: Colors.buttonBlue,
   },
   smallButtonContainer: {

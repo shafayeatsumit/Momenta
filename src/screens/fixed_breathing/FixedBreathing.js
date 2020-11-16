@@ -25,9 +25,10 @@ class FixedBreathing extends Component {
     super(props);
     this.state = {
       timer: 0,
+      initialTimer: 4,
       holdTime: 0,
       showAnimation: false,
-      breathingType: 'exhale',
+      breathingType: 'ready',
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
@@ -244,13 +245,26 @@ class FixedBreathing extends Component {
     }));
   };
 
+  startCountDown = () => {
+    this.initialTimerId = setInterval(() => {
+      if (this.state.initialTimer === 0) {
+        clearInterval(this.initialTimerId);
+        this.startExercise();
+        return;
+      }
+      this.setState((prevState) => ({
+        initialTimer: prevState.initialTimer - 1,
+      }));
+    }, 1000);
+  };
+
   handlePlayPause = () => {
     const {playButtonTitle} = this.state;
     const start = playButtonTitle === 'start';
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.startExercise();
+      this.startCountDown();
     } else if (play) {
       // resume/continue exercise
       this.resumeExercise();
@@ -267,11 +281,13 @@ class FixedBreathing extends Component {
   handleAnimationFinish = () => {
     this.props.navigation.goBack();
   };
+
   componentWillUnmount() {
     clearInterval(this.timerId);
     this.sound.muteSound();
     this.stopAnimation = true;
     this.pauseVibration();
+    clearInterval(this.initialTimerId);
   }
 
   componentDidMount() {}
@@ -285,6 +301,7 @@ class FixedBreathing extends Component {
       timeIsUp,
       showSettings,
       holdTime,
+      initialTimer,
     } = this.state;
     const {fixedBreathing} = this.props;
     const finishDuration = fixedBreathing.breathingTime * 60;
@@ -336,7 +353,11 @@ class FixedBreathing extends Component {
           />
         </View>
         <View style={styles.absoluteContainer}>
-          <Text style={styles.centerText}>{centerText}</Text>
+          {breathingType === 'ready' && initialTimer < 4 ? (
+            <Text style={styles.centerText}>{initialTimer}</Text>
+          ) : (
+            <Text style={styles.centerText}>{centerText}</Text>
+          )}
         </View>
         {breathingType === 'hold' && (
           <View style={styles.absoluteContainer}>

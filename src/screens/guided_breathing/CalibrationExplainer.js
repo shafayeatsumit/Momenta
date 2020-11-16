@@ -13,7 +13,7 @@ import Button from '../../components/ButtonBig';
 import Swiper from 'react-native-swiper';
 import {useDispatch, useSelector} from 'react-redux';
 
-const CalibrationExplainer = ({goToCalibration}) => {
+const CalibrationExplainer = ({goToCalibration, goBack}) => {
   const [index, setIndex] = useState(0);
   const dispatch = useDispatch();
   const scrollRef = useRef();
@@ -29,7 +29,7 @@ const CalibrationExplainer = ({goToCalibration}) => {
   return (
     <View style={styles.slide1}>
       <Text style={styles.title}>Calibration</Text>
-      <TouchableOpacity style={styles.backbuttonHolder}>
+      <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
         <Image
           source={require('../../../assets/icons/arrow_left.png')}
           style={styles.backbutton}
@@ -44,10 +44,12 @@ const CalibrationExplainer = ({goToCalibration}) => {
           ref={scrollRef}
           showsPagination={false}>
           <View style={{flex: 1, marginTop: 50}}>
-            <Text style={styles.text}>
-              First, we'll measure the length of your current{' '}
-              <Text style={styles.exhales}>exhale</Text> and inhale
-            </Text>
+            <View style={styles.textHolderBox}>
+              <Text style={styles.text}>
+                First, we'll measure the length of your current{' '}
+                <Text style={styles.exhales}>exhale</Text> and inhale
+              </Text>
+            </View>
 
             <View style={styles.slideIndecator}>
               <View style={styles.indecatorActive} />
@@ -55,11 +57,13 @@ const CalibrationExplainer = ({goToCalibration}) => {
             </View>
           </View>
           <View style={{flex: 1}}>
-            <Text style={styles.text}>
-              Then, we'll adjust the exercise{'\n'}to help you go from your
-              {'\n'}current breathing to the target{'\n'}breathing rhythms
-              naturally
-            </Text>
+            <View style={styles.textHolderBox}>
+              <Text style={styles.text}>
+                Then, we'll adjust the exercise{'\n'}to help you go from your
+                {'\n'}current breathing to the target{'\n'}breathing rhythms
+                naturally
+              </Text>
+            </View>
             <View style={styles.slideIndecator}>
               <View style={styles.indecatorInactive} />
               <View style={styles.indecatorActive} />
@@ -142,5 +146,12 @@ const styles = StyleSheet.create({
     bottom: 30,
     borderRadius: 6,
     alignSelf: 'center',
+  },
+  textHolderBox: {
+    height: 180,
+    width: '100%',
+    position: 'absolute',
+    bottom: 200,
+    // backgroundColor: 'red',
   },
 });

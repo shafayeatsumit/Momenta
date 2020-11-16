@@ -33,6 +33,14 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     marginBottom: 100,
   },
+  countDownTimer: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 50,
+    fontFamily: FontType.SemiBold,
+    marginBottom: 100,
+  },
 });
 
 export default styles;

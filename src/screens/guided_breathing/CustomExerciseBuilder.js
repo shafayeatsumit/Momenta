@@ -43,12 +43,15 @@ class CustomExerciseBuilder extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.absoluteContainer}>
+        <View>
           <LottieView
             source={require('../../../assets/anims/building_exercise.json')}
             progress={this.animatedProgress}
             style={styles.lottieFile}
           />
+        </View>
+        <View style={styles.absoluteContainer}>
+          <Text style={styles.centerText}> Calibrating your{'\n'}exercise</Text>
         </View>
       </View>
     );
@@ -74,5 +77,21 @@ const styles = StyleSheet.create({
     height: 300,
     width: 300,
     marginBottom: 100,
+  },
+  centerText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: FontType.SemiBold,
+    marginBottom: 100,
+  },
+  absoluteContainer: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
   },
 });

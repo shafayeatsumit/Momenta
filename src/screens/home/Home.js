@@ -3,12 +3,16 @@ import {ScrollView, BackHandler} from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import Thumbnail from './Thumbnail';
 import styles from './Home.styles';
-import {BREATHING_TYPES} from '../../helpers/breathing_constants';
+import {
+  BREATHING_TYPES,
+  MindfulChallenge,
+} from '../../helpers/breathing_constants';
 import {useDispatch, useSelector} from 'react-redux';
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.userInfo);
+
   const handleBreathTypeSelect = (breathing) => {
     const breathingType = breathing.type;
     analytics().logEvent('button_push', {title: `${breathing.id}`});
@@ -26,6 +30,13 @@ const Home = ({navigation}) => {
         : navigation.navigate('GuidedBreathing');
     }
   };
+
+  const handlePressMindfulChallenge = () => {
+    analytics().logEvent('button_push', {title: MindfulChallenge.id});
+    dispatch({type: 'SELECT_GUIDED_TYPE', data: MindfulChallenge});
+    navigation.navigate('MindfulChallenge');
+  };
+
   useEffect(() => {
     const backAction = () => {
       analytics().logEvent('button_push', {title: 'android_back_button'});
@@ -48,6 +59,11 @@ const Home = ({navigation}) => {
           handleBreathTypeSelect={handleBreathTypeSelect}
         />
       ))}
+      <Thumbnail
+        key={MindfulChallenge.id}
+        breathingType={MindfulChallenge}
+        handleBreathTypeSelect={handlePressMindfulChallenge}
+      />
     </ScrollView>
   );
 };

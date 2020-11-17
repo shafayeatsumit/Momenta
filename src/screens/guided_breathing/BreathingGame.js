@@ -84,13 +84,24 @@ class BreathingGame extends Component {
     return vibrationStatus;
   };
 
+  handleMindfulStreak = () => {
+    // handle sreak count here.
+  };
+
   startTimer = () => {
+    const {
+      challenge,
+      breathingTime,
+      id: challengeId,
+    } = this.props.guidedBreathing;
+    const isMindfulChallenge = challenge && challengeId === 'mindful_challenge';
     this.timerId = setInterval(() => {
-      const finishDuration = this.props.guidedBreathing.breathingTime * 60;
+      const finishDuration = breathingTime * 60;
       const {timer} = this.state;
       const timeIsUp = timer === finishDuration;
       if (timeIsUp) {
         clearInterval(this.timerId);
+        isMindfulChallenge && this.handleMindfulStreak();
         this.setState({timeIsUp: true});
         return;
       }

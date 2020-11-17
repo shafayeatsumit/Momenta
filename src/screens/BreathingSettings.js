@@ -11,6 +11,7 @@ import {
 import {Colors, FontType} from '../helpers/theme';
 import ButtonBig from '../components/ButtonBig';
 import {ScreenWidth} from '../helpers/constants/common';
+import {ExerciseDescription} from '../helpers/breathing_constants';
 import analytics from '@react-native-firebase/analytics';
 
 const BreathingSettings = ({close}) => {
@@ -34,6 +35,8 @@ const BreathingSettings = ({close}) => {
     dispatch({type: 'TOGGLE_VIBRATION', name: `${breathingId}_vibration`});
   };
 
+  const exerciseDescription = ExerciseDescription[breathing.id];
+  console.log('exerciseDescription', exerciseDescription);
   return (
     <View style={styles.container}>
       <Text allowFontScaling={false} style={styles.title}>
@@ -48,21 +51,28 @@ const BreathingSettings = ({close}) => {
           </View>
           <View style={styles.infoTextPadding}>
             <Text allowFontScaling={false} style={styles.infoText}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s,
+              {exerciseDescription.summary}
             </Text>
           </View>
           <View style={styles.infoTextPadding}>
             <Text allowFontScaling={false} style={styles.infoTitle}>
-              TARGET RYTHMS
+              TARGET BREATHING RYTHMS
             </Text>
           </View>
           <View style={styles.infoTextPadding}>
             <Text allowFontScaling={false} style={styles.infoText}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s,
+              {exerciseDescription.target_breathing_rhythms}
+            </Text>
+          </View>
+
+          <View style={styles.infoTextPadding}>
+            <Text allowFontScaling={false} style={styles.infoTitle}>
+              DIRECTIONS
+            </Text>
+          </View>
+          <View style={styles.infoTextPadding}>
+            <Text allowFontScaling={false} style={styles.infoText}>
+              {exerciseDescription.directions}
             </Text>
           </View>
         </ScrollView>
@@ -164,5 +174,6 @@ const styles = StyleSheet.create({
   },
   infoTextPadding: {
     marginTop: 10,
+    paddingHorizontal: 15,
   },
 });

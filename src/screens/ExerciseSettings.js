@@ -20,12 +20,17 @@ const ExerciseSettings = ({
       ? dispatch({type: 'SELECT_GUIDED_TIME', breathingTime: duration})
       : dispatch({type: 'SELECT_FIXED_TIME', breathingTime: duration});
   };
-  const showTimePicker = playButtonTitle.toLowerCase() === 'start';
+  const buttonTitle = playButtonTitle.toLowerCase();
+  const isChallenge = breathing.challenge;
+  const showTimePicker = buttonTitle === 'start' && !isChallenge;
+
   const showOptions =
     playButtonTitle.toLowerCase() !== 'finish' &&
     playButtonTitle.toLowerCase() !== 'pause';
-  const showCalibration = breathing.type === 'guided' && showTimePicker;
-  const buttonTitle = playButtonTitle.toLowerCase();
+  const showCalibration =
+    (isChallenge && buttonTitle === 'start') ||
+    (breathing.type === 'guided' && showTimePicker);
+
   const bigButtonTitleColor =
     buttonTitle === 'pause' || buttonTitle === 'finish'
       ? Colors.buttonBlue
@@ -40,7 +45,12 @@ const ExerciseSettings = ({
   }
   const selectedTime = breathing.breathingTime;
   return (
-    <View style={[styles.container, showCalibration && {height: 220}]}>
+    <View
+      style={[
+        styles.container,
+        showCalibration && {height: 230},
+        breathing.challenge && {height: 150},
+      ]}>
       {showCalibration && (
         <TouchableOpacity
           style={styles.calibrateTextHolder}
@@ -65,8 +75,8 @@ const ExerciseSettings = ({
             containerStyle={[
               selectedTime !== 3 && {backgroundColor: Colors.betterBlue},
             ]}
-            title="3 min"
-            handlePress={() => selectTime(3)}
+            title="2 min"
+            handlePress={() => selectTime(2)}
           />
           <ButtonSmall
             titleStyle={[selectedTime !== 5 && {color: Colors.buttonBlue}]}
@@ -110,7 +120,7 @@ export default ExerciseSettings;
 
 const styles = StyleSheet.create({
   container: {
-    height: 160,
+    height: 180,
     width: ScreenWidth,
     alignItems: 'center',
   },

@@ -28,7 +28,11 @@ class GuidedBreathing extends Component {
 
   goHome = () => {
     this.setState({showBreathingGame: false, showAnimation: true});
-    this.props.navigation.pop();
+    const {guidedBreathing} = this.props;
+    const {challenge} = guidedBreathing;
+    challenge
+      ? this.props.navigation.replace('Home')
+      : this.props.navigation.pop();
   };
 
   finishHaptics = () => {

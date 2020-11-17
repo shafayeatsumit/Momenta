@@ -8,6 +8,7 @@ import LoadingScreen from '../screens/Loading';
 import ProfileScreen from '../screens/profile/Profile';
 import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
+import MindfulChallengeScreen from '../screens/mindful_challenge/MindfulChallenge';
 import ExerciseExplainerScreen from '../screens/ExerciseExplainer';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Colors} from '../helpers/theme';
@@ -63,6 +64,10 @@ class Nav extends Component {
             component={FixedBreathingScreen}
           />
           <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen
+            name="MindfulChallenge"
+            component={MindfulChallengeScreen}
+          />
           {/* <Stack.Screen name="Content" component={ContentScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>

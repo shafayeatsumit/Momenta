@@ -8,7 +8,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import styles from './CalmBreathingChallenge.styles';
+import styles from './CalmerBreathingLessons.styles';
 import analytics from '@react-native-firebase/analytics';
 
 const MindfulChallenge = ({navigation}) => {
@@ -18,10 +18,10 @@ const MindfulChallenge = ({navigation}) => {
   const goBack = () => navigation.goBack();
 
   const handleSignup = () => {
-    dispatch({type: 'SIGNED_UP_CALM_BREATHING_CHALLENGE'});
-    analytics().logEvent('button_push', {title: 'signed_up_calm_challenge'});
+    dispatch({type: 'SIGNED_UP_CALMER_BREATHING_LESSONS'});
+    analytics().logEvent('button_push', {title: 'signed_up_calmer_lessons'});
   };
-  const {signedUpCalmBreathingChallenge: isSignedUp} = userInfo;
+  const {signedUpCalmerBreathingLessons: isSignedUp} = userInfo;
   const buttonTitle = isSignedUp ? 'Signed Up' : 'Sign Up';
   return (
     <ImageBackground source={breathing.background} style={styles.background}>

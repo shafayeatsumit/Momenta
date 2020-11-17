@@ -15,7 +15,7 @@ const INIT_STATE = {
   four_seven_eight_vibration: true,
   showExerciseExplainer: true,
   showCalibrationExplainer: true,
-  signedUpCalmBreathingChallenge: false,
+  signedUpCalmerBreathingLessons: false,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -51,10 +51,10 @@ const loginInfo = (state = INIT_STATE, action) => {
         ...state,
         showCalibrationExplainer: false,
       };
-    case 'SIGNED_UP_CALM_BREATHING_CHALLENGE':
+    case 'SIGNED_UP_CALMER_BREATHING_LESSONS':
       return {
         ...state,
-        signedUpCalmBreathingChallenge: true,
+        signedUpCalmerBreathingLessons: true,
       };
     default:
       return state;

@@ -141,7 +141,6 @@ class BreathingGame extends Component {
   };
 
   startExhale = (resumeDuration) => {
-    this.breathingWillEnd = moment().add(this.exhaleTime, 'milliseconds');
     this.setState({breathingType: 'exhale'});
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
@@ -149,6 +148,7 @@ class BreathingGame extends Component {
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
     const duration = resumeDuration || this.exhaleTime;
+    this.breathingWillEnd = moment().add(duration, 'milliseconds');
     vibrationStatus &&
       NativeModules.AndroidVibration.startVibration(duration, 20);
     Animated.timing(this.animatedProgress, {

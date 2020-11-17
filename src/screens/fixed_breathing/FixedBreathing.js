@@ -150,7 +150,7 @@ class FixedBreathing extends Component {
   };
 
   startExhale = (resumeDuration) => {
-    this.breathingWillEnd = moment().add(this.exhaleTime, 'milliseconds');
+    console.log('resume duration =====>', resumeDuration);
     this.setState({breathingType: 'exhale'});
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
@@ -158,6 +158,7 @@ class FixedBreathing extends Component {
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
     const duration = resumeDuration || this.exhaleTime;
+    this.breathingWillEnd = moment().add(duration, 'milliseconds');
     vibrationStatus &&
       NativeModules.AndroidVibration.startVibration(duration, 20);
     Animated.timing(this.animatedProgress, {
@@ -225,6 +226,7 @@ class FixedBreathing extends Component {
     this.sound.unmuteSound();
     // difference between pause and end time.
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
+    console.log('resume duration =========>', resumeDuration);
     if (holdTime) {
       this.setState({holdTime: 0});
       holdType === 'exhale_hold' ? this.startInhale() : this.startExhale();

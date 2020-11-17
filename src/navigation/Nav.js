@@ -9,7 +9,7 @@ import ProfileScreen from '../screens/profile/Profile';
 import ContentScreen from '../screens/content/Content';
 import GuidedBreathingScreen from '../screens/guided_breathing/GuidedBreathing';
 import MindfulChallengeScreen from '../screens/mindful_challenge/MindfulChallenge';
-import CalmBreathingChallengeScreen from '../screens/calm_breathing_challenge/CalmBreathingChallenge';
+import CalmerBreathingLessonsScreen from '../screens/calmer_breathing_lessons/CalmerBreathingLessons';
 import ExerciseExplainerScreen from '../screens/ExerciseExplainer';
 import {createStackNavigator} from '@react-navigation/stack';
 import {Colors} from '../helpers/theme';
@@ -70,8 +70,8 @@ class Nav extends Component {
             component={MindfulChallengeScreen}
           />
           <Stack.Screen
-            name="CalmBreathingChallenge"
-            component={CalmBreathingChallengeScreen}
+            name="CalmerBreathingLessons"
+            component={CalmerBreathingLessonsScreen}
           />
           {/* <Stack.Screen name="Content" component={ContentScreen} /> */}
         </Stack.Navigator>

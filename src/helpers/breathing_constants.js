@@ -86,9 +86,9 @@ export const MindfulChallenge = {
     'Adaptive exercise that rebalances your breathing patterns to bring you into natural calmness and clarity.',
 };
 
-export const CalmBreathingChallenge = {
-  id: 'calm_breathing_challenge',
-  name: 'Calm Breathing Challenge',
+export const CalmerBreathingLessons = {
+  id: 'calmer_breathing_lessons',
+  name: 'Calmer Breathing Lessons',
   type: 'guided',
   dynamicTarget: true,
   targetInhale: 5 * 1000,
@@ -99,8 +99,8 @@ export const CalmBreathingChallenge = {
   breathingTime: 2,
   image: require('../../assets/images/calm.jpg'),
   challenge: true,
-  name_line_one: 'Calm Breathing',
-  name_line_two: 'Challenge',
+  name_line_one: 'Calmer Breathing',
+  name_line_two: 'Lessons',
   description:
     'Adaptive exercise that rebalances your breathing patterns to bring you into natural calmness and clarity.',
 };

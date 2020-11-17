@@ -6,6 +6,7 @@ import styles from './Home.styles';
 import {
   BREATHING_TYPES,
   MindfulChallenge,
+  CalmBreathingChallenge,
 } from '../../helpers/breathing_constants';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -37,6 +38,12 @@ const Home = ({navigation}) => {
     navigation.navigate('MindfulChallenge');
   };
 
+  const handlePressCalmBreathingChallenge = () => {
+    analytics().logEvent('button_push', {title: CalmBreathingChallenge.id});
+    dispatch({type: 'SELECT_GUIDED_TYPE', data: CalmBreathingChallenge});
+    navigation.navigate('CalmBreathingChallenge');
+  };
+
   useEffect(() => {
     const backAction = () => {
       analytics().logEvent('button_push', {title: 'android_back_button'});
@@ -63,6 +70,11 @@ const Home = ({navigation}) => {
         key={MindfulChallenge.id}
         breathingType={MindfulChallenge}
         handleBreathTypeSelect={handlePressMindfulChallenge}
+      />
+      <Thumbnail
+        key={CalmBreathingChallenge.id}
+        breathingType={CalmBreathingChallenge}
+        handleBreathTypeSelect={handlePressCalmBreathingChallenge}
       />
     </ScrollView>
   );

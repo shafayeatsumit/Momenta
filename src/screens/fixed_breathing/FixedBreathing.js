@@ -361,14 +361,20 @@ class FixedBreathing extends Component {
         </View>
         <View style={styles.absoluteContainer}>
           {breathingType === 'ready' && initialTimer < 4 ? (
-            <Text style={styles.centerText}>{initialTimer}</Text>
+            <Text allowFontScaling={false} style={styles.centerText}>
+              {initialTimer}
+            </Text>
           ) : (
-            <Text style={styles.centerText}>{centerText}</Text>
+            <Text allowFontScaling={false} style={styles.centerText}>
+              {centerText}
+            </Text>
           )}
         </View>
         {breathingType === 'hold' && (
           <View style={styles.absoluteContainer}>
-            <Text style={styles.holdTimer}>{holdTime}</Text>
+            <Text allowFontScaling={false} style={styles.holdTimer}>
+              {holdTime}
+            </Text>
           </View>
         )}
 

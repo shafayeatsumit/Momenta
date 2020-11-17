@@ -12,7 +12,7 @@ import {ScreenHeight} from '../../helpers/constants/common';
 import CustomExerciseBuilder from './CustomExerciseBuilder';
 import CalibrationExplainer from './CalibrationExplainer';
 import analytics from '@react-native-firebase/analytics';
-import SoundOptions from '../../helpers/soundOptions';
+
 class GuidedBreathing extends Component {
   constructor(props) {
     super(props);
@@ -24,7 +24,6 @@ class GuidedBreathing extends Component {
       finished: false,
       showAnimation: false,
     };
-    this.sound = new SoundOptions();
   }
 
   goHome = () => {
@@ -101,10 +100,6 @@ class GuidedBreathing extends Component {
 
     analytics().logEvent('button_push', {title: 'finish'});
   };
-
-  componentWillUnmount() {
-    this.sound.stopMusic();
-  }
 
   render() {
     const {

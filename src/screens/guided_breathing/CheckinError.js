@@ -5,9 +5,13 @@ import ButtonSmall from '../../components/ButtonSmall';
 
 const CheckinError = ({error, handleRedo, handleSkip}) => (
   <View style={styles.container}>
-    <Text style={styles.title}>Calibration</Text>
-    <Text style={styles.error}>{error}</Text>
-    <View style={styles.buttonHolder}>
+    <Text allowFontScaling={false} style={styles.title}>
+      Calibration
+    </Text>
+    <Text allowFontScaling={false} style={styles.error}>
+      {error}
+    </Text>
+    <View allowFontScaling={false} style={styles.buttonHolder}>
       <ButtonSmall title={'REDO'} handlePress={handleRedo} />
       <ButtonSmall
         title={'SKIP'}

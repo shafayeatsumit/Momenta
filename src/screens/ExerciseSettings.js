@@ -45,7 +45,9 @@ const ExerciseSettings = ({
         <TouchableOpacity
           style={styles.calibrateTextHolder}
           onPress={goToCalibration}>
-          <Text style={styles.calibrateText}>Calibrate this exercise</Text>
+          <Text allowFontScaling={false} style={styles.calibrateText}>
+            Calibrate this exercise
+          </Text>
         </TouchableOpacity>
       )}
       {showTimePicker && (

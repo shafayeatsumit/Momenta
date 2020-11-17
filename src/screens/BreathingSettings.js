@@ -36,24 +36,30 @@ const BreathingSettings = ({close}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{breathing.name}</Text>
+      <Text allowFontScaling={false} style={styles.title}>
+        {breathing.name}
+      </Text>
       <View style={styles.infoHolder}>
         <ScrollView>
           <View style={styles.infoTextPadding}>
-            <Text style={styles.infoTitle}>SUMMARRY</Text>
+            <Text allowFontScaling={false} style={styles.infoTitle}>
+              SUMMARRY
+            </Text>
           </View>
           <View style={styles.infoTextPadding}>
-            <Text style={styles.infoText}>
+            <Text allowFontScaling={false} style={styles.infoText}>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
               ever since the 1500s,
             </Text>
           </View>
           <View style={styles.infoTextPadding}>
-            <Text style={styles.infoTitle}>TARGET RYTHMS</Text>
+            <Text allowFontScaling={false} style={styles.infoTitle}>
+              TARGET RYTHMS
+            </Text>
           </View>
           <View style={styles.infoTextPadding}>
-            <Text style={styles.infoText}>
+            <Text allowFontScaling={false} style={styles.infoText}>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
               ever since the 1500s,
@@ -63,7 +69,9 @@ const BreathingSettings = ({close}) => {
       </View>
       <View style={styles.toggleContainer}>
         <View style={styles.toggleHolder}>
-          <Text style={styles.toggleText}>SOUND</Text>
+          <Text allowFontScaling={false} style={styles.toggleText}>
+            SOUND
+          </Text>
           <Switch
             trackColor={{false: '#252A43', true: '#252A43'}}
             thumbColor={soundStatus ? Colors.buttonBlue : '#787989'}

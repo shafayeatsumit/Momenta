@@ -3,36 +3,63 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Colors, FontType} from '../../helpers/theme';
 import ButtonSmall from '../../components/ButtonSmall';
 
-const CheckinError = ({inhaleTime, exhaleTime, handleRedo, handleUse}) => (
-  <View style={styles.container}>
-    <Text style={styles.title}>Calibration</Text>
-    <View style={styles.centerTextHolder}>
-      <View style={styles.timeHolder}>
-        <Text style={styles.timeTitle}>Exhale Time</Text>
-        <Text style={styles.time}>
-          {exhaleTime} <Text style={styles.seconds}>seconds</Text>
-        </Text>
-      </View>
-      <View style={styles.timeHolder}>
-        <Text style={styles.timeTitle}>Inhale Time</Text>
+const CheckinError = ({inhaleTime, exhaleTime, handleRedo, handleUse}) => {
+  const rhythm = Math.round(60 / (inhaleTime + exhaleTime));
+  return (
+    <View style={styles.container}>
+      <Text allowFontScaling={false} style={styles.title}>
+        Calibration
+      </Text>
+      <View style={styles.centerTextHolder}>
+        <View style={styles.timeHolder}>
+          <Text allowFontScaling={false} style={styles.timeTitle}>
+            Exhale Time
+          </Text>
+          <Text allowFontScaling={false} style={styles.time}>
+            {exhaleTime}{' '}
+            <Text allowFontScaling={false} style={styles.seconds}>
+              seconds
+            </Text>
+          </Text>
+        </View>
+        <View style={styles.timeHolder}>
+          <Text allowFontScaling={false} style={styles.timeTitle}>
+            Inhale Time
+          </Text>
 
-        <Text style={styles.time}>
-          {inhaleTime} <Text style={styles.seconds}>seconds</Text>
-        </Text>
+          <Text allowFontScaling={false} style={styles.time}>
+            {inhaleTime}{' '}
+            <Text allowFontScaling={false} style={styles.seconds}>
+              seconds
+            </Text>
+          </Text>
+        </View>
+        <View style={styles.timeHolder}>
+          <Text allowFontScaling={false} style={styles.timeTitle}>
+            Rhythm
+          </Text>
+
+          <Text allowFontScaling={false} style={styles.time}>
+            {rhythm}{' '}
+            <Text allowFontScaling={false} style={styles.seconds}>
+              breaths/min
+            </Text>
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.buttonHolder}>
+        <ButtonSmall
+          title={'REDO'}
+          handlePress={handleRedo}
+          containerStyle={{backgroundColor: Colors.betterBlue}}
+          titleStyle={{color: Colors.buttonBlue}}
+        />
+        <ButtonSmall title={'USE'} handlePress={handleUse} />
       </View>
     </View>
-
-    <View style={styles.buttonHolder}>
-      <ButtonSmall
-        title={'REDO'}
-        handlePress={handleRedo}
-        containerStyle={{backgroundColor: Colors.betterBlue}}
-        titleStyle={{color: Colors.buttonBlue}}
-      />
-      <ButtonSmall title={'USE'} handlePress={handleUse} />
-    </View>
-  </View>
-);
+  );
+};
 export default CheckinError;
 
 const styles = StyleSheet.create({
@@ -72,7 +99,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   centerTextHolder: {
-    height: 200,
+    height: 260,
     width: 280,
     // backgroundColor: 'red',
   },

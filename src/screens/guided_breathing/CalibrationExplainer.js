@@ -35,7 +35,9 @@ const CalibrationExplainer = ({goToCalibration, goBack}) => {
 
   return (
     <View style={styles.slide1}>
-      <Text style={styles.title}>Calibration</Text>
+      <Text allowFontScaling={false} style={styles.title}>
+        Calibration
+      </Text>
       <TouchableOpacity style={styles.backbuttonHolder} onPress={handleXout}>
         <Image
           source={require('../../../assets/icons/arrow_left.png')}
@@ -52,9 +54,12 @@ const CalibrationExplainer = ({goToCalibration, goBack}) => {
           showsPagination={false}>
           <View style={{flex: 1, marginTop: 50}}>
             <View style={styles.textHolderBox}>
-              <Text style={styles.text}>
+              <Text allowFontScaling={false} style={styles.text}>
                 First, we'll measure the length of your current{' '}
-                <Text style={styles.exhales}>exhale</Text> and inhale
+                <Text allowFontScaling={false} style={styles.exhales}>
+                  exhale
+                </Text>{' '}
+                and inhale
               </Text>
             </View>
 
@@ -65,7 +70,7 @@ const CalibrationExplainer = ({goToCalibration, goBack}) => {
           </View>
           <View style={{flex: 1}}>
             <View style={styles.textHolderBox}>
-              <Text style={styles.text}>
+              <Text allowFontScaling={false} style={styles.text}>
                 Then, we'll adjust the exercise{'\n'}to help you go from your
                 {'\n'}current breathing to the target{'\n'}breathing rhythms
                 naturally

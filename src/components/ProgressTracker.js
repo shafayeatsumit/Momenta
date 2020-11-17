@@ -30,14 +30,16 @@ const ProgressTracker = ({
           />
         </TouchableOpacity>
         <View style={styles.titleHolder}>
-          <Text style={styles.title}>{title}</Text>
+          <Text allowFontScaling={false} style={styles.title}>
+            {title}
+          </Text>
         </View>
 
         <View style={styles.timerContainer}>
-          <Text style={styles.time}>
+          <Text allowFontScaling={false} style={styles.time}>
             {currentTimeMin}:{twoDigitPadding(currentTimeSec)}
           </Text>
-          <Text style={styles.time}>
+          <Text allowFontScaling={false} style={styles.time}>
             /{targetTimeMin}:{twoDigitPadding(targetTimeSec)}
           </Text>
         </View>

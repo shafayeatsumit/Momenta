@@ -234,11 +234,16 @@ class CheckInBreath extends Component {
         </TouchableOpacity>
 
         {showInhaleInstruction ? (
-          <Text style={styles.text}>Tap when done inhaling</Text>
+          <Text allowFontScaling={false} style={styles.text}>
+            Tap when done inhaling
+          </Text>
         ) : null}
         {showExhaleInsturction ? (
           <Text style={styles.text}>
-            Release when done <Text style={styles.boldText}>exhaling</Text>
+            Release when done{' '}
+            <Text allowFontScaling={false} style={styles.boldText}>
+              exhaling
+            </Text>
           </Text>
         ) : null}
         <LottieView
@@ -255,9 +260,12 @@ class CheckInBreath extends Component {
         </View>
         <View style={styles.absolutePosition}>
           {centerText ? (
-            <Text style={styles.text}>
+            <Text allowFontScaling={false} style={styles.text}>
               Hold below during your {'\n'}next
-              <Text style={styles.boldText}> exhale</Text>
+              <Text allowFontScaling={false} style={styles.boldText}>
+                {' '}
+                exhale
+              </Text>
             </Text>
           ) : null}
         </View>

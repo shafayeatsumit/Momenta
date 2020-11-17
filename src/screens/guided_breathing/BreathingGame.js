@@ -315,9 +315,13 @@ class BreathingGame extends Component {
 
         <View style={styles.absoluteContainer}>
           {breathingType === 'ready' && initialTimer < 4 ? (
-            <Text style={styles.centerText}>{initialTimer}</Text>
+            <Text allowFontScaling={false} style={styles.centerText}>
+              {initialTimer}
+            </Text>
           ) : (
-            <Text style={styles.centerText}>{centerText}</Text>
+            <Text allowFontScaling={false} style={styles.centerText}>
+              {centerText}
+            </Text>
           )}
         </View>
 

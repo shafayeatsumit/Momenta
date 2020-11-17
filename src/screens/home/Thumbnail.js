@@ -18,10 +18,14 @@ const Thumbnail = ({breathingType, handleBreathTypeSelect}) => {
       onPress={() => handleBreathTypeSelect(breathingType)}>
       <ImageBackground source={breathingType.image} style={styles.thumbnail}>
         {hasLineOne && (
-          <Text style={styles.text}>{breathingType.name_line_one}</Text>
+          <Text allowFontScaling={false} style={styles.text}>
+            {breathingType.name_line_one}
+          </Text>
         )}
 
-        <Text style={styles.textBold}>{breathingType.name_line_two}</Text>
+        <Text allowFontScaling={false} style={styles.textBold}>
+          {breathingType.name_line_two}
+        </Text>
       </ImageBackground>
     </TouchableOpacity>
   );

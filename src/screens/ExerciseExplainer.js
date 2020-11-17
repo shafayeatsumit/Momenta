@@ -54,8 +54,11 @@ const ExerciseExplainer = ({navigation}) => {
           showsPagination={false}>
           <View style={{flex: 1, justifyContent: 'center'}}>
             <View style={styles.textHolderBox}>
-              <Text style={[styles.text]}>
-                Focus on your <Text style={styles.exhales}>exhales</Text>
+              <Text allowFontScaling={false} style={[styles.text]}>
+                Focus on your{' '}
+                <Text allowFontScaling={false} style={styles.exhales}>
+                  exhales
+                </Text>
               </Text>
             </View>
 
@@ -66,9 +69,11 @@ const ExerciseExplainer = ({navigation}) => {
           </View>
           <View style={{flex: 1, justifyContent: 'center'}}>
             <View style={styles.textHolderBox}>
-              <Text style={styles.text}>
+              <Text allowFontScaling={false} style={styles.text}>
                 The sign of good, calm{'\n'}breathing is long, slow, easy{'\n'}
-                <Text style={styles.exhales}>exhaling</Text>
+                <Text allowFontScaling={false} style={styles.exhales}>
+                  exhaling
+                </Text>
               </Text>
             </View>
             <View style={styles.slideIndecator}>

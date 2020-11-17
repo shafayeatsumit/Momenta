@@ -6,7 +6,11 @@ const BigButton = ({title, containerStyle, titleStyle, handlePress}) => (
   <TouchableOpacity
     style={StyleSheet.flatten([styles.bigButton, containerStyle])}
     onPress={handlePress}>
-    <Text style={StyleSheet.flatten([styles.title, titleStyle])}>{title}</Text>
+    <Text
+      allowFontScaling={false}
+      style={StyleSheet.flatten([styles.title, titleStyle])}>
+      {title}
+    </Text>
   </TouchableOpacity>
 );
 export default BigButton;

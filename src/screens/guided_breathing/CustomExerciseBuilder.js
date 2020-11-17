@@ -51,7 +51,10 @@ class CustomExerciseBuilder extends Component {
           />
         </View>
         <View style={styles.absoluteContainer}>
-          <Text style={styles.centerText}> Calibrating your{'\n'}exercise</Text>
+          <Text allowFontScaling={false} style={styles.centerText}>
+            {' '}
+            Calibrating your{'\n'}exercise
+          </Text>
         </View>
       </View>
     );

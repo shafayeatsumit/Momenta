@@ -13,6 +13,8 @@ const INIT_STATE = {
   box_vibration: true,
   four_seven_eight_sound: true,
   four_seven_eight_vibration: true,
+  mindful_challenge_sound: true,
+  mindful_challenge_vibration: true,
   showExerciseExplainer: true,
   showCalibrationExplainer: true,
   signedUpCalmerBreathingLessons: false,

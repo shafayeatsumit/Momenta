@@ -41,7 +41,7 @@ const MindfulChallenge = ({navigation}) => {
       </TouchableOpacity>
       <View style={styles.lessonTextBox}>
         <Text style={styles.lessonOne}>Lesson 1</Text>
-        <Text style={[styles.descriptionText, {fontSize: 13}]}>1 Minute</Text>
+        <Text style={[styles.descriptionText, {fontSize: 12}]}>1 Minute</Text>
       </View>
       <TouchableOpacity
         onPress={handleSignup}

@@ -100,7 +100,7 @@ export const CalmerBreathingLessons = {
   challenge: true,
   name_line_one: 'Calmer',
   name_line_two: 'Breathing',
-  description: 'Misconseptions about takig "deep" breath',
+  description: 'Misconceptions about talking a “deep” breath',
 };
 
 export const ExerciseDescription = {
@@ -134,7 +134,8 @@ export const ExerciseDescription = {
       'Exhale and inhale through your nose\n\nThe focus of this exercise is lengthening your breathing time overall without taking big “deep” inhales. (This might be tougher for beginners.) Ideally, you will take a normal sized inhale over 4 seconds, hold at the top of that inhale for 7 seconds, and then exhale very slowly and gently for 8 seconds. If you find yourself unable to take regular sized inhales, you should stop and try the “Prepare for Sleep” exercise, which was designed to be less intense.',
   },
   mindful_challenge: {
-    summary: 'Complete 2 minutes of mindful breathing for 7 consecutive days.',
+    summary:
+      'Complete 2 minutes of mindful breathing for at least 7 consecutive days',
     target_breathing_rhythms: '5 s Exhale\n5 s Inhale\n6 Breaths/min',
     directions:
       'Exhale and inhale slowly through your nose.\n\nWe don’t want big breaths.We want calm, easy, and consistent breathing with exhales that are as long as inhales.When we inhale more than we exhale, we typically lose our calm.',

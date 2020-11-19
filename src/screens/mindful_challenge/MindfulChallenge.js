@@ -11,7 +11,17 @@ import styles from './MindfulChallenge.styles';
 
 const MindfulChallenge = ({navigation}) => {
   const breathing = useSelector((state) => state.breathing);
+  const userInfo = useSelector((state) => state.userInfo);
+  const streakCount = userInfo.mindfulChallengeStreak;
   const goBack = () => navigation.goBack();
+  const handleStart = () => {
+    if (userInfo.showExerciseExplainer) {
+      navigation.navigate('ExerciseExplainer');
+    } else {
+      navigation.navigate('GuidedBreathing');
+    }
+  };
+  const buttonTitle = streakCount > 0 ? 'CONTINUE' : 'START';
   return (
     <ImageBackground source={breathing.image} style={styles.background}>
       <View style={styles.titleBox}>
@@ -22,6 +32,9 @@ const MindfulChallenge = ({navigation}) => {
       <View style={styles.descriptionBox}>
         <Text style={styles.descriptionText}>{breathing.description}</Text>
       </View>
+      <Text style={styles.streak}>
+        {streakCount} {streakCount === 1 ? 'Day' : 'Days'}
+      </Text>
       <TouchableOpacity style={styles.backbuttonHolder} onPress={goBack}>
         <Image
           source={require('../../../assets/icons/arrow_left.png')}
@@ -29,10 +42,10 @@ const MindfulChallenge = ({navigation}) => {
         />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate('GuidedBreathing')}
+        onPress={handleStart}
         style={[styles.button, styles.buttonBlue]}
         activeOpacity={0.8}>
-        <Text style={styles.buttonText}>Start</Text>
+        <Text style={styles.buttonText}>{buttonTitle}</Text>
       </TouchableOpacity>
     </ImageBackground>
   );

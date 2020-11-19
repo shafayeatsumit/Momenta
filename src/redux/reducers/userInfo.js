@@ -16,6 +16,8 @@ const INIT_STATE = {
   showExerciseExplainer: true,
   showCalibrationExplainer: true,
   signedUpCalmerBreathingLessons: false,
+  mindfulChallengeStreak: 0,
+  mindfulChallengeDate: null,
 };
 
 const loginInfo = (state = INIT_STATE, action) => {
@@ -55,6 +57,17 @@ const loginInfo = (state = INIT_STATE, action) => {
       return {
         ...state,
         signedUpCalmerBreathingLessons: true,
+      };
+    case 'RESET_MINDFUL_CHALLENGE_STREAK':
+      return {
+        ...state,
+        mindfulChallengeStreak: 0,
+      };
+    case 'UPDATE_MINDFUL_CHALLENGE_STREAK':
+      return {
+        ...state,
+        mindfulChallengeStreak: state.mindfulChallengeStreak + 1,
+        mindfulChallengeDate: action.updateDate,
       };
     default:
       return state;

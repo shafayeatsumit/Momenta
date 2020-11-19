@@ -13,7 +13,8 @@ import {useDispatch, useSelector} from 'react-redux';
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.userInfo);
-
+  const mindfulChallengeStreak = userInfo.mindfulChallengeStreak;
+  console.log('mindfulChallengeStreak ===>', mindfulChallengeStreak);
   const handleBreathTypeSelect = (breathing) => {
     const breathingType = breathing.type;
     analytics().logEvent('button_push', {title: `${breathing.id}`});
@@ -56,7 +57,6 @@ const Home = ({navigation}) => {
 
     return () => backHandler.remove();
   }, []);
-
   return (
     <ScrollView contentContainerStyle={styles.tilesContainer}>
       {BREATHING_TYPES.map((type) => (
@@ -71,7 +71,7 @@ const Home = ({navigation}) => {
         breathingType={MindfulChallenge}
         handleBreathTypeSelect={handlePressMindfulChallenge}
         textStyle={{fontSize: 15}}
-        footerText="0 day streak"
+        footerText={`${mindfulChallengeStreak} day streak`}
       />
       <Thumbnail
         key={CalmerBreathingLessons.id}

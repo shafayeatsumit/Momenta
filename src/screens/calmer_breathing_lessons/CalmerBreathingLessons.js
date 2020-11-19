@@ -20,6 +20,7 @@ const MindfulChallenge = ({navigation}) => {
     dispatch({type: 'SIGNED_UP_CALMER_BREATHING_LESSONS'});
     analytics().logEvent('button_push', {title: 'signed_up_calmer_lessons'});
   };
+
   const {signedUpCalmerBreathingLessons: isSignedUp} = userInfo;
   const buttonTitle = isSignedUp ? 'Signed Up' : 'Sign Up';
   return (

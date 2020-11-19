@@ -84,7 +84,31 @@ class BreathingGame extends Component {
     return vibrationStatus;
   };
 
+  updateMindfulChallenge = () => {
+    this.props.dispatch({
+      type: 'UPDATE_MINDFUL_CHALLENGE_STREAK',
+      mindfulChallengeDate: moment(),
+    });
+  };
+
   handleMindfulStreak = () => {
+    const {mindfulChallengeStreak, mindfulChallengeDate} = this.props.userInfo;
+    const today = moment();
+    const yesterday = moment().subtract(1, 'day');
+    const isSameDay = moment(mindfulChallengeDate).isSame(today, 'day');
+    const isYesterday = moment(mindfulChallengeDate).isSame(yesterday, 'day');
+
+    if (mindfulChallengeStreak) {
+      if (isSameDay) {
+      } else if (isYesterday) {
+        this.updateMindfulChallenge();
+      } else {
+        // reset challenge
+        this.props.dispatch({type: 'RESET_MINDFUL_CHALLENGE_STREAK'});
+      }
+    } else {
+      this.updateMindfulChallenge();
+    }
     // handle sreak count here.
   };
 

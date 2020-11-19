@@ -33,7 +33,7 @@ const Thumbnail = ({
           {breathingType.name_line_two}
         </Text>
         {middleText && <Text style={styles.middleText}>{middleText}</Text>}
-        {footerText && <Text style={styles.footerText}>0 days streak</Text>}
+        {footerText && <Text style={styles.footerText}>{footerText}</Text>}
       </ImageBackground>
     </TouchableOpacity>
   );

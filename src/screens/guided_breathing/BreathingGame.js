@@ -87,19 +87,20 @@ class BreathingGame extends Component {
   updateMindfulChallenge = () => {
     this.props.dispatch({
       type: 'UPDATE_MINDFUL_CHALLENGE_STREAK',
-      mindfulChallengeDate: moment(),
+      date: moment(),
     });
   };
 
   handleMindfulStreak = () => {
+    // handle sreak count here.
     const {mindfulChallengeStreak, mindfulChallengeDate} = this.props.userInfo;
     const today = moment();
     const yesterday = moment().subtract(1, 'day');
     const isSameDay = moment(mindfulChallengeDate).isSame(today, 'day');
     const isYesterday = moment(mindfulChallengeDate).isSame(yesterday, 'day');
-
     if (mindfulChallengeStreak) {
       if (isSameDay) {
+        // skip if its the same day.
       } else if (isYesterday) {
         this.updateMindfulChallenge();
       } else {
@@ -109,7 +110,6 @@ class BreathingGame extends Component {
     } else {
       this.updateMindfulChallenge();
     }
-    // handle sreak count here.
   };
 
   startTimer = () => {
@@ -330,7 +330,6 @@ class BreathingGame extends Component {
         </Modal>
       );
     }
-
     return (
       <View style={styles.main}>
         <ProgressTracker

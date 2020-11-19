@@ -62,12 +62,13 @@ const loginInfo = (state = INIT_STATE, action) => {
       return {
         ...state,
         mindfulChallengeStreak: 0,
+        mindfulChallengeDate: null,
       };
     case 'UPDATE_MINDFUL_CHALLENGE_STREAK':
       return {
         ...state,
         mindfulChallengeStreak: state.mindfulChallengeStreak + 1,
-        mindfulChallengeDate: action.updateDate,
+        mindfulChallengeDate: action.date,
       };
     default:
       return state;

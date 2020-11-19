@@ -78,12 +78,11 @@ export const MindfulChallenge = {
   calibrationInhale: 3 * 1000,
   firstThreshold: 60 * 1000,
   breathingTime: 2,
-  image: require('../../assets/images/calm.jpg'),
+  image: require('../../assets/images/mindful_challenge.jpg'),
   challenge: true,
-  name_line_one: 'Mindful',
+  name_line_one: '2 Minute Mindful',
   name_line_two: 'Challenge',
-  description:
-    'Adaptive exercise that rebalances your breathing patterns to bring you into natural calmness and clarity.',
+  description: 'Complete 2 minutes of mindful breathing for 7 consecutive days',
 };
 
 export const CalmerBreathingLessons = {
@@ -97,12 +96,11 @@ export const CalmerBreathingLessons = {
   calibrationInhale: 3 * 1000,
   firstThreshold: 60 * 1000,
   breathingTime: 2,
-  image: require('../../assets/images/calm.jpg'),
+  image: require('../../assets/images/calmer_breathing.jpg'),
   challenge: true,
-  name_line_one: 'Calmer Breathing',
-  name_line_two: 'Lessons',
-  description:
-    'Adaptive exercise that rebalances your breathing patterns to bring you into natural calmness and clarity.',
+  name_line_one: 'Calmer',
+  name_line_two: 'Breathing',
+  description: 'Misconseptions about takig "deep" breath',
 };
 
 export const ExerciseDescription = {

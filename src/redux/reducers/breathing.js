@@ -18,6 +18,7 @@ const breathing = (state = initialState, action) => {
         name_line_two,
         description,
         challenge,
+        image,
       } = action.data;
       return {
         ...state,
@@ -29,12 +30,14 @@ const breathing = (state = initialState, action) => {
         name_line_two,
         description,
         challenge,
+        image,
       };
     case 'SELECT_GUIDED_TIME':
     case 'SELECT_FIXED_TIME':
       return {
         ...state,
         breathingTime: action.breathingTime,
+        image: action.image,
       };
     default:
       return state;

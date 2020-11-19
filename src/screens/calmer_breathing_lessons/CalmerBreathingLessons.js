@@ -3,7 +3,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   ImageBackground,
   TouchableOpacity,
@@ -24,7 +23,7 @@ const MindfulChallenge = ({navigation}) => {
   const {signedUpCalmerBreathingLessons: isSignedUp} = userInfo;
   const buttonTitle = isSignedUp ? 'Signed Up' : 'Sign Up';
   return (
-    <ImageBackground source={breathing.background} style={styles.background}>
+    <ImageBackground source={breathing.image} style={styles.background}>
       <View style={styles.titleBox}>
         <Text style={styles.titleSm}>{breathing.name_line_one}</Text>
         <Text style={styles.title}>{breathing.name_line_two}</Text>
@@ -39,6 +38,10 @@ const MindfulChallenge = ({navigation}) => {
           style={styles.backbutton}
         />
       </TouchableOpacity>
+      <View style={styles.lessonTextBox}>
+        <Text style={styles.lessonOne}>Lesson 1</Text>
+        <Text style={[styles.descriptionText, {fontSize: 13}]}>1 Minute</Text>
+      </View>
       <TouchableOpacity
         onPress={handleSignup}
         disabled={isSignedUp}

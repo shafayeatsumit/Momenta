@@ -70,11 +70,14 @@ const Home = ({navigation}) => {
         key={MindfulChallenge.id}
         breathingType={MindfulChallenge}
         handleBreathTypeSelect={handlePressMindfulChallenge}
+        textStyle={{fontSize: 15}}
+        footerText="0 day streak"
       />
       <Thumbnail
         key={CalmerBreathingLessons.id}
         breathingType={CalmerBreathingLessons}
         handleBreathTypeSelect={handlePressCalmerBreathingLessons}
+        middleText="10 day course"
       />
     </ScrollView>
   );

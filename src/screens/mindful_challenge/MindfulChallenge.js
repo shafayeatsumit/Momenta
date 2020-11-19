@@ -13,7 +13,7 @@ const MindfulChallenge = ({navigation}) => {
   const breathing = useSelector((state) => state.breathing);
   const goBack = () => navigation.goBack();
   return (
-    <ImageBackground source={breathing.background} style={styles.background}>
+    <ImageBackground source={breathing.image} style={styles.background}>
       <View style={styles.titleBox}>
         <Text style={styles.titleSm}>{breathing.name_line_one}</Text>
         <Text style={styles.title}>{breathing.name_line_two}</Text>

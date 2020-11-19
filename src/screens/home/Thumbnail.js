@@ -9,7 +9,13 @@ import {
 import {ScreenWidth} from '../../helpers/constants/common';
 import {FontType} from '../../helpers/theme';
 
-const Thumbnail = ({breathingType, handleBreathTypeSelect}) => {
+const Thumbnail = ({
+  breathingType,
+  handleBreathTypeSelect,
+  textStyle,
+  footerText,
+  middleText,
+}) => {
   const hasLineOne = breathingType.name_line_one;
   return (
     <TouchableOpacity
@@ -18,7 +24,7 @@ const Thumbnail = ({breathingType, handleBreathTypeSelect}) => {
       onPress={() => handleBreathTypeSelect(breathingType)}>
       <ImageBackground source={breathingType.image} style={styles.thumbnail}>
         {hasLineOne && (
-          <Text allowFontScaling={false} style={styles.text}>
+          <Text allowFontScaling={false} style={[styles.text, textStyle]}>
             {breathingType.name_line_one}
           </Text>
         )}
@@ -26,6 +32,8 @@ const Thumbnail = ({breathingType, handleBreathTypeSelect}) => {
         <Text allowFontScaling={false} style={styles.textBold}>
           {breathingType.name_line_two}
         </Text>
+        {middleText && <Text style={styles.middleText}>{middleText}</Text>}
+        {footerText && <Text style={styles.footerText}>0 days streak</Text>}
       </ImageBackground>
     </TouchableOpacity>
   );
@@ -58,5 +66,21 @@ const styles = StyleSheet.create({
     fontFamily: FontType.ExtraBold,
     color: 'white',
     textAlign: 'center',
+  },
+  middleText: {
+    color: 'white',
+    fontFamily: FontType.SemiBold,
+    fontSize: 15,
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 55,
+  },
+  footerText: {
+    color: 'white',
+    fontFamily: FontType.Medium,
+    fontSize: 12,
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
   },
 });

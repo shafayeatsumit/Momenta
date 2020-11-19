@@ -158,9 +158,10 @@ class FixedBreathing extends Component {
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
     const duration = resumeDuration || this.exhaleTime;
+    const vibrationDuration = duration > 0 ? duration : 0;
     this.breathingWillEnd = moment().add(duration, 'milliseconds');
     vibrationStatus &&
-      NativeModules.AndroidVibration.startVibration(duration, 20);
+      NativeModules.AndroidVibration.startVibration(vibrationDuration, 20);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -256,7 +257,7 @@ class FixedBreathing extends Component {
   startCountDown = () => {
     this.setState({playButtonTitle: 'starting'});
     this.initialTimerId = setInterval(() => {
-      if (this.state.initialTimer === 0) {
+      if (this.state.initialTimer === 1) {
         clearInterval(this.initialTimerId);
         this.startExercise();
         return;
@@ -364,6 +365,7 @@ class FixedBreathing extends Component {
         <View style={styles.absoluteContainer}>
           {breathingType === 'ready' && initialTimer < 4 ? (
             <Text allowFontScaling={false} style={styles.centerText}>
+              Ready{'\n'}
               {initialTimer}
             </Text>
           ) : (

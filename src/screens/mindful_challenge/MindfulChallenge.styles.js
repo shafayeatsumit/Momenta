@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 48,
     height: 120,
-    width: 250,
+    width: 300,
     alignSelf: 'center',
     justifyContent: 'flex-end',
     alignItems: 'center',

@@ -9,6 +9,7 @@ import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.marcshilling.idletimer.IdleTimerPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.three_thoughts.VibrationManager;

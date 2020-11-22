@@ -11,6 +11,7 @@ import {
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import IdleTimerManager from 'react-native-idle-timer';
 import analytics from '@react-native-firebase/analytics';
 import styles from './FixedBreathing.styles';
 import BreathingSettings from '../BreathingSettings';
@@ -298,9 +299,12 @@ class FixedBreathing extends Component {
     this.stopAnimation = true;
     this.pauseVibration();
     clearInterval(this.initialTimerId);
+    IdleTimerManager.setIdleTimerDisabled(false);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    IdleTimerManager.setIdleTimerDisabled(true);
+  }
 
   render() {
     const {

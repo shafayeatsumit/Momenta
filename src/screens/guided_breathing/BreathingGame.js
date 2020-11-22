@@ -19,6 +19,7 @@ import analytics from '@react-native-firebase/analytics';
 import ProgressTracker from '../../components/ProgressTracker';
 import ExerciseSettings from '../ExerciseSettings';
 import SoundPlayer from '../../helpers/SoundPlayer';
+import IdleTimerManager from 'react-native-idle-timer';
 
 const avgInhale = (inhaleTime, targetInhaleTime) =>
   (inhaleTime + targetInhaleTime) / 2;
@@ -301,12 +302,17 @@ class BreathingGame extends Component {
     }
   };
 
+  componentDidMount() {
+    IdleTimerManager.setIdleTimerDisabled(true);
+  }
+
   componentWillUnmount() {
     clearInterval(this.timerId);
     this.sound.muteSound();
     this.stopAnimation = true;
     this.pauseVibration();
     clearInterval(this.initialTimerId);
+    IdleTimerManager.setIdleTimerDisabled(false);
   }
 
   render() {

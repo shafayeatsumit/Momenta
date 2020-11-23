@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Medium,
     fontSize: 16,
     color: 'white',
+    textAlign: 'center',
   },
   rightButton: {
     position: 'absolute',

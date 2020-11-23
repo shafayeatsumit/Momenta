@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import styles from './MindfulChallenge.styles';
+import analytics from '@react-native-firebase/analytics';
 
 const MindfulChallenge = ({navigation}) => {
   const breathing = useSelector((state) => state.breathing);
@@ -15,6 +16,7 @@ const MindfulChallenge = ({navigation}) => {
   const streakCount = userInfo.mindfulChallengeStreak;
   const goBack = () => navigation.goBack();
   const handleStart = () => {
+    analytics().logEvent('button_push', {title: 'start_mindful_challenge'});
     if (userInfo.showExerciseExplainer) {
       navigation.navigate('ExerciseExplainer');
     } else {

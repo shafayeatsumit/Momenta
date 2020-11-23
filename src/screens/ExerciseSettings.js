@@ -71,9 +71,9 @@ const ExerciseSettings = ({
             handlePress={() => selectTime(1)}
           />
           <ButtonSmall
-            titleStyle={[selectedTime !== 3 && {color: Colors.buttonBlue}]}
+            titleStyle={[selectedTime !== 2 && {color: Colors.buttonBlue}]}
             containerStyle={[
-              selectedTime !== 3 && {backgroundColor: Colors.betterBlue},
+              selectedTime !== 2 && {backgroundColor: Colors.betterBlue},
             ]}
             title="2 min"
             handlePress={() => selectTime(2)}

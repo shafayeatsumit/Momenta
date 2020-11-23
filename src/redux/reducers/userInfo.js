@@ -1,3 +1,4 @@
+import moment from 'moment';
 const INIT_STATE = {
   token: null,
   email: null,
@@ -63,14 +64,14 @@ const loginInfo = (state = INIT_STATE, action) => {
     case 'RESET_MINDFUL_CHALLENGE_STREAK':
       return {
         ...state,
-        mindfulChallengeStreak: 0,
-        mindfulChallengeDate: null,
+        mindfulChallengeStreak: 1,
+        mindfulChallengeDate: moment(),
       };
     case 'UPDATE_MINDFUL_CHALLENGE_STREAK':
       return {
         ...state,
         mindfulChallengeStreak: state.mindfulChallengeStreak + 1,
-        mindfulChallengeDate: action.date,
+        mindfulChallengeDate: moment(),
       };
     default:
       return state;

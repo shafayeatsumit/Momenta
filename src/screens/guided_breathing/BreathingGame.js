@@ -4,10 +4,8 @@ import {
   Animated,
   Text,
   Platform,
-  TouchableOpacity,
   Easing,
   NativeModules,
-  Image,
   Modal,
 } from 'react-native';
 import moment from 'moment';
@@ -86,10 +84,7 @@ class BreathingGame extends Component {
   };
 
   updateMindfulChallenge = () => {
-    this.props.dispatch({
-      type: 'UPDATE_MINDFUL_CHALLENGE_STREAK',
-      date: moment(),
-    });
+    this.props.dispatch({type: 'UPDATE_MINDFUL_CHALLENGE_STREAK'});
   };
 
   handleMindfulStreak = () => {
@@ -241,7 +236,6 @@ class BreathingGame extends Component {
     this.sound.unmuteSound();
     // difference between pause and end time.
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
-    console.log('resume duration ====>', breathingType, ' ', resumeDuration);
     breathingType === 'exhale'
       ? this.startExhale(resumeDuration)
       : this.startInhale(resumeDuration);

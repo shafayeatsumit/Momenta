@@ -14,7 +14,6 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.userInfo);
   const mindfulChallengeStreak = userInfo.mindfulChallengeStreak;
-  console.log('mindfulChallengeStreak ===>', mindfulChallengeStreak);
   const handleBreathTypeSelect = (breathing) => {
     const breathingType = breathing.type;
     analytics().logEvent('button_push', {title: `${breathing.id}`});

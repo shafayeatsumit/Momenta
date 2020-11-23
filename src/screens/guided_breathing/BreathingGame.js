@@ -172,11 +172,11 @@ class BreathingGame extends Component {
     souldPlaySound && this.startExhaleSound();
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
-    const duration = resumeDuration || this.exhaleTime;
-    const vibrationDuration = duration > 0 ? duration : 0;
+    let duration = resumeDuration || this.exhaleTime;
+    duration = duration < 1 ? 10 : duration;
     this.breathingWillEnd = moment().add(duration, 'milliseconds');
     vibrationStatus &&
-      NativeModules.AndroidVibration.startVibration(vibrationDuration, 20);
+      NativeModules.AndroidVibration.startVibration(duration, 20);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -207,8 +207,8 @@ class BreathingGame extends Component {
     const shouldPlaySound = soundStatus && !resumeDuration;
     shouldPlaySound && this.startInhaleSound();
     const duration = resumeDuration || this.inhaleTime;
+    this.breathingWillEnd = moment().add(duration, 'milliseconds');
 
-    this.breathingWillEnd = moment().add(this.inhaleTime, 'milliseconds');
     Animated.timing(this.animatedProgress, {
       toValue: 1,
       duration,
@@ -221,12 +221,13 @@ class BreathingGame extends Component {
   };
 
   pauseExercise = () => {
+    this.pauseTime = moment();
     const {timer} = this.state;
     const playButtonTitle = timer ? 'continue' : 'start';
     this.stopAnimation = true;
     Animated.timing(this.animatedProgress).stop();
     this.sound.muteSound();
-    this.pauseTime = moment();
+
     this.setState({playButtonTitle});
     this.stopTimer();
     this.pauseVibration();
@@ -240,6 +241,7 @@ class BreathingGame extends Component {
     this.sound.unmuteSound();
     // difference between pause and end time.
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
+    console.log('resume duration ====>', breathingType, ' ', resumeDuration);
     breathingType === 'exhale'
       ? this.startExhale(resumeDuration)
       : this.startInhale(resumeDuration);
@@ -272,9 +274,6 @@ class BreathingGame extends Component {
 
   handleSettings = () => {
     const {showSettings} = this.state;
-    if (!showSettings) {
-      this.pauseExercise();
-    }
     analytics().logEvent('button_push', {
       title: `show_options_${!showSettings}`,
     });

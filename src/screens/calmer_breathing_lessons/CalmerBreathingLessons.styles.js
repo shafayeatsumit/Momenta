@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 185,
     height: 41,
-    width: 85,
+    width: 95,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',

@@ -158,11 +158,11 @@ class FixedBreathing extends Component {
     souldPlaySound && this.startExhaleSound();
     const vibrationStatus =
       this.getVibrationStatus() && Platform.OS === 'android';
-    const duration = resumeDuration || this.exhaleTime;
-    const vibrationDuration = duration > 0 ? duration : 0;
+    let duration = resumeDuration || this.exhaleTime;
+    duration = duration > 1 ? duration : 10;
     this.breathingWillEnd = moment().add(duration, 'milliseconds');
     vibrationStatus &&
-      NativeModules.AndroidVibration.startVibration(vibrationDuration, 20);
+      NativeModules.AndroidVibration.startVibration(duration, 20);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -196,8 +196,7 @@ class FixedBreathing extends Component {
     const shouldPlaySound = soundStatus && !resumeDuration;
     shouldPlaySound && this.startInhaleSound();
     const duration = resumeDuration || this.inhaleTime;
-
-    this.breathingWillEnd = moment().add(this.inhaleTime, 'milliseconds');
+    this.breathingWillEnd = moment().add(duration, 'milliseconds');
     Animated.timing(this.animatedProgress, {
       toValue: 1,
       duration,
@@ -247,9 +246,9 @@ class FixedBreathing extends Component {
 
   handleSettings = () => {
     const {showSettings} = this.state;
-    if (!showSettings) {
-      this.pauseExercise();
-    }
+    analytics().logEvent('button_push', {
+      title: `show_options_${!showSettings}`,
+    });
     this.setState((prevState) => ({
       showSettings: !prevState.showSettings,
     }));

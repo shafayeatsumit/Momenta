@@ -36,7 +36,6 @@ const BreathingSettings = ({close}) => {
   };
 
   const exerciseDescription = ExerciseDescription[breathing.id];
-  console.log('exerciseDescription', exerciseDescription);
   return (
     <View style={styles.container}>
       <Text allowFontScaling={false} style={styles.title}>

@@ -227,7 +227,6 @@ class FixedBreathing extends Component {
     this.sound.unmuteSound();
     // difference between pause and end time.
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
-    console.log('resume duration =========>', resumeDuration);
     if (holdTime) {
       this.setState({holdTime: 0});
       holdType === 'exhale_hold' ? this.startInhale() : this.startExhale();

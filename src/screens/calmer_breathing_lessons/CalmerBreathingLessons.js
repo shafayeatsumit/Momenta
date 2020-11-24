@@ -23,7 +23,7 @@ const MindfulChallenge = ({navigation}) => {
 
   const {signedUpCalmerBreathingLessons: isSignedUp} = userInfo;
   const buttonTitle = isSignedUp
-    ? "We'll let you know\nwhen its ready!"
+    ? "We'll let you know when its ready!"
     : 'Sign Up';
   return (
     <ImageBackground source={breathing.image} style={styles.background}>
@@ -54,7 +54,8 @@ const MindfulChallenge = ({navigation}) => {
           isSignedUp && {backgroundColor: '#787989'},
         ]}
         activeOpacity={0.8}>
-        <Text style={[styles.buttonText, isSignedUp && {fontSize: 14}]}>
+        {isSignedUp && <Text style={styles.buttonText}> Signed Up </Text>}
+        <Text style={[styles.buttonText, isSignedUp && {fontSize: 10}]}>
           {buttonTitle}
         </Text>
       </TouchableOpacity>

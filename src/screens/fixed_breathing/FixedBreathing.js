@@ -91,7 +91,6 @@ class FixedBreathing extends Component {
 
   holdTimer = () => {
     const {holdTime, holdType} = this.state;
-
     if (holdTime === 0) {
       // ReactNativeHapticFeedback.trigger('impactMedium', hapticFeedbackOptions);
       holdType === 'exhale_hold' ? this.startInhale() : this.startExhale();
@@ -106,21 +105,30 @@ class FixedBreathing extends Component {
     }, 1000);
   };
 
+  startExhaleHoldTimer = () => {
+    this.exhaleHoldTimerId = setTimeout(() => {
+      clearTimeout(this.exhaleHoldTimerId);
+      this.setState(
+        {
+          holdTime: this.exhaleHold / 1000 - 1,
+        },
+        this.holdTimer,
+      );
+    }, 1000);
+  };
+
   exhaleEnd = () => {
     if (this.stopAnimation) {
       return;
     }
 
     if (this.exhaleHold) {
-      this.setState(
-        {
-          holdTime: this.exhaleHold / 1000,
-          breathingType: 'hold',
-          showHoldTime: false,
-          holdType: 'exhale_hold',
-        },
-        this.holdTimer,
-      );
+      this.setState({
+        breathingType: 'hold',
+        showHoldTime: false,
+        holdType: 'exhale_hold',
+      });
+      this.startExhaleHoldTimer();
     } else {
       this.startInhale();
     }
@@ -150,9 +158,26 @@ class FixedBreathing extends Component {
     vibrationStatus && NativeModules.AndroidVibration.cancelVibration();
   };
 
+  inhaleExhaleTimer = () => {
+    const {breathingTimer} = this.state;
+    if (breathingTimer === 0) {
+      clearTimeout(this.breathingTimerId);
+      console.log('cleared timer');
+      return;
+    }
+    this.breathingTimerId = setTimeout(() => {
+      const updatedTime = this.state.breathingTimer - 1;
+      this.setState({breathingTimer: updatedTime});
+      this.inhaleExhaleTimer();
+    }, 1000);
+  };
+
   startExhale = (resumeDuration) => {
-    console.log('resume duration =====>', resumeDuration);
-    this.setState({breathingType: 'exhale'});
+    const {exhale: exhaleTime} = this.props.fixedBreathing;
+    this.setState(
+      {breathingType: 'exhale', breathingTimer: exhaleTime},
+      this.inhaleExhaleTimer,
+    );
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
     souldPlaySound && this.startExhaleSound();
@@ -170,27 +195,40 @@ class FixedBreathing extends Component {
     }).start(this.exhaleEnd);
   };
 
+  startInhaleHoldTimer = () => {
+    this.inhaleHoldTimerId = setTimeout(() => {
+      clearTimeout(this.inhaleHoldTimerId);
+      this.setState(
+        {
+          holdTime: this.inhaleHold / 1000 - 1,
+        },
+        this.holdTimer,
+      );
+    }, 1000);
+  };
+
   inhaleEnd = () => {
     if (this.stopAnimation) {
       return;
     }
     if (this.inhaleHold) {
-      this.setState(
-        {
-          holdTime: this.inhaleHold / 1000,
-          breathingType: 'hold',
-          showHoldTime: false,
-          holdType: 'inhale_hold',
-        },
-        this.holdTimer,
-      );
+      this.setState({
+        breathingType: 'hold',
+        showHoldTime: false,
+        holdType: 'inhale_hold',
+      });
+      this.startInhaleHoldTimer();
     } else {
       this.startExhale();
     }
   };
 
   startInhale = (resumeDuration) => {
-    this.setState({breathingType: 'inhale'});
+    const {inhale: inhaleTime} = this.props.fixedBreathing;
+    this.setState({breathingType: 'inhale', breathingTimer: inhaleTime}, () => {
+      clearTimeout(this.breathingTimerId);
+      this.inhaleExhaleTimer();
+    });
     const soundStatus = this.getSoundStatus();
     // sound enbled and not resumed.
     const shouldPlaySound = soundStatus && !resumeDuration;
@@ -258,6 +296,7 @@ class FixedBreathing extends Component {
     this.initialTimerId = setInterval(() => {
       if (this.state.initialTimer === 1) {
         clearInterval(this.initialTimerId);
+        this.setState({initialTimer: null});
         this.startExercise();
         return;
       }
@@ -293,6 +332,9 @@ class FixedBreathing extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timerId);
+    clearTimeout(this.exhaleHoldTimerId);
+    clearTimeout(this.inhaleHoldTimerId);
+    clearTimeout(this.breathingTimerId);
     this.sound.muteSound();
     this.stopAnimation = true;
     this.pauseVibration();
@@ -314,10 +356,12 @@ class FixedBreathing extends Component {
       showSettings,
       holdTime,
       initialTimer,
+      breathingTimer,
     } = this.state;
     const {fixedBreathing} = this.props;
+    const {inhale: inhaleTime, exhale: exhaleTime} = fixedBreathing;
     const finishDuration = fixedBreathing.breathingTime * 60;
-    const centerText =
+    const breathingTypeUpperCase =
       breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
@@ -364,19 +408,44 @@ class FixedBreathing extends Component {
             }}
           />
         </View>
+
         <View style={styles.absoluteContainer}>
-          {breathingType === 'ready' && initialTimer < 4 ? (
+          {breathingType === 'ready' ? (
             <Text allowFontScaling={false} style={styles.centerText}>
-              Ready{'\n'}
-              {initialTimer}
+              Get Ready To{'\n'}Exhale
             </Text>
           ) : (
             <Text allowFontScaling={false} style={styles.centerText}>
-              {centerText}
+              {breathingTypeUpperCase}
             </Text>
           )}
         </View>
-        {breathingType === 'hold' && (
+
+        {breathingType === 'inhale' && inhaleTime !== breathingTimer && (
+          <View style={styles.absoluteContainer}>
+            <Text allowFontScaling={false} style={styles.holdTimer}>
+              {breathingTimer}
+            </Text>
+          </View>
+        )}
+
+        {breathingType === 'exhale' && exhaleTime !== breathingTimer && (
+          <View style={styles.absoluteContainer}>
+            <Text allowFontScaling={false} style={styles.holdTimer}>
+              {breathingTimer}
+            </Text>
+          </View>
+        )}
+
+        {initialTimer && initialTimer < 4 ? (
+          <View style={styles.absoluteContainer}>
+            <Text allowFontScaling={false} style={styles.holdTimer}>
+              {initialTimer}
+            </Text>
+          </View>
+        ) : null}
+
+        {breathingType === 'hold' && holdTime !== 0 && (
           <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.holdTimer}>
               {holdTime}

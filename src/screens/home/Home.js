@@ -9,6 +9,7 @@ import {
   CalmerBreathingLessons,
 } from '../../helpers/breathing_constants';
 import {useDispatch, useSelector} from 'react-redux';
+import IdleTimerManager from 'react-native-idle-timer';
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
@@ -53,8 +54,11 @@ const Home = ({navigation}) => {
       'hardwareBackPress',
       backAction,
     );
-
-    return () => backHandler.remove();
+    IdleTimerManager.setIdleTimerDisabled(true);
+    return () => {
+      IdleTimerManager.setIdleTimerDisabled(false);
+      backHandler.remove();
+    };
   }, []);
   return (
     <ScrollView contentContainerStyle={styles.tilesContainer}>

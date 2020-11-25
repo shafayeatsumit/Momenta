@@ -6,6 +6,7 @@ import {
   Platform,
   Easing,
   Modal,
+  AppState,
   NativeModules,
 } from 'react-native';
 import moment from 'moment';
@@ -47,6 +48,7 @@ class FixedBreathing extends Component {
     // inhlae or exhale estimated end time.
     this.breathingWillEnd = null;
     this.pauseTime = null;
+    this.exerciseStarted = false;
   }
 
   getSoundStatus = () => {
@@ -324,6 +326,7 @@ class FixedBreathing extends Component {
           hideButtons: false,
         });
         this.startExercise();
+        this.exerciseStarted = true;
         return;
       }
       this.setState((prevState) => ({
@@ -349,6 +352,13 @@ class FixedBreathing extends Component {
     }
   };
 
+  handleAppStateChange = (nextAppState) => {
+    if (nextAppState.match('background')) {
+      const isMoreThanZeroSecond = this.state.timer > 0;
+      isMoreThanZeroSecond ? this.pauseExercise() : this.handleClose();
+    }
+  };
+
   handleClose = () => {
     this.props.navigation.goBack();
     analytics().logEvent('button_push', {title: 'quit'});
@@ -371,10 +381,12 @@ class FixedBreathing extends Component {
     this.pauseVibration();
     clearInterval(this.initialTimerId);
     IdleTimerManager.setIdleTimerDisabled(false);
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   componentDidMount() {
     IdleTimerManager.setIdleTimerDisabled(true);
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   render() {

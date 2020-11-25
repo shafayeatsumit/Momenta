@@ -7,6 +7,7 @@ import {
   Easing,
   NativeModules,
   Modal,
+  AppState,
 } from 'react-native';
 import moment from 'moment';
 import LottieView from 'lottie-react-native';
@@ -271,6 +272,13 @@ class BreathingGame extends Component {
     }, 1000);
   };
 
+  handleAppStateChange = (nextAppState) => {
+    if (nextAppState.match('background')) {
+      const isMoreThanZeroSecond = this.state.timer > 0;
+      isMoreThanZeroSecond ? this.pauseExercise() : this.props.handleQuit();
+    }
+  };
+
   handleFinish = () => {
     this.props.handleFinish();
     analytics().logEvent('button_push', {title: 'finish'});
@@ -313,6 +321,7 @@ class BreathingGame extends Component {
 
   componentDidMount() {
     IdleTimerManager.setIdleTimerDisabled(true);
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
@@ -322,6 +331,7 @@ class BreathingGame extends Component {
     this.pauseVibration();
     clearInterval(this.initialTimerId);
     IdleTimerManager.setIdleTimerDisabled(false);
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   render() {

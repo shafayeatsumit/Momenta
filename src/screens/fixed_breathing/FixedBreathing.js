@@ -29,7 +29,8 @@ class FixedBreathing extends Component {
       initialTimer: 4,
       holdTime: 0,
       showAnimation: false,
-      breathingType: 'ready',
+      breathingType: null,
+      showInitTimer: false,
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
@@ -310,11 +311,14 @@ class FixedBreathing extends Component {
   };
 
   startCountDown = () => {
-    this.setState({playButtonTitle: 'starting'});
     this.initialTimerId = setInterval(() => {
       if (this.state.initialTimer === 1) {
         clearInterval(this.initialTimerId);
-        this.setState({initialTimer: null});
+        this.setState({
+          initialTimer: null,
+          showInitTimer: false,
+          hideButtons: false,
+        });
         this.startExercise();
         return;
       }
@@ -330,6 +334,7 @@ class FixedBreathing extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
+      this.setState({showInitTimer: true, hideButtons: true});
       this.startCountDown();
     } else if (play) {
       // resume/continue exercise
@@ -346,6 +351,10 @@ class FixedBreathing extends Component {
   };
   handleAnimationFinish = () => {
     this.props.navigation.goBack();
+  };
+
+  upperCaseFirstLetter = (breathingType) => {
+    return breathingType[0].toUpperCase() + breathingType.substring(1);
   };
 
   componentWillUnmount() {
@@ -375,14 +384,16 @@ class FixedBreathing extends Component {
       holdTime,
       initialTimer,
       breathingTimer,
+      showInitTimer,
+      hideButtons,
     } = this.state;
     const {fixedBreathing} = this.props;
     const {inhale: inhaleTime, exhale: exhaleTime} = fixedBreathing;
     const finishDuration = fixedBreathing.breathingTime * 60;
-    const breathingTypeUpperCase =
-      breathingType[0].toUpperCase() + breathingType.substring(1);
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
+    const showInhaleOrEXhale =
+      breathingType === 'inhale' || breathingType === 'exhale';
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -423,9 +434,8 @@ class FixedBreathing extends Component {
             style={styles.lottieFile}
           />
         </View>
-
-        <View style={styles.absoluteContainer}>
-          {breathingType === 'ready' ? (
+        {showInitTimer && (
+          <View style={styles.absoluteContainer}>
             <View style={styles.readyTextHolder}>
               <Text
                 allowFontScaling={false}
@@ -436,12 +446,15 @@ class FixedBreathing extends Component {
                 Exhale
               </Text>
             </View>
-          ) : (
+          </View>
+        )}
+        {showInhaleOrEXhale && (
+          <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.centerText}>
-              {breathingTypeUpperCase}
+              {this.upperCaseFirstLetter(breathingType)}
             </Text>
-          )}
-        </View>
+          </View>
+        )}
 
         {breathingType === 'inhale' && inhaleTime !== breathingTimer && (
           <View style={styles.absoluteContainer}>
@@ -482,6 +495,7 @@ class FixedBreathing extends Component {
               timeIsUp ? this.handleFinish : this.handlePlayPause
             }
             timeIsUp={timeIsUp}
+            hideButtons={hideButtons}
             showSettings={this.handleSettings}
           />
         </View>

@@ -332,7 +332,6 @@ class BreathingGame extends Component {
     } = this.state;
     const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
-
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
     const showInhaleOrEXhale =

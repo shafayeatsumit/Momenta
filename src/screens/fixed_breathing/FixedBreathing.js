@@ -392,8 +392,11 @@ class FixedBreathing extends Component {
     const finishDuration = fixedBreathing.breathingTime * 60;
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-    const showInhaleOrEXhale =
-      breathingType === 'inhale' || breathingType === 'exhale';
+    const showCenterText =
+      breathingType === 'inhale' ||
+      breathingType === 'exhale' ||
+      breathingType === 'hold';
+
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -448,7 +451,7 @@ class FixedBreathing extends Component {
             </View>
           </View>
         )}
-        {showInhaleOrEXhale && (
+        {showCenterText && (
           <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.centerText}>
               {this.upperCaseFirstLetter(breathingType)}

@@ -45,7 +45,7 @@ const BreathingSettings = ({close}) => {
         <ScrollView>
           <View style={styles.infoTextPadding}>
             <Text allowFontScaling={false} style={styles.infoTitle}>
-              SUMMARRY
+              SUMMARY
             </Text>
           </View>
           <View style={styles.infoTextPadding}>
@@ -55,7 +55,7 @@ const BreathingSettings = ({close}) => {
           </View>
           <View style={styles.infoTextPadding}>
             <Text allowFontScaling={false} style={styles.infoTitle}>
-              TARGET BREATHING RYTHMS
+              TARGET BREATHING RHYTHMS
             </Text>
           </View>
           <View style={styles.infoTextPadding}>

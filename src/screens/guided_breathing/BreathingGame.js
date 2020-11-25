@@ -336,15 +336,18 @@ class BreathingGame extends Component {
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
     const showInhaleOrEXhale =
       breathingType === 'inhale' || breathingType === 'exhale';
-    if (showSettings) {
-      return (
-        <Modal animationType="slide" transparent={true} visible={showSettings}>
-          <BreathingSettings close={this.handleSettings} />
-        </Modal>
-      );
-    }
+
     return (
       <View style={styles.main}>
+        {showSettings && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            onRequestClose={this.handleSettings}
+            visible={showSettings}>
+            <BreathingSettings close={this.handleSettings} />
+          </Modal>
+        )}
         <ProgressTracker
           currentTime={timer}
           targetTime={finishDuration}

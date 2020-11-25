@@ -397,14 +397,6 @@ class FixedBreathing extends Component {
       breathingType === 'exhale' ||
       breathingType === 'hold';
 
-    if (showSettings) {
-      return (
-        <Modal animationType="slide" transparent={true} visible={showSettings}>
-          <BreathingSettings close={this.handleSettings} />
-        </Modal>
-      );
-    }
-
     if (showAnimation) {
       return (
         <View style={styles.absoluteContainer}>
@@ -423,6 +415,15 @@ class FixedBreathing extends Component {
 
     return (
       <View style={styles.main}>
+        {showSettings && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            onRequestClose={this.handleSettings}
+            visible={showSettings}>
+            <BreathingSettings close={this.handleSettings} />
+          </Modal>
+        )}
         <ProgressTracker
           currentTime={timer}
           targetTime={finishDuration}

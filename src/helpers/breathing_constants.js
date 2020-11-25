@@ -36,7 +36,7 @@ export const BREATHING_TYPES = [
   },
   {
     id: 'four_seven_eight',
-    name: '4/7/8/0',
+    name: 'Four Seven Eight',
     type: 'fixed',
     inhale: 4,
     inhaleHold: 7,

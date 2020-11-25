@@ -65,13 +65,17 @@ class FixedBreathing extends Component {
 
   startTimer = () => {
     this.timerId = setInterval(() => {
+      const oneHour = 3600;
       const finishDuration = this.props.fixedBreathing.breathingTime * 60;
       const {timer} = this.state;
       const timeIsUp = timer === finishDuration;
-      if (timeIsUp) {
+      const isOneHour = timer === oneHour;
+      if (isOneHour) {
         clearInterval(this.timerId);
-        this.setState({timeIsUp: true});
         return;
+      }
+      if (timeIsUp) {
+        this.setState({timeIsUp: true});
       }
       this.setState({timer: timer + 1});
     }, 1000);

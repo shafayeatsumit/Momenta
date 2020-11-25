@@ -118,14 +118,19 @@ class BreathingGame extends Component {
     } = this.props.guidedBreathing;
     const isMindfulChallenge = challenge && challengeId === 'mindful_challenge';
     this.timerId = setInterval(() => {
+      const oneHour = 3600;
       const finishDuration = breathingTime * 60;
       const {timer} = this.state;
       const timeIsUp = timer === finishDuration;
-      if (timeIsUp) {
+      const isOneHour = timer === oneHour;
+      if (isOneHour) {
         clearInterval(this.timerId);
+        return;
+      }
+      if (timeIsUp) {
         isMindfulChallenge && this.handleMindfulStreak();
         this.setState({timeIsUp: true});
-        return;
+        // return;
       }
       this.setState({timer: timer + 1});
     }, 1000);

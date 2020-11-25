@@ -28,10 +28,17 @@ const styles = StyleSheet.create({
   },
   centerText: {
     color: 'white',
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
     marginBottom: 100,
+  },
+  readyTextHolder: {
+    alignItems: 'center',
+  },
+  readyToStart: {
+    position: 'absolute',
+    bottom: 30,
   },
   holdTimer: {
     color: 'white',

@@ -20,6 +20,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: -10,
   },
+  readyTextHolder: {
+    alignItems: 'center',
+  },
+  readyToStart: {
+    position: 'absolute',
+    bottom: 30,
+    fontSize: 20,
+  },
+  holdTimer: {
+    color: 'white',
+    fontSize: 32,
+    textAlign: 'center',
+    marginTop: 100,
+    fontFamily: FontType.SemiBold,
+    marginBottom: 100,
+  },
   lottieFile: {
     alignSelf: 'center',
     height: 300,
@@ -28,7 +44,7 @@ const styles = StyleSheet.create({
   },
   centerText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 22,
     textAlign: 'center',
     fontFamily: FontType.SemiBold,
     marginBottom: 100,

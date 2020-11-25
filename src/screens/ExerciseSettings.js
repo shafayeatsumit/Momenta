@@ -12,6 +12,7 @@ const ExerciseSettings = ({
   handlePlayPause,
   goToCalibration,
   showSettings,
+  hideButtons,
 }) => {
   const breathing = useSelector((state) => state.breathing);
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const ExerciseSettings = ({
     handleTimeSelect(duration);
     analytics().logEvent('button_push', {title: `duration_${duration}`});
   };
-  if (buttonTitle === 'starting') {
+  if (hideButtons) {
     return <View />;
   }
   const selectedTime = breathing.breathingTime;

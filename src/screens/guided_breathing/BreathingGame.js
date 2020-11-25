@@ -30,8 +30,9 @@ class BreathingGame extends Component {
     super(props);
     this.state = {
       timer: 0,
+      showInitTimer: false,
       initialTimer: 4,
-      breathingType: 'ready',
+      breathingType: null,
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
@@ -66,6 +67,7 @@ class BreathingGame extends Component {
     // inhlae or exhale estimated end time.
     this.breathingWillEnd = null;
     this.pauseTime = null;
+    this.exerciseStarted = false;
     // sound & vibration settings
   }
 
@@ -217,8 +219,7 @@ class BreathingGame extends Component {
 
   pauseExercise = () => {
     this.pauseTime = moment();
-    const {timer} = this.state;
-    const playButtonTitle = timer ? 'continue' : 'start';
+    const playButtonTitle = this.exerciseStarted ? 'continue' : 'start';
     this.stopAnimation = true;
     Animated.timing(this.animatedProgress).stop();
     this.sound.muteSound();
@@ -248,10 +249,14 @@ class BreathingGame extends Component {
   };
 
   startCountDown = () => {
-    this.setState({playButtonTitle: 'starting'});
     this.initialTimerId = setInterval(() => {
       if (this.state.initialTimer === 1) {
         clearInterval(this.initialTimerId);
+        this.setState({
+          initialTimer: null,
+          showInitTimer: false,
+          hideButtons: false,
+        });
         this.startExercise();
         return;
       }
@@ -276,13 +281,19 @@ class BreathingGame extends Component {
     }));
   };
 
+  upperCaseFirstLetter = (breathingType) => {
+    return breathingType[0].toUpperCase() + breathingType.substring(1);
+  };
+
   handlePlayPause = () => {
     const {playButtonTitle} = this.state;
     const start = playButtonTitle === 'start';
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
+      this.setState({showInitTimer: true, hideButtons: true});
       this.startCountDown();
+      this.exerciseStarted = true;
       analytics().logEvent('button_push', {title: 'start'});
     } else if (play) {
       // resume/continue exercise
@@ -316,13 +327,16 @@ class BreathingGame extends Component {
       timeIsUp,
       showSettings,
       initialTimer,
+      hideButtons,
+      showInitTimer,
     } = this.state;
     const {guidedBreathing, goToCalibration} = this.props;
     const finishDuration = guidedBreathing.breathingTime * 60;
-    const centerText =
-      breathingType[0].toUpperCase() + breathingType.substring(1);
+
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
+    const showInhaleOrEXhale =
+      breathingType === 'inhale' || breathingType === 'exhale';
     if (showSettings) {
       return (
         <Modal animationType="slide" transparent={true} visible={showSettings}>
@@ -347,18 +361,36 @@ class BreathingGame extends Component {
           />
         </View>
 
-        <View style={styles.absoluteContainer}>
-          {breathingType === 'ready' && initialTimer < 4 ? (
+        {showInitTimer && (
+          <View style={styles.absoluteContainer}>
+            <View style={styles.readyTextHolder}>
+              <Text
+                allowFontScaling={false}
+                style={[styles.centerText, styles.readyToStart]}>
+                Prepare To
+              </Text>
+              <Text allowFontScaling={false} style={styles.centerText}>
+                Exhale
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {showInhaleOrEXhale && (
+          <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.centerText}>
-              Ready{'\n'}
+              {this.upperCaseFirstLetter(breathingType)}
+            </Text>
+          </View>
+        )}
+
+        {initialTimer && initialTimer < 4 ? (
+          <View style={styles.absoluteContainer}>
+            <Text allowFontScaling={false} style={styles.holdTimer}>
               {initialTimer}
             </Text>
-          ) : (
-            <Text allowFontScaling={false} style={styles.centerText}>
-              {centerText}
-            </Text>
-          )}
-        </View>
+          </View>
+        ) : null}
 
         <View style={styles.bottom}>
           <ExerciseSettings
@@ -366,6 +398,7 @@ class BreathingGame extends Component {
             handlePlayPause={
               timeIsUp ? this.handleFinish : this.handlePlayPause
             }
+            hideButtons={hideButtons}
             timeIsUp={timeIsUp}
             goToCalibration={goToCalibration}
             showSettings={this.handleSettings}

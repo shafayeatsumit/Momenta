@@ -21,6 +21,8 @@ export const setDynamicTarget = (exhale, inhale) => (dispatch, getState) => {
     target = calmTarget(exhale);
   } else if (guidedBreathing.id === 'prepare_for_sleep') {
     target = prepareForSleepTarget(exhale);
+  } else if (guidedBreathing.id === 'mindful_challenge') {
+    target = calmTarget(exhale);
   }
   dispatch({
     type: 'SET_DYNAMIC_TARGET',

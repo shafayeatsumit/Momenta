@@ -175,9 +175,16 @@ class FixedBreathing extends Component {
   startExhale = (resumeDuration) => {
     const {exhale: exhaleTime} = this.props.fixedBreathing;
     this.setState(
-      {breathingType: 'exhale', breathingTimer: exhaleTime},
-      this.inhaleExhaleTimer,
+      {
+        breathingType: 'exhale',
+        ...(!resumeDuration && {breathingTimer: exhaleTime}),
+      },
+      () => {
+        clearTimeout(this.breathingTimerId);
+        this.inhaleExhaleTimer();
+      },
     );
+
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
     souldPlaySound && this.startExhaleSound();
@@ -225,10 +232,16 @@ class FixedBreathing extends Component {
 
   startInhale = (resumeDuration) => {
     const {inhale: inhaleTime} = this.props.fixedBreathing;
-    this.setState({breathingType: 'inhale', breathingTimer: inhaleTime}, () => {
-      clearTimeout(this.breathingTimerId);
-      this.inhaleExhaleTimer();
-    });
+    this.setState(
+      {
+        breathingType: 'inhale',
+        ...(!resumeDuration && {breathingTimer: inhaleTime}),
+      },
+      () => {
+        clearTimeout(this.breathingTimerId);
+        this.inhaleExhaleTimer();
+      },
+    );
     const soundStatus = this.getSoundStatus();
     // sound enbled and not resumed.
     const shouldPlaySound = soundStatus && !resumeDuration;
@@ -253,26 +266,31 @@ class FixedBreathing extends Component {
     this.pauseTime = moment();
     this.setState({playButtonTitle: 'continue'});
     this.stopTimer();
+    clearTimeout(this.breathingTimerId);
     clearInterval(this.holdTimerId);
     this.pauseVibration();
   };
 
   resumeExercise = () => {
     this.stopAnimation = false;
-    const {breathingType, holdTime, holdType} = this.state;
+    const {breathingType, holdTime, breathingTimer, holdType} = this.state;
     this.setState({playButtonTitle: 'pause'});
     this.startTimer();
     this.sound.unmuteSound();
     // difference between pause and end time.
+
     const resumeDuration = this.breathingWillEnd.diff(this.pauseTime);
+    if (breathingType === 'inhale' || breathingType === 'exhale') {
+      breathingType === 'exhale'
+        ? this.startExhale(resumeDuration)
+        : this.startInhale(resumeDuration);
+    }
+
     if (holdTime) {
-      this.setState({holdTime: 0});
-      holdType === 'exhale_hold' ? this.startInhale() : this.startExhale();
+      // this.setState({holdTime: 0});
+      this.holdTimer();
       return;
     }
-    breathingType === 'exhale'
-      ? this.startExhale(resumeDuration)
-      : this.startInhale(resumeDuration);
   };
 
   startExercise = () => {
@@ -403,17 +421,21 @@ class FixedBreathing extends Component {
             source={require('../../../assets/anims/breath.json')}
             progress={this.animatedProgress}
             style={styles.lottieFile}
-            ref={(animation) => {
-              this.animationRef = animation;
-            }}
           />
         </View>
 
         <View style={styles.absoluteContainer}>
           {breathingType === 'ready' ? (
-            <Text allowFontScaling={false} style={styles.centerText}>
-              Get Ready To{'\n'}Exhale
-            </Text>
+            <View style={styles.readyTextHolder}>
+              <Text
+                allowFontScaling={false}
+                style={[styles.centerText, styles.readyToStart]}>
+                Prepare To
+              </Text>
+              <Text allowFontScaling={false} style={styles.centerText}>
+                Exhale
+              </Text>
+            </View>
           ) : (
             <Text allowFontScaling={false} style={styles.centerText}>
               {breathingTypeUpperCase}

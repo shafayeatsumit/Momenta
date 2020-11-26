@@ -352,7 +352,7 @@ class BreathingGame extends Component {
   };
 
   componentDidMount() {
-    IdleTimerManager.setIdleTimerDisabled(true);
+    // IdleTimerManager.setIdleTimerDisabled(true);
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -362,7 +362,7 @@ class BreathingGame extends Component {
     this.stopAnimation = true;
     this.pauseVibration();
     clearInterval(this.initialTimerId);
-    IdleTimerManager.setIdleTimerDisabled(false);
+    // IdleTimerManager.setIdleTimerDisabled(false);
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 

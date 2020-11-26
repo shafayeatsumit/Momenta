@@ -57,8 +57,6 @@ const Home = ({navigation}) => {
     console.log('idle time is true');
     IdleTimerManager.setIdleTimerDisabled(true);
     return () => {
-      IdleTimerManager.setIdleTimerDisabled(false);
-      console.log('idle time is false +++');
       backHandler.remove();
     };
   }, []);

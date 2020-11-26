@@ -70,6 +70,7 @@ class BreathingGame extends Component {
     this.pauseTime = null;
     this.exerciseStarted = false;
     // sound & vibration settings
+    this.textOpacity = new Animated.Value(0);
   }
 
   getSoundStatus = () => {
@@ -96,6 +97,16 @@ class BreathingGame extends Component {
       duration: 4000,
       easing: Easing.sin,
     }).start(() => console.log('faded out animation'));
+  };
+
+  fadeInText = () => {
+    console.log('fade in text');
+    Animated.timing(this.textOpacity, {
+      toValue: 1,
+      delay: 300,
+      duration: 30,
+      easing: Easing.ease,
+    }).start();
   };
 
   handleMindfulStreak = () => {
@@ -318,11 +329,14 @@ class BreathingGame extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.setState({
-        showInitTimer: true,
-        breathingType: null,
-        hideButtons: true,
-      });
+      this.setState(
+        {
+          showInitTimer: true,
+          breathingType: null,
+          hideButtons: true,
+        },
+        this.fadeInText,
+      );
       this.startCountDown();
       this.exerciseStarted = true;
       analytics().logEvent('button_push', {title: 'start'});
@@ -399,14 +413,20 @@ class BreathingGame extends Component {
         {showInitTimer && (
           <View style={styles.absoluteContainer}>
             <View style={styles.readyTextHolder}>
-              <Text
+              <Animated.Text
                 allowFontScaling={false}
-                style={[styles.centerText, styles.readyToStart]}>
+                style={[
+                  styles.centerText,
+                  styles.readyToStart,
+                  {opacity: this.textOpacity},
+                ]}>
                 Prepare To
-              </Text>
-              <Text allowFontScaling={false} style={styles.centerText}>
+              </Animated.Text>
+              <Animated.Text
+                allowFontScaling={false}
+                style={[styles.centerText, {opacity: this.textOpacity}]}>
                 Inhale
-              </Text>
+              </Animated.Text>
             </View>
           </View>
         )}

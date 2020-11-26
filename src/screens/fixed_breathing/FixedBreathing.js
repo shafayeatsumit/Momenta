@@ -49,6 +49,7 @@ class FixedBreathing extends Component {
     this.breathingWillEnd = null;
     this.pauseTime = null;
     this.exerciseStarted = false;
+    this.textOpacity = new Animated.Value(0);
   }
 
   getSoundStatus = () => {
@@ -169,7 +170,6 @@ class FixedBreathing extends Component {
     const {breathingTimer} = this.state;
     if (breathingTimer === 0) {
       clearTimeout(this.breathingTimerId);
-      console.log('cleared timer');
       return;
     }
     this.breathingTimerId = setTimeout(() => {
@@ -214,7 +214,17 @@ class FixedBreathing extends Component {
       toValue: 0.5,
       duration: 4000,
       easing: Easing.sin,
-    }).start(() => console.log('faded out animation'));
+    }).start();
+  };
+
+  fadeInText = () => {
+    console.log('fade in text');
+    Animated.timing(this.textOpacity, {
+      toValue: 1,
+      delay: 300,
+      duration: 30,
+      easing: Easing.ease,
+    }).start();
   };
 
   startInhaleHoldTimer = () => {
@@ -333,7 +343,6 @@ class FixedBreathing extends Component {
           showInitTimer: false,
           hideButtons: false,
         });
-        console.log('count down to 0');
         this.startExercise();
         this.exerciseStarted = true;
         return;
@@ -351,11 +360,14 @@ class FixedBreathing extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.setState({
-        showInitTimer: true,
-        breathingType: null,
-        hideButtons: true,
-      });
+      this.setState(
+        {
+          showInitTimer: true,
+          breathingType: null,
+          hideButtons: true,
+        },
+        this.fadeInText,
+      );
       this.startCountDown();
     } else if (play) {
       // resume/continue exercise
@@ -367,10 +379,8 @@ class FixedBreathing extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
-    console.log('app state', nextAppState);
     const isPaused = this.state.playButtonTitle === 'continue';
     if (isPaused) {
-      console.log('paused exercise');
       return;
     }
     const isBackgrounded = nextAppState.match(/inactive|background/);
@@ -393,7 +403,6 @@ class FixedBreathing extends Component {
   };
 
   componentWillUnmount() {
-    console.log('unmounted the fixed');
     clearInterval(this.timerId);
     clearTimeout(this.exhaleHoldTimerId);
     clearTimeout(this.inhaleHoldTimerId);
@@ -430,10 +439,6 @@ class FixedBreathing extends Component {
     const finishDuration = fixedBreathing.breathingTime * 60;
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-    // const showCenterText =
-    //   breathingType === 'inhale' ||
-    //   breathingType === 'exhale' ||
-    //   breathingType === 'hold'|| bre;
 
     if (showAnimation) {
       return (
@@ -479,14 +484,22 @@ class FixedBreathing extends Component {
         {showInitTimer && (
           <View style={styles.absoluteContainer}>
             <View style={styles.readyTextHolder}>
-              <Text
+              <Animated.Text
                 allowFontScaling={false}
-                style={[styles.centerText, styles.readyToStart]}>
+                style={[
+                  styles.centerText,
+                  styles.readyToStart,
+                  {
+                    opacity: this.textOpacity,
+                  },
+                ]}>
                 Prepare To
-              </Text>
-              <Text allowFontScaling={false} style={styles.centerText}>
+              </Animated.Text>
+              <Animated.Text
+                allowFontScaling={false}
+                style={[styles.centerText, {opacity: this.textOpacity}]}>
                 Inhale
-              </Text>
+              </Animated.Text>
             </View>
           </View>
         )}

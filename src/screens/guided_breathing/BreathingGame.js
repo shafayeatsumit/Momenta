@@ -33,7 +33,7 @@ class BreathingGame extends Component {
       timer: 0,
       showInitTimer: false,
       initialTimer: 4,
-      breathingType: null,
+      breathingType: 'ready',
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
@@ -88,6 +88,14 @@ class BreathingGame extends Component {
 
   updateMindfulChallenge = () => {
     this.props.dispatch({type: 'UPDATE_MINDFUL_CHALLENGE_STREAK'});
+  };
+
+  fadeOutAnimation = () => {
+    Animated.timing(this.animatedProgress, {
+      toValue: 0.5,
+      duration: 4000,
+      easing: Easing.sin,
+    }).start(() => console.log('faded out animation'));
   };
 
   handleMindfulStreak = () => {
@@ -183,7 +191,7 @@ class BreathingGame extends Component {
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
-      easing: Easing.linear,
+      easing: Easing.ease,
     }).start(this.exhaleEnd);
   };
 
@@ -215,7 +223,7 @@ class BreathingGame extends Component {
     Animated.timing(this.animatedProgress, {
       toValue: 1,
       duration,
-      easing: Easing.linear,
+      easing: Easing.ease,
     }).start(this.inhaleEnd);
   };
 
@@ -251,7 +259,7 @@ class BreathingGame extends Component {
   startExercise = () => {
     this.setState({playButtonTitle: 'pause'});
     this.startTimer();
-    this.startExhale();
+    this.startInhale();
   };
 
   startCountDown = () => {
@@ -270,6 +278,7 @@ class BreathingGame extends Component {
         initialTimer: prevState.initialTimer - 1,
       }));
     }, 1000);
+    this.fadeOutAnimation();
   };
 
   handleAppStateChange = (nextAppState) => {
@@ -309,7 +318,11 @@ class BreathingGame extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.setState({showInitTimer: true, hideButtons: true});
+      this.setState({
+        showInitTimer: true,
+        breathingType: null,
+        hideButtons: true,
+      });
       this.startCountDown();
       this.exerciseStarted = true;
       analytics().logEvent('button_push', {title: 'start'});
@@ -392,13 +405,13 @@ class BreathingGame extends Component {
                 Prepare To
               </Text>
               <Text allowFontScaling={false} style={styles.centerText}>
-                Exhale
+                Inhale
               </Text>
             </View>
           </View>
         )}
 
-        {showInhaleOrEXhale && (
+        {breathingType && (
           <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.centerText}>
               {this.upperCaseFirstLetter(breathingType)}

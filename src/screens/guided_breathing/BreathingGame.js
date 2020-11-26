@@ -273,7 +273,12 @@ class BreathingGame extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
-    if (nextAppState.match('background')) {
+    const isPaused = this.state.playButtonTitle === 'continue';
+    if (isPaused) {
+      return;
+    }
+    const isBackgrounded = nextAppState.match(/inactive|background/);
+    if (isBackgrounded) {
       const isMoreThanZeroSecond = this.state.timer > 0;
       isMoreThanZeroSecond ? this.pauseExercise() : this.props.handleQuit();
     }

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {ScrollView, BackHandler} from 'react-native';
+import {ScrollView, BackHandler, StatusBar} from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import Thumbnail from './Thumbnail';
 import styles from './Home.styles';
@@ -62,6 +62,7 @@ const Home = ({navigation}) => {
   }, []);
   return (
     <ScrollView contentContainerStyle={styles.tilesContainer}>
+      <StatusBar hidden />
       {BREATHING_TYPES.map((type) => (
         <Thumbnail
           key={type.id}

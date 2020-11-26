@@ -30,7 +30,7 @@ class FixedBreathing extends Component {
       initialTimer: 4,
       holdTime: 0,
       showAnimation: false,
-      breathingType: null,
+      breathingType: 'ready',
       showInitTimer: false,
       timeIsUp: false,
       playButtonTitle: 'start',
@@ -205,8 +205,16 @@ class FixedBreathing extends Component {
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
-      easing: Easing.linear,
+      easing: Easing.ease,
     }).start(this.exhaleEnd);
+  };
+
+  fadeOutAnimation = () => {
+    Animated.timing(this.animatedProgress, {
+      toValue: 0.5,
+      duration: 4000,
+      easing: Easing.sin,
+    }).start(() => console.log('faded out animation'));
   };
 
   startInhaleHoldTimer = () => {
@@ -258,7 +266,7 @@ class FixedBreathing extends Component {
     Animated.timing(this.animatedProgress, {
       toValue: 1,
       duration,
-      easing: Easing.linear,
+      easing: Easing.ease,
     }).start(this.inhaleEnd);
   };
 
@@ -280,7 +288,7 @@ class FixedBreathing extends Component {
 
   resumeExercise = () => {
     this.stopAnimation = false;
-    const {breathingType, holdTime, breathingTimer, holdType} = this.state;
+    const {breathingType, holdTime} = this.state;
     this.setState({playButtonTitle: 'pause'});
     this.startTimer();
     this.sound.unmuteSound();
@@ -303,7 +311,7 @@ class FixedBreathing extends Component {
   startExercise = () => {
     this.setState({playButtonTitle: 'pause'});
     this.startTimer();
-    this.startExhale();
+    this.startInhale();
   };
 
   handleSettings = () => {
@@ -325,6 +333,7 @@ class FixedBreathing extends Component {
           showInitTimer: false,
           hideButtons: false,
         });
+        console.log('count down to 0');
         this.startExercise();
         this.exerciseStarted = true;
         return;
@@ -333,6 +342,7 @@ class FixedBreathing extends Component {
         initialTimer: prevState.initialTimer - 1,
       }));
     }, 1000);
+    this.fadeOutAnimation();
   };
 
   handlePlayPause = () => {
@@ -341,7 +351,11 @@ class FixedBreathing extends Component {
     const play = playButtonTitle === 'continue';
     if (start) {
       // start exercise
-      this.setState({showInitTimer: true, hideButtons: true});
+      this.setState({
+        showInitTimer: true,
+        breathingType: null,
+        hideButtons: true,
+      });
       this.startCountDown();
     } else if (play) {
       // resume/continue exercise
@@ -353,7 +367,14 @@ class FixedBreathing extends Component {
   };
 
   handleAppStateChange = (nextAppState) => {
-    if (nextAppState.match('background')) {
+    console.log('app state', nextAppState);
+    const isPaused = this.state.playButtonTitle === 'continue';
+    if (isPaused) {
+      console.log('paused exercise');
+      return;
+    }
+    const isBackgrounded = nextAppState.match(/inactive|background/);
+    if (isBackgrounded) {
       const isMoreThanZeroSecond = this.state.timer > 0;
       isMoreThanZeroSecond ? this.pauseExercise() : this.handleClose();
     }
@@ -372,6 +393,7 @@ class FixedBreathing extends Component {
   };
 
   componentWillUnmount() {
+    console.log('unmounted the fixed');
     clearInterval(this.timerId);
     clearTimeout(this.exhaleHoldTimerId);
     clearTimeout(this.inhaleHoldTimerId);
@@ -408,10 +430,10 @@ class FixedBreathing extends Component {
     const finishDuration = fixedBreathing.breathingTime * 60;
     let buttonTitle = timeIsUp ? 'finish' : playButtonTitle;
     buttonTitle = buttonTitle[0].toUpperCase() + buttonTitle.substring(1);
-    const showCenterText =
-      breathingType === 'inhale' ||
-      breathingType === 'exhale' ||
-      breathingType === 'hold';
+    // const showCenterText =
+    //   breathingType === 'inhale' ||
+    //   breathingType === 'exhale' ||
+    //   breathingType === 'hold'|| bre;
 
     if (showAnimation) {
       return (
@@ -463,12 +485,12 @@ class FixedBreathing extends Component {
                 Prepare To
               </Text>
               <Text allowFontScaling={false} style={styles.centerText}>
-                Exhale
+                Inhale
               </Text>
             </View>
           </View>
         )}
-        {showCenterText && (
+        {breathingType && (
           <View style={styles.absoluteContainer}>
             <Text allowFontScaling={false} style={styles.centerText}>
               {this.upperCaseFirstLetter(breathingType)}

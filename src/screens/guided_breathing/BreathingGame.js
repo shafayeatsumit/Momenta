@@ -37,6 +37,7 @@ class BreathingGame extends Component {
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
+      iosHapticStatus: true,
     };
     const {
       targetExhale,
@@ -72,6 +73,30 @@ class BreathingGame extends Component {
     // sound & vibration settings
     this.textOpacity = new Animated.Value(0);
   }
+
+  pauseVibration = () => {
+    const vibrationStatus = this.getVibrationStatus();
+    if (!vibrationStatus) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.cancelVibration();
+    } else {
+      NativeModules.IOSVibration.cancelVibration();
+    }
+  };
+
+  startVibration = (duration) => {
+    const vibrationStatus = this.getVibrationStatus();
+    if (!vibrationStatus) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.startVibration(duration, 20);
+    } else {
+      NativeModules.IOSVibration.startVibration(duration / 1000);
+    }
+  };
 
   getSoundStatus = () => {
     const {userInfo} = this.props;
@@ -181,24 +206,15 @@ class BreathingGame extends Component {
     this.sound.startInhaleSound();
   };
 
-  pauseVibration = () => {
-    const vibrationStatus =
-      this.getVibrationStatus() && Platform.OS === 'android';
-    vibrationStatus && NativeModules.AndroidVibration.cancelVibration();
-  };
-
   startExhale = (resumeDuration) => {
     this.setState({breathingType: 'exhale'});
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
     souldPlaySound && this.startExhaleSound();
-    const vibrationStatus =
-      this.getVibrationStatus() && Platform.OS === 'android';
     let duration = resumeDuration || this.exhaleTime;
     duration = duration < 1 ? 10 : duration;
     this.breathingWillEnd = moment().add(duration, 'milliseconds');
-    vibrationStatus &&
-      NativeModules.AndroidVibration.startVibration(duration, 20);
+    this.startVibration(duration);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -354,6 +370,11 @@ class BreathingGame extends Component {
   componentDidMount() {
     // IdleTimerManager.setIdleTimerDisabled(true);
     AppState.addEventListener('change', this.handleAppStateChange);
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.getHapticStatus((error, resp) => {
+        this.setState({iosHapticStatus: resp});
+      });
+    }
   }
 
   componentWillUnmount() {

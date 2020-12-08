@@ -20,6 +20,8 @@
 		3182481E25624C5F00CCAADD /* swell_inhale_three.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3182481D25624C5F00CCAADD /* swell_inhale_three.mp3 */; };
 		3182482025624C8500CCAADD /* swell_exhale_three.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3182481F25624C8500CCAADD /* swell_exhale_three.mp3 */; };
 		318DC6E1253032CC00D3795E /* BradleyHandITCTT-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */; };
+		31915665257DFAC700022EE6 /* IOSVibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31915664257DFAC700022EE6 /* IOSVibration.swift */; };
+		3191566B257DFAED00022EE6 /* IOSVibration.m in Sources */ = {isa = PBXBuildFile; fileRef = 3191566A257DFAED00022EE6 /* IOSVibration.m */; };
 		31AB3069250AFEF5008A738B /* Cousine-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31AB3068250AFEF5008A738B /* Cousine-Regular.ttf */; };
 		31C6EEC224BAB9080030BBE5 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6EEC124BAB9080030BBE5 /* File.swift */; };
 		31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 31E39EB52465098C00F1116E /* GoogleService-Info.plist */; };
@@ -88,6 +90,8 @@
 		3182481D25624C5F00CCAADD /* swell_inhale_three.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = swell_inhale_three.mp3; sourceTree = "<group>"; };
 		3182481F25624C8500CCAADD /* swell_exhale_three.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = swell_exhale_three.mp3; sourceTree = "<group>"; };
 		318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BradleyHandITCTT-Bold.ttf"; path = "../assets/fonts/BradleyHandITCTT-Bold.ttf"; sourceTree = "<group>"; };
+		31915664257DFAC700022EE6 /* IOSVibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSVibration.swift; sourceTree = "<group>"; };
+		3191566A257DFAED00022EE6 /* IOSVibration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IOSVibration.m; sourceTree = "<group>"; };
 		31AB3068250AFEF5008A738B /* Cousine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Cousine-Regular.ttf"; path = "../assets/fonts/Cousine-Regular.ttf"; sourceTree = "<group>"; };
 		31AB306A250B01B3008A738B /* Cousine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cousine-Regular.ttf"; sourceTree = "<group>"; };
 		31C6EEC024BAB9070030BBE5 /* three_thoughts-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "three_thoughts-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -178,6 +182,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				31915664257DFAC700022EE6 /* IOSVibration.swift */,
+				3191566A257DFAED00022EE6 /* IOSVibration.m */,
 			);
 			name = three_thoughts;
 			sourceTree = "<group>";
@@ -674,7 +680,9 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				31C6EEC224BAB9080030BBE5 /* File.swift in Sources */,
+				31915665257DFAC700022EE6 /* IOSVibration.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				3191566B257DFAED00022EE6 /* IOSVibration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -777,7 +785,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = Z29R57WNL2;
 				INFOPLIST_FILE = three_thoughts/Info.plist;
@@ -832,7 +840,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -858,7 +866,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = Z29R57WNL2;
 				INFOPLIST_FILE = three_thoughts/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -912,7 +920,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
 					"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)",
 				);
-				MARKETING_VERSION = 1.6;
+				MARKETING_VERSION = 1.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

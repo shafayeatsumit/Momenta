@@ -35,6 +35,7 @@ class FixedBreathing extends Component {
       timeIsUp: false,
       playButtonTitle: 'start',
       showSettings: false,
+      iosHapticStatus: true,
     };
     const {inhale, inhaleHold, exhale, exhaleHold} = props.fixedBreathing;
     this.inhaleTime = inhale * 1000;
@@ -61,8 +62,12 @@ class FixedBreathing extends Component {
 
   getVibrationStatus = () => {
     const {userInfo} = this.props;
+    const {iosHapticStatus} = this.state;
     const breathingId = this.props.fixedBreathing.id;
     const vibrationStatus = userInfo[`${breathingId}_vibration`];
+    if (Platform.OS === 'ios') {
+      return iosHapticStatus && vibrationStatus;
+    }
     return vibrationStatus;
   };
 
@@ -161,9 +166,15 @@ class FixedBreathing extends Component {
   };
 
   pauseVibration = () => {
-    const vibrationStatus =
-      this.getVibrationStatus() && Platform.OS === 'android';
-    vibrationStatus && NativeModules.AndroidVibration.cancelVibration();
+    const vibrationStatus = this.getVibrationStatus();
+    if (!vibrationStatus) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.cancelVibration();
+    } else {
+      NativeModules.IOSVibration.cancelVibration();
+    }
   };
 
   inhaleExhaleTimer = () => {
@@ -177,6 +188,18 @@ class FixedBreathing extends Component {
       this.setState({breathingTimer: updatedTime});
       this.inhaleExhaleTimer();
     }, 1000);
+  };
+
+  startVibration = (duration) => {
+    const vibrationStatus = this.getVibrationStatus();
+    if (!vibrationStatus) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.startVibration(duration, 20);
+    } else {
+      NativeModules.IOSVibration.startVibration(duration / 1000);
+    }
   };
 
   startExhale = (resumeDuration) => {
@@ -195,13 +218,10 @@ class FixedBreathing extends Component {
     const soundStatus = this.getSoundStatus();
     const souldPlaySound = soundStatus && !resumeDuration;
     souldPlaySound && this.startExhaleSound();
-    const vibrationStatus =
-      this.getVibrationStatus() && Platform.OS === 'android';
     let duration = resumeDuration || this.exhaleTime;
     duration = duration > 1 ? duration : 10;
     this.breathingWillEnd = moment().add(duration, 'milliseconds');
-    vibrationStatus &&
-      NativeModules.AndroidVibration.startVibration(duration, 20);
+    this.startVibration(duration);
     Animated.timing(this.animatedProgress, {
       toValue: 0.5,
       duration,
@@ -418,6 +438,11 @@ class FixedBreathing extends Component {
   componentDidMount() {
     // IdleTimerManager.setIdleTimerDisabled(true);
     AppState.addEventListener('change', this.handleAppStateChange);
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.getHapticStatus((error, resp) => {
+        this.setState({iosHapticStatus: resp});
+      });
+    }
   }
 
   render() {

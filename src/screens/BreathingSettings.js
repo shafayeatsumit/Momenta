@@ -89,18 +89,17 @@ const BreathingSettings = ({close}) => {
             value={soundStatus}
           />
         </View>
-        {Platform.OS === 'android' && (
-          <View style={styles.toggleHolder}>
-            <Text style={styles.toggleText}>VIBRATION</Text>
-            <Switch
-              trackColor={{false: '#252A43', true: '#252A43'}}
-              thumbColor={vibrationStatus ? Colors.buttonBlue : '#787989'}
-              ios_backgroundColor="#252A43"
-              onValueChange={toggleVibration}
-              value={vibrationStatus}
-            />
-          </View>
-        )}
+
+        <View style={styles.toggleHolder}>
+          <Text style={styles.toggleText}>VIBRATION</Text>
+          <Switch
+            trackColor={{false: '#252A43', true: '#252A43'}}
+            thumbColor={vibrationStatus ? Colors.buttonBlue : '#787989'}
+            ios_backgroundColor="#252A43"
+            onValueChange={toggleVibration}
+            value={vibrationStatus}
+          />
+        </View>
       </View>
       <View style={styles.buttonHolder}>
         <ButtonBig

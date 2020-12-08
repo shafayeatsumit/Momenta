@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {ScrollView, BackHandler, StatusBar} from 'react-native';
+import {ScrollView, BackHandler,Platform, NativeModules, StatusBar} from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import Thumbnail from './Thumbnail';
 import styles from './Home.styles';
@@ -53,9 +53,13 @@ const Home = ({navigation}) => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       backAction,
-    );
-    console.log('idle time is true');
+    );    
     IdleTimerManager.setIdleTimerDisabled(true);
+    //prepare haptic engine for IOS
+    if(Platform.OS==='ios'){
+      NativeModules.IOSVibration.prepareHaptics();
+    }
+
     return () => {
       backHandler.remove();
     };

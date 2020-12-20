@@ -1,10 +1,10 @@
 import React from 'react';
-import {Provider} from 'react-redux';
-import Navigation from './src/navigation/Nav';
-import PersistStore from './src/redux/store.js';
-import {PersistGate} from 'redux-persist/integration/react';
-
+import { Provider } from 'react-redux';
+import { store, persistor } from './src/redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
+import Test from "./src/screens/Test";
 import * as Sentry from '@sentry/react-native';
+
 
 if (!__DEV__) {
   Sentry.init({
@@ -13,11 +13,11 @@ if (!__DEV__) {
   });
 }
 
-const {store, persistor} = PersistStore();
-const App = () => (
+
+const App: React.FC = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Navigation />
+      <Test />
     </PersistGate>
   </Provider>
 );

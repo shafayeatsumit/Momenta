@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import Test from "./src/screens/Test";
+import Nav from "./src/navigation/Nav";
 import * as Sentry from '@sentry/react-native';
 
 
@@ -17,7 +18,7 @@ if (!__DEV__) {
 const App: React.FC = () => (
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Test />
+      <Nav />
     </PersistGate>
   </Provider>
 );

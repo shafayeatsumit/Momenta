@@ -1,13 +1,10 @@
-import { FetchUsersAction, DeleteUserAction } from './user';
 import { AddCountAction, RemoveCountAction } from "./count";
+import { SignUpAnonymouslyAction } from "./user";
 
 export enum ActionTypes {
-  fetchUsers,
-  deleteUser,
-  addCount = "ADD_COUNT",
-  removeCount = "REMOVE_COUNT",
+  SignUpAnonymously = "SIGN_UP_ANONYMOUSLY",
 }
 
-export type UserAction = FetchUsersAction | DeleteUserAction;
+export type UserAction = SignUpAnonymouslyAction;
 export type CountAction = AddCountAction | RemoveCountAction;
 

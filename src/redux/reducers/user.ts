@@ -1,9 +1,14 @@
 import { User, UserAction, ActionTypes } from '../actions';
 
-export const userReducer = (state: User[] = [], action: UserAction) => {
+const initState = {}
+
+export const userReducer = (state: User | {} = initState, action: UserAction) => {
   switch (action.type) {
-    case ActionTypes.fetchUsers:
-      return action.payload;
+    case ActionTypes.SignUpAnonymously:
+      return {
+        ...state,
+        ...action.payload,
+      }
     default:
       return state;
   }

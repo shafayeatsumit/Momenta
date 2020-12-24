@@ -13,11 +13,21 @@ const progress = (data: { bytesWritten: number; contentLength: number; }): void 
 
 };
 
+const getFileName = (name: string): string => {
+  // replace whtiespace with underscore
+  name = name.replace(/\s+/g, '_');
+  return new Date().toISOString() + "_" + name;
+}
 
-export const downloadFile = (name: string, url: string) => {
+export const getDownloadPath = (name: string, url: string) => {
   const fileExt = getUrlExtension(url);
-  const fileName = new Date().toISOString() + "_" + name;
-  const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}-.${fileExt}`;
-  RNFS.downloadFile({ fromUrl: url, toFile: downloadDest, begin, progress, background, progressDivider })
-  return downloadDest
+  const fileName = getFileName(name);
+  const downloadPath = `${RNFS.DocumentDirectoryPath}/${fileName}.${fileExt}`;
+  return downloadPath;
+}
+
+
+export const downloadFile = (url: string, downloadPath: string) => {
+  const ret = RNFS.downloadFile({ fromUrl: url, toFile: downloadPath, begin, progress, background, progressDivider })
+  return ret.promise
 }

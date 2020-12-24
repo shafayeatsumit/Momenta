@@ -17,8 +17,10 @@ const Loading: React.FC<{}> = () => {
   useEffect(() => {
     if (!isExistingUser) {
       dispatch(signUpAnonymously());
+
     }
     dispatch(fetchBackgroundMusic());
+
   }, [])
 
 

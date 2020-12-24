@@ -1,13 +1,13 @@
 import { Dispatch } from 'redux';
 import { api } from '../../helpers/api';
 import { ActionTypes } from './types';
-import { downloadFile } from "../../helpers/downloader";
+import { downloadFile, getDownloadPath } from "../../helpers/downloader";
 
 const BACKGROUND_MUSIC_URL = 'backgroundMusic';
 
 export interface BackgroundMusic {
   _id: string;
-  music: string;
+  url: string;
   name: string;
   type: string;
 }
@@ -22,10 +22,11 @@ export const fetchBackgroundMusic = () => {
   return async (dispatch: Dispatch) => {
     const response = await api.get(BACKGROUND_MUSIC_URL);
     const musicFiles: BackgroundMusic[] = response.data.musicFiles;
-    musicFiles.map((item: BackgroundMusic) => {
-      const filePath = downloadFile(item.name, item.music)
+    musicFiles.map(async (music: BackgroundMusic) => {
+      const filePath = getDownloadPath(music.name, music.url);
+      const response = await downloadFile(music.url, filePath)
       const musicFile = {
-        ...item,
+        ...music,
         filePath,
       }
       dispatch<FetchBackgroundMusicAction>({
@@ -33,6 +34,6 @@ export const fetchBackgroundMusic = () => {
         payload: musicFile,
       })
     });
-
+    console.log('suddd', musicFiles);
   }
 }

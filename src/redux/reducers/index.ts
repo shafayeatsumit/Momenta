@@ -1,12 +1,18 @@
 import { combineReducers } from 'redux';
+// reducers;
 import { userReducer } from "./user";
+import { backgroundMusicReducer } from "./backgroundMusic";
+// Action types;
 import { User } from "../actions/user";
-import { countReducer } from "./count";
+import { BackgroundMusic } from "../actions/backgroundMusic";
+
 
 export interface RootState {
   user: User | {};
+  backgroundMusic: BackgroundMusic | {};
 }
 
 export const rootReducers = combineReducers<RootState>({
   user: userReducer,
+  backgroundMusic: backgroundMusicReducer,
 });

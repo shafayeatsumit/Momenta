@@ -37,6 +37,8 @@ target 'three_thoughts' do
 
 
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'three_thoughtsTests' do
     inherit! :search_paths
     # Pods for testing

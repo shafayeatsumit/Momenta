@@ -5,7 +5,7 @@ import { ActionTypes } from './types';
 const SING_UP_URL = 'user/signUpAnonymously';
 
 export interface User {
-  _id: number;
+  _id: string;
   name: string;
   token: string;
   email: string;

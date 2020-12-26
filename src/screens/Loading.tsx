@@ -3,6 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors } from '../helpers/theme';
 import { signUpAnonymously } from "../redux/actions/user";
 import { fetchBackgroundMusic } from "../redux/actions/backgroundMusic";
+import { fetchExercise } from "../redux/actions/exercise";
 import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,17 +13,18 @@ const Loading: React.FC<{}> = () => {
   const user = useSelector(selectUser)
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const backgroundMusic = useSelector(selectBackgroundMusic);
+  const selectExercise = (state: RootState) => state.exercise;
+  const exercise = useSelector(selectExercise);
   const isExistingUser = user.hasOwnProperty('_id')
-  console.log('backgroundMusic +++>', backgroundMusic);
+
   useEffect(() => {
     if (!isExistingUser) {
       dispatch(signUpAnonymously());
-
+      dispatch(fetchBackgroundMusic());
+      dispatch(fetchExercise());
     }
-    dispatch(fetchBackgroundMusic());
 
   }, [])
-
 
   return (
     <View style={styles.loadingContainer}>

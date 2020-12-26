@@ -1,13 +1,17 @@
 import { ActionTypes, BackgroundMusicAction } from '../actions';
-import { BackgroundMusic } from "../actions/backgroundMusic";
-const initState = {}
+import { BackgroundMusics, BackgroundMusicFetchCompleted } from "../actions/backgroundMusic";
 
-export const backgroundMusicReducer = (state: BackgroundMusic | {} = initState, action: BackgroundMusicAction) => {
+const initState = {
+  fetchCompleted: false,
+}
+
+export const backgroundMusicReducer = (state: BackgroundMusics | BackgroundMusicFetchCompleted = initState, action: BackgroundMusicAction) => {
   switch (action.type) {
     case ActionTypes.AddBackgroundMusic:
       return {
         ...state,
-        [action.payload._id]: action.payload,
+        ...action.payload,
+        fetchCompleted: true,
       }
     default:
       return state;

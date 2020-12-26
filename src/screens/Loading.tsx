@@ -1,4 +1,4 @@
-import React, { userState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Colors } from '../helpers/theme';
 import { signUpAnonymously } from "../redux/actions/user";
@@ -6,8 +6,14 @@ import { fetchBackgroundMusic } from "../redux/actions/backgroundMusic";
 import { fetchExercise } from "../redux/actions/exercise";
 import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const Loading: React.FC<{}> = () => {
+
+export interface Props {
+  navigation: StackNavigationProp<any, any>;
+};
+
+const Loading: React.FC<Props> = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const selectUser = (state: RootState) => state.user;
   const user = useSelector(selectUser)
@@ -18,12 +24,14 @@ const Loading: React.FC<{}> = () => {
   const isExistingUser = user.hasOwnProperty('_id')
 
   useEffect(() => {
-    if (!isExistingUser) {
-      dispatch(signUpAnonymously());
-      dispatch(fetchBackgroundMusic());
-      dispatch(fetchExercise());
-    }
+    const isFetchCompleted = backgroundMusic.fetchCompleted || exercise.fetchCompleted;
+    if (isFetchCompleted) navigation.navigate('Home', { name: 'sumit' })
+  }, [backgroundMusic.fetchCompleted, exercise.fetchCompleted])
 
+  useEffect(() => {
+    if (!isExistingUser) dispatch(signUpAnonymously());
+    if (!exercise.fetchCompleted) dispatch(fetchExercise());
+    if (!backgroundMusic.fetchCompleted) dispatch(fetchBackgroundMusic());
   }, [])
 
   return (

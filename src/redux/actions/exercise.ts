@@ -3,6 +3,7 @@ import { api } from '../../helpers/api';
 import { ActionTypes } from './types';
 import { downloadFile, getDownloadPath } from "../../helpers/downloader";
 import _ from "lodash";
+import { backgroundMusicReducer } from '../reducers/backgroundMusic';
 
 const EXERCISE_URL = "exercise";
 
@@ -20,7 +21,13 @@ export interface Exercise {
   "exerciseLottieFile": string,
 }
 
-export interface Exercises {
+export interface ExerciseFetchCompleted {
+  fetchCompleted: boolean;
+}
+
+
+
+export type Exercises = ExerciseFetchCompleted & {
   [name: string]: Exercise;
 }
 
@@ -54,7 +61,6 @@ export const fetchExercise = () => {
     })
     const exercisePayload: any = _.mapKeys(exercises, "_id");
     const completePromise = await Promise.all(filePromises);
-    console.log('completed promise', exercises)
     dispatch<FetchExerciseAction>({
       type: ActionTypes.AddExercise,
       payload: exercisePayload,

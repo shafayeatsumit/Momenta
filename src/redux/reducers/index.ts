@@ -5,13 +5,13 @@ import { backgroundMusicReducer } from "./backgroundMusic";
 import { exerciseReducer } from "./exercise";
 // Action types;
 import { User } from "../actions/user";
-import { BackgroundMusic } from "../actions/backgroundMusic";
-import { Exercises } from "../actions/exercise";
+import { BackgroundMusics, BackgroundMusicFetchCompleted } from "../actions/backgroundMusic";
+import { Exercises, ExerciseFetchCompleted } from "../actions/exercise";
 
 export interface RootState {
   user: User | {};
-  backgroundMusic: BackgroundMusic | {};
-  exercise: Exercises | {};
+  backgroundMusic: BackgroundMusics | BackgroundMusicFetchCompleted;
+  exercise: Exercises | ExerciseFetchCompleted;
 }
 
 export const rootReducers = combineReducers<RootState>({

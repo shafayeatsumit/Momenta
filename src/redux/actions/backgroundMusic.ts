@@ -1,6 +1,8 @@
 import { Dispatch } from 'redux';
+import _ from "lodash";
 import { api } from '../../helpers/api';
 import { ActionTypes } from './types';
+
 import { downloadFile, getDownloadPath } from "../../helpers/downloader";
 
 const BACKGROUND_MUSIC_URL = 'backgroundMusic';
@@ -10,30 +12,45 @@ export interface BackgroundMusic {
   url: string;
   name: string;
   type: string;
+  filePath?: string;
+}
+
+export interface BackgroundMusicFetchCompleted {
+  fetchCompleted: boolean;
+}
+
+export type BackgroundMusics = BackgroundMusicFetchCompleted & {
+  [name: string]: BackgroundMusic;
 }
 
 export interface FetchBackgroundMusicAction {
   type: ActionTypes.AddBackgroundMusic;
-  payload: BackgroundMusic;
+  payload: BackgroundMusics;
 }
 
 
 export const fetchBackgroundMusic = () => {
   return async (dispatch: Dispatch) => {
     const response = await api.get(BACKGROUND_MUSIC_URL);
-    const musicFiles: BackgroundMusic[] = response.data.musicFiles;
-    musicFiles.map(async (music: BackgroundMusic) => {
+    let musicFiles: BackgroundMusic[] = response.data.musicFiles;
+    const filePromises: Promise<string>[] = [];
+    musicFiles = musicFiles.map((music: BackgroundMusic) => {
       const filePath = getDownloadPath(music.name, music.url);
-      const response = await downloadFile(music.url, filePath)
-      const musicFile = {
+      const fileDownloadPromise: Promise<string> = downloadFile(music.url, filePath)
+      filePromises.push(fileDownloadPromise);
+      return {
         ...music,
         filePath,
       }
-      dispatch<FetchBackgroundMusicAction>({
-        type: ActionTypes.AddBackgroundMusic,
-        payload: musicFile,
-      })
-    });
-    console.log('suddd', musicFiles);
+    })
+    const musicPayload: BackgroundMusics = _.mapKeys(musicFiles, "_id");
+    // completes the primise;
+    await Promise.all(filePromises);
+    dispatch<FetchBackgroundMusicAction>({
+      type: ActionTypes.AddBackgroundMusic,
+      payload: musicPayload,
+    })
+
+    console.log('+++++++++++ suddd ++++++');
   }
 }

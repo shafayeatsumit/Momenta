@@ -19,15 +19,10 @@ export interface Exercise {
   "calibrationExhale": number,
   "thumbnail": string,
   "exerciseLottieFile": string,
+  "thumbnailPath"?: string,
 }
 
-export interface ExerciseFetchCompleted {
-  fetchCompleted: boolean;
-}
-
-
-
-export type Exercises = ExerciseFetchCompleted & {
+export type Exercises = {
   [name: string]: Exercise;
 }
 

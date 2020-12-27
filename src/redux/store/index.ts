@@ -9,7 +9,7 @@ import { rootReducers } from "../reducers";
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user', 'exercise', 'backgroundMusic'],
+  whitelist: ['user', 'exercise', 'backgroundMusic', 'fetchCompleted'],
 };
 
 const middleware = [thunk];

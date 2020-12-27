@@ -15,11 +15,7 @@ export interface BackgroundMusic {
   filePath?: string;
 }
 
-export interface BackgroundMusicFetchCompleted {
-  fetchCompleted: boolean;
-}
-
-export type BackgroundMusics = BackgroundMusicFetchCompleted & {
+export type BackgroundMusics = {
   [name: string]: BackgroundMusic;
 }
 

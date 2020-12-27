@@ -17,23 +17,24 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const selectUser = (state: RootState) => state.user;
   const user = useSelector(selectUser)
-  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
-  const backgroundMusic = useSelector(selectBackgroundMusic);
-  const selectExercise = (state: RootState) => state.exercise;
-  const exercise = useSelector(selectExercise);
   const isExistingUser = user.hasOwnProperty('_id')
+  const selectFetchCompleted = (state: RootState) => state.fetchCompleted;
+  const fetchCompleted = useSelector(selectFetchCompleted);
+  const { exerciseFetchCompleted, musicFetchCompleted } = fetchCompleted;
+  const allFetchCompleted = exerciseFetchCompleted && musicFetchCompleted;
 
   useEffect(() => {
-    const isFetchCompleted = backgroundMusic.fetchCompleted || exercise.fetchCompleted;
-    if (isFetchCompleted) navigation.navigate('Home', { name: 'sumit' })
-  }, [backgroundMusic.fetchCompleted, exercise.fetchCompleted])
+    if (allFetchCompleted) navigation.navigate('Home')
+  }, [allFetchCompleted])
 
   useEffect(() => {
     if (!isExistingUser) dispatch(signUpAnonymously());
-    if (!exercise.fetchCompleted) dispatch(fetchExercise());
-    if (!backgroundMusic.fetchCompleted) dispatch(fetchBackgroundMusic());
+    if (!allFetchCompleted) {
+      dispatch(fetchExercise());
+      dispatch(fetchBackgroundMusic())
+    }
   }, [])
-
+  console.log('fetch completed', fetchCompleted)
   return (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#00ff00" />

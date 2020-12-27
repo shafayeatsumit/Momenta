@@ -3,19 +3,23 @@ import { combineReducers } from 'redux';
 import { userReducer } from "./user";
 import { backgroundMusicReducer } from "./backgroundMusic";
 import { exerciseReducer } from "./exercise";
+import { fetchCompletedReducer } from "./fetchCompleted";
 // Action types;
 import { User } from "../actions/user";
-import { BackgroundMusics, BackgroundMusicFetchCompleted } from "../actions/backgroundMusic";
-import { Exercises, ExerciseFetchCompleted } from "../actions/exercise";
+import { BackgroundMusics } from "../actions/backgroundMusic";
+import { Exercises } from "../actions/exercise";
+import { FetchCompleted } from "../actions/fetchCompleted";
 
 export interface RootState {
   user: User | {};
-  backgroundMusic: BackgroundMusics | BackgroundMusicFetchCompleted;
-  exercise: Exercises | ExerciseFetchCompleted;
+  backgroundMusic: BackgroundMusics | {};
+  exercise: Exercises | {};
+  fetchCompleted: FetchCompleted;
 }
 
 export const rootReducers = combineReducers<RootState>({
   user: userReducer,
   backgroundMusic: backgroundMusicReducer,
   exercise: exerciseReducer,
+  fetchCompleted: fetchCompletedReducer,
 });

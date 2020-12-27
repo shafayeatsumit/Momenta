@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
+import Thumbnail from "./Thumbnail";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootState } from "../../redux/reducers";
 import { useSelector } from "react-redux";
+import styles from './Home.styles';
 import _ from "lodash";
 
 export interface Props {
@@ -12,12 +14,16 @@ export interface Props {
 
 const Home: React.FC<Props> = ({ navigation }: Props) => {
   const selectExercise = (state: RootState) => state.exercise;
-  let exercise = useSelector(selectExercise);
-  console.log('exercise', _.values(exercise))
+  const allExercise = _.values(useSelector(selectExercise));
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontSize: 22, color: 'white' }}>HOme</Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.tilesContainer}>
+      {allExercise.map((exercise) => {
+        return (
+          <Thumbnail key={exercise._id} exercise={exercise} />
+        )
+      })}
+    </ScrollView>
   );
 };
 

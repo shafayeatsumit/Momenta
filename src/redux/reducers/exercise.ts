@@ -1,17 +1,15 @@
 import { ActionTypes, ExerciseAction } from "../actions";
-import { Exercises, ExerciseFetchCompleted } from "../actions/exercise";
+import { Exercises } from "../actions/exercise";
 
-const initialState = {
-  fetchCompleted: false,
-}
+const initialState = {}
 
-export const exerciseReducer = (state: Exercises | ExerciseFetchCompleted = initialState, action: ExerciseAction) => {
+
+export const exerciseReducer = (state: Exercises | {} = initialState, action: ExerciseAction) => {
   switch (action.type) {
     case ActionTypes.AddExercise:
       return {
         ...state,
         ...action.payload,
-        fetchCompleted: true,
       }
     default:
       return state;

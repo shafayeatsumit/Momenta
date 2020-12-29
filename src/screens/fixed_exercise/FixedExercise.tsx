@@ -10,20 +10,14 @@ import ScrollPicker from "../../components/ScrollPicker";
 import useHoldTimer from '../../hooks/useHoldTimer';
 import useAnimationReader from '../../hooks/useAnimationReader';
 import useTimer from "../../hooks/useTimer";
-
+import { BreathingState, ControllerButton } from "../../helpers/types";
 
 
 interface Props {
   route: RouteProp<any, any>;
 }
 
-enum BreathingState {
-  Inhale,
-  InhaleHold,
-  Exhale,
-  ExhaleHold,
-  NotStarted,
-}
+
 
 const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const [showTimePicker, setTimePicker] = useState<boolean>(true);
@@ -32,6 +26,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const [showPause, setPause] = useState<boolean>(false);
   const [showContinue, setContinue] = useState<boolean>(false);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
+  const [buttonState, setButtonState] = useState<ControllerButton | null>(null);
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
   const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, lottieFilePath } = route.params.exercise;
@@ -61,16 +56,20 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     }
   }
 
+  const timerEnd = () => {
+    stopTimer();
+  }
+
   const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(breathTimeEnd)
   const { holdTimer, startHoldTimer, stopHoldTimer } = useHoldTimer(holdTimeEnd);
-  const { time, timeIsUp, handleTimer } = useTimer(exerciseDuration)
+  const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
   const { animationFile: progressAnimation } = useAnimationReader(lottieFilePath)
 
 
 
 
   const handleTimeSelect = (time: number) => {
-    console.log("time picked", time)
+    setExerciseDuration(time);
   }
 
   const startExhale = (duratoin = exhaleTime) => {
@@ -167,13 +166,13 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     setTimePicker(false);
     setStart(false);
     setPause(true);
-    handleTimer();
+    startTimer();
   }
 
   const handlePause = () => {
     setContinue(true)
     setPause(false)
-    handleTimer();
+    stopTimer();
     pauseTimer();
     Animated.timing(animatedProgress).stop();
   }
@@ -181,7 +180,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const handleContinue = () => {
     setContinue(false)
     setPause(true)
-    handleTimer();
+    startTimer();
     continueTimer()
   }
 

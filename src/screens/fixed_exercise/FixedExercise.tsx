@@ -21,15 +21,17 @@ interface Props {
 
 
 const FixedExercise: React.FC<Props> = ({ route }: Props) => {
-  const [showTimePicker, setTimePicker] = useState<boolean>(true);
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
-  const [showStart, setStart] = useState<boolean>(true);
-
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [buttonState, setButtonState] = useState<ControllerButton | null>(null);
+
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
   const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, lottieFilePath } = route.params.exercise;
+
+  const showTimePicker = breathingState === BreathingState.NotStarted
+  const showPlayButton = breathingState === BreathingState.NotStarted;
+
   const breathTimeEnd = () => {
     if (breathingState === BreathingState.Inhale) {
       startInhaleHold();
@@ -164,8 +166,8 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const handleStart = () => {
     startInhale();
-    setTimePicker(false);
-    setStart(false);
+
+
     setButtonState(ControllerButton.Start)
 
     startTimer();
@@ -208,7 +210,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
           {getBreathingStateText()}
         </Text>
       </View>
-      {showStart &&
+      {showPlayButton &&
         <View style={styles.absoluteContainer}>
           <TouchableOpacity style={styles.playButton} onPress={handleStart}>
             <Text style={styles.start}>START</Text>

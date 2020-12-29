@@ -8,9 +8,10 @@ import useInterval from '../../hooks/useInterval';
 import useBreathTimer from "../../hooks/useBreathTimer";
 import ScrollPicker from "../../components/ScrollPicker";
 import useHoldTimer from '../../hooks/useHoldTimer';
+import useAnimationReader from '../../hooks/useAnimationReader';
 import useTimer from "../../hooks/useTimer";
 
-var RNFS = require('react-native-fs');
+
 
 interface Props {
   route: RouteProp<any, any>;
@@ -24,9 +25,7 @@ enum BreathingState {
   NotStarted,
 }
 
-
 const FixedExercise: React.FC<Props> = ({ route }: Props) => {
-  const [breathAnimation, setBreathAnimation] = useState(null);
   const [showTimePicker, setTimePicker] = useState<boolean>(true);
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [showStart, setStart] = useState<boolean>(true);
@@ -65,16 +64,10 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(breathTimeEnd)
   const { holdTimer, startHoldTimer, stopHoldTimer } = useHoldTimer(holdTimeEnd);
   const { time, timeIsUp, handleTimer } = useTimer(exerciseDuration)
+  const { animationFile: progressAnimation } = useAnimationReader(lottieFilePath)
 
 
 
-  useEffect(() => {
-    RNFS.readFile(lottieFilePath, 'utf8')
-      .then((res: any) => {
-        setBreathAnimation(JSON.parse(res))
-      })
-      .catch((error: any) => console.log('error', error))
-  }, [])
 
   const handleTimeSelect = (time: number) => {
     console.log("time picked", time)
@@ -95,12 +88,11 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
 
   const startInhaleHold = (duration = inhaleHoldTime) => {
-    console.log('start Inhale Hold')
     setBreathingState(BreathingState.InhaleHold);
     startHoldTimer(duration)
   }
 
-  console.log('render count', renderCount);
+
   const startExhaleHold = (duration = exhaleHoldTime) => {
     console.log('start Exahle Hold')
     setBreathingState(BreathingState.ExhaleHold);
@@ -108,7 +100,6 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   }
 
   const startInhale = (duration = inhaleTime) => {
-    console.log('+++startInhale+++')
     startBreathTimer(duration)
     setBreathingState(BreathingState.Inhale);
     Animated.timing(animatedProgress, {
@@ -120,13 +111,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   }
 
-  const handleStart = () => {
-    startInhale();
-    setTimePicker(false);
-    setStart(false);
-    setPause(true);
-    handleTimer();
-  }
+  console.log('render count', renderCount);
 
   const pauseTimer = () => {
     switch (breathingState) {
@@ -162,18 +147,8 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     }
   }
 
-  const handlePause = () => {
-    setContinue(true)
-    setPause(false)
-    handleTimer();
-    pauseTimer();
-    Animated.timing(animatedProgress).stop();
-  }
-
-  console.log('time', time)
   const getBreathingStateText = () => {
     switch (breathingState !== null) {
-
       case (breathingState === BreathingState.Inhale):
         return "Inhale"
       case (breathingState === BreathingState.Exhale):
@@ -187,6 +162,22 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     }
   }
 
+  const handleStart = () => {
+    startInhale();
+    setTimePicker(false);
+    setStart(false);
+    setPause(true);
+    handleTimer();
+  }
+
+  const handlePause = () => {
+    setContinue(true)
+    setPause(false)
+    handleTimer();
+    pauseTimer();
+    Animated.timing(animatedProgress).stop();
+  }
+
   const handleContinue = () => {
     setContinue(false)
     setPause(true)
@@ -198,9 +189,9 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.absoluteContainer}>
-        {breathAnimation &&
+        {progressAnimation &&
           <LottieView
-            source={breathAnimation}
+            source={progressAnimation}
             style={styles.lottieFile}
             progress={animatedProgress}
           />

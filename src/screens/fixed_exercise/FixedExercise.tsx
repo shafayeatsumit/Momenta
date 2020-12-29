@@ -8,6 +8,7 @@ import useInterval from '../../hooks/useInterval';
 import useBreathTimer from "../../hooks/useBreathTimer";
 import ScrollPicker from "../../components/ScrollPicker";
 import useHoldTimer from '../../hooks/useHoldTimer';
+import useTimer from "../../hooks/useTimer";
 
 var RNFS = require('react-native-fs');
 
@@ -31,8 +32,6 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const [showStart, setStart] = useState<boolean>(true);
   const [showPause, setPause] = useState<boolean>(false);
   const [showContinue, setContinue] = useState<boolean>(false);
-  const [time, setTime] = useState<number>(0);
-  const [timerIsRunning, setTimerIsRunning] = useState<boolean>(false);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
@@ -65,14 +64,9 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(breathTimeEnd)
   const { holdTimer, startHoldTimer, stopHoldTimer } = useHoldTimer(holdTimeEnd);
+  const { time, timeIsUp, handleTimer } = useTimer(exerciseDuration)
 
-  const handleTimer = () => {
-    setTimerIsRunning((running) => !running);
-  }
 
-  useInterval(() => {
-    setTime(time + 1);
-  }, timerIsRunning ? 1000 : null);
 
   useEffect(() => {
     RNFS.readFile(lottieFilePath, 'utf8')
@@ -131,7 +125,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     setTimePicker(false);
     setStart(false);
     setPause(true);
-    setTimerIsRunning(true);
+    handleTimer();
   }
 
   const pauseTimer = () => {
@@ -175,8 +169,8 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     pauseTimer();
     Animated.timing(animatedProgress).stop();
   }
-  console.log('breath timer', breathTimer);
-  console.log('Hold timer', holdTimer);
+
+  console.log('time', time)
   const getBreathingStateText = () => {
     switch (breathingState !== null) {
 

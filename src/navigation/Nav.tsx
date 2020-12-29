@@ -5,6 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from '../screens/home/Home';
 import LoadingScreen from '../screens/Loading';
+import GuidedExerciseScreen from "../screens/guided_exercise/GuidedExercise";
+import FixedExerciseScreen from "../screens/fixed_exercise/FixedExercise";
 
 
 import { Colors } from '../helpers/theme';
@@ -48,6 +50,8 @@ class Nav extends Component {
 
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="GuidedExercise" component={GuidedExerciseScreen} />
+          <Stack.Screen name="FixedExercise" component={FixedExerciseScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

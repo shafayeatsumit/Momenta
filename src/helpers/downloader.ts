@@ -16,7 +16,9 @@ const progress = (data: { bytesWritten: number; contentLength: number; }): void 
 const getFileName = (name: string): string => {
   // replace whtiespace with underscore
   name = name.replace(/\s+/g, '_');
-  return new Date().toISOString() + "_" + name;
+  // had to replace : otherwise file can not be read by RNFS
+  const date = new Date().toJSON().replace(/:/g, "_");
+  return date + "_" + name;
 }
 
 export const getDownloadPath = (name: string, url: string) => {

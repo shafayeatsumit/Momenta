@@ -7,7 +7,6 @@ const initialState = {
 }
 
 export const fetchCompletedReducer = (state: FetchCompleted = initialState, action: FetchCompletedAction) => {
-  console.log('action types', action.type)
   switch (action.type) {
     case ActionTypes.AddExercise:
       return {

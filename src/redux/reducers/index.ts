@@ -4,6 +4,7 @@ import { userReducer } from "./user";
 import { backgroundMusicReducer } from "./backgroundMusic";
 import { exerciseReducer } from "./exercise";
 import { fetchCompletedReducer } from "./fetchCompleted";
+
 // Action types;
 import { User } from "../actions/user";
 import { BackgroundMusics } from "../actions/backgroundMusic";

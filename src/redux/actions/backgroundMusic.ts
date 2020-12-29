@@ -46,7 +46,6 @@ export const fetchBackgroundMusic = () => {
       type: ActionTypes.AddBackgroundMusic,
       payload: musicPayload,
     })
-
     console.log('+++++++++++ suddd ++++++');
   }
 }

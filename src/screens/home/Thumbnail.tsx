@@ -13,16 +13,18 @@ import { Exercise } from "../../redux/actions/exercise";
 
 
 interface Props {
-  exercise: Exercise
+  exercise: Exercise;
+  goToExercise: Function;
 }
 
-const Thumbnail: React.FC<Props> = ({ exercise }) => {
+const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
+
   const thumbnailSource = "file://" + exercise.thumbnailPath;
   return (
     <TouchableOpacity
       style={styles.tiles}
       activeOpacity={0.8}
-      onPress={() => { }}>
+      onPress={() => goToExercise(exercise)}>
       <ImageBackground
         source={{ uri: thumbnailSource }}
         style={styles.thumbnail}

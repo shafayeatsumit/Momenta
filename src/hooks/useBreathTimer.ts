@@ -3,7 +3,7 @@ import useInterval from "./useInterval";
 
 export default function useBreathTimer(breathTimeEnd: Function) {
   const [breathTimer, setBreathTimer] = useState<number>(0);
-  const [breathTimerIsRunning, setBreathTimerIsRunning] = useState<boolean>(0);
+  const [breathTimerIsRunning, setBreathTimerIsRunning] = useState<boolean>(false);
 
   const startBreathTimer = (duration = breathTimer) => {
     setBreathTimer(duration);

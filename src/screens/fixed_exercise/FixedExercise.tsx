@@ -11,6 +11,7 @@ import useHoldTimer from '../../hooks/useHoldTimer';
 import useAnimationReader from '../../hooks/useAnimationReader';
 import useTimer from "../../hooks/useTimer";
 import { BreathingState, ControllerButton } from "../../helpers/types";
+import ExerciseController from "../../components/ExerciseController";
 
 
 interface Props {
@@ -23,8 +24,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const [showTimePicker, setTimePicker] = useState<boolean>(true);
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [showStart, setStart] = useState<boolean>(true);
-  const [showPause, setPause] = useState<boolean>(false);
-  const [showContinue, setContinue] = useState<boolean>(false);
+
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [buttonState, setButtonState] = useState<ControllerButton | null>(null);
   const renderCount = useRef(0);
@@ -58,6 +58,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const timerEnd = () => {
     stopTimer();
+    setButtonState(ControllerButton.Finish);
   }
 
   const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(breathTimeEnd)
@@ -165,23 +166,26 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     startInhale();
     setTimePicker(false);
     setStart(false);
-    setPause(true);
+    setButtonState(ControllerButton.Start)
+
     startTimer();
   }
 
   const handlePause = () => {
-    setContinue(true)
-    setPause(false)
+    setButtonState(ControllerButton.Continue)
     stopTimer();
     pauseTimer();
     Animated.timing(animatedProgress).stop();
   }
 
   const handleContinue = () => {
-    setContinue(false)
-    setPause(true)
+    setButtonState(ControllerButton.Pause)
     startTimer();
     continueTimer()
+  }
+
+  const handleFinish = () => {
+    console.log('finish');
   }
 
 
@@ -212,17 +216,12 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
         </View>
       }
       {showTimePicker && <ScrollPicker onSelect={handleTimeSelect} initialValue={exerciseDuration} />}
-      {showPause &&
-        <TouchableOpacity style={styles.button} onPress={handlePause}>
-          <Text style={styles.buttonText}>pause</Text>
-        </TouchableOpacity>
-      }
-
-      {showContinue &&
-        <TouchableOpacity style={styles.button} onPress={handleContinue}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-      }
+      <ExerciseController
+        buttonState={buttonState}
+        handleContinue={handleContinue}
+        handleFinish={handleFinish}
+        handlePause={handlePause}
+      />
     </View>
   );
 }

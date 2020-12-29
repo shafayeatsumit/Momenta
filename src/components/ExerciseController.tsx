@@ -6,7 +6,7 @@ import { FontType, Colors } from '../helpers/theme';
 
 
 interface Props {
-  buttonState: ControllerButton;
+  buttonState: ControllerButton | null;
   handlePause: () => void;
   handleContinue: () => void;
   handleFinish: () => void;
@@ -16,7 +16,7 @@ interface Props {
 
 const ExerciseController: React.FC<Props> = ({ buttonState, handleContinue, handleFinish, handlePause }: Props) => {
   const showContinue = buttonState === ControllerButton.Continue;
-  const showPause = buttonState === ControllerButton.Pause;
+  const showPause = buttonState === ControllerButton.Pause || buttonState === ControllerButton.Start;
   const showFinish = buttonState === ControllerButton.Finish;
   return (
     <>

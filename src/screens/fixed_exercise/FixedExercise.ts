@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
     width: 80,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 4,
+    backgroundColor: 'red',
   },
   button: {
     position: 'absolute',

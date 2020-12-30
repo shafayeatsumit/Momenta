@@ -24,20 +24,28 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
+  const breathCounterAnim = useRef(new Animated.Value(1)).current
   const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, lottieFilePath } = route.params.exercise;
 
   const showTimePicker = breathingState === BreathingState.NotStarted
   const showPlayButton = breathingState === BreathingState.NotStarted;
 
   const breathTimeEnd = () => {
-    console.log('yo', breathingState)
-    if (breathingState === BreathingState.Inhale) {
-      startInhaleHold();
-      return;
-    }
-    if (breathingState === BreathingState.Exhale) {
-      startExhaleHold();
-      return;
+    breathCounterAnim.setValue(0);
+    breathCounterAnimation();
+    switch (breathingState !== 0) {
+      case (breathingState === BreathingState.Inhale):
+        startInhaleHold();
+        return
+      case (breathingState === BreathingState.Exhale):
+        startExhaleHold();
+        return
+      case (breathingState === BreathingState.InhaleHold):
+        startExhale();
+        return
+      case (breathingState === BreathingState.ExhaleHold):
+        startInhale();
+        return
     }
   }
 
@@ -45,24 +53,14 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
     renderCount.current = renderCount.current + 1;
   })
 
-  const holdTimeEnd = () => {
-    if (breathingState === BreathingState.InhaleHold) {
-      startExhale()
-      return
-    }
-    if (breathingState === BreathingState.ExhaleHold) {
-      startInhale();
-      return
-    }
-  }
+
 
   const timerEnd = () => {
     stopTimer();
     setButtonState(ControllerButton.Finish);
   }
 
-  const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(() => { })
-  const { holdTimer, startHoldTimer, stopHoldTimer } = useHoldTimer(holdTimeEnd);
+  const { breathTimer, startBreathTimer, stopBreathTimer } = useBreathTimer(breathTimeEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
   const { animationFile: progressAnimation } = useAnimationReader(lottieFilePath)
 
@@ -78,25 +76,19 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
       duration: duratoin * 1000,
       easing: Easing.ease,
       useNativeDriver: true,
-    }).start(() => {
-      setBreathingState(BreathingState.ExhaleHold);
-      startExhaleHold();
-    });
-
+    }).start();
   }
 
 
 
   const startInhaleHold = (duration = inhaleHoldTime) => {
     setBreathingState(BreathingState.InhaleHold);
-    startHoldTimer(duration)
+    startBreathTimer(duration)
   }
 
-
   const startExhaleHold = (duration = exhaleHoldTime) => {
-    console.log('start Exahle Hold')
     setBreathingState(BreathingState.ExhaleHold);
-    startHoldTimer(duration)
+    startBreathTimer(duration)
   }
 
   const startInhale = (duration = inhaleTime) => {
@@ -107,48 +99,43 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
       duration: duration * 1000,
       easing: Easing.ease,
       useNativeDriver: true,
-    }).start(() => {
-      setBreathingState(BreathingState.InhaleHold)
-      startInhaleHold();
-    });
+    }).start();
   }
 
   console.log('render count', renderCount);
 
   const pauseTimer = () => {
+    stopBreathTimer()
+  }
+
+  const continueBreathTimer = () => {
     switch (breathingState) {
       case (BreathingState.Inhale):
-        stopBreathTimer()
+        startInhale(breathTimer);
         return
       case (BreathingState.Exhale):
-        stopBreathTimer()
+        startExhale(breathTimer);
         return
       case (BreathingState.ExhaleHold):
-        stopHoldTimer();
+        startBreathTimer(breathTimer)
         return
       case (BreathingState.InhaleHold):
-        stopHoldTimer();
+        startBreathTimer(breathTimer)
         return
+      default:
+        return;
     }
   }
 
-  const continueTimer = () => {
-    switch (breathingState) {
-      case (BreathingState.Inhale):
-        startBreathTimer();
-        return
-      case (BreathingState.Exhale):
-        startBreathTimer();
-        return
-      case (BreathingState.ExhaleHold):
-        startHoldTimer();
-        return
-      case (BreathingState.InhaleHold):
-        startHoldTimer();
-        return
-    }
+  const breathCounterAnimation = () => {
+    Animated.timing(breathCounterAnim, {
+      toValue: 1,
+      duration: 1,
+      delay: 450,
+      easing: Easing.bounce,
+      useNativeDriver: true,
+    }).start();
   }
-
 
 
   const handleStart = () => {
@@ -167,14 +154,14 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const handleContinue = () => {
     setButtonState(ControllerButton.Pause)
     startTimer();
-    continueTimer()
+    continueBreathTimer()
   }
 
   const handleFinish = () => {
     console.log('finish');
   }
 
-  console.log('breathing state', breathingState);
+  console.log('breath counter anim', breathCounterAnim);
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.absoluteContainer}>
@@ -187,8 +174,9 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
         }
       </View>
       <View style={styles.timer}>
-        <Text style={styles.buttonText}>{time}</Text>
+        <Text style={styles.buttonText}>time: {time}</Text>
       </View>
+
       <BreathingInstruction breathingState={breathingState} />
       {showPlayButton &&
         <View style={styles.absoluteContainer}>
@@ -197,6 +185,12 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
           </TouchableOpacity>
         </View>
       }
+
+      <Animated.View style={{ opacity: breathCounterAnim, marginTop: 360, alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={styles.start}>{breathTimer}</Text>
+      </Animated.View>
+
+
       {showTimePicker && <ScrollPicker onSelect={handleTimeSelect} initialValue={exerciseDuration} />}
       <ExerciseController
         buttonState={buttonState}

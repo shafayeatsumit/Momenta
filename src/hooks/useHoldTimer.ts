@@ -6,12 +6,13 @@ export default function useHoldTimer(holdTimeEnd: Function) {
   const [holdTimerIsRunning, setHoldTimerIsRunning] = useState<boolean>(false);
 
   useInterval(() => {
-    if (holdTimer === 0) {
+    const updatedTime = holdTimer - 1;
+    if (updatedTime === 0) {
       setHoldTimerIsRunning(false);
       holdTimeEnd();
       return
     }
-    setHoldTimer(holdTimer - 1)
+    setHoldTimer(updatedTime)
   }, holdTimerIsRunning ? 1000 : null)
 
   const startHoldTimer = (duration = holdTimer) => {

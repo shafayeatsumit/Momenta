@@ -1,9 +1,9 @@
 export enum BreathingState {
+  NotStarted,
   Inhale,
   InhaleHold,
   Exhale,
   ExhaleHold,
-  NotStarted,
 }
 
 export enum ControllerButton {

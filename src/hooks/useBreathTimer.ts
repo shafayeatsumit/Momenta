@@ -13,12 +13,13 @@ export default function useBreathTimer(breathTimeEnd: Function) {
   const stopBreathTimer = () => setBreathTimerIsRunning(false);
 
   useInterval(() => {
-    if (breathTimer === 0) {
+    const updatedTime = breathTimer - 1;
+    if (updatedTime === 0) {
       setBreathTimerIsRunning(false);
       breathTimeEnd();
       return;
     }
-    setBreathTimer(breathTimer - 1)
+    setBreathTimer(updatedTime)
   }, breathTimerIsRunning ? 1000 : null)
 
   return {

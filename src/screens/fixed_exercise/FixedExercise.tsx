@@ -25,8 +25,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
 
-  const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, progressAnimationFile } = route.params.exercise;
-
+  const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
   const showTimePicker = breathingState === BreathingState.NotStarted
   const showPlayButton = breathingState === BreathingState.NotStarted;
 
@@ -61,7 +60,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
-  const { animationFile: progressAnimation } = useAnimationReader(progressAnimationFile)
+  const { animationFile: progressAnimation } = useAnimationReader(progressAnimationPath)
 
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);

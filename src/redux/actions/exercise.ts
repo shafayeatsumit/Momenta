@@ -8,18 +8,26 @@ import { backgroundMusicReducer } from '../reducers/backgroundMusic';
 const EXERCISE_URL = "exercise";
 
 export interface Exercise {
-  "_id": string;
-  "name": string;
-  "exerciseType": string;
-  "duration": number,
-  "targetInhale": number,
-  "targetExhale": number,
-  "targetDuration": number,
-  "calibrationInhale": number,
-  "calibrationExhale": number,
-  "thumbnail": string,
-  "exerciseLottieFile": string,
-  "thumbnailPath"?: string,
+  id: string;
+  name: string;
+  displayName: string;
+  exerciseType: string;
+  duration: number;
+  primaryColor: string;
+  progressAnimationBackground: string;
+  backgroundGradient: Array<string>;
+  targetInhale?: number;
+  targetExhale?: number;
+  targetDuration?: number;
+  inhaleHoldTime?: number;
+  exhaleHoldTime?: number;
+  calibrationInhale?: number;
+  calibrationExhale?: number;
+  thumbnail: string;
+  progressAnimationFile: string;
+  thumbnailPath?: string;
+  backgroundImage: string;
+  backgroundImagePath?: string;
 }
 
 export type Exercises = {
@@ -38,23 +46,23 @@ export const fetchExercise = () => {
     let exercises: Exercise[] = response.data.exercises
     const filePromises: any = []
     exercises = exercises.map((exercise) => {
-      const lottieFileName = exercise.name + "_" + "exerciseLottieFile";
-      const lottieFileUrl = exercise.exerciseLottieFile;
-      const lottieFilePath = getDownloadPath(lottieFileName, lottieFileUrl);
+      const progressAnimation = exercise.name + "_" + "progressAnimationFile";
+      const progressAnimationUrl = exercise.progressAnimationFile;
+      const progressAnimationPath = getDownloadPath(progressAnimation, progressAnimationUrl);
       const thumbnailName = exercise.name + "_" + "thumbnail";
       const thumbnailUrl = exercise.thumbnail;
       const thumbnailPath = getDownloadPath(thumbnailName, thumbnailUrl);
       const thumbnailDownloadPromise: Promise<string> = downloadFile(thumbnailUrl, thumbnailPath)
-      const lottieFileDownloadPromise: Promise<string> = downloadFile(lottieFileUrl, lottieFilePath)
+      const progressAnimDownloadPromise: Promise<string> = downloadFile(progressAnimationUrl, progressAnimationPath)
       filePromises.push(thumbnailDownloadPromise)
-      filePromises.push(lottieFileDownloadPromise)
+      filePromises.push(progressAnimDownloadPromise)
       return {
         ...exercise,
         thumbnailPath,
-        lottieFilePath,
+        progressAnimationPath,
       }
     })
-    const exercisePayload: any = _.mapKeys(exercises, "_id");
+    const exercisePayload: any = _.mapKeys(exercises, "id");
     const completePromise = await Promise.all(filePromises);
     dispatch<FetchExerciseAction>({
       type: ActionTypes.AddExercise,

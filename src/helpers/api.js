@@ -12,6 +12,7 @@ export const api = axios.create({
   timeout: 20000, // = 20 seconds
 });
 
+AsyncStorage.clear();
 
 const authInterceptor = async (request) => {
   const isAnonymous = anonymousEndpoints.includes(request.url);

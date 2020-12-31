@@ -17,7 +17,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   const dispatch = useDispatch();
   const selectUser = (state: RootState) => state.user;
   const user = useSelector(selectUser)
-  const isExistingUser = user.hasOwnProperty('_id')
+  const isExistingUser = user.hasOwnProperty('id')
   const selectFetchCompleted = (state: RootState) => state.fetchCompleted;
   const fetchCompleted = useSelector(selectFetchCompleted);
   const { exerciseFetchCompleted, musicFetchCompleted } = fetchCompleted;

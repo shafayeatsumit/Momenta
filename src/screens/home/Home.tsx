@@ -27,7 +27,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     <ScrollView contentContainerStyle={styles.tilesContainer}>
       {allExercise.map((exercise) => {
         return (
-          <Thumbnail goToExercise={goToExercise} key={exercise._id} exercise={exercise} />
+          <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
         )
       })}
     </ScrollView>

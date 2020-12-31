@@ -8,7 +8,7 @@ import { downloadFile, getDownloadPath } from "../../helpers/downloader";
 const BACKGROUND_MUSIC_URL = 'backgroundMusic';
 
 export interface BackgroundMusic {
-  _id: string;
+  id: string;
   url: string;
   name: string;
   type: string;
@@ -39,7 +39,7 @@ export const fetchBackgroundMusic = () => {
         filePath,
       }
     })
-    const musicPayload: BackgroundMusics = _.mapKeys(musicFiles, "_id");
+    const musicPayload: BackgroundMusics = _.mapKeys(musicFiles, "id");
     // completes the primise;
     await Promise.all(filePromises);
     dispatch<FetchBackgroundMusicAction>({

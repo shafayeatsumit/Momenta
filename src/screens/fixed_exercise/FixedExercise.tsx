@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, Animated, Easing, TouchableOpacity } from 'react-native';
 import { Exercise } from "../../redux/actions/exercise";
 import { RouteProp } from '@react-navigation/native';
-import styles from "./FixedExercise";
+import styles from "./FixedExercise.styles";
 import LottieView from 'lottie-react-native';
 import useBreathCounter from "../../hooks/useBreathCounter";
 import ScrollPicker from "../../components/ScrollPicker";
@@ -25,7 +25,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
 
-  const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, lottieFilePath } = route.params.exercise;
+  const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, progressAnimationFile } = route.params.exercise;
 
   const showTimePicker = breathingState === BreathingState.NotStarted
   const showPlayButton = breathingState === BreathingState.NotStarted;
@@ -61,7 +61,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
-  const { animationFile: progressAnimation } = useAnimationReader(lottieFilePath)
+  const { animationFile: progressAnimation } = useAnimationReader(progressAnimationFile)
 
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);

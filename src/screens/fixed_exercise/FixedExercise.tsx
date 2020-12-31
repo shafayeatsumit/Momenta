@@ -30,13 +30,12 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const showPlayButton = breathingState === BreathingState.NotStarted;
 
   const breathCountEnd = () => {
-
     switch (breathingState !== 0) {
       case (breathingState === BreathingState.Inhale):
-        startInhaleHold();
+        inhaleHoldTime ? startInhaleHold() : startExhale();
         return
       case (breathingState === BreathingState.Exhale):
-        startExhaleHold();
+        exhaleHoldTime ? startExhaleHold() : startInhale();
         return
       case (breathingState === BreathingState.InhaleHold):
         startExhale();
@@ -121,16 +120,16 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   }
 
   const isShowBreathCounterVisible = () => {
-    if (BreathingState.Inhale && breathCounter === inhaleTime) {
+    if (breathingState === BreathingState.Inhale && breathCounter === inhaleTime) {
       return false
     }
-    if (BreathingState.Exhale && breathCounter === exhaleTime) {
+    if (breathingState === BreathingState.Exhale && breathCounter === exhaleTime) {
       return false
     }
-    if (BreathingState.InhaleHold && breathCounter === inhaleHoldTime) {
+    if (breathingState === BreathingState.InhaleHold && breathCounter === inhaleHoldTime) {
       return false
     }
-    if (BreathingState.ExhaleHold && breathCounter === exhaleHoldTime) {
+    if (breathingState === BreathingState.ExhaleHold && breathCounter === exhaleHoldTime) {
       return false;
     }
     return true;

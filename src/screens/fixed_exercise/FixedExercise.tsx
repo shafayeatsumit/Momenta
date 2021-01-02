@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, Animated, Easing, TouchableOpacity } from 'react-native';
+import { View, Text, Animated, Easing, TouchableOpacity, Image, ImageBackground, } from 'react-native';
 import { Exercise } from "../../redux/actions/exercise";
 import { RouteProp } from '@react-navigation/native';
 import styles from "./FixedExercise.styles";
@@ -12,10 +12,14 @@ import useTimer from "../../hooks/useTimer";
 import { BreathingState, ControllerButton } from "../../helpers/types";
 import ExerciseController from "../../components/ExerciseController";
 import BreathingInstruction from "../../components/BreathingInstructionText";
+import LinearGradient from 'react-native-linear-gradient';
+import { ScreenHeight, ScreenWidth } from '../../helpers/constants';
 
 interface Props {
   route: RouteProp<any, any>;
 }
+
+const ASPECT_RATIO = 640 / 732;
 
 const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
@@ -25,7 +29,7 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   const renderCount = useRef(0);
   const animatedProgress = useRef(new Animated.Value(0)).current;
 
-  const { inhaleTime, inhaleHoldTime, exhaleTime, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
+  const { inhaleTime, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
   const showTimePicker = breathingState === BreathingState.NotStarted
   const showPlayButton = breathingState === BreathingState.NotStarted;
 
@@ -160,8 +164,24 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
   }
 
   const breathCounterVisible = isShowBreathCounterVisible();
+  const backgroundImageSource = "file://" + backgroundImagePath;
+  // const backgroundImageSource = require('../../../assets/images/sleep_bg.png')
+  const playButton = require('../../../assets/images/play_button.png');
+  console.log('background gradient', backgroundGradient)
   return (
-    <View style={{ flex: 1 }}>
+
+    <LinearGradient
+      useAngle={true}
+      angle={192}
+      angleCenter={{ x: 0.5, y: 0.5 }}
+      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
+      colors={backgroundGradient}
+      style={{ flex: 1 }}
+    >
+
+      <View style={styles.backgroundImageContainer}>
+        <ImageBackground source={{ uri: backgroundImageSource }} resizeMode={'cover'} style={{ aspectRatio: ASPECT_RATIO, alignSelf: 'center', height: undefined, width: '100%' }} />
+      </View>
       <View style={styles.absoluteContainer}>
         {progressAnimation &&
           <LottieView
@@ -179,7 +199,8 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
       {showPlayButton &&
         <View style={styles.absoluteContainer}>
           <TouchableOpacity style={styles.playButton} onPress={handleStart}>
-            <Text style={styles.start}>START</Text>
+            {/* <Text style={styles.start}>START</Text> */}
+            <Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70 }} />
           </TouchableOpacity>
         </View>
       }
@@ -199,7 +220,8 @@ const FixedExercise: React.FC<Props> = ({ route }: Props) => {
         handleFinish={handleFinish}
         handlePause={handlePause}
       />
-    </View>
+    </LinearGradient>
+
   );
 }
 

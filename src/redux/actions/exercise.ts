@@ -52,18 +52,25 @@ export const fetchExercise = () => {
       const thumbnailName = exercise.name + "_" + "thumbnail";
       const thumbnailUrl = exercise.thumbnail;
       const thumbnailPath = getDownloadPath(thumbnailName, thumbnailUrl);
-      const thumbnailDownloadPromise: Promise<string> = downloadFile(thumbnailUrl, thumbnailPath)
-      const progressAnimDownloadPromise: Promise<string> = downloadFile(progressAnimationUrl, progressAnimationPath)
+      const background = exercise.name + "_" + "background";
+      const backgroundUrl = exercise.backgroundImage;
+      const backgroundImagePath = getDownloadPath(background, backgroundUrl);
+      const backgroundDownloadPromise: Promise<string> = downloadFile(backgroundUrl, backgroundImagePath);
+      const thumbnailDownloadPromise: Promise<string> = downloadFile(thumbnailUrl, thumbnailPath);
+      const progressAnimDownloadPromise: Promise<string> = downloadFile(progressAnimationUrl, progressAnimationPath);
       filePromises.push(thumbnailDownloadPromise)
       filePromises.push(progressAnimDownloadPromise)
+      filePromises.push(backgroundDownloadPromise)
       return {
         ...exercise,
         thumbnailPath,
         progressAnimationPath,
+        backgroundImagePath,
       }
     })
     const exercisePayload: any = _.mapKeys(exercises, "id");
     const completePromise = await Promise.all(filePromises);
+    console.log('++ done downloading exercises ++');
     dispatch<FetchExerciseAction>({
       type: ActionTypes.AddExercise,
       payload: exercisePayload,

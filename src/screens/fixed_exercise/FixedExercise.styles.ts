@@ -30,7 +30,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 4,
-    backgroundColor: 'red',
+  },
+  backgroundImageContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: ScreenHeight * 0.6,
   },
   button: {
     position: 'absolute',

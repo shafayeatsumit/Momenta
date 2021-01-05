@@ -6,7 +6,7 @@ import styles from './FixedExercise.styles';
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
-import ExerciseBackground from "../../components/Background";
+import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import InnerCircle from "../../components/InnerCircle";
@@ -69,7 +69,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     Animated.timing(fadeOutAnimation, {
       toValue: 0,
       duration: 500,
-      easing: Easing.ease,
+      easing: Easing.linear,
       useNativeDriver: true,
     }).start();
     Animated.timing(fadeInAnimation, {
@@ -184,6 +184,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     console.log('finish');
   }
 
+  const handleBack = () => navigation.goBack()
+
   const exerciseNotStarted = breathingState === BreathingState.NotStarted;
   const isPaused = buttonState === ControllerButton.Continue;
   const showIcons = isPaused || exerciseNotStarted;
@@ -209,24 +211,16 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {showIcons &&
         <>
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={() => { }} />
-          <BackButton handlePress={() => navigation.goBack()} opacity={fadeOutAnimation} />
+          <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           <ExerciseTitle title={displayName} opacity={fadeOutAnimation} />
           <Settings opacity={fadeOutAnimation} />
         </>
       }
 
-      {!exerciseNotStarted &&
-        <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, justifyContent: 'center', alignItems: 'center', }}>
-          {progressAnimation &&
-            <LottieView
-              source={require('../../../assets/anims/breath.json')}
-              style={styles.lottieFile}
-              progress={animatedProgress}
-            />
-          }
-        </View>
-      }
 
+      {!exerciseNotStarted && progressAnimation &&
+        <BreathingProgress animationFile={progressAnimation} animatedProgress={animatedProgress} />
+      }
 
       <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
       <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />

@@ -16,10 +16,7 @@ const styles = StyleSheet.create({
   lottieFile: {
     height: ScreenWidth * .8, width: ScreenWidth * .8,
   },
-  start: {
 
-
-  },
 
   backgroundImageContainer: {
     position: 'absolute',

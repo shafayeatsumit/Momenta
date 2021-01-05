@@ -10,9 +10,9 @@ interface Props {
 
 const PlayButton: React.FC<Props> = ({ handleStart, buttonOpacity }) => {
   return (
-    <Animated.View style={[styles.absoluteContainer, { opacity: buttonOpacity }]}>
-      <TouchableOpacity style={[styles.playButton, { zIndex: 8 }]} onPress={handleStart}>
-        <Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70 }} />
+    <Animated.View style={styles.absoluteContainer}>
+      <TouchableOpacity style={[styles.playButton]} onPress={handleStart}>
+        <Animated.Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity }} />
       </TouchableOpacity>
     </Animated.View>
   );

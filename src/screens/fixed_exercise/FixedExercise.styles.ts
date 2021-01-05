@@ -14,23 +14,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   lottieFile: {
-    alignSelf: 'center',
-    height: 280,
-    width: 280,
+    height: ScreenWidth * .8, width: ScreenWidth * .8,
   },
   start: {
-    fontSize: 20,
-    fontFamily: FontType.Bold,
-    color: 'white',
+
 
   },
-  playButton: {
-    height: 80,
-    width: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 4,
-  },
+
   backgroundImageContainer: {
     position: 'absolute',
     top: 0,
@@ -54,15 +44,7 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Medium,
     color: 'white',
   },
-  timer: {
-    position: 'absolute',
-    top: 20,
-    alignSelf: 'center',
-    height: 30,
-    width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
+
 })
 
 export default styles;

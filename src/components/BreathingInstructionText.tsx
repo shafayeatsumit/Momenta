@@ -1,13 +1,15 @@
-import React from 'react'
-import { View, StyleSheet, Text } from 'react-native';
+import React, { useEffect, useRef } from 'react'
+import { View, StyleSheet, Text, Animated, Easing } from 'react-native';
 import { BreathingState } from "../helpers/types";
 import { FontType, Colors } from '../helpers/theme';
 
 interface Props {
   breathingState: BreathingState;
+  exerciseNotStarted: boolean;
 }
 
-const BreathingInstructionText: React.FC<Props> = ({ breathingState }: Props) => {
+const BreathingInstructionText: React.FC<Props> = ({ breathingState, exerciseNotStarted }: Props) => {
+  const animatedProgress = useRef(new Animated.Value(0)).current;
   const getBreathingStateText = () => {
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
@@ -22,12 +24,21 @@ const BreathingInstructionText: React.FC<Props> = ({ breathingState }: Props) =>
         return ""
     }
   }
-
+  useEffect(() => {
+    if (!exerciseNotStarted) {
+      Animated.timing(animatedProgress, {
+        toValue: 1,
+        duration: 600,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [exerciseNotStarted])
   return (
     <View style={styles.absoluteContainer}>
-      <Text style={styles.text}>
+      <Animated.Text style={[styles.text, { opacity: animatedProgress }]}>
         {getBreathingStateText()}
-      </Text>
+      </Animated.Text>
     </View>
   );
 }

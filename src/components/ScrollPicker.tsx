@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     // flexGrow: 0,
   },
   text: {
-    fontSize: 40,
+    fontSize: 35,
     color: '#ffffff',
     fontWeight: '600',
   },

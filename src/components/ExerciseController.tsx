@@ -22,17 +22,17 @@ const ExerciseController: React.FC<Props> = ({ buttonState, handleContinue, hand
     <>
       {showPause &&
         <TouchableOpacity style={styles.button} onPress={handlePause} >
-          <Text style={styles.buttonText}>Pause</Text>
+          <Text style={styles.buttonText}>PAUSE</Text>
         </TouchableOpacity>
       }
       {showContinue &&
         <TouchableOpacity style={styles.button} onPress={handleContinue} >
-          <Text style={styles.buttonText}> Continue </Text>
+          <Text style={styles.buttonText}> CONTINUE</Text>
         </TouchableOpacity>
       }
       {showFinish &&
         <TouchableOpacity style={styles.button} onPress={handleFinish} >
-          <Text style={styles.buttonText}> Finish </Text>
+          <Text style={styles.buttonText}> FINISH </Text>
         </TouchableOpacity>
       }
     </>
@@ -47,14 +47,14 @@ const styles = StyleSheet.create({
     bottom: 30,
     height: 50,
     width: 150,
-    backgroundColor: Colors.buttonBlue,
+    // backgroundColor: Colors.buttonBlue,
     borderRadius: 5,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: FontType.Medium,
     color: 'white',
   },

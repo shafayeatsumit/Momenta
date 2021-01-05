@@ -20,7 +20,8 @@ interface Props {
 const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
 
   const thumbnailSource = "file://" + exercise.thumbnailPath;
-  console.log('thumbnail source', thumbnailSource)
+  // const thumbnailSource = exercise.thumbnailPath;
+  console.log('thumbnail source', exercise.thumbnailPath)
   return (
     <TouchableOpacity
       style={styles.tiles}
@@ -28,6 +29,7 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
       onPress={() => goToExercise(exercise)}>
       <ImageBackground
         source={{ uri: thumbnailSource }}
+
         style={styles.thumbnail}
         resizeMode="contain"
       >

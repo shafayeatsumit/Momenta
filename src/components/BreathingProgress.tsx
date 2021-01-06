@@ -5,19 +5,21 @@ import { ScreenHeight, ScreenWidth } from "../helpers/constants";
 interface Props {
   animationFile: any;
   animatedProgress: any;
+  name?: string;
 }
 
-const AnimatedProgress: React.FC<Props> = ({ animationFile, animatedProgress }: Props) => {
+const AnimatedProgress: React.FC<Props> = ({ animationFile, name, animatedProgress }: Props) => {
+  const file = name === 'box' ?
+    require('../../assets/anims/box.json')
+    : require('../../assets/anims/breath.json')
   return (
     <View style={styles.container}>
-
       <LottieView
-        source={require('../../assets/anims/breath.json')}
+        source={file}
         style={styles.lottieFile}
         progress={animatedProgress}
         resizeMode="cover"
       />
-
     </View>
   );
 }

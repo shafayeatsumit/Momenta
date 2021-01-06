@@ -40,7 +40,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const fadeInAnimation = useRef(new Animated.Value(0)).current;
 
-  const { inhaleTime, progressAnimationBackground, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
+  const { name, inhaleTime, progressAnimationBackground, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
 
 
   const breathCountEnd = () => {
@@ -207,7 +207,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
       {showProgressAnimation &&
-        <BreathingProgress animationFile={progressAnimation} animatedProgress={animatedProgress} />
+        <BreathingProgress name={name} animationFile={progressAnimation} animatedProgress={animatedProgress} />
       }
       <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
       <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />

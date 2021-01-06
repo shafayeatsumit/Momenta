@@ -25,11 +25,39 @@ import { BreathingState, ControllerButton } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
-  route: RouteProp<any, any>;
   navigation: any;
+  route: RouteProp<any, any>;
 }
 
-const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
+const avgTime = (breathingTime: number, targetTime: number) =>
+  (breathingTime + targetTime) / 2;
+
+let inhaleTime = 0;
+let exhaleTime = 0;
+let breathCount = 0;
+
+const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
+  const {
+    calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration,
+    progressAnimationBackground, displayName, backgroundImagePath, backgroundGradient, progressAnimationPath
+  } = route.params.exercise;
+
+  const avgExhale = avgTime(calibrationExhale, targetExhale);
+  const avgInhale = avgTime(calibrationInhale, targetInhale);
+  const targetBreathCount = Math.ceil(targetDuration * 60 / (avgInhale + avgExhale));
+  const exhlaeIncrement = (targetExhale - calibrationExhale) / targetBreathCount;
+  const inhaleIncrement = (targetInhale - calibrationInhale) / targetBreathCount;
+  if (!inhaleTime) {
+    inhaleTime = calibrationInhale + inhaleIncrement;
+  }
+
+  if (!exhaleTime) {
+    exhaleTime = calibrationExhale + exhlaeIncrement;
+  }
+
+
+
+
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [buttonState, setButtonState] = useState<ControllerButton | null>(null);
@@ -39,25 +67,7 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const fadeInAnimation = useRef(new Animated.Value(0)).current;
 
-  const { inhaleTime, progressAnimationBackground, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
 
-
-  const breathCountEnd = () => {
-    switch (breathingState !== 0) {
-      case (breathingState === BreathingState.Inhale):
-        inhaleHoldTime ? startInhaleHold() : startExhale();
-        return
-      case (breathingState === BreathingState.Exhale):
-        exhaleHoldTime ? startExhaleHold() : startInhale();
-        return
-      case (breathingState === BreathingState.InhaleHold):
-        startExhale();
-        return
-      case (breathingState === BreathingState.ExhaleHold):
-        startInhale();
-        return
-    }
-  }
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -84,7 +94,6 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setButtonState(ControllerButton.Finish);
   }
 
-  const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
   const { animationFile: progressAnimation } = useAnimationReader(progressAnimationPath)
 
@@ -93,50 +102,48 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duratoin = exhaleTime) => {
-    startBreathCounter(duratoin)
     setBreathingState(BreathingState.Exhale)
     Animated.timing(animatedProgress, {
       toValue: 1,
       duration: duratoin * 1000,
       easing: Easing.ease,
       useNativeDriver: true,
-    }).start();
+    }).start(() => exhaleEnd());
   }
 
-  const startInhaleHold = (duration = inhaleHoldTime) => {
-    setBreathingState(BreathingState.InhaleHold);
-    startBreathCounter(duration)
-  }
-
-  const startExhaleHold = (duration = exhaleHoldTime) => {
-    setBreathingState(BreathingState.ExhaleHold);
-    startBreathCounter(duration)
+  const exhaleEnd = () => {
+    console.log('exhlae end');
+    breathCount = breathCount + 1;
+    const noIncrement = breathCount >= targetBreathCount;
+    if (noIncrement) {
+      startInhale();
+    } else {
+      exhaleTime = exhaleTime + exhlaeIncrement;
+      inhaleTime = inhaleTime + inhaleIncrement;
+      startInhale();
+    }
   }
 
   const startInhale = (duration = inhaleTime) => {
-    startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
     Animated.timing(animatedProgress, {
       toValue: 0.5,
       duration: duration * 1000,
       easing: Easing.ease,
       useNativeDriver: true,
-    }).start();
+    }).start(() => startExhale());
   }
+  console.log('inhaleTime', inhaleTime, exhaleTime, breathCount);
+
 
   const continueBreathCounter = () => {
     switch (breathingState) {
       case (BreathingState.Inhale):
-        startInhale(breathCounter);
+
+        // startInhale(breathCounter);
         return
       case (BreathingState.Exhale):
-        startExhale(breathCounter);
-        return
-      case (BreathingState.ExhaleHold):
-        startBreathCounter(breathCounter)
-        return
-      case (BreathingState.InhaleHold):
-        startBreathCounter(breathCounter)
+        // startExhale(breathCounter);
         return
       default:
         return;
@@ -158,7 +165,6 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handlePause = () => {
     setButtonState(ControllerButton.Continue)
     stopTimer();
-    stopBreathCounter();
     fadeOutAnimation.setValue(1)
     Animated.timing(animatedProgress).stop();
   }
@@ -171,7 +177,7 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleFinish = () => {
-    navigation.goBack()
+    console.log('finish');
   }
 
   const handleBack = () => navigation.goBack()
@@ -209,7 +215,6 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         <BreathingProgress animationFile={progressAnimation} animatedProgress={animatedProgress} />
       }
       <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
-      <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
       {exerciseNotStarted && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       <ExerciseController
         buttonState={buttonState}
@@ -218,7 +223,6 @@ const GuidedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         handlePause={handlePause}
       />
     </LinearGradient>
-
   );
 }
 

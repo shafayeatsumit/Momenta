@@ -31,7 +31,7 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, animationType, durati
   const progressAnim = useRef(new Animated.Value(circunference)).current;
   const radiusAnim = useRef(new Animated.Value(ShrinkRadius)).current;
   const strokeWidthAnim = useRef(new Animated.Value(ShrinkStrokeWidth)).current;
-  console.log('duration', duration);
+
   const expandCircle = () => {
     Animated.parallel([
       Animated.timing(progressAnim, {
@@ -54,24 +54,24 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, animationType, durati
       })
     ]).start();
   }
-  console.log('circunference', circunference);
+
   const shrinkCircle = () => {
     Animated.parallel([
       Animated.timing(progressAnim, {
         toValue: -circunference,
-        duration: 4 * 1000,
+        duration: duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
       Animated.timing(radiusAnim, {
         toValue: ShrinkRadius,
-        duration: 4 * 1000,
+        duration: duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
       Animated.timing(strokeWidthAnim, {
         toValue: ShrinkStrokeWidth,
-        duration: 4 * 1000,
+        duration: duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       })

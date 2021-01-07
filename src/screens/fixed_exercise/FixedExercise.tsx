@@ -170,7 +170,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const exerciseNotStarted = breathingState === BreathingState.NotStarted;
   const isPaused = buttonState === ControllerButton.Continue;
   const showIcons = isPaused || exerciseNotStarted;
-
+  console.log('progressDuration ==>', progressDuration, progressAnimation)
 
   return (
     <LinearGradient

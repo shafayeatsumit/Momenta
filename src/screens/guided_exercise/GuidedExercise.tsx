@@ -174,8 +174,6 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const handleBack = () => navigation.goBack()
 
-  console.log('inhale time', inhaleTime);
-  console.log('exhale time', exhaleTime);
   return (
     <LinearGradient
       useAngle={true}

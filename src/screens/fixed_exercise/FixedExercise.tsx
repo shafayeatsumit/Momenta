@@ -124,27 +124,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
-  const continueBreathCounter = () => {
-    switch (breathingState) {
-      case (BreathingState.Inhale):
-        startInhale(breathCounter);
-        return
-      case (BreathingState.Exhale):
-        startExhale(breathCounter);
-        return
-      case (BreathingState.ExhaleHold):
-        startBreathCounter(breathCounter)
-        return
-      case (BreathingState.InhaleHold):
-        startBreathCounter(breathCounter)
-        return
-      default:
-        return;
-    }
-  }
-
-
-
   const startExercise = () => {
     startInhale();
     setExerciseState(ExerciseState.Play)
@@ -156,23 +135,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handlePause = () => {
-
     setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopBreathCounter();
     fadeOutAnimation.setValue(1)
-
-  }
-
-  const handleContinue = () => {
-    setExerciseState(ExerciseState.Play)
-    startTimer();
-    continueBreathCounter()
-    fadeOutAnimation.setValue(0)
-  }
-
-  const handlePausePlay = () => {
-    isPlaying ? handlePause() : handleContinue();
   }
 
   const handleFinish = () => {
@@ -207,7 +173,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} />
+      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={() => { }} />
       {isPlaying &&
         <>
           <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
@@ -215,7 +181,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <PauseExercise handlePause={handlePausePlay} disabled={exerciseFinished} />
+      <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
     </LinearGradient>

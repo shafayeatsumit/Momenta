@@ -26,9 +26,11 @@ interface Props {
     duration: number;
   }
   exerciseState: ExerciseState;
+  exhaleEnd?: () => void;
+  inhaleEnd?: () => void;
 }
 
-const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseState }: Props) => {
+const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseState, exhaleEnd, inhaleEnd }: Props) => {
   const radius = ExpandRadius;
   const circumference = Math.round(radius * 2 * Math.PI);
 
@@ -37,7 +39,6 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
   const strokeWidthAnim = useRef(new Animated.Value(ShrinkStrokeWidth)).current;
 
   const expandCircle = () => {
-
     Animated.parallel([
       Animated.timing(progressAnim, {
         toValue: 0,
@@ -57,7 +58,11 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
         easing: Easing.ease,
         useNativeDriver: true,
       })
-    ]).start();
+    ]).start((resp) => {
+      if (resp.finished && inhaleEnd) {
+        inhaleEnd();
+      }
+    });
   }
 
   const shrinkCircle = () => {
@@ -80,8 +85,12 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
         easing: Easing.linear,
         useNativeDriver: true,
       })
-    ]).start(() => {
+    ]).start((resp) => {
+      if (resp.finished && exhaleEnd) {
+        exhaleEnd();
+      }
       progressAnim.setValue(circumference)
+
     });
   }
 

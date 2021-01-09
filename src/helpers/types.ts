@@ -12,3 +12,13 @@ export enum ExerciseState {
   Play,
   Finish,
 }
+
+enum AnimationType {
+  ExpandCircle,
+  ShrinkCircle,
+}
+
+export interface ProgressType {
+  animationType: AnimationType | null;
+  duration: number;
+}

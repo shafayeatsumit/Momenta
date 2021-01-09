@@ -87,7 +87,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
-
+  const showInstruction = breathCount < 5 && (isPlaying || exerciseFinished)
 
 
   const onStartAnimation = () => {
@@ -200,7 +200,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         </>
       }
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
-      {isPlaying && <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
+      {showInstruction && <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton handleFinish={handleFinish} />}

@@ -40,6 +40,8 @@ interface Progress {
   duration: number;
 }
 
+let breathCount = 0;
+
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -84,6 +86,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     renderCount.current = renderCount.current + 1;
   })
 
+  useEffect(() => {
+    return () => {
+      breathCount = 0;
+    }
+  }, [])
+
   const timerEnd = () => {
     stopTimer();
     setExerciseState(ExerciseState.Finish);
@@ -97,9 +105,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
+  const showInstruction = breathCount < 5 && (isPlaying || exerciseFinished)
 
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);
+  }
+
+  const exhaleEnd = () => {
+    breathCount = breathCount + 1;
   }
 
   const startExhale = (duration = exhaleTime) => {
@@ -173,8 +186,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={() => { }} />
-      {isPlaying &&
+      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
+      {showInstruction &&
         <>
           <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
           <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />

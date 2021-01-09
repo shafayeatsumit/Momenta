@@ -5,7 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
-
+import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
 import BackgroundCircle from "../../components/BackgroundCircle"
@@ -197,6 +197,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
+      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
     </LinearGradient>
 
   );

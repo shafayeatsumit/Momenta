@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing } from 'react-native';
+import { Animated, Easing, View } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
+import ProgressBar from "../../components/ProgressBar";
 import BreathingProgress from "../../components/BreathingProgress";
 import FinishButton from "../../components/FinishButton";
 import BackgroundImage from "../../components/BackgroundImage";
@@ -24,6 +25,7 @@ import BreathingInstruction from "../../components/BreathingInstructionText";
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
+import Svg, { Line } from "react-native-svg";
 
 interface Props {
   navigation: any;
@@ -199,10 +201,11 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       }
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
       {showInstruction && <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
+
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
-
+      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
     </LinearGradient>
   );
 }

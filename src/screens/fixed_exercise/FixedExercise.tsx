@@ -5,10 +5,11 @@ import { RouteProp } from '@react-navigation/native';
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
+
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
 import BackgroundCircle from "../../components/BackgroundCircle"
-import InnerCircle from "../../components/InnerCircle";
+import FinishButton from "../../components/FinishButton";
 import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
 import useAnimationReader from '../../hooks/useAnimationReader';
@@ -18,10 +19,10 @@ import Settings from "../../components/Settings";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
-import ExerciseController from "../../components/ExerciseController";
+import PauseExercise from "../../components/PauseExercise";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 
-import { BreathingState, ControllerButton } from "../../helpers/types";
+import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
@@ -34,12 +35,17 @@ enum AnimationType {
   ShrinkCircle,
 }
 
+interface Progress {
+  type: AnimationType | null;
+  duration: number;
+}
+
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
-  const [buttonState, setButtonState] = useState<ControllerButton | null>(null);
-  const [progressAnimation, setProgressAnimation] = useState<AnimationType | null>(null);
-  const [progressDuration, setProgressDuration] = useState<number>(0);
+  const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
+  const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
+
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -80,12 +86,17 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const timerEnd = () => {
     stopTimer();
-    setButtonState(ControllerButton.Finish);
+    setExerciseState(ExerciseState.Finish);
   }
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
-
+  const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
+  const isPaused = exerciseState === ExerciseState.Paused;
+  const isPlaying = exerciseState === ExerciseState.Play;
+  const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
+  const exerciseFinished = exerciseState === ExerciseState.Finish;
+  const showTimer = isPaused || exerciseFinished;
 
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);
@@ -94,8 +105,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const startExhale = (duration = exhaleTime) => {
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
-    setProgressAnimation(AnimationType.ShrinkCircle)
-    setProgressDuration(duration);
+    setProgress({ type: AnimationType.ShrinkCircle, duration })
   }
 
   const startInhaleHold = (duration = inhaleHoldTime) => {
@@ -111,8 +121,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const startInhale = (duration = inhaleTime) => {
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
-    setProgressAnimation(AnimationType.ExpandCircle)
-    setProgressDuration(duration);
+    setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
   const continueBreathCounter = () => {
@@ -138,7 +147,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startExercise = () => {
     startInhale();
-    setButtonState(ControllerButton.Start)
+    setExerciseState(ExerciseState.Play)
     startTimer();
   }
 
@@ -147,7 +156,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handlePause = () => {
-    setButtonState(ControllerButton.Continue)
+
+    setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopBreathCounter();
     fadeOutAnimation.setValue(1)
@@ -155,22 +165,23 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleContinue = () => {
-    setButtonState(ControllerButton.Pause)
+    setExerciseState(ExerciseState.Play)
     startTimer();
     continueBreathCounter()
     fadeOutAnimation.setValue(0)
   }
 
+  const handlePausePlay = () => {
+    isPlaying ? handlePause() : handleContinue();
+  }
+
   const handleFinish = () => {
-    console.log('finish');
+    console.log('handle finish');
+    navigation.goBack()
   }
 
   const handleBack = () => navigation.goBack()
 
-  const exerciseNotStarted = breathingState === BreathingState.NotStarted;
-  const isPaused = buttonState === ControllerButton.Continue;
-  const showIcons = isPaused || exerciseNotStarted;
-  console.log('progressDuration ==>', progressDuration, progressAnimation)
 
   return (
     <LinearGradient
@@ -182,12 +193,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       style={{ flex: 1 }}
     >
       <BackgroundImage imagePath={backgroundImagePath} />
+      {isStopped && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-
-      {isPaused && <Timer time={time} exerciseDuration={exerciseDuration} />}
+      {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
       {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
-      {showIcons &&
+      {isStopped &&
         <>
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={() => { }} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
@@ -196,16 +207,17 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <BreathingProgress primaryColor={primaryColor} duration={progressDuration} animationType={progressAnimation} />
-      <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
-      <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
-      {exerciseNotStarted && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      <ExerciseController
-        buttonState={buttonState}
-        handleContinue={handleContinue}
-        handleFinish={handleFinish}
-        handlePause={handlePause}
-      />
+      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} />
+      {isPlaying &&
+        <>
+          <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
+          <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
+        </>
+      }
+
+      <PauseExercise handlePause={handlePausePlay} disabled={exerciseFinished} />
+      {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
+      {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
     </LinearGradient>
 
   );

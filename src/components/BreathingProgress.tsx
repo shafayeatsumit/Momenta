@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native';
 import { ScreenHeight, ScreenWidth } from "../helpers/constants";
 import CenterContainer from "../components/CenterContainer";
 import Svg, { Defs, Circle } from "react-native-svg";
+import { ExerciseState } from "../helpers/types";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -20,36 +21,40 @@ enum AnimationType {
 
 interface Props {
   primaryColor: string;
-  animationType: AnimationType | null;
-  duration: number;
+  progress: {
+    type: AnimationType | null;
+    duration: number;
+  }
+  exerciseState: ExerciseState;
 }
 
-const AnimatedProgress: React.FC<Props> = ({ primaryColor, animationType, duration }: Props) => {
+const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseState }: Props) => {
   const radius = ExpandRadius;
-  const circunference = radius * 2 * Math.PI;
+  const circumference = Math.round(radius * 2 * Math.PI);
 
-  const progressAnim = useRef(new Animated.Value(circunference)).current;
+  const progressAnim = useRef(new Animated.Value(circumference)).current;
   const radiusAnim = useRef(new Animated.Value(ShrinkRadius)).current;
   const strokeWidthAnim = useRef(new Animated.Value(ShrinkStrokeWidth)).current;
 
   const expandCircle = () => {
+
     Animated.parallel([
       Animated.timing(progressAnim, {
         toValue: 0,
-        duration: duration * 1000,
-        easing: Easing.linear,
+        duration: progress.duration * 1000,
+        easing: Easing.ease,
         useNativeDriver: true,
       }),
       Animated.timing(radiusAnim, {
         toValue: ExpandRadius,
-        duration: duration * 1000,
-        easing: Easing.linear,
+        duration: progress.duration * 1000,
+        easing: Easing.ease,
         useNativeDriver: true,
       }),
       Animated.timing(strokeWidthAnim, {
         toValue: ExpandStrokeWidth,
-        duration: duration * 1000,
-        easing: Easing.linear,
+        duration: progress.duration * 1000,
+        easing: Easing.ease,
         useNativeDriver: true,
       })
     ]).start();
@@ -58,39 +63,55 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, animationType, durati
   const shrinkCircle = () => {
     Animated.parallel([
       Animated.timing(progressAnim, {
-        toValue: -circunference,
-        duration: duration * 1000,
+        toValue: -circumference / 2,
+        duration: progress.duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
       Animated.timing(radiusAnim, {
         toValue: ShrinkRadius,
-        duration: duration * 1000,
+        duration: progress.duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       }),
       Animated.timing(strokeWidthAnim, {
         toValue: ShrinkStrokeWidth,
-        duration: duration * 1000,
+        duration: progress.duration * 1000,
         easing: Easing.linear,
         useNativeDriver: true,
       })
     ]).start(() => {
-      progressAnim.setValue(circunference)
+      progressAnim.setValue(circumference)
     });
   }
 
   useEffect(() => {
-    if (animationType === AnimationType.ExpandCircle) {
+    if (progress.type === AnimationType.ExpandCircle) {
       expandCircle()
       return;
     }
-    if (animationType === AnimationType.ShrinkCircle) {
+    if (progress.type === AnimationType.ShrinkCircle) {
       shrinkCircle();
       return;
     }
-  }, [animationType])
+  }, [progress])
 
+  const resetAnimation = () => {
+    Animated.timing(progressAnim).stop()
+    Animated.timing(radiusAnim).stop()
+    Animated.timing(strokeWidthAnim).stop()
+
+    progressAnim.setValue(circumference);
+    radiusAnim.setValue(ShrinkRadius)
+    strokeWidthAnim.setValue(ShrinkStrokeWidth)
+  }
+
+  useEffect(() => {
+    if (exerciseState === ExerciseState.Paused) {
+      resetAnimation();
+    }
+
+  }, [exerciseState])
 
   return (
 
@@ -121,7 +142,7 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, animationType, durati
             cx={'50%'}
             strokeWidth={strokeWidthAnim}
             r={radiusAnim}
-            strokeDasharray={`${circunference} ${circunference}`}
+            strokeDasharray={`${circumference} ${circumference}`}
             strokeDashoffset={progressAnim}
             strokeLinecap="round"
           />

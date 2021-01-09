@@ -6,9 +6,9 @@ export enum BreathingState {
   ExhaleHold,
 }
 
-export enum ControllerButton {
-  Start,
-  Continue,
-  Pause,
+export enum ExerciseState {
+  NotStarted,
+  Paused,
+  Play,
   Finish,
 }

@@ -11,7 +11,7 @@ export default function useBreathCounter(breathCounterEnd: Function) {
   }
 
   const stopBreathCounter = () => setBreathCounterIsRunning(false);
-  console.log('breath counter', breathCounter);
+
   useInterval(() => {
     const updatedTime = breathCounter - 1;
     if (updatedTime === 0) {

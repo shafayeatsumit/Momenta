@@ -21,16 +21,17 @@ export default ExerciseSettings;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 30,
     left: 25,
     height: 50,
     width: 50,
     zIndex: 5,
-
+    // backgroundColor: 'red',
   },
   button: {
     height: 50,
     width: 50,
+    justifyContent: 'center',
   }
 
 });

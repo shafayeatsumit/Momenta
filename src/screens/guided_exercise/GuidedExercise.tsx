@@ -18,7 +18,7 @@ import Settings from "../../components/Settings";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
-import ExerciseController from "../../components/ExerciseController";
+import PauseExercise from "../../components/PauseExercise";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 
 import { BreathingState, ControllerButton } from "../../helpers/types";
@@ -35,6 +35,7 @@ const avgTime = (breathingTime: number, targetTime: number) =>
 let inhaleTime = 0;
 let exhaleTime = 0;
 let breathCount = 0;
+let pausedTime: Date | null = null;
 
 const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const {
@@ -133,17 +134,19 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       useNativeDriver: true,
     }).start(() => startExhale());
   }
-  console.log('inhaleTime', inhaleTime, exhaleTime, breathCount);
+  // console.log('inhaleTime', inhaleTime, exhaleTime, breathCount);
 
 
   const continueBreathCounter = () => {
+    const timeRemainning = Date.now() - pausedTime;
+    console.log('time timeRemainning', timeRemainning)
     switch (breathingState) {
       case (BreathingState.Inhale):
 
-        // startInhale(breathCounter);
+        startInhale(timeRemainning);
         return
       case (BreathingState.Exhale):
-        // startExhale(breathCounter);
+        startExhale(timeRemainning);
         return
       default:
         return;
@@ -166,6 +169,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     setButtonState(ControllerButton.Continue)
     stopTimer();
     fadeOutAnimation.setValue(1)
+    pausedTime = Date.now();
     Animated.timing(animatedProgress).stop();
   }
 
@@ -197,7 +201,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       style={{ flex: 1 }}
     >
       <BackgroundImage imagePath={backgroundImagePath} />
-      <InnerCircle circleOpacity={fadeInAnimation} circleBackgroundColor={progressAnimationBackground} />
+
       <BackgroundCircle />
 
       {isPaused && <Timer time={time} exerciseDuration={exerciseDuration} />}
@@ -211,17 +215,12 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
           <Settings opacity={fadeOutAnimation} />
         </>
       }
-      {showProgressAnimation &&
+      {/* {showProgressAnimation &&
         <BreathingProgress animationFile={progressAnimation} animatedProgress={animatedProgress} />
-      }
+      } */}
       <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
       {exerciseNotStarted && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      <ExerciseController
-        buttonState={buttonState}
-        handleContinue={handleContinue}
-        handleFinish={handleFinish}
-        handlePause={handlePause}
-      />
+      <PauseExercise handlePause={() => console.log('hello')} />
     </LinearGradient>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Animated, StyleSheet } from 'react-native';
 import { ScreenWidth } from "../helpers/constants";
-
+import Container from "../components/CenterContainer";
 interface Props {
   circleOpacity: any;
   circleBackgroundColor: string;
@@ -9,9 +9,9 @@ interface Props {
 
 const InnerCircle: React.FC<Props> = ({ circleOpacity, circleBackgroundColor }: Props) => {
   return (
-    <Animated.View style={[styles.absoluteContainer, { opacity: circleOpacity }]}>
-      <View style={{ height: ScreenWidth * .56, width: ScreenWidth * .56, borderRadius: ScreenWidth * .28, backgroundColor: circleBackgroundColor }} />
-    </Animated.View>
+    <Container>
+      <View style={{ height: ScreenWidth * .2, width: ScreenWidth * .2, borderRadius: ScreenWidth * .1, backgroundColor: circleBackgroundColor }} />
+    </Container>
   );
 }
 

@@ -16,7 +16,7 @@ import DurationPicker from "../../components/DurationPicker";
 import useAnimationReader from '../../hooks/useAnimationReader';
 import PlayButton from "../../components/PlayButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
-import Settings from "../../components/Settings";
+import Settings from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";

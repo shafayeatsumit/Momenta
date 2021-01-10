@@ -3,13 +3,14 @@ import { View, Animated, Image, TouchableOpacity, StyleSheet } from 'react-nativ
 
 interface Props {
   opacity: any;
+  handlePress: () => void;
 }
 
 
-const ExerciseSettings: React.FC<Props> = ({ opacity, }) => {
+const ExerciseSettings: React.FC<Props> = ({ opacity, handlePress }) => {
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <TouchableOpacity onPress={() => console.log('back icon')} style={styles.button}>
+      <TouchableOpacity onPress={handlePress} style={styles.button}>
         <Image source={require('../../assets/images/settings_icon.png')} style={{ tintColor: 'white', height: 25, width: 25, resizeMode: 'contain' }} />
       </TouchableOpacity>
     </Animated.View>

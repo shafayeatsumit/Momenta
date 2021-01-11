@@ -4,9 +4,10 @@ import { RouteProp } from '@react-navigation/native';
 
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
-
+import { RootState } from "../../redux/reducers";
 import Settings from '../settings/Settings';
-import SwellPlayer from "../../helpers/SwellPlayer";
+// import SwellPlayer from "../../helpers/SwellPlayer";
+import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
 import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
@@ -25,6 +26,8 @@ import BreathingInstruction from "../../components/BreathingInstructionText";
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 interface Props {
   route: RouteProp<any, any>;
@@ -42,33 +45,16 @@ interface Progress {
 }
 
 let breathCount = 0;
-let swellPlayer: any = new SwellPlayer();
-let exhaleSoundId: null | ReturnType<typeof setTimeout> = null;
-let inhaleSoundId: null | ReturnType<typeof setTimeout> = null;
 
-const startExhaleSound = (exhaleDuration: number) => {
-  const fadeOutDuration = 1250;
-  exhaleSoundId = setTimeout(() => {
-    swellPlayer.stopExhaleSound(fadeOutDuration);
-    exhaleSoundId && clearTimeout(exhaleSoundId);
-  }, exhaleDuration * 1000 - fadeOutDuration);
-  swellPlayer.startExhaleSound();
-};
-
-const startInhaleSound = (inhaleDuration: number) => {
-
-  const fadeOutDuration = 1250;
-  inhaleSoundId = setTimeout(() => {
-    swellPlayer.stopInhaleSound(fadeOutDuration);
-    inhaleSoundId && clearInterval(inhaleSoundId);
-  }, inhaleDuration * 1000 - fadeOutDuration);
-  swellPlayer.startInhaleSound();
-};
-
-const stopSound = () => swellPlayer.stopSound();
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
+  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
+  const selectSettings = (state: RootState) => state.settings;
+  const allBackgroundMusic = useSelector(selectBackgroundMusic);
+  const settings = useSelector(selectSettings)
+  const { backgroundMusic, vibrationType } = settings;
+
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -110,11 +96,22 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }).start(startExercise);
   }
 
+  const playBackgroundMusic = () => {
+    const notEmpty = !_.isEmpty(allBackgroundMusic)
+    if (notEmpty) {
+      const filePath = allBackgroundMusic[backgroundMusic]
+      console.log('filepath', filePath)
+    }
+
+  }
+
   useEffect(() => {
     renderCount.current = renderCount.current + 1;
   })
 
+
   useEffect(() => {
+    hasBackgroundMusic && playBackgroundMusic();
     return () => {
       breathCount = 0;
     }
@@ -134,6 +131,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
   const showInstruction = breathCount < 5 && (isPlaying || exerciseFinished)
+  const hasSwell = backgroundMusic === 'swell';
+  const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
 
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);
@@ -144,7 +143,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
-    startExhaleSound(exhaleTime);
+    console.log('has swell', backgroundMusic)
+    hasSwell && startSwellExhale(exhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
@@ -161,7 +161,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startInhale = (duration = inhaleTime) => {
-    startInhaleSound(inhaleTime);
+    hasSwell && startSwellInhale(inhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
     setProgress({ type: AnimationType.ExpandCircle, duration })
@@ -181,7 +181,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopBreathCounter();
-    stopSound();
+    stopSwellSound();
     fadeOutAnimation.setValue(1)
   }
 

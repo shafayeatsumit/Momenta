@@ -4,7 +4,8 @@ import ModalButton from '../../components/ModalButton'
 import { FontType } from '../../helpers/theme';
 import RadioButton from "../../components/RadioButton";
 import { RootState } from "../../redux/reducers";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { changeMusic } from "../../redux/actions/settings";
 import _ from 'lodash';
 
 interface Props {
@@ -13,13 +14,20 @@ interface Props {
 
 const Sound: React.FC<Props> = ({ color }) => {
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
+  const selectSettings = (state: RootState) => state.settings;
+  const dispatch = useDispatch();
   const musicFiles = _.values(useSelector(selectBackgroundMusic));
+  const backgroundMusic = useSelector(selectSettings).backgroundMusic;
+
+  const handlePress = (id: string | null) => {
+    dispatch(changeMusic(id))
+  }
 
   const OFF = () => (
-    <View style={styles.buttonStyle}>
-      <RadioButton selected={true} color={color} />
+    <ModalButton handlePress={() => handlePress(null)} customStyle={styles.buttonStyle}>
+      <RadioButton selected={backgroundMusic === null} color={color} />
       <Text style={styles.text}>Off</Text>
-    </View>
+    </ModalButton>
   )
 
   return (
@@ -29,8 +37,8 @@ const Sound: React.FC<Props> = ({ color }) => {
         <OFF />
         {musicFiles.map((item) => {
           return (
-            <ModalButton key={item.name} handlePress={() => { console.log('item', item.name) }} customStyle={styles.buttonStyle}>
-              <RadioButton selected={true} color={color} />
+            <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
+              <RadioButton selected={backgroundMusic === item.id} color={color} />
               <Text style={styles.text}>{item.name}</Text>
             </ModalButton>
           )

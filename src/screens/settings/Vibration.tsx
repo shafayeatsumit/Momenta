@@ -3,6 +3,9 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import ModalButton from '../../components/ModalButton'
 import { FontType } from '../../helpers/theme';
 import RadioButton from "../../components/RadioButton";
+import { RootState } from "../../redux/reducers";
+import { changeVibration } from "../../redux/actions/settings";
+import { useSelector, useDispatch } from "react-redux";
 import _ from 'lodash';
 
 const VibrationTypes = [
@@ -15,11 +18,19 @@ interface Props {
 }
 
 const Vibration: React.FC<Props> = ({ color }) => {
+  const dispatch = useDispatch();
+  const selectSettings = (state: RootState) => state.settings;
+  const vibrationType = useSelector(selectSettings).vibrationType;
+
+  const handlePress = (id: string | null) => {
+    dispatch(changeVibration(id))
+  }
+
   const OFF = () => (
-    <View style={styles.buttonStyle}>
-      <RadioButton selected={true} color={color} />
+    <ModalButton handlePress={() => handlePress(null)} customStyle={styles.buttonStyle}>
+      <RadioButton selected={vibrationType === null} color={color} />
       <Text style={styles.text}>Off</Text>
-    </View>
+    </ModalButton>
   )
   return (
     <View style={styles.container}>
@@ -28,8 +39,8 @@ const Vibration: React.FC<Props> = ({ color }) => {
         <OFF />
         {VibrationTypes.map((item) => {
           return (
-            <ModalButton key={item.name} handlePress={() => { console.log('item', item.name) }} customStyle={styles.buttonStyle}>
-              <RadioButton selected={true} color={color} />
+            <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
+              <RadioButton selected={vibrationType === item.id} color={color} />
               <Text style={styles.text}>{item.name}</Text>
             </ModalButton>
           )

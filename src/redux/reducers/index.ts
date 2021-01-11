@@ -4,18 +4,21 @@ import { userReducer } from "./user";
 import { backgroundMusicReducer } from "./backgroundMusic";
 import { exerciseReducer } from "./exercise";
 import { fetchCompletedReducer } from "./fetchCompleted";
+import { settingsReducer } from "./settings";
 
 // Action types;
 import { User } from "../actions/user";
 import { BackgroundMusics } from "../actions/backgroundMusic";
 import { Exercises } from "../actions/exercise";
 import { FetchCompleted } from "../actions/fetchCompleted";
+import { Settings } from "../actions/settings";
 
 export interface RootState {
   user: User | {};
   backgroundMusic: BackgroundMusics | {};
   exercise: Exercises | {};
   fetchCompleted: FetchCompleted;
+  settings: Settings;
 }
 
 export const rootReducers = combineReducers<RootState>({
@@ -23,4 +26,5 @@ export const rootReducers = combineReducers<RootState>({
   backgroundMusic: backgroundMusicReducer,
   exercise: exerciseReducer,
   fetchCompleted: fetchCompletedReducer,
+  settings: settingsReducer,
 });

@@ -4,20 +4,21 @@ import { TouchableOpacity as ButtonIOS } from 'react-native-gesture-handler'
 
 // silly RN bug: TouchableOpacity doesn't work on IOS;
 
+
 interface Props {
-  handlePress: () => void;
+  handlePress(id?: string | null): any;
   children: React.ReactNode;
   customStyle?: StyleProp<ViewStyle>;
 }
 
 const ModalButton: React.FC<Props> = ({ handlePress, children, customStyle }) => {
   if (Platform.OS === 'android') {
-    return <ButtonAndroid style={[styles.button, customStyle && customStyle]} onPress={handlePress}>
+    return <ButtonAndroid style={[styles.button, customStyle && customStyle]} onPress={() => handlePress()}>
       {children}
     </ButtonAndroid>
   }
   return (
-    <ButtonIOS style={[styles.button, customStyle && customStyle]} onPress={handlePress}>
+    <ButtonIOS style={[styles.button, customStyle && customStyle]} onPress={() => handlePress()}>
       {children}
     </ButtonIOS>
   );

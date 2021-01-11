@@ -3,27 +3,28 @@ Sound.setCategory('Playback');
 
 export default class InhaleExhaleSound {
   constructor() {
-    this.inhaleSoundFile = 'swell_inhale_three.mp3';
-    this.exhaleSoundFile = 'swell_exhale_three.mp3';
+    this.inhaleSoundFile = 'swell_inhale.mp3';
+    this.exhaleSoundFile = 'swell_exhale.mp3';
     this.mute = false;
     this.started = false;
     this.inhaleSound = new Sound(
       this.inhaleSoundFile,
       Sound.MAIN_BUNDLE,
       (error) => {
-        console.log('error loading file', error);
+        console.log('error loading inhale file', error);
       },
     );
     this.exhaleSound = new Sound(
       this.exhaleSoundFile,
       Sound.MAIN_BUNDLE,
       (error) => {
-        console.log('error loading exhale', error);
+        console.log('error loading exhale file', error);
       },
     );
   }
 
   startInhaleSound = () => {
+    console.log('Start Inhale Sound');
     if (this.mute) {
       this.inhaleSound.setVolume(0);
       console.log('mute inhale start');
@@ -34,6 +35,7 @@ export default class InhaleExhaleSound {
   };
 
   startExhaleSound = () => {
+    console.log('Start Exhale Sound');
     if (this.mute) {
       this.exhaleSound.setVolume(0);
     } else {
@@ -49,6 +51,10 @@ export default class InhaleExhaleSound {
   stopInhaleSound = (duration) => {
     this.fadeOut(duration, this.inhaleSound);
   };
+  stopSound = () => {
+    this.exhaleSound.stop();
+    this.inhaleSound.stop();    
+  }
 
   muteSound = () => {
     this.mute = true;

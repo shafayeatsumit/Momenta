@@ -30,11 +30,20 @@ const Sound: React.FC<Props> = ({ color }) => {
     </ModalButton>
   )
 
+  const SWELL = () => (
+    <ModalButton handlePress={() => handlePress('swell')} customStyle={styles.buttonStyle}>
+      <RadioButton selected={backgroundMusic === 'swell'} color={color} />
+      <Text style={styles.text}>Swell</Text>
+    </ModalButton>
+  )
+
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sound</Text>
       <ScrollView style={{ flex: 1 }}>
         <OFF />
+        <SWELL />
         {musicFiles.map((item) => {
           return (
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
@@ -54,6 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 20,
+    marginLeft: 30,
     marginVertical: 10,
     marginTop: 20,
   },

@@ -10,10 +10,8 @@ import BreathingProgress from "../../components/BreathingProgress";
 import FinishButton from "../../components/FinishButton";
 import BackgroundImage from "../../components/BackgroundImage";
 import BackgroundCircle from "../../components/BackgroundCircle"
-import InnerCircle from "../../components/InnerCircle";
 import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
-import useAnimationReader from '../../hooks/useAnimationReader';
 import PlayButton from "../../components/PlayButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
 import Settings from "../../components/SettingsButton";
@@ -54,7 +52,7 @@ let breathCount = 0;
 const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const {
     calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration, primaryColor,
-    displayName, backgroundImagePath, backgroundGradient, progressAnimationPath
+    displayName, backgroundImagePath, backgroundGradient,
   } = route.params.exercise;
 
 

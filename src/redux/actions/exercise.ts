@@ -14,7 +14,6 @@ export interface Exercise {
   exerciseType: string;
   duration: number;
   primaryColor: string;
-  progressAnimationBackground: string;
   backgroundGradient: Array<string>;
   targetInhale?: number;
   targetExhale?: number;
@@ -24,7 +23,6 @@ export interface Exercise {
   calibrationInhale?: number;
   calibrationExhale?: number;
   thumbnail: string;
-  progressAnimationFile: string;
   thumbnailPath?: string;
   backgroundImage: string;
   backgroundImagePath?: string;
@@ -46,9 +44,6 @@ export const fetchExercise = () => {
     let exercises: Exercise[] = response.data.exercises
     const filePromises: any = []
     exercises = exercises.map((exercise) => {
-      const progressAnimation = exercise.name + "_" + "progressAnimationFile";
-      const progressAnimationUrl = exercise.progressAnimationFile;
-      const progressAnimationPath = getDownloadPath(progressAnimation, progressAnimationUrl);
       const thumbnailName = exercise.name + "_" + "thumbnail";
       const thumbnailUrl = exercise.thumbnail;
       const thumbnailPath = getDownloadPath(thumbnailName, thumbnailUrl);
@@ -57,14 +52,11 @@ export const fetchExercise = () => {
       const backgroundImagePath = getDownloadPath(background, backgroundUrl);
       const backgroundDownloadPromise: Promise<string> = downloadFile(backgroundUrl, backgroundImagePath);
       const thumbnailDownloadPromise: Promise<string> = downloadFile(thumbnailUrl, thumbnailPath);
-      const progressAnimDownloadPromise: Promise<string> = downloadFile(progressAnimationUrl, progressAnimationPath);
       filePromises.push(thumbnailDownloadPromise)
-      filePromises.push(progressAnimDownloadPromise)
       filePromises.push(backgroundDownloadPromise)
       return {
         ...exercise,
         thumbnailPath,
-        progressAnimationPath,
         backgroundImagePath,
       }
     })

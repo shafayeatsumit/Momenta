@@ -14,7 +14,6 @@ import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
-import useAnimationReader from '../../hooks/useAnimationReader';
 import PlayButton from "../../components/PlayButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
 import SettingsButton from "../../components/SettingsButton";
@@ -56,7 +55,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { primaryColor, inhaleTime, progressAnimationBackground, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime, progressAnimationPath } = route.params.exercise;
+  const { primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime } = route.params.exercise;
 
 
   const breathCountEnd = () => {

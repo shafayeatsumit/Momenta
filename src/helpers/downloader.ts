@@ -3,6 +3,7 @@ const RNFS = require('react-native-fs');
 const background = false;
 const begin = null;
 const progressDivider = 10;
+
 const getUrlExtension = (url: string): string => {
   return url.split(/[#?]/)[0].split('.').pop().trim();
 }

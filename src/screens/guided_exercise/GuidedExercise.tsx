@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, View, Modal } from 'react-native';
+import { Animated, Easing, View, Modal, NativeModules, Platform } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import useTimer from "../../hooks/useTimer";
@@ -89,6 +89,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+  const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -101,6 +102,30 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const showTimer = isPaused || exerciseFinished;
 
 
+  const startVibration = (duration: number) => {
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.startVibration(duration * 1000, 20);
+      return;
+    }
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.startVibration(duration);
+      return;
+    }
+  }
+
+  const stopVibration = () => {
+    if (vibrationType === null) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.cancelVibration();
+      return;
+    }
+    if (Platform.OS === 'ios' && iosHapticStatus) {
+      NativeModules.IOSVibration.cancelVibration();
+      return;
+    }
+  }
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -126,6 +151,11 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   })
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
+        setIOSHapticStatus(resp)
+      });
+    }
     return () => {
       inhaleTime = 0;
       exhaleTime = 0;
@@ -146,6 +176,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const startExhale = (duration = exhaleTime) => {
     setBreathingState(BreathingState.Exhale)
+    vibrationType === 'purr_exhale' && startVibration(exhaleTime);
     hasSwell && startSwellExhale(exhaleTime);
     setProgress({ type: AnimationType.ShrinkCircle, duration })
   }
@@ -170,6 +201,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const startInhale = (duration = inhaleTime) => {
     setBreathingState(BreathingState.Inhale);
     hasSwell && startSwellInhale(inhaleTime);
+    vibrationType === 'purr_inhale' && startVibration(inhaleTime);
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
@@ -187,6 +219,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const handlePause = () => {
     setExerciseState(ExerciseState.Paused)
     stopTimer();
+    stopVibration();
     hasBackgroundMusic && stopBackgroundMusic();
     hasSwell && stopSwellSound();
     fadeOutAnimation.setValue(1)

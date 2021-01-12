@@ -6,19 +6,27 @@ import { FontType, Colors } from '../helpers/theme';
 interface Props {
   breathingState: BreathingState;
   exerciseNotStarted: boolean;
+  totalBreathCount: number;
+  breathCounter: number;
+  inhaleHoldTime: number;
+  exhaleHoldTime: number;
 }
 
-const BreathingInstructionText: React.FC<Props> = ({ breathingState, exerciseNotStarted }: Props) => {
+const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTime, exhaleHoldTime, breathingState, exerciseNotStarted, totalBreathCount }: Props) => {
   const animatedProgress = useRef(new Animated.Value(0)).current;
   const getBreathingStateText = () => {
+    const showInhaleHold = breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1;
+    const showExhaleHold = breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1;
+
+
     switch (breathingState !== null) {
-      case (breathingState === BreathingState.Inhale):
-        return "Inhale"
-      case (breathingState === BreathingState.Exhale):
-        return "Exhale"
-      case (breathingState === BreathingState.InhaleHold):
+      case (breathingState === BreathingState.Inhale && totalBreathCount < 5):
+        return "Breath In"
+      case (breathingState === BreathingState.Exhale && totalBreathCount < 5):
+        return "Breath Out"
+      case (breathingState === BreathingState.InhaleHold && showInhaleHold):
         return "Hold"
-      case (breathingState === BreathingState.ExhaleHold):
+      case (breathingState === BreathingState.ExhaleHold && showExhaleHold):
         return "Hold"
       default:
         return ""

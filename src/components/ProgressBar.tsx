@@ -39,7 +39,7 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color }: Props) => {
           x="0"
           y="0"
           width={animatedWidth}
-          height="3"
+          height="5"
           fill={color}
         />
       </Svg>
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 3,
+    height: 5,
     width: ScreenWidth,
   },
 

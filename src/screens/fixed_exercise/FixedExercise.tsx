@@ -6,9 +6,7 @@ import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import Settings from '../settings/Settings';
-// import SwellPlayer from "../../helpers/SwellPlayer";
-import { PlayMusic, StopMusic } from "../../helpers/MusicPlayer";
-import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
+import { startSwellExhale, startSwellInhale, stopSwellSound, playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
@@ -45,7 +43,7 @@ interface Progress {
   duration: number;
 }
 
-let breathCount = 0;
+let totalBreathCount = 0;
 
 
 
@@ -97,11 +95,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }).start(startExercise);
   }
 
-  const playBackgroundMusic = () => {
+  const startBackgroundMusic = () => {
     const notEmpty = !_.isEmpty(allBackgroundMusic)
     if (notEmpty) {
       const music = allBackgroundMusic[backgroundMusic]
-      PlayMusic(music.filePath)
+      playBackgroundMusic(music.filePath)
     }
 
   }
@@ -113,7 +111,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   useEffect(() => {
     return () => {
-      breathCount = 0;
+      totalBreathCount = 0;
     }
   }, [])
 
@@ -130,7 +128,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
-  const showInstruction = breathCount < 5 && (isPlaying || exerciseFinished)
+
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
 
@@ -139,7 +137,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const exhaleEnd = () => {
-    breathCount = breathCount + 1;
+    totalBreathCount = totalBreathCount + 1;
   }
 
   const startExhale = (duration = exhaleTime) => {
@@ -174,7 +172,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleStart = () => {
-    hasBackgroundMusic && playBackgroundMusic();
+    hasBackgroundMusic && startBackgroundMusic();
     onStartAnimation();
   }
 
@@ -183,7 +181,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     stopTimer();
     stopBreathCounter();
     hasSwell && stopSwellSound();
-    hasBackgroundMusic && StopMusic();
+    hasBackgroundMusic && stopBackgroundMusic();
     fadeOutAnimation.setValue(1)
   }
 
@@ -223,9 +221,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       }
 
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
-      {showInstruction &&
+
+      {!isPaused &&
         <>
-          <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />
+          <BreathingInstruction
+            breathCounter={breathCounter} totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
+            inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime}
+          />
           <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
         </>
       }

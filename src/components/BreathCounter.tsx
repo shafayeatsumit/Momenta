@@ -15,16 +15,18 @@ interface Props {
 
 const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleTime, exhaleTime, inhaleHoldTime, exhaleHoldTime }: Props) => {
   const isShowBreathCounterVisible = () => {
-    if (breathingState === BreathingState.Inhale && breathCounter === inhaleTime) {
+    const showInhaleHoldCounter = breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1;
+    const showExhaleHoldCounter = breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1;
+    if (breathingState === BreathingState.Inhale) {
       return false
     }
-    if (breathingState === BreathingState.Exhale && breathCounter === exhaleTime) {
+    if (breathingState === BreathingState.Exhale) {
       return false
     }
-    if (breathingState === BreathingState.InhaleHold && breathCounter === inhaleHoldTime) {
+    if (breathingState === BreathingState.InhaleHold && showInhaleHoldCounter) {
       return false
     }
-    if (breathingState === BreathingState.ExhaleHold && breathCounter === exhaleHoldTime) {
+    if (breathingState === BreathingState.ExhaleHold && showExhaleHoldCounter) {
       return false;
     }
     if (breathingState === BreathingState.NotStarted) {
@@ -51,7 +53,7 @@ const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleT
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: ScreenHeight / 2 + 30,
+    marginTop: ScreenHeight / 2 - 13,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center'

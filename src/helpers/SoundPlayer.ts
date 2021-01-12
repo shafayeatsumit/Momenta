@@ -1,5 +1,9 @@
 import SwellPlayer from "./SwellPlayer";
 
+const Sound = require('react-native-sound');
+// Enable playback in silence mode
+Sound.setCategory('Playback');
+let sound: any;
 
 let swellPlayer: any = new SwellPlayer();
 let exhaleSoundId: null | ReturnType<typeof setTimeout> = null;
@@ -29,3 +33,22 @@ export const stopSwellSound = () => {
   inhaleSoundId && clearInterval(inhaleSoundId);
   exhaleSoundId && clearTimeout(exhaleSoundId);
 }
+
+export const playBackgroundMusic = (filePath: string) => {
+  sound = new Sound(filePath, "", (error: any) => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+    sound.play()
+    sound.setNumberOfLoops(-1);
+  });
+}
+
+export const stopBackgroundMusic = () => {
+  if (sound) {
+    sound.setVolume(0)
+    sound.stop();
+  }
+}
+

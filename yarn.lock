@@ -6197,10 +6197,9 @@ react-native-screens@2.4.0:
   dependencies:
     debounce "^1.2.0"
 
-react-native-sound@0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.11.0.tgz#ad60b55ba8c6dc89917f381ad3713f2738de530f"
-  integrity sha512-4bGAZfni6E2L695NQjOZwNLBQGXgBGYC4Sy+h99K5h0HqNZjCqR0+aLel+ezASxEJDpaH83gylNObXpiqJgdwg==
+"react-native-sound@https://github.com/Menardi/react-native-sound-gapless.git":
+  version "0.10.12"
+  resolved "https://github.com/Menardi/react-native-sound-gapless.git#879facf8875598da3568ddd06b04cead9f7a7a4f"
 
 react-native-svg@12.1.0:
   version "12.1.0"

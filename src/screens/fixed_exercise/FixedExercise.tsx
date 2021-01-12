@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal } from 'react-native';
+import { Animated, Easing, Modal, Platform, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import useBreathCounter from "../../hooks/useBreathCounter";
@@ -53,12 +53,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
-
+  console.log('vibrationType ===>', vibrationType);
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+  const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
 
   const renderCount = useRef(0);
 
@@ -67,6 +68,30 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const { primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime } = route.params.exercise;
 
+  const startVibration = (duration: number) => {
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.startVibration(duration * 1000, 20);
+      return;
+    }
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.startVibration(duration);
+      return;
+    }
+  }
+
+  const stopVibration = () => {
+    if (vibrationType === null) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.cancelVibration();
+      return;
+    }
+    if (Platform.OS === 'ios' && iosHapticStatus) {
+      NativeModules.IOSVibration.cancelVibration();
+      return;
+    }
+  }
 
   const breathCountEnd = () => {
     switch (breathingState !== 0) {
@@ -110,6 +135,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   useEffect(() => {
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
+        setIOSHapticStatus(resp)
+      });
+    }
     return () => {
       totalBreathCount = 0;
     }
@@ -141,8 +171,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
-    console.log('has swell', backgroundMusic)
     hasSwell && startSwellExhale(exhaleTime);
+    vibrationType === 'purr_exhale' && startVibration(exhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
@@ -160,6 +190,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startInhale = (duration = inhaleTime) => {
     hasSwell && startSwellInhale(inhaleTime);
+    vibrationType === 'purr_inhale' && startVibration(inhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
     setProgress({ type: AnimationType.ExpandCircle, duration })
@@ -179,6 +210,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handlePause = () => {
     setExerciseState(ExerciseState.Paused)
     stopTimer();
+    stopVibration();
     stopBreathCounter();
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
@@ -241,7 +273,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         transparent={true}
         visible={settingsVisible}
         onRequestClose={closeSetting}
-        style={{ zIndex: 100 }}
       >
         <Settings closeModal={closeSetting} color={primaryColor} />
       </Modal>

@@ -46,7 +46,7 @@ const avgTime = (breathingTime: number, targetTime: number) =>
 
 let inhaleTime = 0;
 let exhaleTime = 0;
-let breathCount = 0;
+let totalBreathCount = 0;
 
 
 const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
@@ -87,7 +87,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
-  const showInstruction = breathCount < 5 && (isPlaying || exerciseFinished)
+
 
 
   const onStartAnimation = () => {
@@ -107,7 +107,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     return () => {
       inhaleTime = 0;
       exhaleTime = 0;
-      breathCount = 0;
+      totalBreathCount = 0;
     };
   }, [])
 
@@ -130,8 +130,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const exhaleEnd = () => {
     console.log('exhlae end');
-    breathCount = breathCount + 1;
-    const noIncrement = breathCount >= targetBreathCount;
+    totalBreathCount = totalBreathCount + 1;
+    const noIncrement = totalBreathCount >= targetBreathCount;
     if (noIncrement) {
       startInhale();
     } else {
@@ -198,7 +198,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         </>
       }
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
-      {showInstruction && <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
+      {!isPaused && <BreathingInstruction totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
 
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}

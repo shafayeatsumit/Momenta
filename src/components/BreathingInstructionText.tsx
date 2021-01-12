@@ -7,16 +7,18 @@ interface Props {
   breathingState: BreathingState;
   exerciseNotStarted: boolean;
   totalBreathCount: number;
-  breathCounter: number;
-  inhaleHoldTime: number;
-  exhaleHoldTime: number;
+  breathCounter?: number;
+  inhaleHoldTime?: number;
+  exhaleHoldTime?: number;
 }
 
 const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTime, exhaleHoldTime, breathingState, exerciseNotStarted, totalBreathCount }: Props) => {
   const animatedProgress = useRef(new Animated.Value(0)).current;
   const getBreathingStateText = () => {
-    const showInhaleHold = breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1;
-    const showExhaleHold = breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1;
+
+
+    const showInhaleHold = inhaleHoldTime ? breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1 : false;
+    const showExhaleHold = exhaleHoldTime ? breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1 : false;
 
 
     switch (breathingState !== null) {

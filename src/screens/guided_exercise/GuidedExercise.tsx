@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, View, Modal } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
-import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
 import { RootState } from "../../redux/reducers";
@@ -19,13 +18,15 @@ import ExerciseTitle from "../../components/ExerciseTitle";
 import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
-import BreathCounter from "../../components/BreathCounter";
 import PauseExercise from "../../components/PauseExercise";
 import BreathingInstruction from "../../components/BreathingInstructionText";
+import { startSwellExhale, startSwellInhale, stopSwellSound, playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
-import Svg, { Line } from "react-native-svg";
+
 
 interface Props {
   navigation: any;
@@ -52,12 +53,20 @@ let totalBreathCount = 0;
 
 
 const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
+  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
+  const selectSettings = (state: RootState) => state.settings;
+  const allBackgroundMusic = useSelector(selectBackgroundMusic);
+  const settings = useSelector(selectSettings)
+  const { backgroundMusic, vibrationType } = settings;
+
   const {
     calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration, primaryColor,
     displayName, backgroundImagePath, backgroundGradient,
   } = route.params.exercise;
 
 
+  const hasSwell = backgroundMusic === 'swell';
+  const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
 
   const avgExhale = avgTime(calibrationExhale, targetExhale);
   const avgInhale = avgTime(calibrationInhale, targetInhale);
@@ -102,6 +111,16 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     }).start(startExercise);
   }
 
+  const startBackgroundMusic = () => {
+    const notEmpty = !_.isEmpty(allBackgroundMusic)
+    if (notEmpty) {
+      const music = allBackgroundMusic[backgroundMusic]
+      playBackgroundMusic(music.filePath)
+    }
+
+  }
+
+
   useEffect(() => {
     renderCount.current = renderCount.current + 1;
   })
@@ -127,7 +146,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const startExhale = (duration = exhaleTime) => {
     setBreathingState(BreathingState.Exhale)
-    setBreathingState(BreathingState.Exhale)
+    hasSwell && startSwellExhale(exhaleTime);
     setProgress({ type: AnimationType.ShrinkCircle, duration })
   }
 
@@ -150,6 +169,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const startInhale = (duration = inhaleTime) => {
     setBreathingState(BreathingState.Inhale);
+    hasSwell && startSwellInhale(inhaleTime);
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
@@ -160,12 +180,15 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
 
   const handleStart = () => {
+    hasBackgroundMusic && startBackgroundMusic();
     onStartAnimation();
   }
 
   const handlePause = () => {
     setExerciseState(ExerciseState.Paused)
     stopTimer();
+    hasBackgroundMusic && stopBackgroundMusic();
+    hasSwell && stopSwellSound();
     fadeOutAnimation.setValue(1)
   }
 

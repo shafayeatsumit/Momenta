@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, View } from 'react-native';
+import { Animated, Easing, View, Modal } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 
+import { RootState } from "../../redux/reducers";
+import Settings from '../settings/Settings';
 import ProgressBar from "../../components/ProgressBar";
 import BreathingProgress from "../../components/BreathingProgress";
 import FinishButton from "../../components/FinishButton";
@@ -14,7 +16,7 @@ import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
 import PlayButton from "../../components/PlayButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
-import Settings from "../../components/SettingsButton";
+import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
@@ -77,6 +79,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
+  const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -166,7 +169,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     fadeOutAnimation.setValue(1)
   }
 
-
+  const handlePressSettings = () => setSettingsVisible(true);
+  const closeSetting = () => setSettingsVisible(false);
 
   const handleFinish = () => {
     navigation.goBack()
@@ -194,7 +198,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={() => { }} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           <ExerciseTitle title={displayName} opacity={fadeOutAnimation} />
-          <Settings opacity={fadeOutAnimation} />
+          <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
         </>
       }
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
@@ -204,6 +208,16 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={settingsVisible}
+        onRequestClose={closeSetting}
+        style={{ zIndex: 100 }}
+      >
+        <Settings closeModal={closeSetting} color={primaryColor} />
+      </Modal>
     </LinearGradient>
   );
 }

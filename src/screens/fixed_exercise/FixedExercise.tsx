@@ -7,6 +7,7 @@ import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import Settings from '../settings/Settings';
 // import SwellPlayer from "../../helpers/SwellPlayer";
+import { PlayMusic, StopMusic } from "../../helpers/MusicPlayer";
 import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
 import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
@@ -99,8 +100,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const playBackgroundMusic = () => {
     const notEmpty = !_.isEmpty(allBackgroundMusic)
     if (notEmpty) {
-      const filePath = allBackgroundMusic[backgroundMusic]
-      console.log('filepath', filePath)
+      const music = allBackgroundMusic[backgroundMusic]
+      PlayMusic(music.filePath)
     }
 
   }
@@ -111,7 +112,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   useEffect(() => {
-    hasBackgroundMusic && playBackgroundMusic();
     return () => {
       breathCount = 0;
     }
@@ -174,6 +174,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleStart = () => {
+    hasBackgroundMusic && playBackgroundMusic();
     onStartAnimation();
   }
 
@@ -181,7 +182,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopBreathCounter();
-    stopSwellSound();
+    hasSwell && stopSwellSound();
+    hasBackgroundMusic && StopMusic();
     fadeOutAnimation.setValue(1)
   }
 

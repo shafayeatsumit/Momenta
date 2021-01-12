@@ -1,23 +1,25 @@
 // Import the react-native-sound module
-var Sound = require('react-native-sound');
+const Sound = require('react-native-sound');
 
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 
 let sound: any;
 
-export const Play = (filePath: string) => {
-  new Sound(filePath, "", (error) => {
+export const PlayMusic = (filePath: string) => {
+
+  sound = new Sound(filePath, "", (error) => {
     if (error) {
       console.log('failed to load the sound', error);
       return;
     }
     sound.play()
+    sound.setNumberOfLoops(-1);
     // loaded successfully
   });
 }
 
-export const Stop = () => {
+export const StopMusic = () => {
   if (sound) {
     sound.stop();
   }

@@ -13,13 +13,13 @@ const BullsEye: React.FC<Props> = ({ color, handlePressIn, handlePressOut }: Pro
 
   return (
     <TouchableOpacity style={styles.main} onPressIn={handlePressIn} onPressOut={handlePressOut}>
-      <Svg width="204" height="204" viewBox="0 0 204 204">
+      <Svg width="300" height="250" viewBox="0 0 240 240">
         <G fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
           <G fill={color} transform="translate(-85 -565)">
             <G transform="translate(85 565)">
-              <Circle cx="102" cy="102" r="102" opacity="0.08" />
-              <Circle cx="102" cy="102" r="69" opacity="0.159" />
-              <Circle cx="103.5" cy="103.5" r="33.5" />
+              <Circle cx="125" cy="125" r="125" opacity="0.08" />
+              <Circle cx="125" cy="125" r="90" opacity="0.159" />
+              <Circle cx="125.5" cy="125.5" r="50" />
             </G>
           </G>
         </G>
@@ -30,7 +30,7 @@ const BullsEye: React.FC<Props> = ({ color, handlePressIn, handlePressOut }: Pro
 
 const styles = StyleSheet.create({
   main: {
-    height: 205,
+    height: 220,
     width: ScreenWidth,
     position: 'absolute',
     bottom: -103,

@@ -7,6 +7,7 @@ import BullsEye from "../../components/BullsEye";
 import LottieView from 'lottie-react-native';
 import CenterContainer from "../../components/CenterContainer";
 import BackButton from "../../components/BackButton";
+import ExerciseTitle from "../../components/ExerciseTitle";
 
 interface Props {
   navigation: any;
@@ -49,8 +50,10 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
 
     >
       <BackButton handlePress={handleBack} />
+      <ExerciseTitle title="Calibrate" />
       {showAnimation &&
         <CenterContainer>
+
           <LottieView
             source={require('../../../assets/anims/measuring.json')}
             autoPlay={false}

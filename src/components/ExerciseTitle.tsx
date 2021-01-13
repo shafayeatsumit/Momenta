@@ -3,7 +3,7 @@ import { Animated, Text, View, StyleSheet } from 'react-native';
 import { FontType } from "../helpers/theme";
 interface Props {
   title: string;
-  opacity: any;
+  opacity?: any;
 }
 
 const ExerciseTitle: React.FC<Props> = ({ title, opacity }: Props) => {
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 30,
     height: 50,
-    width: 80,
+    width: 130,
     zIndex: 5,
     justifyContent: 'center',
     alignItems: 'center',

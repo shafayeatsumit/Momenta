@@ -21,7 +21,7 @@ class Nav extends Component {
           headerMode="none"
           screenOptions={{
             gestureEnabled: false,
-            cardStyle: { backgroundColor: Colors.betterBlue },
+            cardStyle: { backgroundColor: "#121118" },
             cardStyleInterpolator: ({ current: { progress } }) => ({
               cardStyle: {
                 opacity: progress.interpolate({

@@ -5,6 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
+import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
 import { startSwellExhale, startSwellInhale, stopSwellSound, playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import ProgressBar from '../../components/ProgressBar';
@@ -60,6 +61,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
+  const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
 
@@ -219,6 +221,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const handlePressSettings = () => setSettingsVisible(true);
   const closeSetting = () => setSettingsVisible(false);
+  const closeInfoModal = () => setInfoModalVisible(false);
+  const handlePressInfo = () => setInfoModalVisible(true);
 
   const handleFinish = () => {
     console.log('handle finish');
@@ -245,7 +249,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {isStopped &&
         <>
-          <ExerciseInfo opacity={fadeOutAnimation} handlePress={() => { }} />
+          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           <ExerciseTitle title={displayName} opacity={fadeOutAnimation} />
           <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
@@ -277,6 +281,16 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         <Settings closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={infoModalVisible}
+        onRequestClose={closeInfoModal}
+      >
+        <InfoModal
+          title={displayName} about="about" tips="string" handleClose={closeInfoModal}
+        />
+      </Modal>
     </LinearGradient>
 
   );

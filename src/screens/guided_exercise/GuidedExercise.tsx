@@ -6,6 +6,7 @@ import useTimer from "../../hooks/useTimer";
 
 import CalibraitonButton from "../../components/CalibrationButton";
 import { RootState } from "../../redux/reducers";
+import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
 import ProgressBar from "../../components/ProgressBar";
 import BreathingProgress from "../../components/BreathingProgress";
@@ -92,6 +93,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
+  const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -226,7 +228,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const handlePressSettings = () => setSettingsVisible(true);
   const closeSetting = () => setSettingsVisible(false);
-
+  const closeInfoModal = () => setInfoModalVisible(false);
+  const handlePressInfo = () => setInfoModalVisible(true);
   const handleFinish = () => navigation.goBack()
 
   const goToCalibration = () => navigation.navigate("Calibraiton", { exercise: exerciseData })
@@ -256,7 +259,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
       {isStopped &&
         <>
-          <ExerciseInfo opacity={fadeOutAnimation} handlePress={() => { }} />
+          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           <ExerciseTitle title={displayName} opacity={fadeOutAnimation} />
           <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
@@ -275,9 +278,20 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         transparent={true}
         visible={settingsVisible}
         onRequestClose={closeSetting}
-        style={{ zIndex: 100 }}
+
       >
         <Settings closeModal={closeSetting} color={primaryColor} />
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={infoModalVisible}
+        onRequestClose={closeInfoModal}
+      >
+        <InfoModal
+          title={displayName} about="about" tips="string" handleClose={closeInfoModal}
+        />
       </Modal>
     </LinearGradient>
   );

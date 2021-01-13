@@ -53,7 +53,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
-  console.log('vibrationType ===>', vibrationType);
+
   const [exerciseDuration, setExerciseDuration] = useState<number>(5);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -154,7 +154,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
   const isPaused = exerciseState === ExerciseState.Paused;
-  const isPlaying = exerciseState === ExerciseState.Play;
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;

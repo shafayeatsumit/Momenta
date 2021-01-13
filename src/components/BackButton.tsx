@@ -3,7 +3,7 @@ import { Animated, View, StyleSheet, TouchableOpacity, Image } from 'react-nativ
 
 interface Props {
   handlePress: () => void;
-  opacity: any;
+  opacity?: any;
 }
 
 const BackButton: React.FC<Props> = ({ handlePress, opacity }: Props) => {

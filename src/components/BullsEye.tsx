@@ -1,13 +1,21 @@
 import React from 'react';
-import Svg, {Circle, G} from 'react-native-svg';
-import {StyleSheet, View} from 'react-native';
-import {ScreenWidth} from '../helpers/constants/common';
-function Icon() {
+import Svg, { Circle, G } from 'react-native-svg';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { ScreenWidth } from '../helpers/constants/common';
+
+interface Props {
+  color: string;
+  handlePressIn: () => void;
+  handlePressOut: () => void;
+}
+
+const BullsEye: React.FC<Props> = ({ color, handlePressIn, handlePressOut }: Props) => {
+
   return (
-    <View style={styles.main}>
+    <TouchableOpacity style={styles.main} onPressIn={handlePressIn} onPressOut={handlePressOut}>
       <Svg width="204" height="204" viewBox="0 0 204 204">
         <G fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
-          <G fill="#3C71DE" transform="translate(-85 -565)">
+          <G fill={color} transform="translate(-85 -565)">
             <G transform="translate(85 565)">
               <Circle cx="102" cy="102" r="102" opacity="0.08" />
               <Circle cx="102" cy="102" r="69" opacity="0.159" />
@@ -16,7 +24,7 @@ function Icon() {
           </G>
         </G>
       </Svg>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -30,4 +38,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-export default Icon;
+export default BullsEye;

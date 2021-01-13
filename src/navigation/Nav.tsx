@@ -7,7 +7,7 @@ import HomeScreen from '../screens/home/Home';
 import LoadingScreen from '../screens/Loading';
 import GuidedExerciseScreen from "../screens/guided_exercise/GuidedExercise";
 import FixedExerciseScreen from "../screens/fixed_exercise/FixedExercise";
-
+import CalibrationScreen from "../screens/calibration/Calibration";
 
 import { Colors } from '../helpers/theme';
 const Stack = createStackNavigator();
@@ -52,6 +52,7 @@ class Nav extends Component {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="GuidedExercise" component={GuidedExerciseScreen} />
           <Stack.Screen name="FixedExercise" component={FixedExerciseScreen} />
+          <Stack.Screen name="Calibraiton" component={CalibrationScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

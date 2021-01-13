@@ -4,6 +4,7 @@ import { RouteProp } from '@react-navigation/native';
 
 import useTimer from "../../hooks/useTimer";
 
+import CalibraitonButton from "../../components/CalibrationButton";
 import { RootState } from "../../redux/reducers";
 import Settings from '../settings/Settings';
 import ProgressBar from "../../components/ProgressBar";
@@ -58,11 +59,12 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
+  const exerciseData = route.params.exercise;
 
   const {
     calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration, primaryColor,
     displayName, backgroundImagePath, backgroundGradient,
-  } = route.params.exercise;
+  } = exerciseData;
 
 
   const hasSwell = backgroundMusic === 'swell';
@@ -96,7 +98,6 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
   const isPaused = exerciseState === ExerciseState.Paused;
-  const isPlaying = exerciseState === ExerciseState.Play;
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
   const exerciseFinished = exerciseState === ExerciseState.Finish;
   const showTimer = isPaused || exerciseFinished;
@@ -142,9 +143,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       const music = allBackgroundMusic[backgroundMusic]
       playBackgroundMusic(music.filePath)
     }
-
   }
-
 
   useEffect(() => {
     renderCount.current = renderCount.current + 1;
@@ -228,9 +227,9 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const handlePressSettings = () => setSettingsVisible(true);
   const closeSetting = () => setSettingsVisible(false);
 
-  const handleFinish = () => {
-    navigation.goBack()
-  }
+  const handleFinish = () => navigation.goBack()
+
+  const goToCalibration = () => navigation.navigate("Calibraiton", { exercise: exerciseData })
 
   const handleBack = () => navigation.goBack()
 
@@ -247,7 +246,13 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       {isStopped && <BackgroundCircle opacity={fadeOutAnimation} />}
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
-      {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+      {exerciseNotStarted &&
+        <>
+          <CalibraitonButton handlePress={goToCalibration} />
+          <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />
+        </>
+
+      }
 
       {isStopped &&
         <>

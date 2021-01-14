@@ -11,7 +11,15 @@ interface Props {
   handleClose: () => void;
 }
 
+const jsonEscape = (str: string) => {
+  return str.replace(/\\n/g, '\n');
+}
+
+const ABOUT_1 = "This exercise works best when you inhale and exhale through your nose only. Your nose slows your breathing down, which in turn calms you.\n\nThe other goal is to shift your breath’s balance away from being dominated by your inhale so you can do that by first focusing on just your exhales. Then, try to consciously take less and less air in (so less volume) with each inhale.at\n\nDo not take big “deep” inhales as if you’re exercising or doing yoga. Big inhales work against the goal of balance and calm. Big breaths with lots of air, signal to your body that you’re about to move (or are possibly in danger).\n\nAfter you get going, you’ll know you’re in a good rhythm when each breath feels just a bit more gentle, balanced, and smaller than the one that preceded it"
+
 const InfoModal: React.FC<Props> = ({ about, tips, title, handleClose }) => {
+  console.log('about ===>', about);
+  console.log('tips ====>', tips);
   return (
     <LinearGradient
       useAngle={true}
@@ -26,9 +34,9 @@ const InfoModal: React.FC<Props> = ({ about, tips, title, handleClose }) => {
 
       <ScrollView style={styles.scrollView}>
         <Text style={styles.title}>About</Text>
-        <Text style={styles.text}>{about}</Text>
+        <Text style={styles.text}>{jsonEscape(about)}</Text>
         <Text style={styles.title}>Tips</Text>
-        <Text style={styles.text}>{tips}</Text>
+        <Text style={styles.text}>{jsonEscape(tips)}</Text>
       </ScrollView>
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>

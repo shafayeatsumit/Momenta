@@ -2,8 +2,8 @@ import { ActionTypes, SettingsAction } from "../actions";
 import { Settings } from "../actions/settings";
 
 const initialState = {
-  backgroundMusic: null,
-  vibrationType: null,
+  backgroundMusic: 'swell',
+  vibrationType: 'purr_exhale',
 }
 
 export const settingsReducer = (state: Settings = initialState, action: SettingsAction) => {

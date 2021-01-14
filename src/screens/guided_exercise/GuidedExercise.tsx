@@ -64,7 +64,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const {
     calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration, primaryColor,
-    displayName, backgroundImagePath, backgroundGradient,
+    displayName, backgroundImagePath, backgroundGradient, about, tips,
   } = exerciseData;
 
 
@@ -73,7 +73,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const avgExhale = avgTime(calibrationExhale, targetExhale);
   const avgInhale = avgTime(calibrationInhale, targetInhale);
-  const targetBreathCount = Math.ceil(targetDuration * 60 / (avgInhale + avgExhale));
+  const targetBreathCount = Math.ceil(targetDuration / (avgInhale + avgExhale));
   const exhlaeIncrement = (targetExhale - calibrationExhale) / targetBreathCount;
   const inhaleIncrement = (targetInhale - calibrationInhale) / targetBreathCount;
   if (!inhaleTime) {
@@ -290,7 +290,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         onRequestClose={closeInfoModal}
       >
         <InfoModal
-          title={displayName} about="about" tips="string" handleClose={closeInfoModal}
+          title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
         />
       </Modal>
     </LinearGradient>

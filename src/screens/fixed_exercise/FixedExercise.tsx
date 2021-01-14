@@ -68,7 +68,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime } = route.params.exercise;
+  const { about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime } = route.params.exercise;
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -288,7 +288,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         onRequestClose={closeInfoModal}
       >
         <InfoModal
-          title={displayName} about="about" tips="string" handleClose={closeInfoModal}
+          title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
         />
       </Modal>
     </LinearGradient>

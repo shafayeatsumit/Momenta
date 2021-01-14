@@ -124,7 +124,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       NativeModules.AndroidVibration.cancelVibration();
       return;
     }
-    if (Platform.OS === 'ios' && iosHapticStatus) {
+    if (Platform.OS === 'ios' && iosHapticStatus && !__DEV__) {
       NativeModules.IOSVibration.cancelVibration();
       return;
     }

@@ -23,6 +23,10 @@ export interface Exercise {
   calibrationInhale?: number;
   calibrationExhale?: number;
   thumbnail: string;
+  thumbnailTitle: string;
+  thumbnailSubtitle: string;
+  about: string;
+  tips: string;
   thumbnailPath?: string;
   backgroundImage: string;
   backgroundImagePath?: string;

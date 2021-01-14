@@ -25,15 +25,20 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
       style={styles.tiles}
       activeOpacity={0.8}
       onPress={() => goToExercise(exercise)}>
-      <ImageBackground
-        source={{ uri: thumbnailSource }}
 
-        style={styles.thumbnail}
-        resizeMode="contain"
-      >
-        <Text style={styles.textBold}>{exercise.name}</Text>
-      </ImageBackground>
-
+      <View style={styles.thumbnailContainer}>
+        <ImageBackground
+          source={{ uri: thumbnailSource }}
+          style={styles.thumbnail}
+          resizeMode={"cover"}
+        >
+          <Text style={styles.textBold}>{exercise.displayName}</Text>
+        </ImageBackground>
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{exercise.thumbnailTitle}</Text>
+        <Text style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -41,23 +46,47 @@ export default Thumbnail;
 
 const styles = StyleSheet.create({
   tiles: {
-    width: ScreenWidth / 2.4,
-    height: ScreenWidth / 1.65,
+    width: ScreenWidth / 2.35,
+    height: ScreenWidth / 1.9,
     marginVertical: 10,
-    borderRadius: 7,
-    overflow: 'hidden',
+    // backgroundColor: 'red',
+  },
+  thumbnailContainer: {
+    flex: 5,
+    // backgroundColor: 'pink',
+  },
+  textContainer: {
+    paddingTop: 8,
+    flex: 2,
+    padding: 5,
+    // backgroundColor: 'orange',
   },
   thumbnail: {
-    flex: 1,
+    height: '100%',
+    width: '100%',
+    borderRadius: 10,
     overflow: 'hidden',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   textBold: {
-    fontSize: 24,
-    fontFamily: FontType.ExtraBold,
+    fontSize: 20,
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    fontFamily: FontType.Bold,
     color: 'white',
     textAlign: 'center',
   },
+  title: {
+    fontSize: 14,
+    fontFamily: FontType.Medium,
+    color: 'white',
+    textAlign: 'left',
+  },
+  subTitle: {
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: FontType.Regular,
+    color: 'white',
+    textAlign: 'left',
+  }
 });

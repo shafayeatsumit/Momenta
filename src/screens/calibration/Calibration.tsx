@@ -2,7 +2,9 @@ import React, { useRef, useState, useEffect } from 'react'
 import { View, Text, Animated, StyleSheet, Modal } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import CalibrationInfo from "../../components/ExerciseInfo";
 import Result from "./Result";
+import InfoModal from "../../components/Info";
 import BackgroundImage from "../../components/BackgroundImage";
 import BullsEye from "../../components/BullsEye";
 import LottieView from 'lottie-react-native';
@@ -41,6 +43,8 @@ const initError = {
   message: null,
   visible: false,
 }
+const ABOUT = "This allows you to do two things:\n\nMeasure your current breathing rhythms so you can start to get a feel for how quickly or slowly you are breathing\n\nCalibrate the exercise or course to your current breathing rhythm so you get a more natural, soothing, and calming experience";
+const TIPS = "Inhale and exhale through your nose normally. No need to change anything about your breath or alter it any way.\n\nYou’ll have the option to redo the calibration phase if you’d like too.\n\nYou simply want to measure your current breathing and Momenta will adjust the exercise to that breathing";
 
 let pressInTime: Date | null = null;
 let pressOutTime: Date | null = null;
@@ -54,6 +58,8 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
   const [resultVisible, setResultVisible] = useState<boolean>(false);
   const [error, setError] = useState<Error>(initError);
   const [calibrationType, setCalibrationType] = useState<CalibrationType>(CalibrationType.None)
+  const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+
   let animationTimeOutId: null | ReturnType<typeof setTimeout> = null;
 
   const playAnimation = () => {
@@ -162,6 +168,9 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
     }
   }, [])
 
+  const closeInfoModal = () => setInfoModalVisible(false);
+  const handlePressInfo = () => setInfoModalVisible(true);
+
   const handleBack = () => navigation.goBack();
   const handleContinue = () => {
     console.log(`result inhale ${inhaleDuration} exhale ${exhaleDuration}`)
@@ -217,7 +226,7 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
           </View>
         </>
       }
-
+      <CalibrationInfo handlePress={handlePressInfo} />
       <View style={styles.msgContainer}>
         {showInhaleInstruction && <Text style={styles.text}>Tap and hold below during your next <Text style={styles.highlighter}>inhale</Text> </Text>}
       </View>
@@ -235,6 +244,18 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
           exhaleDuration={exhaleDuration}
           handleContinue={handleContinue}
           handleRedo={closeResult}
+        />
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={infoModalVisible}
+        onRequestClose={closeInfoModal}
+      >
+        <InfoModal
+          title={displayName} about={ABOUT}
+          tips={TIPS} handleClose={closeInfoModal}
         />
       </Modal>
     </LinearGradient>

@@ -87,7 +87,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
 
 
-  const [exerciseDuration, setExerciseDuration] = useState<number>(5);
+  const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
@@ -155,6 +155,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     if (Platform.OS === 'ios') {
       NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
         setIOSHapticStatus(resp)
+        if (resp) NativeModules.IOSVibration.prepareHaptics();
       });
     }
     return () => {
@@ -165,7 +166,6 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }, [])
 
   const timerEnd = () => {
-    stopTimer();
     setExerciseState(ExerciseState.Finish);
   }
 
@@ -230,7 +230,10 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const closeSetting = () => setSettingsVisible(false);
   const closeInfoModal = () => setInfoModalVisible(false);
   const handlePressInfo = () => setInfoModalVisible(true);
-  const handleFinish = () => navigation.goBack()
+  const handleFinish = () => {
+    handlePause();
+    navigation.goBack()
+  }
 
   const goToCalibration = () => navigation.navigate("Calibraiton", { exercise: exerciseData })
 
@@ -270,7 +273,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
+      {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
 
       <Modal

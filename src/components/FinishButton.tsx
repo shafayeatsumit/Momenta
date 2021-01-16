@@ -4,14 +4,15 @@ import { FontType } from "../helpers/theme";
 
 interface Props {
   handleFinish: () => void;
+  color: string;
 }
 
 
 
-const Timer: React.FC<Props> = ({ handleFinish }: Props) => {
+const Timer: React.FC<Props> = ({ handleFinish, color }: Props) => {
   return (
     <TouchableOpacity style={styles.button} onPress={handleFinish}>
-      <Text style={styles.text}>FINISH</Text>
+      <Text style={[styles.text, { color: color }]}>FINISH</Text>
     </TouchableOpacity>
   );
 }
@@ -19,10 +20,10 @@ const Timer: React.FC<Props> = ({ handleFinish }: Props) => {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 35,
     right: 25,
     height: 40,
-    width: 70,
+    // width: 70,
     zIndex: 10,
     justifyContent: 'center',
     alignItems: 'center',

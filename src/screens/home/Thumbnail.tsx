@@ -3,14 +3,13 @@ import {
   View,
   TouchableOpacity,
   ImageBackground,
-  Image,
   Text,
   StyleSheet,
 } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
 import { Exercise } from "../../redux/actions/exercise";
-
+import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   exercise: Exercise;
@@ -21,6 +20,7 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
   const thumbnailSource = "file://" + exercise.thumbnailPath;
   console.log('thumbnail source', thumbnailSource)
   return (
+
     <TouchableOpacity
       style={styles.tiles}
       activeOpacity={0.8}
@@ -35,11 +35,13 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           <Text style={styles.textBold}>{exercise.displayName}</Text>
         </ImageBackground>
       </View>
+
       <View style={styles.textContainer}>
         <Text style={styles.title}>{exercise.thumbnailTitle}</Text>
         <Text style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text>
       </View>
     </TouchableOpacity>
+
   );
 };
 export default Thumbnail;
@@ -75,10 +77,11 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Bold,
     color: 'white',
     textAlign: 'center',
+
   },
   title: {
     fontSize: 14,
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.Bold,
     color: 'white',
     textAlign: 'left',
   },
@@ -86,7 +89,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     fontFamily: FontType.Regular,
-    color: 'white',
+    color: '#D3D3D3',
     textAlign: 'left',
   }
 });

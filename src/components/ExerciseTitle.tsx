@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 26,
-    fontFamily: FontType.Regular,
+    fontFamily: FontType.Medium,
     lineHeight: 32,
     color: 'white',
-    fontWeight: '700'
+    // fontWeight: '700'
   }
 });

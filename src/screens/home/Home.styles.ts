@@ -2,6 +2,11 @@ import { StyleSheet } from 'react-native';
 import { ScreenHeight, ScreenWidth } from '../../helpers/constants/common';
 import { Colors, FontType } from '../../helpers/theme';
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   tilesContainer: {
     paddingTop: 40,
     paddingBottom: 10,

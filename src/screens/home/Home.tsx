@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import styles from './Home.styles';
 import _ from "lodash";
 import { Exercise } from "../../redux/actions/exercise";
+import LinearGradient from 'react-native-linear-gradient';
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
@@ -24,14 +25,25 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.tilesContainer}>
-      {allExercise.map((exercise) => {
-        return (
-          <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
-        )
-      })}
-    </ScrollView>
+    <LinearGradient
+      useAngle={true}
+      angle={192}
+      angleCenter={{ x: 0.5, y: 0.5 }}
+      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
+      colors={["#323545", "#121118"]}
+      style={styles.mainContainer}
+    >
+
+      <ScrollView contentContainerStyle={styles.tilesContainer}>
+        {allExercise.map((exercise) => {
+          return (
+            <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
+          )
+        })}
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 export default Home;
+

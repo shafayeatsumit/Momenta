@@ -23,7 +23,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   const { exerciseFetchCompleted, musicFetchCompleted } = fetchCompleted;
 
   useEffect(() => {
-    if (exerciseFetchCompleted) navigation.navigate('Home')
+    if (exerciseFetchCompleted) navigation.replace('Home')
   }, [exerciseFetchCompleted])
 
   useEffect(() => {

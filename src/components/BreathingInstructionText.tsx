@@ -23,9 +23,9 @@ const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTi
 
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale && totalBreathCount < 5):
-        return "Breath In"
+        return "Breath in"
       case (breathingState === BreathingState.Exhale && totalBreathCount < 5):
-        return "Breath Out"
+        return "Breath out"
       case (breathingState === BreathingState.InhaleHold && showInhaleHold):
         return "Hold"
       case (breathingState === BreathingState.ExhaleHold && showExhaleHold):

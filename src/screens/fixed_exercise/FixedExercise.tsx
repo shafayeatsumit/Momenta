@@ -55,7 +55,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
 
-  const [exerciseDuration, setExerciseDuration] = useState<number>(5);
+  const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
@@ -76,6 +76,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       return;
     }
     if (Platform.OS === 'ios') {
+      console.log("duration ios", duration)
       NativeModules.IOSVibration.startVibration(duration);
       return;
     }
@@ -141,6 +142,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     if (Platform.OS === 'ios') {
       NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
         setIOSHapticStatus(resp)
+        if (resp) NativeModules.IOSVibration.prepareHaptics();
       });
     }
     return () => {
@@ -149,7 +151,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }, [])
 
   const timerEnd = () => {
-    stopTimer();
     setExerciseState(ExerciseState.Finish);
   }
 
@@ -225,7 +226,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handlePressInfo = () => setInfoModalVisible(true);
 
   const handleFinish = () => {
-    console.log('handle finish');
+    handlePause();
     navigation.goBack()
   }
 
@@ -270,7 +271,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      {exerciseFinished && <FinishButton handleFinish={handleFinish} />}
+      {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
       <Modal
         animationType="slide"

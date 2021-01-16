@@ -13,7 +13,7 @@ export default function useTimer(timeEnd: Function, finishTime: number) {
   useInterval(() => {
     if (time === finishTimeInMinutes) {
       timeEnd();
-      return
+      // return
     }
     setTime(time + 1);
   }, timerIsRunning ? 1000 : null);

@@ -4,13 +4,13 @@ import { ScreenHeight, ScreenWidth } from '../helpers/constants';
 
 
 interface Props {
-  handlePause: () => void;
+  handleTap: () => void;
   disabled: boolean;
 }
 
-const ExerciseController: React.FC<Props> = ({ handlePause, disabled }: Props) => {
+const ExerciseController: React.FC<Props> = ({ handleTap, disabled }: Props) => {
   return (
-    <TouchableOpacity onPress={handlePause} style={styles.button} disabled={disabled} />
+    <TouchableOpacity onPress={handleTap} style={styles.button} disabled={disabled} />
   );
 }
 

@@ -25,7 +25,7 @@ const Timer: React.FC<Props> = ({ time, exerciseDuration }) => {
 const styles = StyleSheet.create({
   timer: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 90,
     alignSelf: 'center',
     height: 30,
     width: 140,

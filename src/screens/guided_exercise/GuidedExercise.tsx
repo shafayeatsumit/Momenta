@@ -20,7 +20,7 @@ import ExerciseTitle from "../../components/ExerciseTitle";
 import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
-import PauseExercise from "../../components/PauseExercise";
+import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 import { startSwellExhale, startSwellInhale, stopSwellSound, playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import { useSelector } from 'react-redux';
@@ -271,7 +271,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
       {!isPaused && <BreathingInstruction totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
 
-      <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
+      <TapHandler handleTap={handlePause} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />

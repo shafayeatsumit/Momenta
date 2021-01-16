@@ -7,9 +7,10 @@ interface Props {
   duration: number;
   time: number;
   color: string;
+  showProgressBar?: boolean;
 }
 
-const ProgressBar: React.FC<Props> = ({ duration, time, color }: Props) => {
+const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }: Props) => {
   const animatedWidth = useRef(new Animated.Value(0)).current;
   const totalDuration = 60 * duration;
 
@@ -33,7 +34,7 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color }: Props) => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, showProgressBar ? { opacity: 1 } : { opacity: 0 }]}>
       <Svg height="100%" width="100%">
         <AnimatedRect
           x="0"
@@ -51,7 +52,7 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color }: Props) => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 40,
     left: 0,
     right: 0,
     height: 5,

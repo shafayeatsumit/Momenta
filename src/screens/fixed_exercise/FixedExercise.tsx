@@ -16,12 +16,13 @@ import FinishButton from "../../components/FinishButton";
 import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
 import PlayButton from "../../components/PlayButton";
+import PauseButton from "../../components/PauseButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
 import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
-import PauseExercise from "../../components/PauseExercise";
+import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
@@ -62,6 +63,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+  const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
 
@@ -130,7 +132,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       const music = allBackgroundMusic[backgroundMusic]
       playBackgroundMusic(music.filePath)
     }
-
   }
 
   useEffect(() => {
@@ -159,12 +160,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
   const isPaused = exerciseState === ExerciseState.Paused;
   const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
-  const exerciseFinished = exerciseState === ExerciseState.Finish;
-  const showTimer = isPaused || exerciseFinished;
 
+  const exerciseFinished = exerciseState === ExerciseState.Finish;
+  const showTimer = isPaused || exerciseFinished || optionsVisible;
+  const showProgressBar = isPaused || optionsVisible;
+  const showPause = optionsVisible && !isStopped;
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
-
+  const showBackgroundCircle = (isStopped || isPaused);
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);
   }
@@ -210,14 +213,39 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     onStartAnimation();
   }
 
+  const showOptions = () => {
+    setOptionsVisible(true);
+    Animated.timing(fadeOutAnimation, {
+      toValue: 1,
+      duration: 500,
+      delay: 500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(hideOptions);
+  }
+
+  const hideOptions = () => {
+    Animated.timing(fadeOutAnimation, {
+      toValue: 0,
+      duration: 200,
+      delay: 1500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => setOptionsVisible(false));
+  }
+
   const handlePause = () => {
+    fadeOutAnimation.setValue(1);
     setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopVibration();
     stopBreathCounter();
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
-    fadeOutAnimation.setValue(1)
+  }
+
+  const handleTap = () => {
+    showOptions();
   }
 
   const handlePressSettings = () => setSettingsVisible(true);
@@ -243,12 +271,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       style={{ flex: 1 }}
     >
       <BackgroundImage imagePath={backgroundImagePath} />
-      {isStopped && <BackgroundCircle opacity={fadeOutAnimation} />}
+      {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
       {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
-      {isStopped &&
+      {(isStopped || optionsVisible) &&
         <>
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
@@ -259,7 +287,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
 
-      {!isPaused &&
+      {!isPaused && !optionsVisible &&
         <>
           <BreathingInstruction
             breathCounter={breathCounter} totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
@@ -269,10 +297,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <PauseExercise handlePause={handlePause} disabled={exerciseFinished} />
+      <TapHandler handleTap={handleTap} disabled={exerciseFinished} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
+      {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
-      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
+
+      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />
+
       <Modal
         animationType="slide"
         transparent={true}

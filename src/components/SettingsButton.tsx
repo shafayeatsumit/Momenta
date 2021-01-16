@@ -22,7 +22,7 @@ export default ExerciseSettings;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 80,
     left: 25,
     height: 50,
     width: 50,

@@ -20,7 +20,7 @@ const Timer: React.FC<Props> = ({ handleFinish, color }: Props) => {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 35,
+    bottom: 85,
     right: 25,
     height: 40,
     // width: 70,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: FontType.Medium,
     color: 'white',
 

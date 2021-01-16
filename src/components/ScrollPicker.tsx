@@ -80,7 +80,8 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
           return (
             <View style={styles.textContainer}>
               <Animated.Text style={[styles.text,
-              { opacity, transform: [{ scale }] }
+              { opacity, transform: [{ scale }] },
+              item === 10 && { fontSize: 30 }
               ]}>{item}</Animated.Text>
             </View>
           );
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     // flexGrow: 0,
   },
   text: {
-    fontSize: 35,
+    fontSize: 37,
     color: '#ffffff',
     fontWeight: '600',
   },
@@ -111,9 +112,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 40,
     height: 40,
-    // backgroundColor: 'red',
-    // borderWidth: 1,
-    // marginHorizontal: 1,
   },
 
 });

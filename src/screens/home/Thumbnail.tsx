@@ -18,7 +18,6 @@ interface Props {
 
 const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
   const thumbnailSource = "file://" + exercise.thumbnailPath;
-  console.log('thumbnail source', thumbnailSource)
   return (
 
     <TouchableOpacity

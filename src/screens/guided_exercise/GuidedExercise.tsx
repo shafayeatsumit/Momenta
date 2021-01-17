@@ -251,9 +251,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
 
   const goToCalibration = () => setCalibrationModalVisible(true);
-
   const handleBack = () => navigation.goBack()
-  console.log(`inhale ${inhaleTime} exhale ${exhaleTime}`);
 
   return (
     <LinearGradient

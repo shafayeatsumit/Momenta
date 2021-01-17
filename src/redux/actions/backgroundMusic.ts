@@ -42,10 +42,10 @@ export const fetchBackgroundMusic = () => {
     const musicPayload: BackgroundMusics = _.mapKeys(musicFiles, "id");
     // completes the primise;
     await Promise.all(filePromises);
+    console.log('<<<<<++ done downloading music ++>>>>>')
     dispatch<FetchBackgroundMusicAction>({
       type: ActionTypes.AddBackgroundMusic,
       payload: musicPayload,
     })
-    console.log('+++++++++++ suddd ++++++');
   }
 }

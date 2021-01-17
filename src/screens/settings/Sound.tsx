@@ -6,6 +6,8 @@ import RadioButton from "../../components/RadioButton";
 import { RootState } from "../../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { changeMusic } from "../../redux/actions/settings";
+import { eventButtonPush } from "../../helpers/analytics";
+
 import _ from 'lodash';
 
 interface Props {
@@ -20,6 +22,8 @@ const Sound: React.FC<Props> = ({ color }) => {
   const backgroundMusic = useSelector(selectSettings).backgroundMusic;
 
   const handlePress = (id: string | null) => {
+    const eventTitle = id !== null ? id : 'off';
+    eventButtonPush(`sound_settings_${eventTitle}`);
     dispatch(changeMusic(id))
   }
 

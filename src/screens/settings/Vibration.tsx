@@ -6,6 +6,7 @@ import RadioButton from "../../components/RadioButton";
 import { RootState } from "../../redux/reducers";
 import { changeVibration } from "../../redux/actions/settings";
 import { useSelector, useDispatch } from "react-redux";
+import { eventButtonPush } from "../../helpers/analytics";
 import _ from 'lodash';
 
 const VibrationTypes = [
@@ -23,6 +24,8 @@ const Vibration: React.FC<Props> = ({ color }) => {
   const vibrationType = useSelector(selectSettings).vibrationType;
 
   const handlePress = (id: string | null) => {
+    const eventName = id !== null ? id : 'off';
+    eventButtonPush(`vibration_settings_${eventName}`)
     dispatch(changeVibration(id))
   }
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, BackHandler, ScrollView, Platform } from 'react-native';
+import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -23,6 +24,22 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     const navPath = exerciseType === 'guided' ? "GuidedExercise" : "FixedExercise"
     navigation.navigate(navPath, { exercise })
   }
+
+  const backAction = () => {
+    eventButtonPush('android_back_button')
+    return false;
+  };
+
+  useEffect(() => {
+    // for Android only
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => {
+      backHandler.remove();
+    }
+  }, [])
 
   return (
     <LinearGradient

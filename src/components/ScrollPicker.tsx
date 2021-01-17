@@ -10,7 +10,7 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { triggerHaptic } from "../helpers/hapticFeedback";
-const { width, height } = Dimensions.get('window');
+import { eventButtonPush } from "../helpers/analytics";
 
 interface Props {
   onSelect: Function;
@@ -28,6 +28,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
     const timePicked = currentIndex + 1;
     onSelect(timePicked);
     triggerHaptic();
+    eventButtonPush(`duration_picked_${timePicked}`)
   }
 
   return (

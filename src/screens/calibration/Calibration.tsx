@@ -13,6 +13,7 @@ import BackButton from "../../components/BackButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
 import { FontType } from '../../helpers/theme';
 import Button from "../../components/ButtonMd";
+import { eventCalibrationHold, eventCalibrationRelease } from "../../helpers/analytics";
 
 interface Props {
   primaryColor: string;
@@ -82,6 +83,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
 
 
   const handlePressIn = () => {
+    eventCalibrationHold();
     const isExhaling = pressInTime !== null;
     if (pressInTime) {
       const timeTakenExhale = Number(measureTime(pressOutTime));
@@ -102,6 +104,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
   }
 
   const handlePressOut = () => {
+    eventCalibrationRelease();
     if (pressInTime && pressOutTime) {
       // calibration complete this case;
       return;

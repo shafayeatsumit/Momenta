@@ -44,7 +44,7 @@ const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleT
     <>
       {breathCounterVisible &&
         <View style={styles.container}>
-          <Text style={styles.text}>{breathCounter}</Text>
+          <Text allowFontScaling={false} style={styles.text}>{breathCounter}</Text>
         </View>
       }
     </>

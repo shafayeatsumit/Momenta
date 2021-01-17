@@ -31,14 +31,14 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text style={styles.textBold}>{exercise.displayName}</Text>
-          <Text style={styles.level}>{exercise.level}</Text>
+          <Text allowFontScaling={false} style={styles.textBold}>{exercise.displayName}</Text>
+          <Text allowFontScaling={false} style={styles.level}>{exercise.level}</Text>
         </ImageBackground>
       </View>
 
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{exercise.thumbnailTitle}</Text>
-        <Text style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text>
+        <Text allowFontScaling={false} style={styles.title}>{exercise.thumbnailTitle}</Text>
+        <Text allowFontScaling={false} style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text>
       </View>
     </TouchableOpacity>
 

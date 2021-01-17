@@ -17,7 +17,7 @@ const Timer: React.FC<Props> = ({ time, exerciseDuration }) => {
   const targetTimeSec = targetTime % 60;
   return (
     <View style={styles.timer}>
-      <Text style={styles.timeText}> {currentTimeMin}:{twoDigitPadding(currentTimeSec)} / {targetTimeMin}:{twoDigitPadding(targetTimeSec)}</Text>
+      <Text allowFontScaling={false} style={styles.timeText}> {currentTimeMin}:{twoDigitPadding(currentTimeSec)} / {targetTimeMin}:{twoDigitPadding(targetTimeSec)}</Text>
     </View>
   );
 }

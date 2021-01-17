@@ -43,7 +43,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     >
       <Image source={require('../../assets/images/momenta.png')} />
       <ActivityIndicator style={styles.loader} size="large" color="#808080" />
-      <Text style={styles.text}>Breathe better.</Text>
+      <Text allowFontScaling={false} style={styles.text}>Breathe better.</Text>
     </LinearGradient>
 
   );

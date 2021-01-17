@@ -24,7 +24,7 @@ const Settings: React.FC<Props> = ({ closeModal, color }: Props) => {
       style={{ flex: 1 }}
     >
       <View style={styles.spacer} />
-      <Text style={styles.settings}>Settings</Text>
+      <Text allowFontScaling={false} style={styles.settings}>Settings</Text>
 
       <SoundSettings color={color} />
       <Vibration color={color} />
@@ -32,7 +32,7 @@ const Settings: React.FC<Props> = ({ closeModal, color }: Props) => {
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>
         <ModalButton handlePress={closeModal} >
-          <Text style={styles.buttonText}>DONE</Text>
+          <Text allowFontScaling={false} style={styles.buttonText}>DONE</Text>
         </ModalButton>
       </View>
 

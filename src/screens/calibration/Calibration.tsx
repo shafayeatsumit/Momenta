@@ -199,8 +199,8 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
       <ExerciseTitle title="Calibrate" />
       {animationVisible &&
         <CenterContainer>
-          {inhaling && <Text style={styles.textBold}>Release when done inhaling</Text>}
-          {exhaling && <Text style={styles.textBold}>Tap when done exhaling</Text>}
+          {inhaling && <Text allowFontScaling={false} style={styles.textBold}>Release when done inhaling</Text>}
+          {exhaling && <Text allowFontScaling={false} style={styles.textBold}>Tap when done exhaling</Text>}
           <LottieView
             source={require('../../../assets/anims/measuring.json')}
             autoPlay={false}
@@ -221,7 +221,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
       {errorVisible &&
         <>
           <CenterContainer>
-            <Text style={styles.text}><Text style={styles.highlighter}>{error.type}</Text> {error.message}</Text>
+            <Text allowFontScaling={false} style={styles.text}><Text style={styles.highlighter}>{error.type}</Text> {error.message}</Text>
           </CenterContainer>
           <View style={styles.buttonHolder}>
             <Button handlePress={resetCalibration} containerStyle={{ backgroundColor: primaryColor }} title="RETRY" />
@@ -230,7 +230,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
       }
       <CalibrationInfo handlePress={handlePressInfo} />
       <View style={styles.msgContainer}>
-        {showInhaleInstruction && <Text style={styles.text}>Tap and hold below during your next <Text style={styles.highlighter}>inhale</Text> </Text>}
+        {showInhaleInstruction && <Text allowFontScaling={false} style={styles.text}>Tap and hold below during your next <Text style={styles.highlighter}>inhale</Text> </Text>}
       </View>
 
       <BackgroundImage imagePath={backgroundImagePath} />

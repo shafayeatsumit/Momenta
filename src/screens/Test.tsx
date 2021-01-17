@@ -5,7 +5,7 @@ const Test = () => {
 
   return (
     <View style={styles.main}>
-      <Text>Hellow</Text>
+      <Text allowFontScaling={false}>Hellow</Text>
     </View>
   );
 }

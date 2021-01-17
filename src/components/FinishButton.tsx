@@ -12,7 +12,7 @@ interface Props {
 const Timer: React.FC<Props> = ({ handleFinish, color }: Props) => {
   return (
     <TouchableOpacity style={styles.button} onPress={handleFinish}>
-      <Text style={[styles.text, { color: color }]}>FINISH</Text>
+      <Text allowFontScaling={false} style={[styles.text, { color: color }]}>FINISH</Text>
     </TouchableOpacity>
   );
 }

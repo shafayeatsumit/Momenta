@@ -14,7 +14,7 @@ const CalibraitonButton: React.FC<Props> = ({ handlePress }) => {
   }
   return (
     <TouchableOpacity style={styles.button} onPress={pressCalibrate}>
-      <Text style={styles.text}>Calibrate to your breathing</Text>
+      <Text allowFontScaling={false} style={styles.text}>Calibrate to your breathing</Text>
     </TouchableOpacity>
   );
 }

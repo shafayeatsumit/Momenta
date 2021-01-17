@@ -30,18 +30,18 @@ const InfoModal: React.FC<Props> = ({ about, tips, title, handleClose }) => {
       style={{ flex: 1 }}
     >
       <View style={styles.spacer} />
-      <Text style={styles.settings}>{title}</Text>
+      <Text allowFontScaling={false} style={styles.settings}>{title}</Text>
 
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.title}>About</Text>
-        <Text style={styles.text}>{jsonEscape(about)}</Text>
-        <Text style={styles.title}>Tips</Text>
-        <Text style={styles.text}>{jsonEscape(tips)}</Text>
+        <Text allowFontScaling={false} style={styles.title}>About</Text>
+        <Text allowFontScaling={false} style={styles.text}>{jsonEscape(about)}</Text>
+        <Text allowFontScaling={false} style={styles.title}>Tips</Text>
+        <Text allowFontScaling={false} style={styles.text}>{jsonEscape(tips)}</Text>
       </ScrollView>
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>
         <ModalButton handlePress={handleClose} >
-          <Text style={styles.buttonText}>DONE</Text>
+          <Text allowFontScaling={false} style={styles.buttonText}>DONE</Text>
         </ModalButton>
       </View>
 

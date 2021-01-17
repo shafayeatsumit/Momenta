@@ -29,22 +29,22 @@ const Vibration: React.FC<Props> = ({ color }) => {
   const OFF = () => (
     <ModalButton handlePress={() => handlePress(null)} customStyle={styles.buttonStyle}>
       <RadioButton selected={vibrationType === null} color={color} />
-      <Text style={styles.text}>Off</Text>
+      <Text allowFontScaling={false} style={styles.text}>Off</Text>
     </ModalButton>
   )
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Vibration</Text>
+      <Text allowFontScaling={false} style={styles.title}>Vibration</Text>
       <ScrollView style={{ flex: 1 }}>
         <OFF />
         {VibrationTypes.map((item) => {
           return (
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
               <RadioButton selected={vibrationType === item.id} color={color} />
-              <Text style={styles.text}>{item.name}</Text>
+              <Text allowFontScaling={false} style={styles.text}>{item.name}</Text>
               {item.id === 'purr_exhale' &&
                 <View style={[styles.recHolder, { backgroundColor: color }]}>
-                  <Text style={styles.rec}>Recommended</Text>
+                  <Text allowFontScaling={false} style={styles.rec}>Recommended</Text>
                 </View>
 
               }

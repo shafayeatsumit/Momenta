@@ -26,16 +26,16 @@ const Sound: React.FC<Props> = ({ color }) => {
   const OFF = () => (
     <ModalButton handlePress={() => handlePress(null)} customStyle={styles.buttonStyle}>
       <RadioButton selected={backgroundMusic === null} color={color} />
-      <Text style={styles.text}>Off</Text>
+      <Text allowFontScaling={false} style={styles.text}>Off</Text>
     </ModalButton>
   )
 
   const SWELL = () => (
     <ModalButton handlePress={() => handlePress('swell')} customStyle={styles.buttonStyle}>
       <RadioButton selected={backgroundMusic === 'swell'} color={color} />
-      <Text style={styles.text}>Swell</Text>
+      <Text allowFontScaling={false} style={styles.text}>Swell</Text>
       <View style={[styles.recHolder, { backgroundColor: color }]}>
-        <Text style={styles.rec}>Recommended</Text>
+        <Text allowFontScaling={false} style={styles.rec}>Recommended</Text>
       </View>
     </ModalButton>
   )
@@ -43,7 +43,7 @@ const Sound: React.FC<Props> = ({ color }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sound</Text>
+      <Text allowFontScaling={false} style={styles.title}>Sound</Text>
       <ScrollView style={{ flex: 1 }}>
         <OFF />
         <SWELL />
@@ -51,7 +51,7 @@ const Sound: React.FC<Props> = ({ color }) => {
           return (
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
               <RadioButton selected={backgroundMusic === item.id} color={color} />
-              <Text style={styles.text}>{item.name}</Text>
+              <Text allowFontScaling={false} style={styles.text}>{item.name}</Text>
             </ModalButton>
           )
         })}

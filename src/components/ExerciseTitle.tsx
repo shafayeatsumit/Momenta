@@ -9,7 +9,7 @@ interface Props {
 const ExerciseTitle: React.FC<Props> = ({ title, opacity }: Props) => {
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <Text style={styles.text}>
+      <Text allowFontScaling={false} style={styles.text}>
         {title}
       </Text>
     </Animated.View>

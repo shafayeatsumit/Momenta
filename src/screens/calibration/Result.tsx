@@ -22,9 +22,9 @@ const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration,
   return (
     <View style={styles.main}>
       <CenterContainer>
-        <Text style={styles.text}>{inhaleDuration} inhale</Text>
-        <Text style={styles.text}>{exhaleDuration} exhale</Text>
-        <Text style={[styles.text, { marginTop: 10 }]}>{rhythm} breaths per minute</Text>
+        <Text allowFontScaling={false} style={styles.text}>{inhaleDuration} inhale</Text>
+        <Text allowFontScaling={false} style={styles.text}>{exhaleDuration} exhale</Text>
+        <Text allowFontScaling={false} style={[styles.text, { marginTop: 10 }]}>{rhythm} breaths per minute</Text>
       </CenterContainer>
       <View style={styles.buttonContainer}>
         <Button title={"REDO"} handlePress={handleRedo} />

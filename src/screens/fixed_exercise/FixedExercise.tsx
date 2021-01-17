@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, Modal, Platform, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
+import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
@@ -166,6 +167,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
   const showBackgroundCircle = (isStopped || isPaused);
+
   const handleTimeSelect = (time: number) => {
     setExerciseDuration(time);
   }
@@ -207,6 +209,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleStart = () => {
+    triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
     onStartAnimation();
   }
@@ -258,6 +261,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleFinish = () => {
+    triggerHaptic();
     handlePause();
     navigation.goBack()
   }

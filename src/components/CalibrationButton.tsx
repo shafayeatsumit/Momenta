@@ -1,14 +1,19 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontType } from "../helpers/theme";
+import { triggerHaptic } from "../helpers/hapticFeedback";
 
 interface Props {
   handlePress: () => void;
 }
 
 const CalibraitonButton: React.FC<Props> = ({ handlePress }) => {
+  const pressCalibrate = () => {
+    triggerHaptic();
+    handlePress()
+  }
   return (
-    <TouchableOpacity style={styles.button} onPress={handlePress}>
+    <TouchableOpacity style={styles.button} onPress={pressCalibrate}>
       <Text style={styles.text}>Calibrate to your breathing</Text>
     </TouchableOpacity>
   );

@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import CenterContainer from "../../components/CenterContainer";
 import { FontType } from '../../helpers/theme';
 import Button from "../../components/ButtonMd";
+import { triggerHaptic } from "../../helpers/hapticFeedback";
 
 interface Props {
   handleRedo: () => void;
@@ -14,7 +15,10 @@ interface Props {
 
 const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration, handleRedo, handleContinue }) => {
   const rhythm = Math.round(60 / (inhaleDuration + exhaleDuration));
-
+  const continuePress = () => {
+    triggerHaptic();
+    handleContinue();
+  }
   return (
     <View style={styles.main}>
       <CenterContainer>
@@ -27,7 +31,7 @@ const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration,
         <Button
           title={"CONTINUE"}
           containerStyle={{ backgroundColor: primaryColor }}
-          handlePress={handleContinue}
+          handlePress={continuePress}
         />
       </View>
 

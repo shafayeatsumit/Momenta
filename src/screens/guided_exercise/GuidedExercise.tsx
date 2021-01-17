@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, View, Modal, NativeModules, Platform } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
+import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useTimer from "../../hooks/useTimer";
 import Calibraiton from "../../screens/calibration/Calibration";
 import CalibraitonButton from "../../components/CalibrationButton";
@@ -226,6 +227,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
 
   const handleStart = () => {
+    triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
     onStartAnimation();
   }
@@ -246,6 +248,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const handlePressInfo = () => setInfoModalVisible(true);
   const handleFinish = () => {
+    triggerHaptic();
     handlePause();
     navigation.goBack()
   }

@@ -186,7 +186,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const exhaleEnd = () => {
     totalBreathCount = totalBreathCount + 1;
-    const noIncrement = totalBreathCount >= targetBreathCount;
+    const noIncrement = totalBreathCount > targetBreathCount;
     if (noIncrement) {
       startInhale();
     } else {
@@ -208,8 +208,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
 
   const updateCalibrationData = (calibInhale: number, calibExhale: number) => {
-    const updatedInhaleTime = Math.max(calibInhale, 3);
-    const updatedExhaleTime = Math.max(calibExhale, 3);
+    const updatedInhaleTime = Math.max(calibExhale, 3);
+    const updatedExhaleTime = calibExhale;
     setCalibration({
       exhale: updatedExhaleTime,
       inhale: updatedInhaleTime,

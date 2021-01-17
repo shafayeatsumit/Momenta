@@ -1,5 +1,6 @@
 import React from 'react'
 import { Animated, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { eventButtonPush } from "../helpers/analytics";
 
 interface Props {
   handlePress: () => void;
@@ -7,9 +8,13 @@ interface Props {
 }
 
 const BackButton: React.FC<Props> = ({ handlePress, opacity }: Props) => {
+  const pressHandler = () => {
+    eventButtonPush('back button')
+    handlePress();
+  }
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <TouchableOpacity onPress={handlePress} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={pressHandler} style={styles.buttonContainer}>
         <Image source={require('../../assets/images/left_arrow_icon.png')} style={styles.icon} />
       </TouchableOpacity>
     </Animated.View >

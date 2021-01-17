@@ -1,5 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
+import { eventButtonPush } from "../helpers/analytics";
+
 const Button = require('../../assets/images/pause_button.png');
 
 interface Props {
@@ -8,10 +10,13 @@ interface Props {
 }
 
 const PauseButton: React.FC<Props> = ({ handlePause, buttonOpacity }) => {
-  console.log('button opacity', buttonOpacity);
+  const pressHandler = () => {
+    eventButtonPush('pause');
+    handlePause();
+  }
   return (
     <Animated.View style={styles.absoluteContainer}>
-      <TouchableOpacity style={[styles.PauseButton]} onPress={handlePause}>
+      <TouchableOpacity style={[styles.PauseButton]} onPress={pressHandler}>
         <Animated.Image source={Button} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity ? buttonOpacity : 0.6 }} />
       </TouchableOpacity>
     </Animated.View>

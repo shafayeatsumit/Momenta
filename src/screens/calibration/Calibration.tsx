@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { View, Text, Animated, StyleSheet, Modal } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import CalibrationInfo from "../../components/ExerciseInfo";
 import Result from "./Result";
@@ -13,7 +12,7 @@ import BackButton from "../../components/BackButton";
 import ExerciseTitle from "../../components/ExerciseTitle";
 import { FontType } from '../../helpers/theme';
 import Button from "../../components/ButtonMd";
-import { eventCalibrationHold, eventCalibrationRelease } from "../../helpers/analytics";
+import { eventButtonPush, eventCalibrationHold, eventCalibrationRelease } from "../../helpers/analytics";
 
 interface Props {
   primaryColor: string;
@@ -158,6 +157,11 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
     })
   };
 
+  const handleRetry = () => {
+    resetCalibration();
+    eventButtonPush('retry_calibration');
+  }
+
   const closeResult = () => {
     resetCalibration()
     setResultVisible(false);
@@ -227,7 +231,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
             <Text allowFontScaling={false} style={styles.text}><Text style={styles.highlighter}>{error.type}</Text> {error.message}</Text>
           </CenterContainer>
           <View style={styles.buttonHolder}>
-            <Button handlePress={resetCalibration} containerStyle={{ backgroundColor: primaryColor }} title="RETRY" />
+            <Button handlePress={handleRetry} containerStyle={{ backgroundColor: primaryColor }} title="RETRY" />
           </View>
         </>
       }

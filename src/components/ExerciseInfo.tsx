@@ -1,5 +1,6 @@
 import React from 'react'
 import { Animated, View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { eventButtonPush } from "../helpers/analytics";;
 
 interface Props {
   opacity: any;
@@ -7,9 +8,13 @@ interface Props {
 }
 
 const ExerciseInfo: React.FC<Props> = ({ opacity, handlePress }: Props) => {
+  const pressHandler = () => {
+    eventButtonPush('see_info')
+    handlePress();
+  }
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <TouchableOpacity onPress={handlePress} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={pressHandler} style={styles.buttonContainer}>
         <Image source={require('../../assets/images/info_icon.png')} style={styles.icon} />
       </TouchableOpacity>
     </Animated.View>

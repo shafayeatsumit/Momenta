@@ -1,5 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
+import { eventButtonPush } from "../helpers/analytics";
+
 const playButton = require('../../assets/images/play_button.png');
 
 interface Props {
@@ -9,9 +11,13 @@ interface Props {
 }
 
 const PlayButton: React.FC<Props> = ({ handleStart, buttonOpacity }) => {
+  const pressHandler = () => {
+    handleStart();
+    eventButtonPush('play');
+  }
   return (
     <Animated.View style={styles.absoluteContainer}>
-      <TouchableOpacity style={[styles.playButton]} onPress={handleStart}>
+      <TouchableOpacity style={[styles.playButton]} onPress={pressHandler}>
         <Animated.Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity }} />
       </TouchableOpacity>
     </Animated.View>

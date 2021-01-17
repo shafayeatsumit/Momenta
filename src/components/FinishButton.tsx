@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontType } from "../helpers/theme";
+import { eventButtonPush } from "../helpers/analytics";
 
 interface Props {
   handleFinish: () => void;
@@ -10,8 +11,12 @@ interface Props {
 
 
 const Timer: React.FC<Props> = ({ handleFinish, color }: Props) => {
+  const pressHandler = () => {
+    eventButtonPush('finish');
+    handleFinish();
+  }
   return (
-    <TouchableOpacity style={styles.button} onPress={handleFinish}>
+    <TouchableOpacity style={styles.button} onPress={pressHandler}>
       <Text allowFontScaling={false} style={[styles.text, { color: color }]}>FINISH</Text>
     </TouchableOpacity>
   );

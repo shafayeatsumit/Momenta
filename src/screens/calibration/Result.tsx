@@ -4,6 +4,7 @@ import CenterContainer from "../../components/CenterContainer";
 import { FontType } from '../../helpers/theme';
 import Button from "../../components/ButtonMd";
 import { triggerHaptic } from "../../helpers/hapticFeedback";
+import { eventButtonPush } from '../../helpers/analytics';
 
 interface Props {
   handleRedo: () => void;
@@ -18,7 +19,14 @@ const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration,
   const continuePress = () => {
     triggerHaptic();
     handleContinue();
+    eventButtonPush('calibration_done');
   }
+
+  const redoPress = () => {
+    handleRedo();
+    eventButtonPush('calibration_redo');
+  }
+
   return (
     <View style={styles.main}>
       <CenterContainer>
@@ -27,7 +35,7 @@ const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration,
         <Text allowFontScaling={false} style={[styles.text, { marginTop: 10 }]}>{rhythm} breaths per minute</Text>
       </CenterContainer>
       <View style={styles.buttonContainer}>
-        <Button title={"REDO"} handlePress={handleRedo} />
+        <Button title={"REDO"} handlePress={redoPress} />
         <Button
           title={"CONTINUE"}
           containerStyle={{ backgroundColor: primaryColor }}

@@ -20,6 +20,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   const allExercise = _.values(useSelector(selectExercise));
 
   const goToExercise = (exercise: Exercise) => {
+    eventButtonPush(`go_to_${exercise.displayName}`);
     const { exerciseType } = exercise
     const navPath = exerciseType === 'guided' ? "GuidedExercise" : "FixedExercise"
     navigation.navigate(navPath, { exercise })

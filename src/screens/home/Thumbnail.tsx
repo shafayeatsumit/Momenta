@@ -9,7 +9,6 @@ import {
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
 import { Exercise } from "../../redux/actions/exercise";
-import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
   exercise: Exercise;

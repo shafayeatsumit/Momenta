@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Animated, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { eventButtonPush } from "../helpers/analytics";
 
 interface Props {
   opacity: any;
@@ -8,9 +9,13 @@ interface Props {
 
 
 const ExerciseSettings: React.FC<Props> = ({ opacity, handlePress }) => {
+  const pressHandler = () => {
+    eventButtonPush('see_settings');
+    handlePress();
+  }
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <TouchableOpacity onPress={handlePress} style={styles.button}>
+      <TouchableOpacity onPress={pressHandler} style={styles.button}>
         <Image source={require('../../assets/images/settings_icon.png')} style={{ tintColor: 'white', height: 25, width: 25, resizeMode: 'contain' }} />
       </TouchableOpacity>
     </Animated.View>

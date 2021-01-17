@@ -42,6 +42,12 @@ const Vibration: React.FC<Props> = ({ color }) => {
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
               <RadioButton selected={vibrationType === item.id} color={color} />
               <Text style={styles.text}>{item.name}</Text>
+              {item.id === 'purr_exhale' &&
+                <View style={[styles.recHolder, { backgroundColor: color }]}>
+                  <Text style={styles.rec}>Recommended</Text>
+                </View>
+
+              }
             </ModalButton>
           )
         })}
@@ -76,5 +82,17 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: 'white',
     paddingLeft: 17,
+  },
+  recHolder: {
+    position: 'absolute',
+    right: 0,
+    padding: 7,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  rec: {
+    fontFamily: FontType.Regular,
+    fontSize: 13,
+    color: 'white',
   },
 });

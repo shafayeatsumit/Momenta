@@ -34,6 +34,9 @@ const Sound: React.FC<Props> = ({ color }) => {
     <ModalButton handlePress={() => handlePress('swell')} customStyle={styles.buttonStyle}>
       <RadioButton selected={backgroundMusic === 'swell'} color={color} />
       <Text style={styles.text}>Swell</Text>
+      <View style={[styles.recHolder, { backgroundColor: color }]}>
+        <Text style={styles.rec}>Recommended</Text>
+      </View>
     </ModalButton>
   )
 
@@ -76,6 +79,18 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: FontType.Bold,
     alignSelf: 'flex-start'
+  },
+  recHolder: {
+    position: 'absolute',
+    right: 0,
+    padding: 7,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  rec: {
+    fontFamily: FontType.Regular,
+    fontSize: 13,
+    color: 'white',
   },
   text: {
     fontFamily: FontType.Regular,

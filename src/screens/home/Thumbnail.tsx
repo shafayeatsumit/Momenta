@@ -33,6 +33,7 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           resizeMode={"cover"}
         >
           <Text style={styles.textBold}>{exercise.displayName}</Text>
+          <Text style={styles.level}>{exercise.level}</Text>
         </ImageBackground>
       </View>
 
@@ -49,7 +50,7 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 2.35,
-    height: ScreenWidth / 1.9,
+    height: ScreenWidth / 1.8,
     marginVertical: 10,
     // backgroundColor: 'red',
   },
@@ -75,6 +76,16 @@ const styles = StyleSheet.create({
     top: 15,
     left: 15,
     fontFamily: FontType.Bold,
+    color: 'white',
+    textAlign: 'center',
+  },
+  level: {
+    fontSize: 13,
+    position: 'absolute',
+    bottom: 15,
+    left: 15,
+    fontFamily: FontType.Regular,
+    fontWeight: '500',
     color: 'white',
     textAlign: 'center',
 

@@ -48,7 +48,6 @@ interface Progress {
 let totalBreathCount = 0;
 
 
-
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const selectSettings = (state: RootState) => state.settings;

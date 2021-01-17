@@ -27,6 +27,7 @@ export interface Exercise {
   thumbnailSubtitle: string;
   about: string;
   tips: string;
+  level: string;
   thumbnailPath?: string;
   backgroundImage: string;
   backgroundImagePath?: string;

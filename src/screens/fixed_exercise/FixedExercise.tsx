@@ -247,17 +247,26 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     showOptions();
   }
 
-  const handlePressSettings = () => setSettingsVisible(true);
+  const handlePressSettings = () => {
+    !isPaused && handlePause();
+    setSettingsVisible(true);
+  }
   const closeSetting = () => setSettingsVisible(false);
   const closeInfoModal = () => setInfoModalVisible(false);
-  const handlePressInfo = () => setInfoModalVisible(true);
+  const handlePressInfo = () => {
+    !isPaused && handlePause();
+    setInfoModalVisible(true);
+  }
 
   const handleFinish = () => {
     handlePause();
     navigation.goBack()
   }
 
-  const handleBack = () => navigation.goBack()
+  const handleBack = () => {
+    !isPaused && handlePause();
+    navigation.goBack()
+  }
 
 
   return (

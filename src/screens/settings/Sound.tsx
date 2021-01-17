@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   rec: {
     fontFamily: FontType.Regular,
-    fontSize: 13,
+    fontSize: 10,
     color: 'white',
   },
   text: {

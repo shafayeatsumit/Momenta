@@ -77,7 +77,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       return;
     }
     if (Platform.OS === 'ios') {
-      console.log("duration ios", duration)
       NativeModules.IOSVibration.startVibration(duration);
       return;
     }

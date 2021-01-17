@@ -9,6 +9,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
+import { triggerHaptic } from "../helpers/hapticFeedback";
 const { width, height } = Dimensions.get('window');
 
 interface Props {
@@ -26,6 +27,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
     const currentIndex = event.nativeEvent.contentOffset.x / ITEM_SIZE;
     const timePicked = currentIndex + 1;
     onSelect(timePicked);
+    triggerHaptic();
   }
 
   return (
@@ -112,6 +114,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 40,
     height: 40,
+    // backgroundColor: 'yellow',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
 
 });

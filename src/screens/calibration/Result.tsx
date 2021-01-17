@@ -9,9 +9,10 @@ interface Props {
   handleContinue: () => void;
   inhaleDuration: number;
   exhaleDuration: number;
+  primaryColor: string;
 }
 
-const Result: React.FC<Props> = ({ inhaleDuration, exhaleDuration, handleRedo, handleContinue }) => {
+const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration, handleRedo, handleContinue }) => {
   const rhythm = Math.round(60 / (inhaleDuration + exhaleDuration));
 
   return (
@@ -25,7 +26,7 @@ const Result: React.FC<Props> = ({ inhaleDuration, exhaleDuration, handleRedo, h
         <Button title={"REDO"} handlePress={handleRedo} />
         <Button
           title={"CONTINUE"}
-          containerStyle={{ backgroundColor: '#4F58CA' }}
+          containerStyle={{ backgroundColor: primaryColor }}
           handlePress={handleContinue}
         />
       </View>

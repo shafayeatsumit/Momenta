@@ -23,19 +23,16 @@ export default class InhaleExhaleSound {
     );
   }
 
-  startInhaleSound = () => {
-    console.log('Start Inhale Sound');
+  startInhaleSound = () => {    
     if (this.mute) {
-      this.inhaleSound.setVolume(0);
-      console.log('mute inhale start');
+      this.inhaleSound.setVolume(0);      
     } else {
       this.inhaleSound.setVolume(1);
       this.inhaleSound.play();
     }
   };
 
-  startExhaleSound = () => {
-    console.log('Start Exhale Sound');
+  startExhaleSound = () => {    
     if (this.mute) {
       this.exhaleSound.setVolume(0);
     } else {

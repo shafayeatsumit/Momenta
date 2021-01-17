@@ -3,7 +3,7 @@ import { Animated, Easing, View, Modal, NativeModules, Platform } from 'react-na
 import { RouteProp } from '@react-navigation/native';
 
 import useTimer from "../../hooks/useTimer";
-
+import Calibraiton from "../../screens/calibration/Calibration";
 import CalibraitonButton from "../../components/CalibrationButton";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
@@ -67,21 +67,22 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     displayName, backgroundImagePath, backgroundGradient, about, tips,
   } = exerciseData;
 
+  const [calibration, setCalibration] = useState<{ inhale: number, exhale: number }>({ inhale: calibrationInhale, exhale: calibrationExhale })
 
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
 
-  const avgExhale = avgTime(calibrationExhale, targetExhale);
-  const avgInhale = avgTime(calibrationInhale, targetInhale);
+  const avgExhale = avgTime(calibration.exhale, targetExhale);
+  const avgInhale = avgTime(calibration.inhale, targetInhale);
   const targetBreathCount = Math.ceil(targetDuration / (avgInhale + avgExhale));
-  const exhlaeIncrement = (targetExhale - calibrationExhale) / targetBreathCount;
-  const inhaleIncrement = (targetInhale - calibrationInhale) / targetBreathCount;
+  const exhaleIncrement = (targetExhale - calibration.exhale) / targetBreathCount;
+  const inhaleIncrement = (targetInhale - calibration.inhale) / targetBreathCount;
   if (!inhaleTime) {
-    inhaleTime = calibrationInhale + inhaleIncrement;
+    inhaleTime = calibration.inhale + inhaleIncrement;
   }
 
   if (!exhaleTime) {
-    exhaleTime = calibrationExhale + exhlaeIncrement;
+    exhaleTime = calibration.exhale + exhaleIncrement;
   }
 
 
@@ -94,6 +95,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+  const [calibrationModalVisible, setCalibrationModalVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -183,13 +185,12 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
 
   const exhaleEnd = () => {
-    console.log('exhlae end');
     totalBreathCount = totalBreathCount + 1;
     const noIncrement = totalBreathCount >= targetBreathCount;
     if (noIncrement) {
       startInhale();
     } else {
-      exhaleTime = exhaleTime + exhlaeIncrement;
+      exhaleTime = exhaleTime + exhaleIncrement;
       inhaleTime = inhaleTime + inhaleIncrement;
       startInhale();
     }
@@ -204,6 +205,18 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     hasSwell && startSwellInhale(inhaleTime);
     vibrationType === 'purr_inhale' && startVibration(inhaleTime);
     setProgress({ type: AnimationType.ExpandCircle, duration })
+  }
+
+  const updateCalibrationData = (calibInhale: number, calibExhale: number) => {
+    const updatedInhaleTime = Math.max(calibInhale, 3);
+    const updatedExhaleTime = Math.max(calibExhale, 3);
+    setCalibration({
+      exhale: updatedExhaleTime,
+      inhale: updatedInhaleTime,
+    })
+    inhaleTime = updatedInhaleTime;
+    exhaleTime = updatedExhaleTime;
+    closeCalibrationModal();
   }
 
   const startExercise = () => {
@@ -229,15 +242,18 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const handlePressSettings = () => setSettingsVisible(true);
   const closeSetting = () => setSettingsVisible(false);
   const closeInfoModal = () => setInfoModalVisible(false);
+  const closeCalibrationModal = () => setCalibrationModalVisible(false);
+
   const handlePressInfo = () => setInfoModalVisible(true);
   const handleFinish = () => {
     handlePause();
     navigation.goBack()
   }
 
-  const goToCalibration = () => navigation.navigate("Calibraiton", { exercise: exerciseData })
+  const goToCalibration = () => setCalibrationModalVisible(true);
 
   const handleBack = () => navigation.goBack()
+  console.log(`inhale ${inhaleTime} exhale ${exhaleTime}`);
 
   return (
     <LinearGradient
@@ -294,6 +310,21 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       >
         <InfoModal
           title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
+        />
+      </Modal>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={calibrationModalVisible}
+        onRequestClose={closeCalibrationModal}
+      >
+        <Calibraiton
+          primaryColor={primaryColor}
+          displayName={displayName}
+          backgroundImagePath={backgroundImagePath}
+          backgroundGradient={backgroundGradient}
+          closeModal={closeCalibrationModal}
+          updateCalibrationData={updateCalibrationData}
         />
       </Modal>
     </LinearGradient>

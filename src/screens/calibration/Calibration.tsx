@@ -15,8 +15,12 @@ import { FontType } from '../../helpers/theme';
 import Button from "../../components/ButtonMd";
 
 interface Props {
-  navigation: any;
-  route: RouteProp<any, any>;
+  primaryColor: string;
+  displayName: string;
+  backgroundImagePath: string;
+  backgroundGradient: [string, string];
+  closeModal: () => void;
+  updateCalibrationData: Function;
 }
 
 enum ErrorType {
@@ -52,8 +56,7 @@ let longExhaleErrorId: ReturnType<typeof setTimeout> | null = null;
 let inhaleDuration: number | null = null;
 let exhaleDuration: number | null = null;
 
-const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
-  const { primaryColor, displayName, backgroundImagePath, backgroundGradient } = route.params.exercise;
+const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, primaryColor, displayName, backgroundImagePath, backgroundGradient }: Props) => {
   const animationRef = useRef<LottieView>(null)
   const [resultVisible, setResultVisible] = useState<boolean>(false);
   const [error, setError] = useState<Error>(initError);
@@ -108,7 +111,6 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
     const timeTakenInhale = Number(measureTime(pressInTime));
     setCalibrationType(CalibrationType.Exhale);
     inhaleDuration = timeTakenInhale;
-    console.log("Inhale time ====>", timeTakenInhale);
     if (timeTakenInhale < 2) {
       twoSecsError('inhale');
       return;
@@ -171,11 +173,11 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
   const closeInfoModal = () => setInfoModalVisible(false);
   const handlePressInfo = () => setInfoModalVisible(true);
 
-  const handleBack = () => navigation.goBack();
+
   const handleContinue = () => {
-    console.log(`result inhale ${inhaleDuration} exhale ${exhaleDuration}`)
     setResultVisible(false);
-    setTimeout(handleBack, 300);
+    updateCalibrationData(inhaleDuration, exhaleDuration)
+    // closeModal()
   }
   const bullsEyeVisible = calibrationType !== CalibrationType.Error && calibrationType !== CalibrationType.Result;
   const animationVisible = calibrationType === CalibrationType.Inhale || calibrationType === CalibrationType.Exhale;
@@ -193,7 +195,7 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
       style={{ flex: 1 }}
 
     >
-      <BackButton handlePress={handleBack} />
+      <BackButton handlePress={closeModal} />
       <ExerciseTitle title="Calibrate" />
       {animationVisible &&
         <CenterContainer>
@@ -222,7 +224,7 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
             <Text style={styles.text}><Text style={styles.highlighter}>{error.type}</Text> {error.message}</Text>
           </CenterContainer>
           <View style={styles.buttonHolder}>
-            <Button handlePress={resetCalibration} containerStyle={{ backgroundColor: '#4F58CA' }} title="RETRY" />
+            <Button handlePress={resetCalibration} containerStyle={{ backgroundColor: primaryColor }} title="RETRY" />
           </View>
         </>
       }
@@ -244,6 +246,7 @@ const Calibration: React.FC<Props> = ({ navigation, route }: Props) => {
           exhaleDuration={exhaleDuration}
           handleContinue={handleContinue}
           handleRedo={closeResult}
+          primaryColor={primaryColor}
         />
       </Modal>
 

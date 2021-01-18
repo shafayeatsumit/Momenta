@@ -10,4 +10,8 @@ export const eventCalibrationHold = () => {
 
 export const eventCalibrationRelease = () => {
   analytics().logEvent('calibration_release');
-} 
+}
+
+export const eventSetUserId = (id: string) => {
+  analytics().setUserId(id);
+}

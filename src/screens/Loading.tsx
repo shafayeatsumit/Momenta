@@ -8,6 +8,7 @@ import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 import { StackNavigationProp } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
+import { eventSetUserId } from "../helpers/analytics";
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
@@ -27,6 +28,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   }, [exerciseFetchCompleted])
 
   useEffect(() => {
+    if (isExistingUser) eventSetUserId(user.id)
     if (!isExistingUser) dispatch(signUpAnonymously());
     if (!exerciseFetchCompleted) dispatch(fetchExercise());
     if (!musicFetchCompleted) dispatch(fetchBackgroundMusic());

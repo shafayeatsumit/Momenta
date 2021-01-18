@@ -12,7 +12,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const ShrinkRadius = ScreenWidth * .20;
 const ExpandRadius = ScreenWidth * 0.40;
 const ShrinkStrokeWidth = 4;
-const ExpandStrokeWidth = 6;
+const ExpandStrokeWidth = 8;
 
 enum AnimationType {
   ExpandCircle,

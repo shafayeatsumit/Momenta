@@ -308,7 +308,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <TapHandler handleTap={handleTap} disabled={exerciseFinished} />
+      <TapHandler handleTap={handleTap} disabled={exerciseFinished || exerciseNotStarted || isPaused} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}

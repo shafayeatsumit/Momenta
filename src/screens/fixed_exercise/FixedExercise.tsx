@@ -232,14 +232,18 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }).start(() => setOptionsVisible(false));
   }
 
-  const handlePause = () => {
+  const stop = () => {
     fadeOutAnimation.setValue(1);
-    setExerciseState(ExerciseState.Paused)
     stopTimer();
     stopVibration();
     stopBreathCounter();
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
+  }
+
+  const handlePause = () => {
+    setExerciseState(ExerciseState.Paused);
+    stop();
   }
 
   const handleTap = () => {
@@ -249,24 +253,32 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handlePressSettings = () => {
-    !isPaused && handlePause();
+    if (exerciseNotStarted) {
+      stop();
+    } else if (!isPaused) {
+      handlePause();
+    }
     setSettingsVisible(true);
   }
   const closeSetting = () => setSettingsVisible(false);
   const closeInfoModal = () => setInfoModalVisible(false);
   const handlePressInfo = () => {
-    !isPaused && handlePause();
+    if (exerciseNotStarted) {
+      stop();
+    } else if (!isPaused) {
+      handlePause();
+    }
     setInfoModalVisible(true);
   }
 
   const handleFinish = () => {
     triggerHaptic();
-    handlePause();
+    stop();
     navigation.goBack()
   }
 
   const handleBack = () => {
-    !isPaused && handlePause();
+    !isPaused && stop();
     navigation.goBack()
   }
 

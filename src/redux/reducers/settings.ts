@@ -3,7 +3,7 @@ import { Settings } from "../actions/settings";
 
 const initialState = {
   backgroundMusic: 'swell',
-  vibrationType: 'purr_exhale',
+  vibrationType: 'purr_inhale',
 }
 
 export const settingsReducer = (state: Settings = initialState, action: SettingsAction) => {

@@ -294,7 +294,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} />
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={settingsVisible}
         onRequestClose={closeSetting}
@@ -304,7 +304,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       </Modal>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={infoModalVisible}
         onRequestClose={closeInfoModal}

@@ -30,8 +30,8 @@ const Result: React.FC<Props> = ({ primaryColor, inhaleDuration, exhaleDuration,
   return (
     <View style={styles.main}>
       <CenterContainer>
-        <Text allowFontScaling={false} style={styles.text}>{inhaleDuration} inhale</Text>
-        <Text allowFontScaling={false} style={styles.text}>{exhaleDuration} exhale</Text>
+        <Text allowFontScaling={false} style={styles.text}>{inhaleDuration}s inhale</Text>
+        <Text allowFontScaling={false} style={styles.text}>{exhaleDuration}s exhale</Text>
         <Text allowFontScaling={false} style={[styles.text, { marginTop: 10 }]}>{rhythm} breaths per minute</Text>
       </CenterContainer>
       <View style={styles.buttonContainer}>

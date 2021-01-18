@@ -258,7 +258,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
       </Modal>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={infoModalVisible}
         onRequestClose={closeInfoModal}

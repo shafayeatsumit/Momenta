@@ -45,7 +45,7 @@ const Vibration: React.FC<Props> = ({ color }) => {
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
               <RadioButton selected={vibrationType === item.id} color={color} />
               <Text allowFontScaling={false} style={styles.text}>{item.name}</Text>
-              {item.id === 'purr_exhale' &&
+              {item.id === 'purr_inhale' &&
                 <View style={[styles.recHolder, { backgroundColor: color }]}>
                   <Text allowFontScaling={false} style={styles.rec}>Recommended</Text>
                 </View>

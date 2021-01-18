@@ -27,7 +27,7 @@ export default CalibraitonButton;
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 170,
+    bottom: 190,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',

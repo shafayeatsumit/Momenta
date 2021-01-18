@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import {
   View,
   Text,
@@ -27,22 +27,35 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
     const currentIndex = event.nativeEvent.contentOffset.x / ITEM_SIZE;
     const timePicked = currentIndex + 1;
     onSelect(timePicked);
-    triggerHaptic();
+
     eventButtonPush(`duration_picked_${timePicked}`)
   }
 
+  const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    console.log("Visible items are", viewableItems);
+    // console.log("Changed in this iteration", changed);
+    triggerHaptic();
+  }, []);
+
+  const _viewabilityConfig = {
+    itemVisiblePercentThreshold: 50
+  }
+
+
+
   return (
-
-
     <Animated.View style={styles.main}>
       <Animated.FlatList
         data={timers}
         horizontal
         style={styles.flatListStyle}
         pagingEnabled={true}
+        onViewableItemsChanged={_onViewableItemsChanged}
+        viewabilityConfig={_viewabilityConfig}
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScrollEnd}
         snapToInterval={ITEM_SIZE}
+
         initialScrollIndex={initialValue - 1}
         getItemLayout={(data, index) =>
           ({ length: ITEM_SIZE, offset: ITEM_SIZE * index, index })

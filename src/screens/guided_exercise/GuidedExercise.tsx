@@ -5,6 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useTimer from "../../hooks/useTimer";
 import Calibraiton from "../../screens/calibration/Calibration";
+import CalibrationComplete from "../../components/CalibrationComplete";
 import CalibraitonButton from "../../components/CalibrationButton";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
@@ -98,6 +99,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [calibrationModalVisible, setCalibrationModalVisible] = useState<boolean>(false);
+  const [calibrationComplete, setCalibrationComplete] = useState<boolean>(false);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
@@ -220,6 +222,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     })
     inhaleTime = updatedInhaleTime;
     exhaleTime = updatedExhaleTime;
+    setCalibrationComplete(true);
     closeCalibrationModal();
   }
 
@@ -307,11 +310,16 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
       {exerciseNotStarted &&
         <>
-          <CalibraitonButton handlePress={goToCalibration} />
+
+          {calibrationComplete
+            ? <CalibrationComplete calibrationComplete={calibrationComplete} />
+            : <CalibraitonButton handlePress={goToCalibration} />
+          }
           <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />
         </>
-
       }
+
+
 
       {(isStopped || optionsVisible) &&
         <>

@@ -5,7 +5,7 @@ import { ScreenHeight, ScreenWidth } from '../helpers/constants';
 
 interface Props {
   handleTap: () => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const ExerciseController: React.FC<Props> = ({ handleTap, disabled }: Props) => {

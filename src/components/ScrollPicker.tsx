@@ -32,8 +32,6 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
   }
 
   const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
-    console.log("Visible items are", viewableItems);
-    // console.log("Changed in this iteration", changed);
     triggerHaptic();
   }, []);
 

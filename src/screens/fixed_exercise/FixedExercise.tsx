@@ -215,21 +215,18 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const showOptions = () => {
-    setOptionsVisible(true);
-    Animated.timing(fadeOutAnimation, {
-      toValue: 1,
-      duration: 500,
-      delay: 500,
-      easing: Easing.linear,
-      useNativeDriver: true,
-    }).start(hideOptions);
+    if (!optionsVisible) {
+      setOptionsVisible(true);
+      hideOptions();
+    }
   }
 
   const hideOptions = () => {
+    console.log('+++++ hiding options +++++++')
     Animated.timing(fadeOutAnimation, {
       toValue: 0,
-      duration: 200,
-      delay: 1500,
+      duration: 300,
+      delay: 2000,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start(() => setOptionsVisible(false));
@@ -246,7 +243,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleTap = () => {
-    showOptions();
+    if (exerciseState === ExerciseState.Play) {
+      showOptions();
+    }
   }
 
   const handlePressSettings = () => {
@@ -308,7 +307,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
 
-      <TapHandler handleTap={handleTap} disabled={exerciseFinished || exerciseNotStarted || isPaused} />
+      <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
       {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}

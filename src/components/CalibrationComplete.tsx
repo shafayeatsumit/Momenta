@@ -12,7 +12,7 @@ const CalibrationComplete: React.FC<Props> = ({ calibrationComplete }) => {
   const fadeInText = () => {
     Animated.timing(animationValue, {
       toValue: 1,
-      duration: 1300,
+      duration: 1500,
       easing: Easing.linear,
       useNativeDriver: true,
     }).start();
@@ -40,7 +40,7 @@ export default CalibrationComplete;
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 190,
+    bottom: 210,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     fontSize: 18,
     textAlign: 'center',
-    color: '#AAAAAA',
+    fontWeight: '500',
+    color: 'white',
   }
 
 });

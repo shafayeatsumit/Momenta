@@ -16,7 +16,6 @@ export interface ChangeVibrationAction {
 }
 
 export const changeMusic = (id: string | null): ChangeMusicAction => {
-  console.log('dispatch', id);
   return {
     type: ActionTypes.ChangeBackgroundMusic,
     payload: id,

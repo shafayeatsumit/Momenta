@@ -21,8 +21,20 @@ const Sound: React.FC<Props> = ({ color }) => {
   const musicFiles = _.values(useSelector(selectBackgroundMusic));
   const backgroundMusic = useSelector(selectSettings).backgroundMusic;
 
+
+  const getMusicName = (id: string | null) => {
+    if (id === null) {
+      return 'off'
+    }
+    if (id === 'swell') {
+      return 'swell'
+    }
+    const musicName = musicFiles.find((item) => item.id === id).name
+    return musicName;
+  }
+
   const handlePress = (id: string | null) => {
-    const eventTitle = id !== null ? id : 'off';
+    const eventTitle = getMusicName(id);
     eventButtonPush(`sound_settings_${eventTitle}`);
     dispatch(changeMusic(id))
   }

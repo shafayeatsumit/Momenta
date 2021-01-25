@@ -27,7 +27,7 @@ export default CalibraitonButton;
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 190,
+    bottom: 210,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     fontSize: 18,
     textAlign: 'center',
-    color: '#AAAAAA',
+    color: 'white',
   }
 });

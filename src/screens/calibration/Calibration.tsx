@@ -82,7 +82,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
 
 
   const handlePressIn = () => {
-    eventCalibrationHold();
+
     const isExhaling = pressInTime !== null;
     if (pressInTime) {
       const timeTakenExhale = Number(measureTime(pressOutTime));
@@ -100,6 +100,7 @@ const Calibration: React.FC<Props> = ({ updateCalibrationData, closeModal, prima
     animationTimeOutId = setTimeout(playAnimation, 100)
     pressInTime = new Date();
     setCalibrationType(CalibrationType.Inhale)
+    eventCalibrationHold();
   }
 
   const handlePressOut = () => {

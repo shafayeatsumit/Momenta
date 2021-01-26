@@ -52,3 +52,13 @@ export const stopBackgroundMusic = () => {
   }
 }
 
+
+export const playLesson = (fileURL: string) => {
+  const lesson = new Sound(fileURL, null, (e: any) => {
+    if (e) {
+      console.log('error loading lesson:', e)
+    } else {
+      lesson.play()
+    }
+  })
+}

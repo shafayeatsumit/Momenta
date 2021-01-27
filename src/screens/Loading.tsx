@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
-import { Colors, FontType } from '../helpers/theme';
+import { Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import { FontType } from '../helpers/theme';
 import { signUpAnonymously } from "../redux/actions/user";
 import { fetchBackgroundMusic } from "../redux/actions/backgroundMusic";
 import { fetchExercise } from "../redux/actions/exercise";
+import { fetchCourse } from "../redux/actions/course";
 import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -32,6 +33,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     if (!isExistingUser) dispatch(signUpAnonymously());
     if (!exerciseFetchCompleted) dispatch(fetchExercise());
     if (!musicFetchCompleted) dispatch(fetchBackgroundMusic());
+    dispatch(fetchCourse());
   }, [])
   console.log('fetch completed', fetchCompleted)
   return (

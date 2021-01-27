@@ -32,7 +32,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   };
 
   useEffect(() => {
-    // for Android only
+    // for Android only    
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       backAction,

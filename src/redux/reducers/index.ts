@@ -5,6 +5,7 @@ import { backgroundMusicReducer } from "./backgroundMusic";
 import { exerciseReducer } from "./exercise";
 import { fetchCompletedReducer } from "./fetchCompleted";
 import { settingsReducer } from "./settings";
+import { courseReducer } from './course';
 
 // Action types;
 import { User } from "../actions/user";
@@ -12,6 +13,7 @@ import { BackgroundMusics } from "../actions/backgroundMusic";
 import { Exercises } from "../actions/exercise";
 import { FetchCompleted } from "../actions/fetchCompleted";
 import { Settings } from "../actions/settings";
+import { Courses } from "../actions/course";
 
 export interface RootState {
   user: User | {};
@@ -19,6 +21,7 @@ export interface RootState {
   exercise: Exercises | {};
   fetchCompleted: FetchCompleted;
   settings: Settings;
+  course: Courses | {};
 }
 
 export const rootReducers = combineReducers<RootState>({
@@ -27,4 +30,5 @@ export const rootReducers = combineReducers<RootState>({
   exercise: exerciseReducer,
   fetchCompleted: fetchCompletedReducer,
   settings: settingsReducer,
+  course: courseReducer,
 });

@@ -22,3 +22,10 @@ export interface ProgressType {
   animationType: AnimationType | null;
   duration: number;
 }
+
+export interface Lesson {
+  _id: string;
+  url: string;
+  order: number;
+  title: string;
+}

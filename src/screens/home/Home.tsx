@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
-import { View, BackHandler, ScrollView, Platform } from 'react-native';
+import { View, Text, BackHandler, ScrollView, Platform } from 'react-native';
 import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
+import CoursheThumbnail from './CourseThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
 import { RootState } from "../../redux/reducers";
 import { useSelector } from "react-redux";
 import styles from './Home.styles';
 import _ from "lodash";
 import { Exercise } from "../../redux/actions/exercise";
 import LinearGradient from 'react-native-linear-gradient';
+import { Course } from '../../redux/actions/course';
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
@@ -18,12 +19,19 @@ export interface Props {
 const Home: React.FC<Props> = ({ navigation }: Props) => {
   const selectExercise = (state: RootState) => state.exercise;
   const allExercise = _.values(useSelector(selectExercise));
+  const selectCourse = (state: RootState) => state.course;
+  const allCourse = _.values(useSelector(selectCourse));
 
   const goToExercise = (exercise: Exercise) => {
     eventButtonPush(`go_to_${exercise.displayName}`);
     const { exerciseType } = exercise
     const navPath = exerciseType === 'guided' ? "GuidedExercise" : "FixedExercise"
     navigation.navigate(navPath, { exercise })
+  }
+
+  const goToCourse = (course: Course) => {
+    eventButtonPush(`go_to_${course.name}`);
+    navigation.navigate('Course', { course })
   }
 
   const backAction = () => {
@@ -51,14 +59,26 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       colors={["#323545", "#121118"]}
       style={styles.mainContainer}
     >
-
-      <ScrollView contentContainerStyle={styles.tilesContainer}>
-        {allExercise.map((exercise) => {
-          return (
+      <View style={styles.titleHolder}>
+        <Text style={styles.title}>Exercises</Text>
+      </View>
+      <View >
+        <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+          {allExercise.map((exercise) =>
             <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
-          )
-        })}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </View>
+      <View style={styles.titleHolder}>
+        <Text style={styles.title}>Courses</Text>
+      </View>
+      <View >
+        <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+          {allCourse.map((course) =>
+            <CoursheThumbnail goToCourse={goToCourse} key={course.id} course={course} />
+          )}
+        </ScrollView>
+      </View>
     </LinearGradient>
   );
 };

@@ -4,6 +4,7 @@ const Sound = require('react-native-sound');
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 let sound: any;
+let lesson: any;
 
 let swellPlayer: any = new SwellPlayer();
 let exhaleSoundId: null | ReturnType<typeof setTimeout> = null;
@@ -53,12 +54,34 @@ export const stopBackgroundMusic = () => {
 }
 
 
-export const playLesson = (fileURL: string) => {
-  const lesson = new Sound(fileURL, null, (e: any) => {
+export const prepareLesson = (fileURL: string) => {
+  lesson = new Sound(fileURL, null, (e: any) => {
     if (e) {
       console.log('error loading lesson:', e)
-    } else {
-      lesson.play()
+      return;
     }
+    console.log('lesson prepared');
   })
+
+}
+
+export const playLesson = (fileURL: string, lessonCompleteCB: Function) => {
+  lesson = new Sound(fileURL, null, (e: any) => {
+    if (e) {
+      console.log('error loading lesson:', e)
+      return;
+    }
+    lesson.play((success: boolean) => {
+      if (success) {
+        lessonCompleteCB();
+      }
+    });
+  })
+}
+
+export const stopLesson = () => {
+  if (lesson) {
+    lesson.setVolume(0)
+    lesson.stop();
+  }
 }

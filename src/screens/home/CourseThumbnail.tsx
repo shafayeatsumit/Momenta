@@ -8,21 +8,21 @@ import {
 } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
-import { Exercise } from "../../redux/actions/exercise";
+import { Course } from "../../redux/actions/course";
 
 interface Props {
-  exercise: Exercise;
-  goToExercise: Function;
+  course: Course;
+  goToCourse: Function;
 }
 
-const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
-  const thumbnailSource = "file://" + exercise.thumbnailPath;
+const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
+  const thumbnailSource = course.thumbnail;
   return (
 
     <TouchableOpacity
       style={styles.tiles}
       activeOpacity={0.8}
-      onPress={() => goToExercise(exercise)}>
+      onPress={() => goToCourse(course)}>
 
       <View style={styles.thumbnailContainer}>
         <ImageBackground
@@ -30,14 +30,14 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text allowFontScaling={false} style={styles.textBold}>{exercise.displayName}</Text>
-          <Text allowFontScaling={false} style={styles.level}>{exercise.level}</Text>
+          <Text allowFontScaling={false} style={styles.textBold}>{course.name}</Text>
+          <Text allowFontScaling={false} style={styles.level}>{course.level}</Text>
         </ImageBackground>
       </View>
 
       <View style={styles.textContainer}>
-        <Text allowFontScaling={false} style={styles.title}>{exercise.thumbnailTitle}</Text>
-        {/* <Text allowFontScaling={false} style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text> */}
+        <Text allowFontScaling={false} style={styles.title}>{course.totalLessons} lessons . {course.totalDuration} minutes</Text>
+        <Text allowFontScaling={false} style={styles.subTitle}>{course.thumbnailTitle}</Text>
       </View>
     </TouchableOpacity>
 
@@ -47,14 +47,12 @@ export default Thumbnail;
 
 const styles = StyleSheet.create({
   tiles: {
-    width: ScreenWidth / 2.35,
+    width: ScreenWidth / 1.35,
     height: ScreenWidth / 1.8,
     marginHorizontal: 10,
-    // backgroundColor: 'red',
   },
   thumbnailContainer: {
     flex: 5,
-    // backgroundColor: 'pink',
   },
   textContainer: {
     paddingTop: 8,
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
   textBold: {
     fontSize: 20,
     position: 'absolute',
-    top: 15,
+    top: 18,
     left: 15,
     fontFamily: FontType.Bold,
     color: 'white',

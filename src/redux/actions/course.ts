@@ -42,7 +42,7 @@ export const fetchCourse = () => {
     let courses: Course[] = response.data.courses;
     const coursePayload: any = _.mapKeys(courses, "name");
     dispatch<FetchCourseAction>({
-      type: ActionTypes.AddExercise,
+      type: ActionTypes.AddCourse,
       payload: coursePayload,
     })
   }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, Platform, NativeModules } from 'react-native';
+import { Animated, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -14,7 +14,7 @@ import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
-import NextLessonButton from "../../components/NextLesson";
+import NavigateLesson from "../../components/NavigateLesson";
 import Timer from "../../components/Timer";
 import DurationPicker from "../../components/DurationPicker";
 import PlayButton from "../../components/PlayButton";
@@ -26,6 +26,7 @@ import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
+
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
@@ -68,6 +69,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [activeLessonIndex, setActiveLessonIndex] = useState<number>(0);
   const [activeLessonEnd, setActiveLessonEnd] = useState<boolean>(false);
+  
 
   const activeLesson = tracks[activeLessonIndex];
 
@@ -78,6 +80,15 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const goToNextLesson = () => {
     setActiveLessonEnd(false)
     const upcomingLessonIndex = activeLessonIndex + 1;
+    const upcomingLesson = tracks[upcomingLessonIndex];
+    setActiveLessonIndex(upcomingLessonIndex);
+    startVoiceOver(upcomingLesson);
+  }
+
+  const goToPrevLesson = ()=>{
+    stopLesson();
+    setActiveLessonEnd(false)
+    const upcomingLessonIndex = activeLessonIndex -1;
     const upcomingLesson = tracks[upcomingLessonIndex];
     setActiveLessonIndex(upcomingLessonIndex);
     startVoiceOver(upcomingLesson);
@@ -219,15 +230,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
     const lesson = tracks[activeLessonIndex];
-    if (hasSwell) {
-      setTimeout(() => {
-        startVoiceOver(lesson);
-      }, 500)
-    } else {
-      startVoiceOver(lesson);
-    }
-
-
+    startVoiceOver(lesson);
     onStartAnimation();
   }
 
@@ -295,14 +298,16 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     triggerHaptic();
     stop();
     navigation.goBack()
+    stopLesson();
   }
 
   const handleBack = () => {
     !isPaused && stop();
     navigation.goBack()
+    stopLesson();
   }
 
-
+  const canGoBack = activeLessonIndex>0;
   return (
     <LinearGradient
       useAngle={true}
@@ -341,7 +346,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
 
-      {activeLessonEnd && <NextLessonButton handleNextLesson={goToNextLesson} color={primaryColor} />}
+      {activeLessonEnd && <NavigateLesson title="Next" handleNextLesson={goToNextLesson} color={primaryColor} />}
+      {canGoBack && <NavigateLesson title="Back" handlePrevLesson={goToPrevLesson} color={primaryColor} />}
       <ProgressBar duration={60} time={time} color={primaryColor} showProgressBar={showProgressBar} />
 
       <Modal

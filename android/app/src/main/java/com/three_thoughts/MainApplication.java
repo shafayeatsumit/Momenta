@@ -14,6 +14,7 @@ import com.marcshilling.idletimer.IdleTimerPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.three_thoughts.VibrationManager;
+import com.guichaguri.trackplayer.TrackPlayer;
 
 public class MainApplication extends Application implements ReactApplication {
 

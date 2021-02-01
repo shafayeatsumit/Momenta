@@ -24,6 +24,7 @@ export default class InhaleExhaleSound {
   }
 
   startInhaleSound = () => {    
+    console.log('start inhale sound');
     if (this.mute) {
       this.inhaleSound.setVolume(0);      
     } else {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
-
+import TrackPlayer from 'react-native-track-player';
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
@@ -50,6 +50,8 @@ interface Progress {
 }
 
 let totalBreathCount = 0;
+let onLessonEnd: any;
+
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
@@ -69,10 +71,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [activeLessonIndex, setActiveLessonIndex] = useState<number>(0);
   const [activeLessonEnd, setActiveLessonEnd] = useState<boolean>(false);
-  
+
 
   const activeLesson = tracks[activeLessonIndex];
-
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -83,16 +84,17 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const upcomingLesson = tracks[upcomingLessonIndex];
     setActiveLessonIndex(upcomingLessonIndex);
     startVoiceOver(upcomingLesson);
+    startBackgroundMusic();
   }
 
-  const goToPrevLesson = ()=>{
+  const goToPrevLesson = () => {
     stopLesson();
     setActiveLessonEnd(false)
-    const upcomingLessonIndex = activeLessonIndex -1;
+    const upcomingLessonIndex = activeLessonIndex - 1;
     const upcomingLesson = tracks[upcomingLessonIndex];
     setActiveLessonIndex(upcomingLessonIndex);
     startVoiceOver(upcomingLesson);
-
+    TrackPlayer.skipToPrevious();
   }
 
   const primaryColor = "#4873B4"
@@ -145,27 +147,43 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startBackgroundMusic = () => {
-    const notEmpty = !_.isEmpty(allBackgroundMusic)
-    if (notEmpty) {
-      const music = allBackgroundMusic[backgroundMusic]
-      playBackgroundMusic(music.filePath)
+    const music = allBackgroundMusic.find((item) => item.id === backgroundMusic);
+    if (music) {
+      playBackgroundMusic(music.fileName);
     }
   }
+
+
 
   useEffect(() => {
     renderCount.current = renderCount.current + 1;
   })
 
 
+
+
+  const iosHapticsSetup = () => {
+    NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
+      setIOSHapticStatus(resp)
+      if (resp) NativeModules.IOSVibration.prepareHaptics();
+    });
+
+  }
+
+  const setupEventListener = () => {
+    onLessonEnd = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
+      lessonComplete();
+    });
+  }
+
   useEffect(() => {
     if (Platform.OS === 'ios') {
-      NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
-        setIOSHapticStatus(resp)
-        if (resp) NativeModules.IOSVibration.prepareHaptics();
-      });
+      iosHapticsSetup();
     }
+    setupEventListener();
     return () => {
       totalBreathCount = 0;
+      onLessonEnd.remove();
     }
   }, [])
 
@@ -223,7 +241,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startVoiceOver = (lesson) => {
-    playLesson(lesson.url, lessonComplete);
+    playLesson(lesson.url);
   }
 
   const handleStart = () => {
@@ -266,6 +284,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handlePause = () => {
     setExerciseState(ExerciseState.Paused);
     stop();
+    TrackPlayer.pause();
   }
 
   const handleTap = () => {
@@ -307,7 +326,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     stopLesson();
   }
 
-  const canGoBack = activeLessonIndex>0;
+  const canGoBack = activeLessonIndex > 0;
+  const courseFinished = activeLessonEnd && activeLessonIndex + 1 === 3;
+
   return (
     <LinearGradient
       useAngle={true}
@@ -346,8 +367,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
 
-      {activeLessonEnd && <NavigateLesson title="Next" handleNextLesson={goToNextLesson} color={primaryColor} />}
-      {canGoBack && <NavigateLesson title="Back" handlePrevLesson={goToPrevLesson} color={primaryColor} />}
+      {activeLessonEnd && !courseFinished && <NavigateLesson title="Next" handleNextLesson={goToNextLesson} color={primaryColor} />}
+      {courseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
+      {/* {canGoBack && <NavigateLesson title="Back" handlePrevLesson={goToPrevLesson} color={primaryColor} />} */}
       <ProgressBar duration={60} time={time} color={primaryColor} showProgressBar={showProgressBar} />
 
       <Modal

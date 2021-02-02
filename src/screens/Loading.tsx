@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { FontType } from '../helpers/theme';
 import { signUpAnonymously } from "../redux/actions/user";
-import { fetchBackgroundMusic } from "../redux/actions/backgroundMusic";
 import { fetchExercise } from "../redux/actions/exercise";
 import { fetchCourse } from "../redux/actions/course";
 import { RootState } from "../redux/reducers";
@@ -32,7 +31,6 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     if (isExistingUser) eventSetUserId(user.id)
     if (!isExistingUser) dispatch(signUpAnonymously());
     if (!exerciseFetchCompleted) dispatch(fetchExercise());
-    if (!musicFetchCompleted) dispatch(fetchBackgroundMusic());
     dispatch(fetchCourse());
   }, [])
   console.log('fetch completed', fetchCompleted)

@@ -1,17 +1,17 @@
-import { ActionTypes, BackgroundMusicAction } from '../actions';
-import { BackgroundMusics } from "../actions/backgroundMusic";
 
-const initState = {}
 
-export const backgroundMusicReducer = (state: BackgroundMusics | {} = initState, action: BackgroundMusicAction) => {
-  switch (action.type) {
-    case ActionTypes.AddBackgroundMusic:
-      return {
-        ...state,
-        ...action.payload,
 
-      }
-    default:
-      return state;
-  }
-};
+export interface BackgroundMusic {
+  id: string;
+  fileName: string;
+  name: string;
+}
+
+
+const initState = [
+  { id: 'wind', fileName: 'wind.wav', name: 'Wind' },
+  { id: 'river', fileName: 'river.wav', name: 'River' },
+  { id: 'rain', fileName: 'rain.wav', name: 'Rain' },
+];
+
+export const backgroundMusicReducer = () => initState;

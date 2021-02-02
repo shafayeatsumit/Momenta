@@ -3,11 +3,10 @@
 const Sound = require('react-native-sound');
 // Enable playback in silence mode
 import TrackPlayer from 'react-native-track-player';
-
+TrackPlayer.setupPlayer();
 Sound.setCategory('Playback');
-let sound: any;
-let lesson: any;
 
+let sound: any;
 
 let exhaleSoundId: null | ReturnType<typeof setTimeout> = null;
 let inhaleSoundId: null | ReturnType<typeof setTimeout> = null;
@@ -27,6 +26,9 @@ const exhaleSwellFile = new Sound(
     console.log('error loading swell file', error);
   },
 );
+
+
+
 
 const swellFadeOut = (duration: number, file: any) => {
   const end = new Date().getTime() + duration;
@@ -97,17 +99,20 @@ export const stopSwellSound = () => {
   exhaleSoundId && clearTimeout(exhaleSoundId);
 }
 
-export const playBackgroundMusic = (filePath: string, volume = 1) => {
-  sound = new Sound(filePath, "", (error: any) => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-    sound.setVolume(volume);
-    sound.play()
-
+export const playBackgroundMusic = (file: string, volume = 1) => {
+  sound = new Sound(
+    file,
+    Sound.MAIN_BUNDLE,
+    (error: any) => {
+      console.log('error loading swell file', error);
+    },
+  );
+  setTimeout(() => {
     sound.setNumberOfLoops(-1);
-  });
+    sound.play()
+  }, 500)
+
+
 }
 
 export const stopBackgroundMusic = () => {
@@ -118,44 +123,23 @@ export const stopBackgroundMusic = () => {
 }
 
 
-export const prepareLesson = (fileURL: string) => {
-  lesson = new Sound(fileURL, null, (e: any) => {
-    if (e) {
-      console.log('error loading lesson:', e)
-      return;
-    }
-    console.log('lesson prepared');
-  })
 
-}
 
-export const playLesson = (fileURL: string, lessonCompleteCB: Function) => {
+export const playLesson = async (fileURL: string) => {
+  TrackPlayer.add({
 
-  const start = async () => {
-    // Set up the player
-    await TrackPlayer.setupPlayer();
+    "id": "1111",
+    "url": fileURL,
+    "title": "Longing",
+    "artist": "David Chavez",
+    "artwork": "https://i.picsum.photos/id/100/200/200.jpg",
+    "duration": 143
 
-    // Add a track to the queue
-    await TrackPlayer.add({
-      id: 'trackId',
-      url: fileURL,
-      title: 'Track Title',
-      artist: 'Track Artist',
-    });
-    TrackPlayer.updateOptions({
-        stopWithApp: true
-    });
-    // Start playing it
-    await TrackPlayer.play();
-    TrackPlayer.registerEventHandler((data) => {
-      console.log('data', data);
-      if (data.type === 'playback-queue-ended') {
-        lessonCompleteCB();
-      }
-    })    
-  };
-  start();
-
+  });
+  TrackPlayer.updateOptions({
+    stopWithApp: true
+  });
+  await TrackPlayer.play();
 }
 
 export const stopLesson = () => {

@@ -129,7 +129,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const notEmpty = !_.isEmpty(allBackgroundMusic)
     if (notEmpty) {
       const music = allBackgroundMusic[backgroundMusic]
-      playBackgroundMusic(music.filePath)
+      playBackgroundMusic(music.fileName)
     }
   }
 

@@ -9,15 +9,15 @@ import { courseReducer } from './course';
 
 // Action types;
 import { User } from "../actions/user";
-import { BackgroundMusics } from "../actions/backgroundMusic";
+
 import { Exercises } from "../actions/exercise";
 import { FetchCompleted } from "../actions/fetchCompleted";
 import { Settings } from "../actions/settings";
 import { Courses } from "../actions/course";
-
+import { BackgroundMusic } from "../reducers/backgroundMusic";
 export interface RootState {
   user: User | {};
-  backgroundMusic: BackgroundMusics | {};
+  backgroundMusic: BackgroundMusic[];
   exercise: Exercises | {};
   fetchCompleted: FetchCompleted;
   settings: Settings;

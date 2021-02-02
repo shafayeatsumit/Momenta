@@ -149,10 +149,13 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const startBackgroundMusic = () => {
     const notEmpty = !_.isEmpty(allBackgroundMusic)
-    if (notEmpty) {
-      const music = allBackgroundMusic[backgroundMusic]
-      playBackgroundMusic(music.filePath)
-    }
+    console.log('all backgroundMusic', allBackgroundMusic);
+    console.log('=======>', backgroundMusic);
+    // if (notEmpty) {
+    //   const music = allBackgroundMusic.find((item) => item.id = backgroundMusic);
+
+    //   playBackgroundMusic(music.fileName)
+    // }
   }
 
   useEffect(() => {

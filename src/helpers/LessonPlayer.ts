@@ -1,5 +1,4 @@
 const Sound = require('react-native-sound');
-import { resolvePlugin } from '@babel/core';
 import TrackPlayer from 'react-native-track-player';
 
 TrackPlayer.setupPlayer();

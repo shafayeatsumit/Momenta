@@ -2,8 +2,7 @@
 
 const Sound = require('react-native-sound');
 // Enable playback in silence mode
-import TrackPlayer from 'react-native-track-player';
-TrackPlayer.setupPlayer();
+
 Sound.setCategory('Playback');
 
 let sound: any;
@@ -32,7 +31,6 @@ const exhaleSwellFile = new Sound(
 
 const swellFadeOut = (duration: number, file: any) => {
   const end = new Date().getTime() + duration;
-  console.log('++++++++++fadeout++++++++++')
   const doFadeOut = () => {
     const current = new Date().getTime();
     const remaining = end - current;
@@ -75,7 +73,6 @@ export const startSwellExhale = (exhaleDuration: number) => {
   const fadeOutDuration = 1250;
   exhaleSoundId = setTimeout(() => {
     stopExhaleSwell(fadeOutDuration)
-    console.log('stop exhale')
     exhaleSoundId && clearTimeout(exhaleSoundId);
   }, exhaleDuration * 1000 - fadeOutDuration);
   startExhaleSwell();
@@ -86,7 +83,6 @@ export const startSwellInhale = (inhaleDuration: number) => {
   const fadeOutDuration = 1250;
   inhaleSoundId = setTimeout(() => {
     stopInhaleSwell(fadeOutDuration)
-    console.log('stop inhale')
     inhaleSoundId && clearInterval(inhaleSoundId);
   }, inhaleDuration * 1000 - fadeOutDuration);
   startInhaleSwell();
@@ -125,23 +121,3 @@ export const stopBackgroundMusic = () => {
 
 
 
-export const playLesson = async (fileURL: string) => {
-  TrackPlayer.add({
-
-    "id": "1111",
-    "url": fileURL,
-    "title": "Longing",
-    "artist": "David Chavez",
-    "artwork": "https://i.picsum.photos/id/100/200/200.jpg",
-    "duration": 143
-
-  });
-  TrackPlayer.updateOptions({
-    stopWithApp: true
-  });
-  await TrackPlayer.play();
-}
-
-export const stopLesson = () => {
-  TrackPlayer.stop()
-}

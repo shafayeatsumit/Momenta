@@ -5,7 +5,7 @@ import _ from "lodash";
 
 const COURSE_URL = "courses";
 
-export interface courseTrack {
+export interface courseLesson {
   id: string;
   order: number;
   title: string;
@@ -20,7 +20,7 @@ export interface Course {
   thumbnailTitle: string;
   level: string;
   backgroundImage: string;
-  tracks: Array<courseTrack>;
+  lesons: Array<courseLesson>;
   totalLessons: number;
   totalDuration: number;
   inhaleTime: number;

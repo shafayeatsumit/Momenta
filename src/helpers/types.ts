@@ -24,7 +24,7 @@ export interface ProgressType {
 }
 
 export interface Lesson {
-  _id: string;
+  id: string;
   url: string;
   order: number;
   title: string;

@@ -5,7 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import Test from "./src/screens/Test";
 import Nav from "./src/navigation/Nav";
 import * as Sentry from '@sentry/react-native';
-
+import TrackPlayer from 'react-native-track-player';
 
 if (!__DEV__) {
   Sentry.init({
@@ -13,6 +13,19 @@ if (!__DEV__) {
       'https://f27128cba4cd43c9b168302811ec8a3d@o414961.ingest.sentry.io/5305328',
   });
 }
+
+TrackPlayer.setupPlayer();
+TrackPlayer.updateOptions({
+  stopWithApp: false,
+
+  capabilities: [
+    TrackPlayer.CAPABILITY_PLAY,
+    TrackPlayer.CAPABILITY_PAUSE,
+    TrackPlayer.CAPABILITY_STOP,
+    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+  ],
+})
 
 
 const App: React.FC = () => (

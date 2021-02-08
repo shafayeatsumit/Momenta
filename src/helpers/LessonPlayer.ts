@@ -1,7 +1,7 @@
 const Sound = require('react-native-sound');
-import TrackPlayer from 'react-native-track-player';
 
-TrackPlayer.setupPlayer();
+
+
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 let sound: any;
@@ -78,29 +78,7 @@ export const fadeInBackground = () => {
   }, 1000)
 }
 
-export const PlayNext = async (lesson: any) => {
-  await backgroundFadeOut();
-  sound.setVolume(0);
-  sound.stop();
-  console.log('lesson', lesson);
-  TrackPlayer.add({
-    "id": lesson.id,
-    "url": lesson.url,
-    "title": lesson.title,
-    "artist": "David Chavez",
-    "artwork": "https://i.picsum.photos/id/100/200/200.jpg",
-    "duration": 143
 
-  });
-  TrackPlayer.updateOptions({
-    stopWithApp: true
-  });
-  await TrackPlayer.play();
-  setTimeout(() => {
-    sound.play();
-    backgroundFadeIn();
-  }, 500)
-}
 
 export const stopBackgroundMusic = () => {
   if (sound) {
@@ -110,12 +88,3 @@ export const stopBackgroundMusic = () => {
 }
 
 
-
-
-export const playLesson = async (fileURL: string) => {
-  await TrackPlayer.play();
-}
-
-export const stopLesson = () => {
-  TrackPlayer.stop()
-}

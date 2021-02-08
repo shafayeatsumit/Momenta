@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { FontType } from '../helpers/theme';
-import { signUpAnonymously } from "../redux/actions/user";
+import { signUpAnonymously, fetchUserStats } from "../redux/actions/user";
 import { fetchExercise } from "../redux/actions/exercise";
 import { fetchCourse } from "../redux/actions/course";
 import { RootState } from "../redux/reducers";

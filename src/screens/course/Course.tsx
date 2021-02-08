@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Animated, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import TrackPlayer from 'react-native-track-player';
+
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
@@ -9,7 +10,7 @@ import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
 import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
-import { playBackgroundMusic, PlayNext, fadeInBackground, stopBackgroundMusic, stopLesson, playLesson } from "../../helpers/LessonPlayer";
+import { playBackgroundMusic, fadeInBackground, stopBackgroundMusic } from "../../helpers/LessonPlayer";
 import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
@@ -27,6 +28,9 @@ import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
+
+
+
 
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
@@ -51,8 +55,7 @@ interface Progress {
 }
 
 let totalBreathCount = 0;
-let onLessonEnd: any;
-let firstRender = false;
+let navigationListenerId: null | ReturnType<typeof setTimeout> = null;
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
@@ -61,7 +64,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
-  const { inhaleTime, tracks, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
+  const { inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -74,7 +77,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [activeLessonEnd, setActiveLessonEnd] = useState<boolean>(false);
 
 
-  const activeLesson = tracks[activeLessonIndex];
+  const activeLesson = lessons[activeLessonIndex];
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -82,26 +85,25 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const goToNextLesson = async () => {
     setActiveLessonEnd(false)
     const upcomingLessonIndex = activeLessonIndex + 1;
-    const upcomingLesson = tracks[upcomingLessonIndex];
     setActiveLessonIndex(upcomingLessonIndex);
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
-    await TrackPlayer.play();
-    hasBackgroundMusic && fadeInBackground();
+    startVoiceOver(upcomingLessonIndex);
+
   }
+
 
   const goToPrevLesson = async () => {
     // stopLesson();
     setActiveLessonEnd(false)
     const upcomingLessonIndex = activeLessonIndex - 1;
-    const upcomingLesson = tracks[upcomingLessonIndex];
+    const upcomingLesson = lessons[upcomingLessonIndex];
     setActiveLessonIndex(upcomingLessonIndex);
-    // startVoiceOver(upcomingLesson);
     await TrackPlayer.skipToPrevious();
     const currentState = TrackPlayer.getCurrentTrack();
   }
 
-  const primaryColor = "#4873B4"
+
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -157,8 +159,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
-
-
   useEffect(() => {
     renderCount.current = renderCount.current + 1;
   })
@@ -171,43 +171,22 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   }
 
-  const setupEventListener = () => {
-    onLessonEnd = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      const track = await TrackPlayer.getCurrentTrack();
-      console.log('current track', track);
-      if (!firstRender) {
-        firstRender = true;
-        return
-      }
-      lessonComplete();
-      TrackPlayer.pause();
 
-
-
-    });
-  }
-
-  const setUpTracks = () => {
-    const updatedTracks = tracks.map((item) => ({ ...item, id: item._id }));
-    TrackPlayer.add(updatedTracks);
-    TrackPlayer.updateOptions({
-      stopWithApp: true
-    });
-    setupEventListener()
-  }
 
   useEffect(() => {
-    setUpTracks();
+
     if (Platform.OS === 'ios') {
       iosHapticsSetup();
     }
 
     return () => {
       totalBreathCount = 0;
-      onLessonEnd.remove();
-      TrackPlayer.destroy();
+      TrackPlayer.reset();
+      if (navigationListenerId) {
+        clearTimeout(navigationListenerId)
+      }
+
       stop();
-      firstRender = false;
     }
   }, [])
 
@@ -254,6 +233,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
+
+
   const startExercise = () => {
     startInhale();
     setExerciseState(ExerciseState.Play)
@@ -264,15 +245,31 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setActiveLessonEnd(true);
   }
 
-  const startVoiceOver = () => {
-    playLesson();
+  const startNavigationListener = (duration: number) => {
+    navigationListenerId = setTimeout(() => {
+      console.log('stoping the voiceover');
+      TrackPlayer.stop();
+      TrackPlayer.reset();
+      lessonComplete();
+    }, duration * 1000)
   }
+
+  const startVoiceOver = async (lessonIndex: number) => {
+    const activeLesson = lessons[lessonIndex];
+    console.log('active Lesson', activeLesson);
+    startNavigationListener(activeLesson.duration);
+    await TrackPlayer.add(activeLesson);
+    await TrackPlayer.play();
+    hasBackgroundMusic && fadeInBackground();
+  }
+
+
 
   const handleStart = () => {
     triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
-    const lesson = tracks[activeLessonIndex];
-    startVoiceOver();
+
+    startVoiceOver(activeLessonIndex);
     onStartAnimation();
   }
 
@@ -284,7 +281,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const hideOptions = () => {
-    console.log('+++++ hiding options +++++++')
     Animated.timing(fadeOutAnimation, {
       toValue: 0,
       duration: 300,
@@ -342,13 +338,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     triggerHaptic();
     stop();
     navigation.goBack()
-    stopLesson();
+    TrackPlayer.stop();
   }
 
   const handleBack = () => {
     !isPaused && stop();
     navigation.goBack()
-    stopLesson();
+    TrackPlayer.stop();
   }
 
   const canGoBack = activeLessonIndex > 0;

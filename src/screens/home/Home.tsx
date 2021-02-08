@@ -5,7 +5,8 @@ import Thumbnail from "./Thumbnail";
 import CoursheThumbnail from './CourseThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from "../../redux/reducers";
-import { useSelector } from "react-redux";
+import { fetchUserStats } from "../../redux/actions/user";
+import { useDispatch, useSelector } from "react-redux";
 import styles from './Home.styles';
 import _ from "lodash";
 import { Exercise } from "../../redux/actions/exercise";
@@ -17,6 +18,8 @@ export interface Props {
 };
 
 const Home: React.FC<Props> = ({ navigation }: Props) => {
+  const selectUser = (state: RootState) => state.user;
+  const user = useSelector(selectUser);
   const selectExercise = (state: RootState) => state.exercise;
   const allExercise = _.values(useSelector(selectExercise));
   const selectCourse = (state: RootState) => state.course;
@@ -45,6 +48,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       'hardwareBackPress',
       backAction,
     );
+
     return () => {
       backHandler.remove();
     }

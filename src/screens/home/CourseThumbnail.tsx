@@ -3,12 +3,15 @@ import {
   View,
   TouchableOpacity,
   ImageBackground,
+  Image,
   Text,
   StyleSheet,
 } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
 import { Course } from "../../redux/actions/course";
+import { RootState } from "../../redux/reducers";
+import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
   course: Course;
@@ -16,7 +19,11 @@ interface Props {
 }
 
 const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
+  const selectUserStats = (state: RootState) => state.userStats;
+  const userStats = useSelector(selectUserStats);
   const thumbnailSource = course.thumbnail;
+  const isFinished = userStats[course.id] ? userStats[course.id].isFinished : false;
+
   return (
 
     <TouchableOpacity
@@ -32,6 +39,8 @@ const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
         >
           <Text allowFontScaling={false} style={styles.textBold}>{course.name}</Text>
           <Text allowFontScaling={false} style={styles.level}>{course.level}</Text>
+          {isFinished && <Image source={require('../../../assets/images/checkmark.png')} style={styles.checkmark} />}
+
         </ImageBackground>
       </View>
 
@@ -84,7 +93,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
     textAlign: 'center',
-
+  },
+  checkmark: {
+    position: 'absolute',
+    bottom: 12,
+    right: 15,
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    tintColor: 'white',
+    backgroundColor: 'green',
   },
   title: {
     fontSize: 14,

@@ -14,7 +14,10 @@ interface Props {
 const CourseTitle: React.FC<Props> = ({ lesson, opacity, totalLessons }: Props) => {
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <Text style={styles.text}>Lesson {lesson.order} of {totalLessons}</Text>
+      <View style={styles.lessonCount}>
+        <Text style={styles.text}>Lesson {lesson.order} of {totalLessons}</Text>
+      </View>
+
       <Text style={styles.lessonTitle}>{lesson.title}</Text>
       <Text style={styles.text}>1 min</Text>
     </Animated.View >
@@ -32,6 +35,11 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
   },
+  lessonCount: {
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    padding: 2,
+    borderRadius: 20,
+  },
   lessonTitle: {
     textAlign: 'center',
     fontFamily: FontType.Medium,
@@ -44,6 +52,7 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     fontSize: 18,
     color: 'white',
-    paddingHorizontal: 80,
+    paddingHorizontal: 20,
+
   }
 });

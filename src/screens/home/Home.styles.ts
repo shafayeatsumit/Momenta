@@ -4,8 +4,6 @@ import { Colors, FontType } from '../../helpers/theme';
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   tilesContainer: {
     paddingTop: 40,
@@ -14,11 +12,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   titleHolder: {
-    // height: 20,
     width: 180,
     marginTop: 50,
     marginLeft: 40,
-    // backgroundColor: 'red',
   },
   title: {
     fontFamily: FontType.Bold,

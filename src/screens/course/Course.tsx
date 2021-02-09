@@ -14,6 +14,7 @@ import { playBackgroundMusic, fadeInBackground, stopBackgroundMusic } from "../.
 import ProgressBar from '../../components/ProgressBar';
 import BreathingProgress from "../../components/BreathingProgress";
 import BackgroundImage from "../../components/BackgroundImage";
+import LessonBackButton from "../../components/LessonBack";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import NavigateLesson from "../../components/NavigateLesson";
@@ -25,17 +26,12 @@ import LessonTitle from "../../components/LessonTitle";
 import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
-import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
+import { updateUserStats } from "../../redux/actions/userStats";
 import BreathingInstruction from "../../components/BreathingInstructionText";
-
-
-
-
-
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
 
@@ -56,15 +52,19 @@ interface Progress {
 
 let totalBreathCount = 0;
 let navigationListenerId: null | ReturnType<typeof setTimeout> = null;
-
+let lessonStarted = false;
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
+  const dispatch = useDispatch();
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const selectSettings = (state: RootState) => state.settings;
+  const selectUserStats = (state: RootState) => state.userStats;
+  const userStats = useSelector(selectUserStats);
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
   const { backgroundMusic, vibrationType } = settings;
-  const { inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
+  const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
+
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -82,8 +82,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
+
+
+
   const goToNextLesson = async () => {
     setActiveLessonEnd(false)
+    statsUpdate();
     const upcomingLessonIndex = activeLessonIndex + 1;
     setActiveLessonIndex(upcomingLessonIndex);
     hasSwell && stopSwellSound();
@@ -171,13 +175,23 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   }
 
-
+  const setUpInitLesson = () => {
+    const isListenedBefore = userStats[courseId];
+    if (!isListenedBefore) {
+      return
+    }
+    const lastLesson = userStats[courseId].lastFinishedLesson;
+    if (lastLesson === totalLessons) {
+      return
+    }
+    setActiveLessonIndex(lastLesson)
+  }
 
   useEffect(() => {
-
     if (Platform.OS === 'ios') {
       iosHapticsSetup();
     }
+    setUpInitLesson();
 
     return () => {
       totalBreathCount = 0;
@@ -185,7 +199,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       if (navigationListenerId) {
         clearTimeout(navigationListenerId)
       }
-
+      lessonStarted = false;
       stop();
     }
   }, [])
@@ -241,13 +255,25 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     startTimer();
   }
 
+  const statsUpdate = () => {
+    const isLastLesson = activeLessonIndex + 1 === totalLessons;
+    if (isLastLesson) {
+      dispatch(updateUserStats(courseId, activeLessonIndex + 1, true))
+      return;
+    }
+    const isLessonFinished = userStats[courseId]
+      ? userStats[courseId].isFinished : false;
+    dispatch(updateUserStats(courseId, activeLessonIndex + 1, isLessonFinished))
+
+  }
+
   const lessonComplete = () => {
     setActiveLessonEnd(true);
+
   }
 
   const startNavigationListener = (duration: number) => {
     navigationListenerId = setTimeout(() => {
-      console.log('stoping the voiceover');
       TrackPlayer.stop();
       TrackPlayer.reset();
       lessonComplete();
@@ -256,7 +282,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startVoiceOver = async (lessonIndex: number) => {
     const activeLesson = lessons[lessonIndex];
-    console.log('active Lesson', activeLesson);
     startNavigationListener(activeLesson.duration);
     await TrackPlayer.add(activeLesson);
     await TrackPlayer.play();
@@ -266,6 +291,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const handleStart = () => {
+    if (!lessonStarted) {
+      lessonStarted = true;
+    }
     triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
 
@@ -335,6 +363,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleFinish = () => {
+    statsUpdate();
     triggerHaptic();
     stop();
     navigation.goBack()
@@ -347,9 +376,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     TrackPlayer.stop();
   }
 
+  const handleLessonBack = () => {
+    setActiveLessonIndex(activeLessonIndex - 1)
+  }
+
   const canGoBack = activeLessonIndex > 0;
   const courseFinished = activeLessonEnd && activeLessonIndex + 1 === 3;
-
+  const showLessonBack = !lessonStarted && canGoBack;
   return (
     <LinearGradient
       useAngle={true}
@@ -370,7 +403,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           <CourseTitle title={name} opacity={fadeOutAnimation} />
           <LessonTitle lesson={activeLesson} totalLessons={totalLessons} opacity={fadeOutAnimation} />
-          <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
+          {!lessonStarted && <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />}
+
         </>
       }
 
@@ -390,7 +424,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {activeLessonEnd && !courseFinished && <NavigateLesson title="Next" handleNextLesson={goToNextLesson} color={primaryColor} />}
       {courseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
-      {/* {canGoBack && <NavigateLesson title="Back" handlePrevLesson={goToPrevLesson} color={primaryColor} />} */}
+      {showLessonBack && <LessonBackButton opacity={fadeOutAnimation} handlePress={handleLessonBack} />}
       <ProgressBar duration={60} time={time} color={primaryColor} showProgressBar={showProgressBar} />
 
       <Modal

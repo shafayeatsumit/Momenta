@@ -23,8 +23,7 @@ export default class InhaleExhaleSound {
     );
   }
 
-  startInhaleSound = () => {    
-    console.log('start inhale sound');
+  startInhaleSound = () => {        
     if (this.mute) {
       this.inhaleSound.setVolume(0);      
     } else {
@@ -49,6 +48,7 @@ export default class InhaleExhaleSound {
   stopInhaleSound = (duration) => {
     this.fadeOut(duration, this.inhaleSound);
   };
+  
   stopSound = () => {
     this.exhaleSound.stop();
     this.inhaleSound.stop();    

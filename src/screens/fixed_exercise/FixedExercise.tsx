@@ -126,11 +126,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startBackgroundMusic = () => {
-    const notEmpty = !_.isEmpty(allBackgroundMusic)
-    if (notEmpty) {
-      const music = allBackgroundMusic[backgroundMusic]
-      playBackgroundMusic(music.fileName)
+    const music = allBackgroundMusic.find((item) => item.id === backgroundMusic);
+    if (music) {
+      playBackgroundMusic(music.fileName);
     }
+
   }
 
   useEffect(() => {

@@ -41,6 +41,7 @@ export const stopSwellSound = () => {
 }
 
 export const playBackgroundMusic = (file: string, volume = 1) => {
+  console.log('backgroundMusic file', file)
   sound = new Sound(
     file,
     Sound.MAIN_BUNDLE,

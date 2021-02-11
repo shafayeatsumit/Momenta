@@ -34,6 +34,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
+import Sound from 'react-native-sound'
 
 interface Props {
   route: RouteProp<any, any>;
@@ -53,6 +54,9 @@ interface Progress {
 let totalBreathCount = 0;
 let navigationListenerId: null | ReturnType<typeof setTimeout> = null;
 let lessonStarted = false;
+let activeLessonEnd = false;
+
+
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
@@ -74,7 +78,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [activeLessonIndex, setActiveLessonIndex] = useState<number>(0);
-  const [activeLessonEnd, setActiveLessonEnd] = useState<boolean>(false);
+
 
 
   const activeLesson = lessons[activeLessonIndex];
@@ -86,7 +90,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const goToNextLesson = async () => {
-    setActiveLessonEnd(false)
+    activeLessonEnd = false;
+
     statsUpdate();
     const upcomingLessonIndex = activeLessonIndex + 1;
     setActiveLessonIndex(upcomingLessonIndex);
@@ -96,16 +101,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   }
 
-
-  const goToPrevLesson = async () => {
-    // stopLesson();
-    setActiveLessonEnd(false)
-    const upcomingLessonIndex = activeLessonIndex - 1;
-    const upcomingLesson = lessons[upcomingLessonIndex];
-    setActiveLessonIndex(upcomingLessonIndex);
-    await TrackPlayer.skipToPrevious();
-    const currentState = TrackPlayer.getCurrentTrack();
-  }
 
 
 
@@ -187,13 +182,33 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setActiveLessonIndex(lastLesson)
   }
 
+  const playTrack = (url: string) => {
+    const track = new Sound(url, null, (e) => {
+      if (e) {
+        console.log('error loading track:', e)
+      } else {
+        track.play()
+      }
+    })
+  }
+
+  const setupTrackPlayer = () => {
+    TrackPlayer.addEventListener('playback-queue-ended', (event) => {
+      console.log(' lesson end', event)
+      lessonComplete();
+    })
+
+  }
+
   useEffect(() => {
+    setupTrackPlayer();
     if (Platform.OS === 'ios') {
       iosHapticsSetup();
     }
     setUpInitLesson();
 
     return () => {
+      activeLessonEnd = false;
       totalBreathCount = 0;
       TrackPlayer.reset();
       if (navigationListenerId) {
@@ -268,21 +283,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const lessonComplete = () => {
-    setActiveLessonEnd(true);
-
+    activeLessonEnd = true;
   }
 
-  const startNavigationListener = (duration: number) => {
-    navigationListenerId = setTimeout(() => {
-      TrackPlayer.stop();
-      TrackPlayer.reset();
-      lessonComplete();
-    }, duration * 1000)
-  }
+
 
   const startVoiceOver = async (lessonIndex: number) => {
     const activeLesson = lessons[lessonIndex];
-    startNavigationListener(activeLesson.duration);
+
     await TrackPlayer.add(activeLesson);
     await TrackPlayer.play();
     hasBackgroundMusic && fadeInBackground();
@@ -383,6 +391,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const canGoBack = activeLessonIndex > 0;
   const courseFinished = activeLessonEnd && activeLessonIndex + 1 === 3;
   const showLessonBack = !lessonStarted && canGoBack;
+
   return (
     <LinearGradient
       useAngle={true}

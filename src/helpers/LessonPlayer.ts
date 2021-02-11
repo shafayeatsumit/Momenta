@@ -43,7 +43,7 @@ const backgroundFadeIn = (duration = 5000) => {
       if (remaining < 0) {
         // End animation here as there's less than 0 milliseconds left
         // file.stop();
-        console.log('fade IN done');
+
         resolve(true)
         return;
       }

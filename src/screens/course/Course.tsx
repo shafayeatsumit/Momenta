@@ -132,10 +132,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     renderCount.current = renderCount.current + 1;
   })
 
-
-
-
-
   const setupTrackPlayer = () => {
     TrackPlayer.addEventListener('playback-track-changed', async (event) => {
       if (!event.nextTrack) {
@@ -144,8 +140,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       }
       setupNewLesson();
     })
-
-
   }
 
   useEffect(() => {
@@ -161,8 +155,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }, [])
 
-
-
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
 
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
@@ -175,9 +167,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const showPause = optionsVisible && !isStopped;
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
-  const showBackgroundCircle = (isStopped || isPaused);
-
-
+  const showBackgroundCircle = (isStopped || isPaused || optionsVisible);
 
   const startExhale = (duration = exhaleTime) => {
     hasSwell && startSwellExhale(exhaleTime);
@@ -312,9 +302,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       <CourseTitle title={name} />
       {activeLesson && <LessonTitle lesson={activeLesson} totalLessons={totalLessons} />}
 
-
-
-
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
@@ -331,7 +318,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         visible={settingsVisible}
         onRequestClose={closeSetting}
       >
-        <Settings closeModal={closeSetting} color={primaryColor} />
+        <Settings showVibrationSettings={false} closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
 

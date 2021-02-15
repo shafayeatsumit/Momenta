@@ -11,9 +11,10 @@ import Vibration from "./Vibration";
 interface Props {
   closeModal: () => void;
   color: string;
+  showVibrationSettings?: boolean;
 }
 
-const Settings: React.FC<Props> = ({ closeModal, color }: Props) => {
+const Settings: React.FC<Props> = ({ closeModal, color, showVibrationSettings }: Props) => {
   return (
     <LinearGradient
       useAngle={true}
@@ -27,7 +28,8 @@ const Settings: React.FC<Props> = ({ closeModal, color }: Props) => {
       <Text allowFontScaling={false} style={styles.settings}>Settings</Text>
 
       <SoundSettings color={color} />
-      <Vibration color={color} />
+      {showVibrationSettings && <Vibration color={color} />}
+
 
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>

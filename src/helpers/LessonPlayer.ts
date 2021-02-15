@@ -66,7 +66,7 @@ export const playBackgroundMusic = (file: string, volume = 1) => {
   );
   setTimeout(() => {
     sound.setNumberOfLoops(-1);
-    sound.play()
+    // sound.play()
   }, 500)
 }
 

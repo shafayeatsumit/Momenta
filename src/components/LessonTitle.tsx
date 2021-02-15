@@ -12,6 +12,8 @@ interface Props {
 }
 
 const CourseTitle: React.FC<Props> = ({ lesson, opacity, totalLessons }: Props) => {
+  const duration = Math.round(lesson.duration / 60);
+  const min = duration > 1 ? 'mins' : 'min';
   return (
     <Animated.View style={[styles.container, { opacity }]}>
       <View style={styles.lessonCount}>
@@ -19,7 +21,7 @@ const CourseTitle: React.FC<Props> = ({ lesson, opacity, totalLessons }: Props) 
       </View>
 
       <Text style={styles.lessonTitle}>{lesson.title}</Text>
-      <Text style={styles.text}>1 min</Text>
+      <Text style={styles.text}>{duration} {min}</Text>
     </Animated.View >
   );
 }

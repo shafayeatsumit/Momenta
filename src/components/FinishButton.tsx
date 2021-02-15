@@ -4,19 +4,21 @@ import { FontType } from "../helpers/theme";
 import { eventButtonPush } from "../helpers/analytics";
 
 interface Props {
-  handleFinish: () => void;
+  handleFinish?: () => void;
+  handleCourseFinish?: () => void;
   color: string;
 }
 
 
 
-const Timer: React.FC<Props> = ({ handleFinish, color }: Props) => {
+const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, color }: Props) => {
   const pressHandler = () => {
     eventButtonPush('finish');
-    handleFinish();
+    handleFinish && handleFinish();
+    handleCourseFinish && handleCourseFinish();
   }
   return (
-    <TouchableOpacity style={styles.button} onPress={pressHandler}>
+    <TouchableOpacity style={[styles.button, handleCourseFinish && { left: 0, right: 0, alignSelf: 'center' }]} onPress={pressHandler}>
       <Text allowFontScaling={false} style={[styles.text, { color: color }]}>FINISH</Text>
     </TouchableOpacity>
   );

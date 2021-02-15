@@ -28,4 +28,5 @@ export interface Lesson {
   url: string;
   order: number;
   title: string;
+  duration: number;
 }

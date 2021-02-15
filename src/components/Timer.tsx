@@ -11,7 +11,7 @@ const twoDigitPadding = (num: number) => String(num).padStart(2, '0');
 
 const Timer: React.FC<Props> = ({ time, exerciseDuration }) => {
   const currentTimeMin = Math.floor(time / 60);
-  const currentTimeSec = time % 60;
+  const currentTimeSec = Math.round(time % 60);
   const targetTime = exerciseDuration * 60;
   const targetTimeMin = targetTime / 60;
   const targetTimeSec = targetTime % 60;

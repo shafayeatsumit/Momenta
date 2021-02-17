@@ -27,12 +27,12 @@ import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
-import { updateUserStats } from "../../redux/actions/userStats";
+import { updateContentSettings, contentFinished } from "../../redux/actions/contentSettings";
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
+import _, { update } from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
 
 
@@ -62,13 +62,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const selectSettings = (state: RootState) => state.settings;
-  const selectUserStats = (state: RootState) => state.userStats;
-  const userStats = useSelector(selectUserStats);
+  const selectContentSettings = (state: RootState) => state.contentSettings;
+  const contentSettings = useSelector(selectContentSettings);
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
 
-  const { backgroundMusic } = settings;
   const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
+  // this line needs to be changed;
+  const { backgroundMusic } = contentSettings;
 
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -97,7 +98,19 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const trackId = await TrackPlayer.getCurrentTrack()
     const lesson = await TrackPlayer.getTrack(trackId);
     setActiveLesson(lesson);
+    dispatch(updateContentSettings(courseId, lesson.order))
+  }
 
+  const initializeLesson = async () => {
+    const previouslyListened = contentSettings[courseId];
+    if (previouslyListened) {
+      const lastListenedLessonOrder = contentSettings[courseId].lastLesson;
+      if (lastListenedLessonOrder === 0) {
+        return;
+      }
+      const lastListenedLesson = lessons.find((item) => item.order === lastListenedLessonOrder);
+      await TrackPlayer.skip(lastListenedLesson.id)
+    }
   }
 
   const breathCountEnd = () => {
@@ -134,16 +147,19 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const setupTrackPlayer = () => {
     TrackPlayer.addEventListener('playback-track-changed', async (event) => {
+
       if (!event.nextTrack) {
         setCourseFinished(true);
         return
       }
       setupNewLesson();
+
     })
   }
 
   useEffect(() => {
     TrackPlayer.add([...lessons]);
+    initializeLesson();
     setupTrackPlayer();
     return () => {
       TrackPlayer.reset();
@@ -263,6 +279,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handleFinish = () => {
     triggerHaptic();
     stop();
+    dispatch(contentFinished(courseId))
     navigation.goBack()
     TrackPlayer.stop();
   }
@@ -318,7 +335,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         visible={settingsVisible}
         onRequestClose={closeSetting}
       >
-        <Settings showVibrationSettings={false} closeModal={closeSetting} color={primaryColor} />
+        <Settings backgroundMusic={null} showVibrationSettings={false} closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
 

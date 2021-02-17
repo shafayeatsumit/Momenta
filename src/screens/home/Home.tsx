@@ -5,7 +5,6 @@ import Thumbnail from "./Thumbnail";
 import CoursheThumbnail from './CourseThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from "../../redux/reducers";
-import { fetchUserStats } from "../../redux/actions/user";
 import { useDispatch, useSelector } from "react-redux";
 import styles from './Home.styles';
 import _ from "lodash";

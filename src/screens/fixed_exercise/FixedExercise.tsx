@@ -332,7 +332,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         visible={settingsVisible}
         onRequestClose={closeSetting}
       >
-        <Settings showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
+        <Settings backgroundMusic={backgroundMusic} showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
       <Modal

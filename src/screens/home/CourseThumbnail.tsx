@@ -19,10 +19,10 @@ interface Props {
 }
 
 const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
-  const selectUserStats = (state: RootState) => state.userStats;
-  const userStats = useSelector(selectUserStats);
+  const selectContentSettings = (state: RootState) => state.contentSettings;
+  const contentSettings = useSelector(selectContentSettings);
   const thumbnailSource = course.thumbnail;
-  const isFinished = userStats[course.id] ? userStats[course.id].isFinished : false;
+  const isFinished = contentSettings[course.id] ? contentSettings[course.id].isFinished : false;
 
   return (
 

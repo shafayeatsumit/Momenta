@@ -41,9 +41,9 @@ export const signUpAnonymously = () => {
   }
 }
 
-export const fetchUserStats = (userId: string) => {
+export const fetchContentSettings = (userId: string) => {
   return async (dispatch: Dispatch) => {
     const response = await api.get(`${USER_URL}/${userId}`)
-    const userStats: User = response.user;
+    const contentSettings: User = response.user;
   }
 }

@@ -6,7 +6,7 @@ import { exerciseReducer } from "./exercise";
 import { fetchCompletedReducer } from "./fetchCompleted";
 import { settingsReducer } from "./settings";
 import { courseReducer } from './course';
-import { userStatsReducer } from "./userStats";
+import { contentSettingReducer } from "./contentSettings";
 // Action types;
 import { User } from "../actions/user";
 
@@ -15,7 +15,7 @@ import { FetchCompleted } from "../actions/fetchCompleted";
 import { Settings } from "../actions/settings";
 import { Courses } from "../actions/course";
 import { BackgroundMusic } from "../reducers/backgroundMusic";
-import { UserStats } from "../actions/userStats";
+import { ContentSettings } from "../actions/contentSettings";
 
 export interface RootState {
   user: User | {};
@@ -24,7 +24,7 @@ export interface RootState {
   fetchCompleted: FetchCompleted;
   settings: Settings;
   course: Courses | {};
-  userStats: UserStats | {};
+  contentSettings: ContentSettings | {};
 }
 
 export const rootReducers = combineReducers<RootState>({
@@ -34,5 +34,5 @@ export const rootReducers = combineReducers<RootState>({
   fetchCompleted: fetchCompletedReducer,
   settings: settingsReducer,
   course: courseReducer,
-  userStats: userStatsReducer,
+  contentSettings: contentSettingReducer,
 });

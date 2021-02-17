@@ -12,14 +12,15 @@ import _ from 'lodash';
 
 interface Props {
   color: string;
+  backgroundMusic: string | null;
 }
 
-const Sound: React.FC<Props> = ({ color }) => {
+const Sound: React.FC<Props> = ({ color, backgroundMusic }) => {
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const selectSettings = (state: RootState) => state.settings;
   const dispatch = useDispatch();
   const musicFiles = _.values(useSelector(selectBackgroundMusic));
-  const backgroundMusic = useSelector(selectSettings).backgroundMusic;
+  // const backgroundMusic = useSelector(selectSettings).backgroundMusic;
 
 
   const getMusicName = (id: string | null) => {

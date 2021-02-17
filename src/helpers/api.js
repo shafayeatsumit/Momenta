@@ -5,6 +5,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 const BASEURL = 'http://ec2-3-137-185-158.us-east-2.compute.amazonaws.com:3000/';
 // const BASEURL = 'http://localhost:3000/';
 
+// AsyncStorage.clear();
+
 const anonymousEndpoints = ['user/signUpAnonymously'];
 
 export const api = axios.create({

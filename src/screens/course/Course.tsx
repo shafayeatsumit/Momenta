@@ -70,7 +70,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
   // this line needs to be changed;
   const { backgroundMusic } = contentSettings;
-
+  const previouslyListened = contentSettings[courseId];
+  const maxListened = contentSettings[courseId] ? contentSettings[courseId].lastLesson : 1;
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
@@ -98,17 +99,30 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const trackId = await TrackPlayer.getCurrentTrack()
     const lesson = await TrackPlayer.getTrack(trackId);
     setActiveLesson(lesson);
-    dispatch(updateContentSettings(courseId, lesson.order))
+
   }
 
+  const updateContent = async () => {
+    if (!previouslyListened) {
+      dispatch(updateContentSettings(courseId, 1))
+      return;
+    }
+
+    const trackId = await TrackPlayer.getCurrentTrack()
+    const lesson = await TrackPlayer.getTrack(trackId);
+    if (lesson.order > maxListened) {
+      dispatch(updateContentSettings(courseId, lesson.order))
+    }
+
+  }
+
+  useEffect(() => {
+    updateContent();
+  }, [activeLesson])
+
   const initializeLesson = async () => {
-    const previouslyListened = contentSettings[courseId];
     if (previouslyListened) {
-      const lastListenedLessonOrder = contentSettings[courseId].lastLesson;
-      if (lastListenedLessonOrder === 0) {
-        return;
-      }
-      const lastListenedLesson = lessons.find((item) => item.order === lastListenedLessonOrder);
+      const lastListenedLesson = lessons.find((item) => item.order === maxListened);
       await TrackPlayer.skip(lastListenedLesson.id)
     }
   }
@@ -291,8 +305,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
   const lastLesson = lessons[lessons.length - 1]
   const firstLesson = lessons[0]
-  const canGoBack = lessonStarted && !courseFinished && firstLesson.id !== activeLesson.id;
-  const canGoForward = lessonStarted && !courseFinished && lastLesson.id !== activeLesson.id;
+  const canGoBack = !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
+  const canGoForward = !courseFinished && activeLesson && activeLesson.order < maxListened;
+
+
   return (
     <LinearGradient
       useAngle={true}

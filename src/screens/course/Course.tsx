@@ -15,6 +15,7 @@ import ProgressBar from '../../components/ProgressBar';
 
 import BackgroundImage from "../../components/BackgroundImage";
 import LessonBackButton from "../../components/LessonBack";
+import LessonForwardButton from "../../components/LessonForward";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import NavigateLesson from "../../components/NavigateLesson";
@@ -69,7 +70,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
   // this line needs to be changed;
-  const { backgroundMusic } = contentSettings;
+  const backgroundMusic = contentSettings[courseId] && contentSettings[courseId].backgroundMusic ? contentSettings[courseId].backgroundMusic : null;
   const previouslyListened = contentSettings[courseId];
   const maxListened = contentSettings[courseId] ? contentSettings[courseId].lastLesson : 1;
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -92,8 +93,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
 
-  const goToNextLesson = () => TrackPlayer.skipToNext();
-  const goToPreviousLesson = () => TrackPlayer.skipToPrevious();
+  const goToNextLesson = () => {
+    TrackPlayer.skipToNext();
+    TrackPlayer.pause();
+  }
+  const goToPreviousLesson = () => {
+    TrackPlayer.skipToPrevious();
+    TrackPlayer.pause();
+  }
 
   const setupNewLesson = async () => {
     const trackId = await TrackPlayer.getCurrentTrack()
@@ -205,7 +212,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setBreathingState(BreathingState.Exhale)
   }
 
-
   const startInhale = (duration = inhaleTime) => {
     hasSwell && startSwellInhale(inhaleTime);
     startBreathCounter(duration)
@@ -248,8 +254,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       useNativeDriver: true,
     }).start(() => setOptionsVisible(false));
   }
-
-
 
   const stop = () => {
     fadeOutAnimation.setValue(1);
@@ -303,10 +307,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
     TrackPlayer.stop();
   }
-  const lastLesson = lessons[lessons.length - 1]
+
   const firstLesson = lessons[0]
-  const canGoBack = !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
-  const canGoForward = !courseFinished && activeLesson && activeLesson.order < maxListened;
+  const canGoBack = isStopped && !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
+  const canGoForward = isStopped && !courseFinished && activeLesson && activeLesson.order < maxListened;
 
 
   return (
@@ -339,10 +343,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
 
-      {canGoForward && <NavigateLesson title="Next" handleNextLesson={goToNextLesson} color={primaryColor} />}
-      { canGoBack && <NavigateLesson title="Back" handlePrevLesson={goToPreviousLesson} color={primaryColor} />}
       {courseFinished && <FinishButton color={primaryColor} handleCourseFinish={handleFinish} />}
-      {/* {showLessonBack && <LessonBackButton opacity={fadeOutAnimation} handlePress={handleLessonBack} />} */}
+      {canGoBack && <LessonBackButton opacity={fadeOutAnimation} handlePress={goToPreviousLesson} />}
+      {canGoForward && <LessonForwardButton opacity={fadeOutAnimation} handlePress={goToNextLesson} />}
       {lessonDurationInMins ? <ProgressBar duration={lessonDurationInMins} time={position} color={primaryColor} showProgressBar={showProgressBar} /> : null}
 
       <Modal
@@ -351,7 +354,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         visible={settingsVisible}
         onRequestClose={closeSetting}
       >
-        <Settings backgroundMusic={null} showVibrationSettings={false} closeModal={closeSetting} color={primaryColor} />
+        <Settings courseId={courseId} backgroundMusic={backgroundMusic} showVibrationSettings={false} closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
 

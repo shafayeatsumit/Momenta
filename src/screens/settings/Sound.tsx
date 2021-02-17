@@ -7,21 +7,20 @@ import { RootState } from "../../redux/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { changeMusic } from "../../redux/actions/settings";
 import { eventButtonPush } from "../../helpers/analytics";
+import { updateContentBackgroundMusic } from "../../redux/actions/contentSettings";
 
 import _ from 'lodash';
 
 interface Props {
   color: string;
+  courseId?: string;
   backgroundMusic: string | null;
 }
 
-const Sound: React.FC<Props> = ({ color, backgroundMusic }) => {
+const Sound: React.FC<Props> = ({ color, backgroundMusic, courseId }) => {
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
-  const selectSettings = (state: RootState) => state.settings;
   const dispatch = useDispatch();
   const musicFiles = _.values(useSelector(selectBackgroundMusic));
-  // const backgroundMusic = useSelector(selectSettings).backgroundMusic;
-
 
   const getMusicName = (id: string | null) => {
     if (id === null) {
@@ -37,7 +36,14 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic }) => {
   const handlePress = (id: string | null) => {
     const eventTitle = getMusicName(id);
     eventButtonPush(`sound_settings_${eventTitle}`);
+
+    if (courseId) {
+
+      dispatch(updateContentBackgroundMusic(courseId, id));
+      return;
+    }
     dispatch(changeMusic(id))
+
   }
 
   const OFF = () => (
@@ -57,7 +63,7 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic }) => {
     </ModalButton>
   )
 
-
+  console.log('bg music here===>', backgroundMusic);
   return (
     <View style={styles.container}>
       <Text allowFontScaling={false} style={styles.title}>Sound</Text>

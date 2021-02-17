@@ -52,10 +52,11 @@ export const contentFinished = (courseId: string): ContentFinishedAction => {
   }
 }
 
-export const updateContentBackgroundMusic = (backgroundMusic: string) => {
+export const updateContentBackgroundMusic = (courseId: string, backgroundMusic: string | null) => {
   return {
     type: ActionTypes.UpdateContentBackgroundMusic,
     payload: {
+      courseId,
       backgroundMusic,
     }
   }

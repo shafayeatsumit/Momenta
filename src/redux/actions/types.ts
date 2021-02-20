@@ -4,11 +4,13 @@ import { UpdateContentSettingsAction, UpdateContentBackgroundMusicAction, Conten
 import { FetchExerciseAction } from "./exercise";
 import { ChangeVibrationAction, ChangeMusicAction } from "./settings";
 import { FetchCourseAction } from "./course";
+import { FetchGuidedPracticeAction } from "./guidedPractice";
 
 export enum ActionTypes {
   SignUpAnonymously = "SIGN_UP_ANONYMOUSLY",
   AddExercise = "ADD_EXERCISE",
   AddCourse = "ADD_COURSE",
+  AddGuidedPractice = "ADD_GUIDED_PRACTICE",
   FetchCompleted = "FETCH_COMPLETED",
   ChangeVibrationType = "CHANGE_VIBRATION_TYPE",
   ChangeBackgroundMusic = "CHANGE_BACKGROUND_MUSIC",
@@ -26,3 +28,4 @@ export type ExerciseAction = FetchExerciseAction;
 export type CountAction = AddCountAction | RemoveCountAction;
 export type FetchCompletedAction = FetchExerciseAction;
 export type CourseAction = FetchCourseAction;
+export type GuidedPracticeAction = FetchGuidedPracticeAction;

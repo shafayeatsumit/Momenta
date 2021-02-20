@@ -9,27 +9,27 @@ import {
 } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
-import { Course } from "../../redux/actions/course";
+import { GuidePractice } from "../../redux/actions/guidedPractice";
 import { RootState } from "../../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
-  course: Course;
-  goToCourse: Function;
+  content: GuidePractice;
+  goToPractice: Function;
 }
 
-const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
+const Thumbnail: React.FC<Props> = ({ content, goToPractice }) => {
   const selectContentSettings = (state: RootState) => state.contentSettings;
   const contentSettings = useSelector(selectContentSettings);
-  const thumbnailSource = course.thumbnail;
-  const isFinished = contentSettings[course.id] ? contentSettings[course.id].isFinished : false;
+  const thumbnailSource = content.thumbnail;
+  const isFinished = contentSettings[content.id] ? contentSettings[content.id].isFinished : false;
 
   return (
 
     <TouchableOpacity
       style={styles.tiles}
       activeOpacity={0.8}
-      onPress={() => goToCourse(course)}>
+      onPress={() => goToPractice(content)}>
 
       <View style={styles.thumbnailContainer}>
         <ImageBackground
@@ -37,16 +37,16 @@ const Thumbnail: React.FC<Props> = ({ course, goToCourse }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text allowFontScaling={false} style={styles.textBold}>{course.name}</Text>
-          <Text allowFontScaling={false} style={styles.level}>{course.level}</Text>
+          <Text allowFontScaling={false} style={styles.textBold}>{content.name}</Text>
+          <Text allowFontScaling={false} style={styles.level}>{content.level}</Text>
           {isFinished && <Image source={require('../../../assets/images/checkmark.png')} style={styles.checkmark} />}
 
         </ImageBackground>
       </View>
 
       <View style={styles.textContainer}>
-        <Text allowFontScaling={false} style={styles.title}>{course.totalLessons} lessons . {course.totalDuration} minutes</Text>
-        <Text allowFontScaling={false} style={styles.subTitle}>{course.thumbnailTitle}</Text>
+        {/* <Text allowFontScaling={false} style={styles.title}>{course.totalLessons} lessons . {course.totalDuration} minutes</Text> */}
+        <Text allowFontScaling={false} style={styles.subTitle}>{content.thumbnailTitle}</Text>
       </View>
     </TouchableOpacity>
 

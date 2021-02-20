@@ -3,6 +3,7 @@ import { Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { FontType } from '../helpers/theme';
 import { signUpAnonymously } from "../redux/actions/user";
 import { fetchExercise } from "../redux/actions/exercise";
+import { fetchGuidedPractice } from "../redux/actions/guidedPractice";
 import { fetchCourse } from "../redux/actions/course";
 import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +33,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     if (!isExistingUser) dispatch(signUpAnonymously());
     if (!exerciseFetchCompleted) dispatch(fetchExercise());
     dispatch(fetchCourse());
+    dispatch(fetchGuidedPractice());
   }, [])
   console.log('fetch completed', fetchCompleted)
   return (

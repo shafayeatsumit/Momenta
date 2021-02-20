@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, BackHandler, ScrollView, Platform } from 'react-native';
 import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
-import CoursheThumbnail from './CourseThumbnail';
+import GuidedPracticeThumbnail from './GuidedPracticeThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from "../../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +11,7 @@ import _ from "lodash";
 import { Exercise } from "../../redux/actions/exercise";
 import LinearGradient from 'react-native-linear-gradient';
 import { Course } from '../../redux/actions/course';
+import { GuidePractice } from '../../redux/actions/guidedPractice';
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
@@ -23,6 +24,8 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   const allExercise = _.values(useSelector(selectExercise));
   const selectCourse = (state: RootState) => state.course;
   const allCourse = _.values(useSelector(selectCourse));
+  const selectGuidedPractice = (state: RootState) => state.guidedPracitce;
+  const allGuidedPractice = _.values(useSelector(selectGuidedPractice));
 
   const goToExercise = (exercise: Exercise) => {
     eventButtonPush(`go_to_${exercise.displayName}`);
@@ -36,23 +39,26 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     navigation.navigate('Course', { course })
   }
 
+  const goToGuidedPractice = (guidePractice: GuidePractice) => {
+    eventButtonPush(`go_to_${guidePractice.name}`);
+    navigation.navigate('GuidedPractice', { guidePractice })
+  }
+
   const backAction = () => {
     eventButtonPush('android_back_button')
     return false;
   };
 
   useEffect(() => {
-    // for Android only    
+    // Android only    
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       backAction,
     );
-
     return () => {
       backHandler.remove();
     }
   }, [])
-
   return (
     <LinearGradient
       useAngle={true}
@@ -73,12 +79,12 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
         </ScrollView>
       </View>
       <View style={styles.titleHolder}>
-        <Text style={styles.title}>Courses</Text>
+        <Text style={styles.title}>Guided Practices</Text>
       </View>
       <View >
         <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
-          {allCourse.map((course) =>
-            <CoursheThumbnail goToCourse={goToCourse} key={course.id} course={course} />
+          {allGuidedPractice.map((practice) =>
+            <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
           )}
         </ScrollView>
       </View>

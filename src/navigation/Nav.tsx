@@ -9,6 +9,7 @@ import GuidedExerciseScreen from "../screens/guided_exercise/GuidedExercise";
 import FixedExerciseScreen from "../screens/fixed_exercise/FixedExercise";
 import CalibrationScreen from "../screens/calibration/Calibration";
 import CourseScreen from '../screens/course/Course';
+import GuidedPracticeScreen from '../screens/guided_practice/GuidedPractice';
 
 import { Colors } from '../helpers/theme';
 const Stack = createStackNavigator();
@@ -55,6 +56,7 @@ class Nav extends Component {
           <Stack.Screen name="FixedExercise" component={FixedExerciseScreen} />
           <Stack.Screen name="Calibraiton" component={CalibrationScreen} />
           <Stack.Screen name="Course" component={CourseScreen} />
+          <Stack.Screen name="GuidedPractice" component={GuidedPracticeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -38,7 +38,6 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic, courseId }) => {
     eventButtonPush(`sound_settings_${eventTitle}`);
 
     if (courseId) {
-
       dispatch(updateContentBackgroundMusic(courseId, id));
       return;
     }
@@ -63,7 +62,7 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic, courseId }) => {
     </ModalButton>
   )
 
-  console.log('bg music here===>', backgroundMusic);
+
   return (
     <View style={styles.container}>
       <Text allowFontScaling={false} style={styles.title}>Sound</Text>

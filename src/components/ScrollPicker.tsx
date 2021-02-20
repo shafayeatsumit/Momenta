@@ -15,12 +15,13 @@ import { eventButtonPush } from "../helpers/analytics";
 interface Props {
   onSelect: Function;
   initialValue: number;
+  durationList?: number[];
 }
 
-const timers = [...Array(10).keys()].map((i) => (i === 0 ? 1 : i + 1));
+const defaultDuration = [...Array(10).keys()].map((i) => (i === 0 ? 1 : i + 1));
 const ITEM_SIZE = 40;
 
-const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
+const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue, durationList = defaultDuration }: Props) => {
 
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -30,6 +31,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
 
     eventButtonPush(`duration_picked_${timePicked}`)
   }
+  const isGuidedPractice = durationList[0] === 4;
 
   const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
     triggerHaptic();
@@ -44,7 +46,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
   return (
     <Animated.View style={styles.main}>
       <Animated.FlatList
-        data={timers}
+        data={durationList}
         horizontal
         style={styles.flatListStyle}
         pagingEnabled={true}
@@ -95,7 +97,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, initialValue }: Props) => {
             <View style={styles.textContainer}>
               <Animated.Text style={[styles.text,
               { opacity, transform: [{ scale }] },
-              item === 10 && { fontSize: 30 }
+              item >= 10 && { fontSize: 30 }
               ]}>{item}</Animated.Text>
             </View>
           );

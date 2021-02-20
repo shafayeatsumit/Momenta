@@ -22,6 +22,16 @@ export const contentSettingReducer = (state: ContentSettings | {} = initialState
           backgroundMusic,
         }
       }
+    case ActionTypes.UpdateContentVibrationType:
+      const { vibrationType } = action.payload;
+
+      return {
+        ...state,
+        [action.payload.courseId]: {
+          ...state[action.payload.courseId],
+          vibrationType,
+        }
+      }
     case ActionTypes.ContentFinished:
       return {
         [action.payload.courseId]: {

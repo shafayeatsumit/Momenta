@@ -1,16 +1,316 @@
-import React from 'react'
-import { View, Text } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react'
+import { Animated, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
+import TrackPlayer from 'react-native-track-player';
+import BreathingProgress from "../../components/BreathingProgress";
+import { triggerHaptic } from "../../helpers/hapticFeedback";
+import useBreathCounter from "../../hooks/useBreathCounter";
+import useTimer from "../../hooks/useTimer";
+import { RootState } from "../../redux/reducers";
+import InfoModal from "../../components/Info";
+import Settings from '../settings/Settings';
+import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
+import { playBackgroundMusic, fadeInBackground, stopBackgroundMusic } from "../../helpers/LessonPlayer";
+import ProgressBar from '../../components/ProgressBar';
+import DurationPicker from "../../components/DurationPicker";
+
+import BackgroundImage from "../../components/BackgroundImage";
+import LessonBackButton from "../../components/LessonBack";
+import FinishCheckMark from "../../components/FinishCheckMark";
+import LessonForwardButton from "../../components/LessonForward";
+import BackgroundCircle from "../../components/BackgroundCircle"
+import FinishButton from "../../components/FinishButton";
+import NavigateLesson from "../../components/NavigateLesson";
+import Timer from "../../components/Timer";
+
+import PlayButton from "../../components/PlayButton";
+import PauseButton from "../../components/PauseButton";
+import LessonTitle from "../../components/LessonTitle";
+import SettingsButton from "../../components/SettingsButton";
+import ExerciseInfo from "../../components/ExerciseInfo";
+import BackButton from "../../components/BackButton";
+import TapHandler from "../../components/TapHandler";
+import { updateContentSettings, contentFinished, ContentSettings } from "../../redux/actions/contentSettings";
+
+import { BreathingState, ExerciseState } from "../../helpers/types";
+import LinearGradient from 'react-native-linear-gradient';
+import { useSelector, useDispatch } from 'react-redux';
+import _, { update } from 'lodash';
+import CourseTitle from '../../components/CourseTitle';
+
 
 interface Props {
-
+  route: RouteProp<any, any>;
+  navigation: any;
 }
 
-const GuidedPractice: React.FC<Props> = ({ }) => {
+enum AnimationType {
+  ExpandCircle,
+  ShrinkCircle,
+}
+
+interface Progress {
+  type: AnimationType | null;
+  duration: number;
+}
+
+let lessonStarted = false;
+
+const DurationList = [...Array(11).keys()].map((i) => i * 3 + 1).filter((item) => item > 1);
+
+
+const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
+  const dispatch = useDispatch();
+  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
+  const selectSettings = (state: RootState) => state.settings;
+  const selectContentSettings = (state: RootState) => state.contentSettings;
+  const contentSettings: ContentSettings = useSelector(selectContentSettings);
+  const allBackgroundMusic = useSelector(selectBackgroundMusic);
+
+
+  const { id: practiceId, inhaleTime, primaryColor, lessons, introLesssons, welcome, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.guidePractice;
+
+
+
+  const backgroundMusic = contentSettings[practiceId] && contentSettings[practiceId].backgroundMusic ? contentSettings[practiceId].backgroundMusic : 'swell';
+  const vibrationType = contentSettings[practiceId] && contentSettings[practiceId].vibrationType ? contentSettings[practiceId].vibrationType : 'purr_inhale';
+  console.log('content settings', contentSettings);
+  const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
+  const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
+  const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+  const [exerciseDuration, setExerciseDuration] = useState<number>(3);
+  const [activeLesson, setActiveLesson] = useState<any>(null);
+  const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+  const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
+  const [practiceFinished, setPracticeFinished] = useState<boolean>(false);
+  const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
+
+  const fadeOutAnimation = useRef(new Animated.Value(1)).current;
+
+
+  const setupNewLesson = async () => {
+
+
+  }
+
+
+  const breathCountEnd = () => {
+    switch (breathingState !== 0) {
+      case (breathingState === BreathingState.Inhale):
+        startExhale();
+        return
+      case (breathingState === BreathingState.Exhale):
+        startInhale();
+        return
+    }
+  }
+
+
+  const onStartAnimation = () => {
+    Animated.timing(fadeOutAnimation, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(startExercise);
+  }
+
+  const startBackgroundMusic = () => {
+    const music = allBackgroundMusic.find((item) => item.id === backgroundMusic);
+    if (music) {
+      playBackgroundMusic(music.fileName);
+    }
+  }
+
+
+
+  useEffect(() => {
+    return () => {
+    }
+  }, [])
+
+  const timerEnd = () => {
+    setExerciseState(ExerciseState.Finish);
+  }
+
+
+  const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
+  const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
+  const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
+  const isPaused = exerciseState === ExerciseState.Paused;
+  const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
+
+
+  const showTimer = isPaused || optionsVisible;
+  const showProgressBar = isPaused || optionsVisible;
+  const showPause = optionsVisible && !isStopped;
+  const hasSwell = backgroundMusic === 'swell';
+  const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
+  const showBackgroundCircle = (isStopped || isPaused);
+
+  const startExhale = (duration = exhaleTime) => {
+    hasSwell && startSwellExhale(exhaleTime);
+    startBreathCounter(duration)
+    setBreathingState(BreathingState.Exhale)
+    setProgress({ type: AnimationType.ShrinkCircle, duration })
+  }
+
+  const exhaleEnd = () => {
+
+  }
+
+  const startInhale = (duration = inhaleTime) => {
+    hasSwell && startSwellInhale(inhaleTime);
+    startBreathCounter(duration)
+    setBreathingState(BreathingState.Inhale);
+    setProgress({ type: AnimationType.ExpandCircle, duration })
+  }
+
+  const startExercise = () => {
+    startInhale();
+    setExerciseState(ExerciseState.Play)
+    startTimer();
+  }
+  const handleTimeSelect = (time: number) => {
+    const duration = time * 3 + 1
+    setExerciseDuration(duration);
+  }
+
+  const handleStart = () => {
+    if (!lessonStarted) {
+      lessonStarted = true;
+    }
+    triggerHaptic();
+    hasBackgroundMusic && startBackgroundMusic();
+    onStartAnimation();
+  }
+
+  const showOptions = () => {
+    if (!optionsVisible) {
+      setOptionsVisible(true);
+      hideOptions();
+    }
+  }
+
+  const hideOptions = () => {
+    Animated.timing(fadeOutAnimation, {
+      toValue: 0,
+      duration: 300,
+      delay: 2000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => setOptionsVisible(false));
+  }
+
+  const stop = () => {
+    fadeOutAnimation.setValue(1);
+    stopBreathCounter();
+    hasSwell && stopSwellSound();
+    hasBackgroundMusic && stopBackgroundMusic();
+  }
+
+  const handlePause = () => {
+    setExerciseState(ExerciseState.Paused);
+    stop();
+    TrackPlayer.pause();
+  }
+
+  const handleTap = () => {
+    if (exerciseState === ExerciseState.Play) {
+      showOptions();
+    }
+  }
+
+  const handlePressSettings = () => {
+    if (exerciseNotStarted) {
+      stop();
+    } else if (!isPaused) {
+      handlePause();
+    }
+    setSettingsVisible(true);
+  }
+
+  const closeSetting = () => setSettingsVisible(false);
+
+  const handlePressInfo = () => {
+    if (exerciseNotStarted) {
+      stop();
+    } else if (!isPaused) {
+      handlePause();
+    }
+    setInfoModalVisible(true);
+  }
+
+  const handleFinish = () => {
+    triggerHaptic();
+    stop();
+    dispatch(contentFinished(practiceId))
+    navigation.goBack()
+    TrackPlayer.stop();
+  }
+
+  const handleBack = () => {
+    !isPaused && stop();
+    navigation.goBack()
+    TrackPlayer.stop();
+  }
+
+
+
+
+
   return (
-    <View>
-      <Text>Hello World</Text>
-    </View>
+    <LinearGradient
+      useAngle={true}
+      angle={192}
+      angleCenter={{ x: 0.5, y: 0.5 }}
+      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
+      colors={backgroundGradient}
+      style={{ flex: 1 }}
+    >
+      <BackgroundImage imagePath={backgroundImage} />
+      {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
+      {practiceFinished && <FinishCheckMark />}
+
+
+      {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
+      {exerciseNotStarted && <DurationPicker durationList={DurationList} exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+
+      {(isStopped || optionsVisible) &&
+        <>
+          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
+          <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
+          {!lessonStarted && <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />}
+
+        </>
+      }
+
+      <CourseTitle title={name} />
+      {activeLesson && <LessonTitle lesson={activeLesson} totalLessons={totalLessons} />}
+      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
+      <TapHandler handleTap={handleTap} />
+      {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
+      {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
+
+      {practiceFinished && <FinishButton color={primaryColor} handleCourseFinish={handleFinish} />}
+      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={settingsVisible}
+        onRequestClose={closeSetting}
+      >
+        <Settings
+          courseId={practiceId} backgroundMusic={backgroundMusic}
+          vibrationType={vibrationType}
+          showVibrationSettings={true} closeModal={closeSetting}
+          color={primaryColor} />
+      </Modal>
+
+
+    </LinearGradient>
+
   );
 }
 
-export default GuidedPractice;
+export default FixedExercise;

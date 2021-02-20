@@ -358,7 +358,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         onRequestClose={closeSetting}
 
       >
-        <Settings showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
+        <Settings vibrationType={vibrationType} showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
       </Modal>
 
       <Modal

@@ -7,13 +7,14 @@ interface Props {
   exerciseDuration: number;
   handleTimeSelect: (time: number) => void;
   opacity: any;
+  durationList?: number[],
 }
 
-const DurationPicker: React.FC<Props> = ({ exerciseDuration, handleTimeSelect, opacity }: Props) => {
+const DurationPicker: React.FC<Props> = ({ exerciseDuration, handleTimeSelect, opacity, durationList }: Props) => {
   return (
     <Animated.View style={[styles.container, { opacity }]}>
       <Text allowFontScaling={false} style={{ textAlign: 'center', fontSize: 24, color: 'white', fontFamily: FontType.Medium }}>Minutes</Text>
-      <ScrollPicker onSelect={handleTimeSelect} initialValue={exerciseDuration} />
+      <ScrollPicker durationList={durationList} onSelect={handleTimeSelect} initialValue={exerciseDuration} />
     </Animated.View>
   );
 }

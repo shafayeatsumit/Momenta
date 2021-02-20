@@ -23,10 +23,21 @@ export interface UpdateContentBackgroundMusicAction {
   }
 }
 
+export interface UpdateContentVibrationTypeAction {
+  type: ActionTypes.UpdateContentVibrationType,
+  payload: {
+    courseId: string,
+    vibrationType: string | null,
+  }
+}
+
 interface contentSettings {
   backgroundMusic?: string | null,
   lastLesson: number,
+  lastIntroLesson?: number,
+  listenedWelcome?: boolean,
   isFinished?: boolean,
+  vibrationType?: string | null,
 }
 
 export interface ContentSettings {
@@ -58,6 +69,16 @@ export const updateContentBackgroundMusic = (courseId: string, backgroundMusic: 
     payload: {
       courseId,
       backgroundMusic,
+    }
+  }
+}
+
+export const updateContentVibrationType = (contentId: string, vibrationType: string | null) => {
+  return {
+    type: ActionTypes.UpdateContentVibrationType,
+    payload: {
+      courseId: contentId,
+      vibrationType,
     }
   }
 }

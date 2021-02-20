@@ -7,6 +7,7 @@ import { RootState } from "../../redux/reducers";
 import { changeVibration } from "../../redux/actions/settings";
 import { useSelector, useDispatch } from "react-redux";
 import { eventButtonPush } from "../../helpers/analytics";
+import { updateContentVibrationType } from "../../redux/actions/contentSettings";
 import _ from 'lodash';
 
 const VibrationTypes = [
@@ -16,16 +17,23 @@ const VibrationTypes = [
 
 interface Props {
   color: string;
+  courseId?: string;
+  vibrationType: string | null;
 }
 
-const Vibration: React.FC<Props> = ({ color }) => {
+const Vibration: React.FC<Props> = ({ color, vibrationType, courseId }) => {
   const dispatch = useDispatch();
-  const selectSettings = (state: RootState) => state.settings;
-  const vibrationType = useSelector(selectSettings).vibrationType;
+  // const selectSettings = (state: RootState) => state.settings;
+  // const vibrationType = useSelector(selectSettings).vibrationType;
 
   const handlePress = (id: string | null) => {
     const eventName = id !== null ? id : 'off';
     eventButtonPush(`vibration_settings_${eventName}`)
+    if (courseId) {
+      dispatch(updateContentVibrationType(courseId, id));
+      return;
+    }
+
     dispatch(changeVibration(id))
   }
 

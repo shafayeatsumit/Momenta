@@ -18,7 +18,7 @@ const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, color }: Pro
     handleCourseFinish && handleCourseFinish();
   }
   return (
-    <TouchableOpacity style={[styles.button, handleCourseFinish && { left: 0, right: 0, alignSelf: 'center' }]} onPress={pressHandler}>
+    <TouchableOpacity style={[styles.button, handleCourseFinish && { left: 0, right: 0, alignSelf: 'center', bottom: 80 }]} onPress={pressHandler}>
       <Text allowFontScaling={false} style={[styles.text, { color: color }]}>FINISH</Text>
     </TouchableOpacity>
   );

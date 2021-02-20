@@ -15,6 +15,7 @@ import ProgressBar from '../../components/ProgressBar';
 
 import BackgroundImage from "../../components/BackgroundImage";
 import LessonBackButton from "../../components/LessonBack";
+import FinishCheckMark from "../../components/FinishCheckMark";
 import LessonForwardButton from "../../components/LessonForward";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
@@ -73,6 +74,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const backgroundMusic = contentSettings[courseId] && contentSettings[courseId].backgroundMusic ? contentSettings[courseId].backgroundMusic : null;
   const previouslyListened = contentSettings[courseId];
   const maxListened = contentSettings[courseId] ? contentSettings[courseId].lastLesson : 1;
+  const isFinishedOnce = contentSettings[courseId] ? contentSettings[courseId].isFinished : false;
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
@@ -83,15 +85,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const { position, duration: lessonDuration } = useTrackPlayerProgress();
   const lessonDurationInMins = Math.round(lessonDuration / 60);
-
-
-
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
-
-
-
 
   const goToNextLesson = () => {
     TrackPlayer.skipToNext();
@@ -117,7 +113,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
     const trackId = await TrackPlayer.getCurrentTrack()
     const lesson = await TrackPlayer.getTrack(trackId);
-    if (lesson.order > maxListened) {
+
+    if (isFinishedOnce) {
+      console.log('it should be in hrere');
+      dispatch(updateContentSettings(courseId, lesson.order))
+      return;
+    }
+    if (lesson && lesson.order > maxListened) {
       dispatch(updateContentSettings(courseId, lesson.order))
     }
 
@@ -171,6 +173,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       if (!event.nextTrack) {
         setCourseFinished(true);
+        triggerHaptic();
         return
       }
       setupNewLesson();
@@ -310,7 +313,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const firstLesson = lessons[0]
   const canGoBack = isStopped && !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
-  const canGoForward = isStopped && !courseFinished && activeLesson && activeLesson.order < maxListened;
+  let canGoForward = isStopped && (!courseFinished && activeLesson && activeLesson.order < maxListened);
+
 
 
   return (
@@ -324,6 +328,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     >
       <BackgroundImage imagePath={backgroundImage} />
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
+      {courseFinished && <FinishCheckMark />}
 
       {showTimer && <Timer time={position} exerciseDuration={lessonDurationInMins} />}
 

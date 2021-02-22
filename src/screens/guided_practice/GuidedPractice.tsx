@@ -30,7 +30,7 @@ import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
-import { updateContentSettings, contentFinished, ContentSettings } from "../../redux/actions/contentSettings";
+import { listenedLesson, listenedIntroLesson, listenedWelcomeLesson, contentFinished, ContentSettings } from "../../redux/actions/contentSettings";
 
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
@@ -42,6 +42,15 @@ import CourseTitle from '../../components/CourseTitle';
 interface Props {
   route: RouteProp<any, any>;
   navigation: any;
+}
+
+interface TrackType {
+  id: string,
+  url: string,
+  artist: string,
+  order: number,
+  duration: number,
+  title: string,
 }
 
 enum AnimationType {
@@ -68,17 +77,17 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
 
 
-  const { id: practiceId, inhaleTime, primaryColor, lessons, introLesssons, welcome, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.guidePractice;
+  const { id: practiceId, inhaleTime, primaryColor, lessons, introLessons, welcome, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.guidePractice;
 
 
-
+  const practiceSettings = contentSettings[practiceId];
   const backgroundMusic = contentSettings[practiceId] && contentSettings[practiceId].backgroundMusic ? contentSettings[practiceId].backgroundMusic : 'swell';
   const vibrationType = contentSettings[practiceId] && contentSettings[practiceId].vibrationType ? contentSettings[practiceId].vibrationType : 'purr_inhale';
-  console.log('content settings', contentSettings);
+  // console.log('content settings', contentSettings);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
-  const [exerciseDuration, setExerciseDuration] = useState<number>(3);
+  const [exerciseDuration, setExerciseDuration] = useState<number>(10);
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
@@ -88,10 +97,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const setupNewLesson = async () => {
 
-
-  }
 
 
   const breathCountEnd = () => {
@@ -122,10 +128,23 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
+  const setupEventTracker = () => {
+    TrackPlayer.addEventListener('playback-track-changed', async (event) => {
+      console.log('track player', event);
+      if (!event.nextTrack) {
+        triggerHaptic();
+        return
+      }
+    })
+  }
 
 
   useEffect(() => {
+    setupEventTracker();
     return () => {
+      TrackPlayer.reset();
+      lessonStarted = false;
+      stop();
     }
   }, [])
 
@@ -171,18 +190,103 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setExerciseState(ExerciseState.Play)
     startTimer();
   }
+
   const handleTimeSelect = (time: number) => {
     const duration = time * 3 + 1
     setExerciseDuration(duration);
   }
 
+
+  const getWelcomeTrack = () => {
+    const welcomeTrack = {
+      url: welcome,
+      artist: "Peter",
+      title: "Welcome",
+      id: "welcome",
+      duration: 60,
+      order: 0,
+    }
+    return welcomeTrack;
+  }
+
+  const getIntroLesson = (): TrackType => {
+    const listenedWelcome = practiceSettings && practiceSettings.listenedWelcome;
+    if (listenedWelcome) {
+      const lastListenedIntro = practiceSettings.lastIntroLesson
+
+      if (!lastListenedIntro || lastListenedIntro === introLessons.length) {
+        const firstLessonOrder = 1
+        dispatch(listenedIntroLesson(practiceId, firstLessonOrder))
+        return introLessons[0]
+      } else {
+        const nextLessonOrder = lastListenedIntro + 1;
+        dispatch(listenedIntroLesson(practiceId, nextLessonOrder))
+        return introLessons[lastListenedIntro]
+      }
+    }
+
+    const welcomeTrack = getWelcomeTrack();
+    dispatch(listenedWelcomeLesson(practiceId))
+    return welcomeTrack;
+  }
+
+  const reArrangeLessons = (lastLesson: number) => {
+    const firstHalf = lessons.slice(lastLesson, lessons.length)
+    const secondHalf = lessons.slice(0, lastLesson)
+    const updatedLessons = firstHalf.concat(secondHalf)
+    return updatedLessons;
+  }
+
+  const getLessons = () => {
+    const notFirstTimer = practiceSettings && practiceSettings.lastLesson;
+    const numberOfLessons = (exerciseDuration - 1) / 3;
+
+    if (notFirstTimer) {
+      const lastListenedLesson = practiceSettings.lastLesson;
+      if (!lastListenedLesson || lastListenedLesson === lessons.length) {
+        const firstLessonOrder = 1
+        dispatch(listenedLesson(practiceId, firstLessonOrder))
+        return lessons.slice(0, numberOfLessons);
+
+      } else {
+        const nextLessonOrder = lastListenedLesson + 1;
+        const lessonsUpdate = reArrangeLessons(lastListenedLesson)
+        dispatch(listenedLesson(practiceId, nextLessonOrder))
+        const rearrangedLessons = lessonsUpdate.slice(0, numberOfLessons)
+        return rearrangedLessons;
+      }
+    }
+    // for the first timer 
+    // if last lesson --> splice and prepareTracks
+    dispatch(listenedLesson(practiceId, 1))
+    return lessons.slice(0, numberOfLessons);
+
+  }
+
+  const startVoiceOver = async () => {
+    await TrackPlayer.play()
+    hasBackgroundMusic && fadeInBackground();
+  }
+
+  const prepareTracks = async () => {
+    let allTracks: any = [];
+    const introTrack = getIntroLesson();
+    const lessonTracks = getLessons();
+    allTracks = [introTrack, ...lessonTracks];
+    await TrackPlayer.add(allTracks)
+    await TrackPlayer.play()
+  }
+
   const handleStart = () => {
     if (!lessonStarted) {
       lessonStarted = true;
+      prepareTracks();
     }
+
     triggerHaptic();
     hasBackgroundMusic && startBackgroundMusic();
     onStartAnimation();
+    startVoiceOver();
   }
 
   const showOptions = () => {
@@ -274,7 +378,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
-      {exerciseNotStarted && <DurationPicker durationList={DurationList} exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+      {exerciseNotStarted && <DurationPicker durationList={DurationList} exerciseDuration={(exerciseDuration - 1) / 3} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
       {(isStopped || optionsVisible) &&
         <>
@@ -301,7 +405,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         onRequestClose={closeSetting}
       >
         <Settings
-          courseId={practiceId} backgroundMusic={backgroundMusic}
+          contentId={practiceId} backgroundMusic={backgroundMusic}
           vibrationType={vibrationType}
           showVibrationSettings={true} closeModal={closeSetting}
           color={primaryColor} />

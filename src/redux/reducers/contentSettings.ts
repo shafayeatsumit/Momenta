@@ -8,8 +8,8 @@ export const contentSettingReducer = (state: ContentSettings | {} = initialState
       const { lastLesson } = action.payload;
       return {
         ...state,
-        [action.payload.courseId]: {
-          ...state[action.payload.courseId],
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
           lastLesson,
         }
       }
@@ -17,8 +17,8 @@ export const contentSettingReducer = (state: ContentSettings | {} = initialState
       const { backgroundMusic } = action.payload;
       return {
         ...state,
-        [action.payload.courseId]: {
-          ...state[action.payload.courseId],
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
           backgroundMusic,
         }
       }
@@ -27,15 +27,43 @@ export const contentSettingReducer = (state: ContentSettings | {} = initialState
 
       return {
         ...state,
-        [action.payload.courseId]: {
-          ...state[action.payload.courseId],
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
           vibrationType,
         }
       }
+    case ActionTypes.ListenedWelcomeLesson:
+      return {
+        ...state,
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
+          listenedWelcome: true,
+        }
+      }
+    case ActionTypes.ListenedIntroLesson:
+      const { introLessonOrder } = action.payload;
+      return {
+        ...state,
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
+          lastIntroLesson: introLessonOrder,
+        }
+      }
+
+    case ActionTypes.ListenedLesson:
+      const { lessonOrder } = action.payload;
+      return {
+        ...state,
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
+          lastLesson: lessonOrder,
+        }
+      }
+
     case ActionTypes.ContentFinished:
       return {
-        [action.payload.courseId]: {
-          ...state[action.payload.courseId],
+        [action.payload.contentId]: {
+          ...state[action.payload.contentId],
           isFinished: true,
           lastLesson: 0,
         }

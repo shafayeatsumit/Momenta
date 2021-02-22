@@ -1,8 +1,9 @@
 import { AddCountAction, RemoveCountAction } from "./count";
 import { SignUpAnonymouslyAction } from "./user";
 import {
-  UpdateContentSettingsAction, UpdateContentVibrationTypeAction,
-  UpdateContentBackgroundMusicAction, ContentFinishedAction
+  UpdateContentSettingsAction, UpdateContentVibrationTypeAction, ListenedIntroLessonAction,
+  UpdateContentBackgroundMusicAction, ContentFinishedAction, ListenedWelcomeLessonAction,
+  ListenedLessonAction,
 } from "./contentSettings";
 import { FetchExerciseAction } from "./exercise";
 import { ChangeVibrationAction, ChangeMusicAction } from "./settings";
@@ -20,13 +21,16 @@ export enum ActionTypes {
   UpdateContentSettings = "UPDATE_CONTENT_SETTINGS",
   UpdateContentBackgroundMusic = "UPDATE_CONTENT_MUSIC",
   UpdateContentVibrationType = "UPDATE_CONTENT_VIBRATION_TYPE",
+  ListenedWelcomeLesson = "LISTENED_WELCOME_LESSON",
+  ListenedIntroLesson = "LISTENED_INTRO_LESSON",
+  ListenedLesson = "LISTENED_LESSON",
   FinishedCourse = "FINISHED_COURSE",
   ContentFinished = "CONTENT_FINISHED",
 }
 
 
 export type UserAction = SignUpAnonymouslyAction;
-export type ContentSettingsAction = ContentFinishedAction | UpdateContentVibrationTypeAction | UpdateContentSettingsAction | UpdateContentBackgroundMusicAction;
+export type ContentSettingsAction = ListenedLessonAction | ListenedIntroLessonAction | ListenedWelcomeLessonAction | ContentFinishedAction | UpdateContentVibrationTypeAction | UpdateContentSettingsAction | UpdateContentBackgroundMusicAction;
 export type SettingsAction = ChangeVibrationAction | ChangeMusicAction;
 export type ExerciseAction = FetchExerciseAction;
 export type CountAction = AddCountAction | RemoveCountAction;

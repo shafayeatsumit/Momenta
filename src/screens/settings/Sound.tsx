@@ -13,11 +13,11 @@ import _ from 'lodash';
 
 interface Props {
   color: string;
-  courseId?: string;
+  contentId?: string;
   backgroundMusic: string | null;
 }
 
-const Sound: React.FC<Props> = ({ color, backgroundMusic, courseId }) => {
+const Sound: React.FC<Props> = ({ color, backgroundMusic, contentId }) => {
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const dispatch = useDispatch();
   const musicFiles = _.values(useSelector(selectBackgroundMusic));
@@ -37,8 +37,8 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic, courseId }) => {
     const eventTitle = getMusicName(id);
     eventButtonPush(`sound_settings_${eventTitle}`);
 
-    if (courseId) {
-      dispatch(updateContentBackgroundMusic(courseId, id));
+    if (contentId) {
+      dispatch(updateContentBackgroundMusic(contentId, id));
       return;
     }
     dispatch(changeMusic(id))

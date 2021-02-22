@@ -17,11 +17,11 @@ const VibrationTypes = [
 
 interface Props {
   color: string;
-  courseId?: string;
+  contentId?: string;
   vibrationType: string | null;
 }
 
-const Vibration: React.FC<Props> = ({ color, vibrationType, courseId }) => {
+const Vibration: React.FC<Props> = ({ color, vibrationType, contentId }) => {
   const dispatch = useDispatch();
   // const selectSettings = (state: RootState) => state.settings;
   // const vibrationType = useSelector(selectSettings).vibrationType;
@@ -29,8 +29,8 @@ const Vibration: React.FC<Props> = ({ color, vibrationType, courseId }) => {
   const handlePress = (id: string | null) => {
     const eventName = id !== null ? id : 'off';
     eventButtonPush(`vibration_settings_${eventName}`)
-    if (courseId) {
-      dispatch(updateContentVibrationType(courseId, id));
+    if (contentId) {
+      dispatch(updateContentVibrationType(contentId, id));
       return;
     }
 

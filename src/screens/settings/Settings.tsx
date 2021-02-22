@@ -13,12 +13,12 @@ interface Props {
   color: string;
   backgroundMusic: string | null,
   vibrationType: string | null,
-  courseId?: string;
+  contentId?: string;
   showVibrationSettings?: boolean;
 
 }
 
-const Settings: React.FC<Props> = ({ courseId, vibrationType, backgroundMusic, closeModal, color, showVibrationSettings }: Props) => {
+const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, closeModal, color, showVibrationSettings }: Props) => {
   return (
     <LinearGradient
       useAngle={true}
@@ -31,8 +31,8 @@ const Settings: React.FC<Props> = ({ courseId, vibrationType, backgroundMusic, c
       <View style={styles.spacer} />
       <Text allowFontScaling={false} style={styles.settings}>Settings</Text>
 
-      <SoundSettings courseId={courseId} backgroundMusic={backgroundMusic} color={color} />
-      {showVibrationSettings && <Vibration vibrationType={vibrationType} color={color} courseId={courseId} />}
+      <SoundSettings contentId={contentId} backgroundMusic={backgroundMusic} color={color} />
+      {showVibrationSettings && <Vibration vibrationType={vibrationType} color={color} contentId={contentId} />}
 
 
       <View style={styles.spacerBottom} />

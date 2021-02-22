@@ -3,7 +3,7 @@ import { ActionTypes } from "./types"
 export interface UpdateContentSettingsAction {
   type: ActionTypes.UpdateContentSettings,
   payload: {
-    courseId: string,
+    contentId: string,
     lastLesson: number,
   },
 }
@@ -11,14 +11,14 @@ export interface UpdateContentSettingsAction {
 export interface ContentFinishedAction {
   type: ActionTypes.ContentFinished,
   payload: {
-    courseId: string,
+    contentId: string,
   }
 }
 
 export interface UpdateContentBackgroundMusicAction {
   type: ActionTypes.UpdateContentBackgroundMusic,
   payload: {
-    courseId: string,
+    contentId: string,
     backgroundMusic: string | null,
   }
 }
@@ -26,8 +26,31 @@ export interface UpdateContentBackgroundMusicAction {
 export interface UpdateContentVibrationTypeAction {
   type: ActionTypes.UpdateContentVibrationType,
   payload: {
-    courseId: string,
+    contentId: string,
     vibrationType: string | null,
+  }
+}
+
+export interface ListenedWelcomeLessonAction {
+  type: ActionTypes.ListenedWelcomeLesson,
+  payload: {
+    contentId: string,
+  }
+}
+
+export interface ListenedIntroLessonAction {
+  type: ActionTypes.ListenedIntroLesson,
+  payload: {
+    contentId: string,
+    introLessonOrder: number,
+  }
+}
+
+export interface ListenedLessonAction {
+  type: ActionTypes.ListenedLesson,
+  payload: {
+    contentId: string,
+    lessonOrder: number,
   }
 }
 
@@ -44,30 +67,30 @@ export interface ContentSettings {
   [id: string]: contentSettings,
 }
 
-export const updateContentSettings = (courseId: string, lastLesson: number): UpdateContentSettingsAction => {
+export const updateContentSettings = (contentId: string, lastLesson: number): UpdateContentSettingsAction => {
   return {
     type: ActionTypes.UpdateContentSettings,
     payload: {
       lastLesson,
-      courseId,
+      contentId,
     }
   }
 }
 
-export const contentFinished = (courseId: string): ContentFinishedAction => {
+export const contentFinished = (contentId: string): ContentFinishedAction => {
   return {
     type: ActionTypes.ContentFinished,
     payload: {
-      courseId,
+      contentId,
     }
   }
 }
 
-export const updateContentBackgroundMusic = (courseId: string, backgroundMusic: string | null) => {
+export const updateContentBackgroundMusic = (contentId: string, backgroundMusic: string | null) => {
   return {
     type: ActionTypes.UpdateContentBackgroundMusic,
     payload: {
-      courseId,
+      contentId,
       backgroundMusic,
     }
   }
@@ -77,8 +100,37 @@ export const updateContentVibrationType = (contentId: string, vibrationType: str
   return {
     type: ActionTypes.UpdateContentVibrationType,
     payload: {
-      courseId: contentId,
+      contentId: contentId,
       vibrationType,
+    }
+  }
+}
+
+export const listenedWelcomeLesson = (contentId: string) => {
+  return {
+    type: ActionTypes.ListenedWelcomeLesson,
+    payload: {
+      contentId,
+    }
+  }
+}
+
+export const listenedIntroLesson = (contentId: string, order: number) => {
+  return {
+    type: ActionTypes.ListenedIntroLesson,
+    payload: {
+      contentId,
+      introLessonOrder: order,
+    }
+  }
+}
+
+export const listenedLesson = (contentId: string, order: number) => {
+  return {
+    type: ActionTypes.ListenedLesson,
+    payload: {
+      contentId,
+      lessonOrder: order,
     }
   }
 }

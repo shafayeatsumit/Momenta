@@ -5,15 +5,18 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
+  spacer: {
+    height: 60,
+  },
   tilesContainer: {
-    paddingTop: 40,
-    paddingBottom: 10,
+    paddingTop: 20,
+    // paddingBottom: 10,
     flexGrow: 1,
     marginHorizontal: 20,
   },
   titleHolder: {
     width: 280,
-    marginTop: 50,
+    // marginTop: 0,
     marginLeft: 40,
   },
   title: {

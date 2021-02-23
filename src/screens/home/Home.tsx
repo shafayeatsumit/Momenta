@@ -3,6 +3,7 @@ import { View, Text, BackHandler, ScrollView, Platform } from 'react-native';
 import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
 import GuidedPracticeThumbnail from './GuidedPracticeThumbnail';
+import CourseThumbnail from './CourseThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootState } from "../../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,6 +45,8 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     navigation.navigate('GuidedPractice', { guidePractice })
   }
 
+
+
   const backAction = () => {
     eventButtonPush('android_back_button')
     return false;
@@ -68,26 +71,39 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       colors={["#323545", "#121118"]}
       style={styles.mainContainer}
     >
-      <View style={styles.titleHolder}>
-        <Text style={styles.title}>Exercises</Text>
-      </View>
-      <View >
-        <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
-          {allExercise.map((exercise) =>
-            <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
-          )}
-        </ScrollView>
-      </View>
-      <View style={styles.titleHolder}>
-        <Text style={styles.title}>Guided Practices</Text>
-      </View>
-      <View >
-        <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
-          {allGuidedPractice.map((practice) =>
-            <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
-          )}
-        </ScrollView>
-      </View>
+      <View style={styles.spacer} />
+      <ScrollView>
+        <View style={styles.titleHolder}>
+          <Text style={styles.title}>Exercises</Text>
+        </View>
+        <View >
+          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+            {allExercise.map((exercise) =>
+              <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
+            )}
+          </ScrollView>
+        </View>
+        <View style={styles.titleHolder}>
+          <Text style={styles.title}>Guided Practices</Text>
+        </View>
+        <View >
+          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+            {allGuidedPractice.map((practice) =>
+              <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
+            )}
+          </ScrollView>
+        </View>
+        <View style={styles.titleHolder}>
+          <Text style={styles.title}>Courses</Text>
+        </View>
+        <View >
+          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+            {allCourse.map((course) =>
+              <CourseThumbnail goToPractice={goToCourse} key={course.id} content={course} />
+            )}
+          </ScrollView>
+        </View>
+      </ScrollView>
     </LinearGradient>
   );
 };

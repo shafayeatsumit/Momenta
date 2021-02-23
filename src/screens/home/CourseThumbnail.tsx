@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants/common';
 import { FontType } from '../../helpers/theme';
-import { GuidePractice } from "../../redux/actions/guidedPractice";
+import { Course } from "../../redux/actions/course";
 import { RootState } from "../../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Props {
-  content: GuidePractice;
+  content: Course;
   goToPractice: Function;
 }
 
@@ -39,19 +39,16 @@ const Thumbnail: React.FC<Props> = ({ content, goToPractice }) => {
         >
           <Text allowFontScaling={false} style={styles.textBold}>{content.name}</Text>
           <Text allowFontScaling={false} style={styles.level}>{content.level}</Text>
-          {/* {isFinished &&
+          {isFinished &&
             <View style={styles.checkmarkHolder}>
               <Image source={require('../../../assets/images/checkmark.png')} style={styles.checkmark} />
             </View>
-          } */}
+          }
 
         </ImageBackground>
       </View>
 
-      <View style={styles.textContainer}>
-        {/* <Text allowFontScaling={false} style={styles.title}>{course.totalLessons} lessons . {course.totalDuration} minutes</Text> */}
-        <Text allowFontScaling={false} style={styles.subTitle}>{content.thumbnailTitle}</Text>
-      </View>
+
     </TouchableOpacity>
 
   );
@@ -60,8 +57,8 @@ export default Thumbnail;
 
 const styles = StyleSheet.create({
   tiles: {
-    width: ScreenWidth / 1.35,
-    height: ScreenWidth / 1.8,
+    width: ScreenWidth / 1.8,
+    height: ScreenWidth / 2.5,
     marginHorizontal: 10,
   },
   thumbnailContainer: {
@@ -69,9 +66,9 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     paddingTop: 8,
-    flex: 2,
+    flex: 1,
     padding: 5,
-    // backgroundColor: 'orange',
+    backgroundColor: 'orange',
   },
   thumbnail: {
     height: '100%',

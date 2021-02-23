@@ -65,6 +65,7 @@ interface Progress {
 }
 
 let lessonStarted = false;
+let introComplete = false;
 
 const DurationList = [...Array(11).keys()].map((i) => i * 3 + 1).filter((item) => item > 1);
 
@@ -84,13 +85,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const practiceSettings = contentSettings[practiceId];
   const backgroundMusic = contentSettings[practiceId] && contentSettings[practiceId].backgroundMusic ? contentSettings[practiceId].backgroundMusic : 'swell';
   const vibrationType = contentSettings[practiceId] && contentSettings[practiceId].vibrationType ? contentSettings[practiceId].vibrationType : 'purr_inhale';
-  // console.log('content settings', contentSettings);
+  console.log('content settings', contentSettings);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [exerciseDuration, setExerciseDuration] = useState<number>(10);
   const [activeLesson, setActiveLesson] = useState<any>(null);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
+
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [practiceFinished, setPracticeFinished] = useState<boolean>(false);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
@@ -130,14 +132,27 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
+  const handleTrackChangeEvent = async (event) => {
+    if (!event.nextTrack) {
+      return
+    }
+    if (!introComplete) {
+      introComplete = true;
+      return;
+    }
+    console.log('event', event);
+    const lesson = await TrackPlayer.getTrack(event.nextTrack);
+    dispatch(listenedLesson(practiceId, lesson.order))
+  }
+
+  const handleQueueEndEvent = async (event) => {
+    setPracticeFinished(true);
+    triggerHaptic();
+  }
+
   const setupEventTracker = () => {
-    TrackPlayer.addEventListener('playback-track-changed', async (event) => {
-      console.log('track player', event);
-      if (!event.nextTrack) {
-        triggerHaptic();
-        return
-      }
-    })
+    TrackPlayer.addEventListener('playback-track-changed', handleTrackChangeEvent)
+    TrackPlayer.addEventListener('playback-queue-ended', handleQueueEndEvent)
   }
 
 
@@ -156,6 +171,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     return () => {
       TrackPlayer.reset();
       lessonStarted = false;
+      introComplete = false;
       stop();
     }
   }, [])
@@ -258,21 +274,20 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     if (notFirstTimer) {
       const lastListenedLesson = practiceSettings.lastLesson;
       if (!lastListenedLesson || lastListenedLesson === lessons.length) {
-        const firstLessonOrder = 1
-        dispatch(listenedLesson(practiceId, firstLessonOrder))
+
         return lessons.slice(0, numberOfLessons);
 
       } else {
         const nextLessonOrder = lastListenedLesson + 1;
         const lessonsUpdate = reArrangeLessons(lastListenedLesson)
-        dispatch(listenedLesson(practiceId, nextLessonOrder))
+
         const rearrangedLessons = lessonsUpdate.slice(0, numberOfLessons)
         return rearrangedLessons;
       }
     }
     // for the first timer 
     // if last lesson --> splice and prepareTracks
-    dispatch(listenedLesson(practiceId, 1))
+
     return lessons.slice(0, numberOfLessons);
 
   }

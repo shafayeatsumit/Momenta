@@ -33,8 +33,13 @@ const InfoModal: React.FC<Props> = ({ about, tips, title, handleClose }) => {
       <ScrollView style={styles.scrollView}>
         <Text allowFontScaling={false} style={styles.title}>About</Text>
         <Text allowFontScaling={false} style={styles.text}>{jsonEscape(about)}</Text>
-        <Text allowFontScaling={false} style={styles.title}>Tips</Text>
-        <Text allowFontScaling={false} style={styles.text}>{jsonEscape(tips)}</Text>
+        {tips &&
+          <>
+            <Text allowFontScaling={false} style={styles.title}>Tips</Text>
+            <Text allowFontScaling={false} style={styles.text}>{jsonEscape(tips)}</Text>
+          </>
+
+        }
       </ScrollView>
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>

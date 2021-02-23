@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   titleHolder: {
-    width: 250,
+    width: 280,
     marginTop: 50,
     marginLeft: 40,
   },

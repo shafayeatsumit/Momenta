@@ -15,6 +15,7 @@ import ProgressBar from '../../components/ProgressBar';
 import DurationPicker from "../../components/DurationPicker";
 
 import BackgroundImage from "../../components/BackgroundImage";
+import BreathingInstruction from "../../components/BreathingInstructionText";
 import LessonBackButton from "../../components/LessonBack";
 import FinishCheckMark from "../../components/FinishCheckMark";
 import LessonForwardButton from "../../components/LessonForward";
@@ -93,6 +94,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [practiceFinished, setPracticeFinished] = useState<boolean>(false);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
+  const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
@@ -139,8 +141,18 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
 
+  const setupHaptics = () => {
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
+        setIOSHapticStatus(resp)
+        if (resp) NativeModules.IOSVibration.prepareHaptics();
+      });
+    }
+  }
+
   useEffect(() => {
     setupEventTracker();
+    setupHaptics();
     return () => {
       TrackPlayer.reset();
       lessonStarted = false;
@@ -172,6 +184,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
+    vibrationType === 'purr_exhale' && startVibration(exhaleTime);
   }
 
   const exhaleEnd = () => {
@@ -182,6 +195,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     hasSwell && startSwellInhale(inhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
+    vibrationType === 'purr_inhale' && startVibration(inhaleTime);
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
@@ -306,11 +320,40 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }).start(() => setOptionsVisible(false));
   }
 
+  const startVibration = (duration: number) => {
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.startVibration(duration * 1000, 20);
+      return;
+    }
+    if (Platform.OS === 'ios') {
+      NativeModules.IOSVibration.startVibration(duration);
+      return;
+    }
+  }
+
+
+  const stopVibration = () => {
+    if (vibrationType === null) {
+      return;
+    }
+    if (Platform.OS === 'android') {
+      NativeModules.AndroidVibration.cancelVibration();
+      return;
+    }
+
+    if (Platform.OS === 'ios' && iosHapticStatus && !__DEV__) {
+      NativeModules.IOSVibration.cancelVibration();
+      return;
+    }
+  }
+
   const stop = () => {
     fadeOutAnimation.setValue(1);
     stopBreathCounter();
+    stopTimer();
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
+    stopVibration();
   }
 
   const handlePause = () => {
@@ -387,6 +430,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           {!lessonStarted && <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />}
 
         </>
+      }
+      {!isPaused && !optionsVisible &&
+        <BreathingInstruction
+          breathCounter={breathCounter} totalBreathCount={1} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
+
+        />
       }
 
       <CourseTitle title={name} />

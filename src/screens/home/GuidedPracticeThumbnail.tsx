@@ -61,15 +61,16 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 1.35,
-    height: ScreenWidth / 1.8,
+    height: ScreenWidth / 1.9,
     marginHorizontal: 10,
+    // backgroundColor: 'yellow',
   },
   thumbnailContainer: {
     flex: 5,
   },
   textContainer: {
     paddingTop: 8,
-    flex: 2,
+    flex: 1.2,
     padding: 5,
     // backgroundColor: 'orange',
   },

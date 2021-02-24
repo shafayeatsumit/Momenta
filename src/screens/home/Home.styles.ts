@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: FontType.Bold,
-    fontSize: 28,
+    fontSize: 25,
     color: 'white',
   }
 });

@@ -315,7 +315,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const canGoBack = isStopped && !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
   let canGoForward = isStopped && (!courseFinished && activeLesson && activeLesson.order < maxListened);
 
-
+  console.log('bg', backgroundImage)
 
   return (
     <LinearGradient

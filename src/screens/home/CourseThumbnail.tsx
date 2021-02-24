@@ -38,7 +38,7 @@ const Thumbnail: React.FC<Props> = ({ content, goToPractice }) => {
           resizeMode={"cover"}
         >
           <Text allowFontScaling={false} style={styles.textBold}>{content.name}</Text>
-          <Text allowFontScaling={false} style={styles.level}>{content.level}</Text>
+          <Text allowFontScaling={false} style={styles.level}>{content.totalLessons} Lessons</Text>
           {isFinished &&
             <View style={styles.checkmarkHolder}>
               <Image source={require('../../../assets/images/checkmark.png')} style={styles.checkmark} />
@@ -46,9 +46,14 @@ const Thumbnail: React.FC<Props> = ({ content, goToPractice }) => {
           }
 
         </ImageBackground>
+
+
       </View>
 
-
+      <View style={styles.textContainer}>
+        {/* <Text allowFontScaling={false} style={styles.title}>{course.totalLessons} lessons . {course.totalDuration} minutes</Text> */}
+        <Text allowFontScaling={false} style={styles.subTitle}>{content.thumbnailTitle}</Text>
+      </View>
     </TouchableOpacity>
 
   );
@@ -57,8 +62,8 @@ export default Thumbnail;
 
 const styles = StyleSheet.create({
   tiles: {
-    width: ScreenWidth / 1.8,
-    height: ScreenWidth / 2.5,
+    width: ScreenWidth / 2,
+    height: ScreenWidth / 2.0,
     marginHorizontal: 10,
   },
   thumbnailContainer: {
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     flex: 1,
     padding: 5,
-    backgroundColor: 'orange',
+    // backgroundColor: 'red',
   },
   thumbnail: {
     height: '100%',
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   textBold: {
-    fontSize: 20,
+    fontSize: 18,
     position: 'absolute',
     top: 18,
     left: 15,
@@ -99,17 +104,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 12,
     right: 15,
-    height: 28,
-    width: 28,
-    borderRadius: 14,
+    height: 24,
+    width: 24,
+    borderRadius: 12,
     tintColor: 'white',
     backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkmark: {
-    height: 16,
-    width: 16,
+    height: 12,
+    width: 12,
     tintColor: 'white',
     zIndex: 3,
   },

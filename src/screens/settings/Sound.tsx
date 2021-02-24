@@ -68,7 +68,10 @@ const Sound: React.FC<Props> = ({ color, backgroundMusic, contentId }) => {
       <Text allowFontScaling={false} style={styles.title}>Sound</Text>
       <ScrollView style={{ flex: 1 }}>
         <OFF />
-        <SWELL />
+        {!contentId &&
+          <SWELL />
+        }
+
         {musicFiles.map((item) => {
           return (
             <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>

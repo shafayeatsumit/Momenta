@@ -71,7 +71,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
   // this line needs to be changed;
-  const backgroundMusic = contentSettings[courseId] && contentSettings[courseId].backgroundMusic ? contentSettings[courseId].backgroundMusic : null;
+  const backgroundMusic = contentSettings[courseId] && contentSettings[courseId].backgroundMusic ? contentSettings[courseId].backgroundMusic : 'river';
   const previouslyListened = contentSettings[courseId];
   const maxListened = contentSettings[courseId] ? contentSettings[courseId].lastLesson : 1;
   const isFinishedOnce = contentSettings[courseId] ? contentSettings[courseId].isFinished : false;

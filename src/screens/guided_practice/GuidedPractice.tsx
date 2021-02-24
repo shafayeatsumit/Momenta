@@ -67,7 +67,7 @@ interface Progress {
 let lessonStarted = false;
 let introComplete = false;
 
-const DurationList = [...Array(11).keys()].map((i) => i * 3 + 1).filter((item) => item > 1);
+const DurationList = [...Array(5).keys()].map((i) => i * 3 + 1).filter((item) => item > 1);
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
@@ -83,7 +83,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const practiceSettings = contentSettings[practiceId];
-  const backgroundMusic = contentSettings[practiceId] && contentSettings[practiceId].backgroundMusic ? contentSettings[practiceId].backgroundMusic : 'swell';
+  const backgroundMusic = contentSettings[practiceId] && contentSettings[practiceId].backgroundMusic ? contentSettings[practiceId].backgroundMusic : 'river';
   const vibrationType = contentSettings[practiceId] && contentSettings[practiceId].vibrationType ? contentSettings[practiceId].vibrationType : 'purr_inhale';
   console.log('content settings', contentSettings);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -446,16 +446,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
         </>
       }
-      {!isPaused && !optionsVisible &&
-        <BreathingInstruction
-          breathCounter={breathCounter} totalBreathCount={1} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
 
-        />
-      }
 
       <CourseTitle title={name} />
       {activeLesson && <LessonTitle lesson={activeLesson} totalLessons={totalLessons} />}
-      <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}

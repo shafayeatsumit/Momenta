@@ -62,6 +62,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       backHandler.remove();
     }
   }, [])
+  console.log('allExercise ===>', allExercise.length);
   return (
     <LinearGradient
       useAngle={true}
@@ -77,7 +78,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
           <Text style={styles.title}>Exercises</Text>
         </View>
         <View >
-          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
             {allExercise.map((exercise) =>
               <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
             )}
@@ -87,7 +88,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
           <Text style={styles.title}>Guided Practices</Text>
         </View>
         <View >
-          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
             {allGuidedPractice.map((practice) =>
               <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
             )}
@@ -97,7 +98,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
           <Text style={styles.title}>Courses</Text>
         </View>
         <View >
-          <ScrollView horizontal={true} contentContainerStyle={styles.tilesContainer}>
+          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
             {allCourse.map((course) =>
               <CourseThumbnail goToPractice={goToCourse} key={course.id} content={course} />
             )}

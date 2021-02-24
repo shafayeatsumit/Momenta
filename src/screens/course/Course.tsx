@@ -334,7 +334,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {(isStopped || optionsVisible) &&
         <>
-          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
+          {/* <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} /> */}
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
           {!lessonStarted && <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />}
 

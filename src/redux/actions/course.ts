@@ -23,8 +23,7 @@ export interface Course {
   lesons: Array<courseLesson>;
   totalLessons: number;
   totalDuration: number;
-  inhaleTime: number;
-  exhaleTime: number;
+  about: string;
 }
 
 export type Courses = {
@@ -37,9 +36,10 @@ export interface FetchCourseAction {
 }
 
 export const fetchCourse = () => {
+  console.log('going to fetch courses here');
   return async (dispatch: Dispatch) => {
     const response = await api.get(COURSE_URL);
-    let courses: Course[] = response.data.courses;
+    let courses: Course[] = response.data;
     const coursePayload: any = _.mapKeys(courses, "name");
     dispatch<FetchCourseAction>({
       type: ActionTypes.AddCourse,

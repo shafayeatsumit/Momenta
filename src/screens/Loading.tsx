@@ -31,7 +31,8 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   useEffect(() => {
     if (isExistingUser) eventSetUserId(user.id)
     if (!isExistingUser) dispatch(signUpAnonymously());
-    if (!exerciseFetchCompleted) dispatch(fetchExercise());
+    // if (!exerciseFetchCompleted) dispatch(fetchExercise());
+    dispatch(fetchExercise());
     dispatch(fetchCourse());
     dispatch(fetchGuidedPractice());
   }, [])

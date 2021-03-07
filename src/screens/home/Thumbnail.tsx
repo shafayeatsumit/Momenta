@@ -15,8 +15,13 @@ interface Props {
   goToExercise: Function;
 }
 
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
-  const thumbnailSource = "file://" + exercise.thumbnailPath;
+  const thumbnailSource = exercise.thumbnail;
+  const displayName = capitalizeFirstLetter(exercise.name);
   return (
 
     <TouchableOpacity
@@ -30,14 +35,13 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text allowFontScaling={false} style={styles.textBold}>{exercise.displayName}</Text>
+          <Text allowFontScaling={false} style={styles.textBold}>{displayName}</Text>
           <Text allowFontScaling={false} style={styles.level}>{exercise.level}</Text>
         </ImageBackground>
       </View>
 
       <View style={styles.textContainer}>
         <Text allowFontScaling={false} style={styles.title}>{exercise.thumbnailTitle}</Text>
-        {/* <Text allowFontScaling={false} style={styles.subTitle}>{exercise.thumbnailSubtitle}</Text> */}
       </View>
     </TouchableOpacity>
 

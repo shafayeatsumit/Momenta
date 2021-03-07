@@ -9,7 +9,12 @@ const BASEURL = 'http://production.getmomenta.co/'
 
 // AsyncStorage.clear();
 
-const anonymousEndpoints = ['user/signUpAnonymously'];
+const anonymousEndpoints = [
+  'auth/local/register',
+  'exercises',
+  'courses',
+  'guided-practices',
+];
 
 export const api = axios.create({
   baseURL: BASEURL,

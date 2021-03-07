@@ -29,7 +29,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   const allGuidedPractice = _.values(useSelector(selectGuidedPractice));
 
   const goToExercise = (exercise: Exercise) => {
-    eventButtonPush(`go_to_${exercise.displayName}`);
+    eventButtonPush(`go_to_${exercise.name}`);
     const { exerciseType } = exercise
     const navPath = exerciseType === 'guided' ? "GuidedExercise" : "FixedExercise"
     navigation.navigate(navPath, { exercise })
@@ -62,7 +62,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       backHandler.remove();
     }
   }, [])
-  console.log('allExercise ===>', allExercise.length);
+
   return (
     <LinearGradient
       useAngle={true}

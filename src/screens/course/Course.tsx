@@ -20,7 +20,7 @@ import LessonForwardButton from "../../components/LessonForward";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import NavigateLesson from "../../components/NavigateLesson";
-import Timer from "../../components/Timer";
+import CourseTimer from "../../components/CourseTimer";
 
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
@@ -84,7 +84,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [courseFinished, setCourseFinished] = useState<boolean>(false);
 
   const { position, duration: lessonDuration } = useTrackPlayerProgress();
-  const lessonDurationInMins = Math.round(lessonDuration / 60);
+  const lessonDurationInSecs = Math.round(lessonDuration);
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -102,7 +102,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const trackId = await TrackPlayer.getCurrentTrack()
     const lesson = await TrackPlayer.getTrack(trackId);
     setActiveLesson(lesson);
-
   }
 
   const updateContent = async () => {
@@ -115,7 +114,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     const lesson = await TrackPlayer.getTrack(trackId);
 
     if (isFinishedOnce) {
-      console.log('it should be in hrere');
       dispatch(updateContentSettings(courseId, lesson.order))
       return;
     }
@@ -314,8 +312,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const firstLesson = lessons[0]
   const canGoBack = isStopped && !courseFinished && activeLesson && firstLesson.id !== activeLesson.id;
   let canGoForward = isStopped && (!courseFinished && activeLesson && activeLesson.order < maxListened);
+  canGoForward = canGoForward || (isStopped && isFinishedOnce);
 
-  console.log('bg', backgroundImage)
 
   return (
     <LinearGradient
@@ -330,7 +328,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
       {courseFinished && <FinishCheckMark />}
 
-      {showTimer && <Timer time={position} exerciseDuration={lessonDurationInMins} />}
+      {showTimer && <CourseTimer time={position} exerciseDuration={lessonDurationInSecs} />}
 
       {(isStopped || optionsVisible) &&
         <>
@@ -351,7 +349,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {courseFinished && <FinishButton color={primaryColor} handleCourseFinish={handleFinish} />}
       {canGoBack && <LessonBackButton opacity={fadeOutAnimation} handlePress={goToPreviousLesson} />}
       {canGoForward && <LessonForwardButton opacity={fadeOutAnimation} handlePress={goToNextLesson} />}
-      {lessonDurationInMins ? <ProgressBar duration={lessonDurationInMins} time={position} color={primaryColor} showProgressBar={showProgressBar} /> : null}
+      {lessonDurationInSecs ? <ProgressBar duration={lessonDurationInSecs / 60} time={position} color={primaryColor} showProgressBar={showProgressBar} /> : null}
 
       <Modal
         animationType="fade"

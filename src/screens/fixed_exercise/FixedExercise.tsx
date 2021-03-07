@@ -70,7 +70,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImagePath, backgroundGradient, exhaleHoldTime } = route.params.exercise;
+  const { about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImage, backgroundGradient, exhaleHoldTime } = route.params.exercise;
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -282,7 +282,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
   }
 
-
+  console.log('gradient', backgroundImage)
   return (
     <LinearGradient
       useAngle={true}
@@ -292,7 +292,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       colors={backgroundGradient}
       style={{ flex: 1 }}
     >
-      <BackgroundImage imagePath={backgroundImagePath} />
+      <BackgroundImage imagePath={backgroundImage} />
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}

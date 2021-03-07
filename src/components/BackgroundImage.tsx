@@ -9,10 +9,10 @@ interface Props {
 const ASPECT_RATIO = 640 / 732;
 
 const BackgroundImage: React.FC<Props> = ({ imagePath }: Props) => {
-  const imageSource = imagePath.startsWith("http://") ? imagePath : "file://" + imagePath;
+
   return (
     <View style={styles.backgroundImageContainer}>
-      <ImageBackground source={{ uri: imageSource }} resizeMode={'cover'} style={{ aspectRatio: ASPECT_RATIO, alignSelf: 'center', height: undefined, width: '100%' }} />
+      <ImageBackground source={{ uri: imagePath }} resizeMode={'cover'} style={{ aspectRatio: ASPECT_RATIO, alignSelf: 'center', height: undefined, width: '100%' }} />
     </View>
   );
 }

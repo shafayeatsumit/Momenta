@@ -36,7 +36,6 @@ export interface FetchCourseAction {
 }
 
 export const fetchCourse = () => {
-  console.log('going to fetch courses here');
   return async (dispatch: Dispatch) => {
     const response = await api.get(COURSE_URL);
     let courses: Course[] = response.data;

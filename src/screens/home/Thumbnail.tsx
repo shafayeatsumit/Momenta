@@ -22,6 +22,7 @@ const capitalizeFirstLetter = (string: string) => {
 const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
   const thumbnailSource = exercise.thumbnail;
   const displayName = capitalizeFirstLetter(exercise.name);
+
   return (
 
     <TouchableOpacity

@@ -4,6 +4,8 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
+import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
+
 
 public class MainActivity extends ReactActivity {
 

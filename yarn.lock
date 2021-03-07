@@ -6265,6 +6265,11 @@ react-native-track-player@^1.2.3:
   resolved "https://registry.yarnpkg.com/react-native-track-player/-/react-native-track-player-1.2.3.tgz#cd147b1fc93a229c49392abd7b37f087285e673a"
   integrity sha512-h8HWOC9Zo54hen0ttlGzdofEMH38CPfT6+UWAcbEoHFgGcvxsRlJAgubdtM3QWwWZh20Q2zvQA8+8/l4Bu0yfA==
 
+react-native-uuid-generator@^6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-uuid-generator/-/react-native-uuid-generator-6.1.1.tgz#59ca80f1eacd282311593af49fde34331d712b6e"
+  integrity sha512-jWF0wiGTUTkCBTpspUZatC7wlhjN3GRbW9YblaxxpuMuhk0DEOQXOp1qgsDd2vLTL8GsM3i7Hnatvfj1kwf88w==
+
 react-native@0.61.5:
   version "0.61.5"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.61.5.tgz#6e21acb56cbd75a3baeb1f70201a66f42600bba8"

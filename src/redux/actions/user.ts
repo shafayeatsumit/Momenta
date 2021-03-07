@@ -2,14 +2,15 @@ import { Dispatch } from 'redux';
 import { api } from '../../helpers/api';
 import { ActionTypes } from './types';
 import { eventSetUserId } from "../../helpers/analytics";
-import { useRoute } from '@react-navigation/native';
 
-const SING_UP_URL = 'user/signUpAnonymously';
+import UUIDGenerator from 'react-native-uuid-generator';
+
+const SING_UP_URL = 'auth/local/register';
 const USER_URL = 'user';
 
 interface UserCourse {
   isFinished: boolean,
-  _id: string,
+  id: string,
   courseId: string,
   lastLesson: number,
 }
@@ -23,6 +24,7 @@ export interface User {
   challenges: [],
 }
 
+
 export interface SignUpAnonymouslyAction {
   type: ActionTypes.SignUpAnonymously;
   payload: User;
@@ -31,19 +33,30 @@ export interface SignUpAnonymouslyAction {
 
 export const signUpAnonymously = () => {
   return async (dispatch: Dispatch) => {
-    const response = await api.post(SING_UP_URL, {});
-    const user: User = response.data.user;
-    eventSetUserId(user.id);
+    const uuid: string = await UUIDGenerator.getRandomUUID();
+    const randomPass = Math.random().toString(36).substring(10);
+    console.log('random uuid', uuid);
+    const response = await api.post(SING_UP_URL, {
+      "email": `${uuid}@momenta.com`,
+      "password": randomPass,
+      "username": uuid
+    });
+
+    const userResponse = response.data;
+    const payload: User = {
+      token: userResponse.jwt,
+      id: userResponse.user.id,
+      email: userResponse.user.email,
+      name: userResponse.user.username,
+      courses: [],
+      challenges: [],
+    }
+
+    eventSetUserId(payload.id);
     dispatch<SignUpAnonymouslyAction>({
       type: ActionTypes.SignUpAnonymously,
-      payload: user,
+      payload,
     })
   }
 }
 
-export const fetchContentSettings = (userId: string) => {
-  return async (dispatch: Dispatch) => {
-    const response = await api.get(`${USER_URL}/${userId}`)
-    const contentSettings: User = response.user;
-  }
-}

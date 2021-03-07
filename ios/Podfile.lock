@@ -273,6 +273,8 @@ PODS:
     - React
   - react-native-track-player (1.2.3):
     - React
+  - react-native-uuid-generator (6.1.1):
+    - React
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
   - React-RCTAnimation (0.61.5):
@@ -372,6 +374,7 @@ DEPENDENCIES:
   - react-native-idle-timer (from `../node_modules/react-native-idle-timer`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-track-player (from `../node_modules/react-native-track-player`)
+  - react-native-uuid-generator (from `../node_modules/react-native-uuid-generator`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -458,6 +461,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-track-player:
     :path: "../node_modules/react-native-track-player"
+  react-native-uuid-generator:
+    :path: "../node_modules/react-native-uuid-generator"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -543,6 +548,7 @@ SPEC CHECKSUMS:
   react-native-idle-timer: 1d5aacf8915340f4c59b56ff829a6c08ec4e43ee
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-track-player: 28b96dd6404dea3eee80e67b74507679235a8dfb
+  react-native-uuid-generator: 82ffa2a1cac94242ebed52c4dedc5044d3412717
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
@@ -571,4 +577,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5f432bdbeada65b8b6fdaadd7873ebcfb12dce6c
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.10.1

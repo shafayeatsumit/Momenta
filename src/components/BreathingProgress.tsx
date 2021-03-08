@@ -59,7 +59,7 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
         useNativeDriver: true,
       })
     ]).start((resp) => {
-      if (resp.finished && inhaleEnd) {
+      if (inhaleEnd) {
         inhaleEnd();
       }
     });
@@ -86,7 +86,7 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
         useNativeDriver: true,
       })
     ]).start((resp) => {
-      if (resp.finished && exhaleEnd) {
+      if (exhaleEnd) {
         exhaleEnd();
       }
       progressAnim.setValue(circumference)

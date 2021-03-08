@@ -13,7 +13,7 @@ interface Props {
   exhaleHoldTime: number;
 }
 
-const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleTime, exhaleTime, inhaleHoldTime, exhaleHoldTime }: Props) => {
+const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleHoldTime, exhaleHoldTime }: Props) => {
   const isShowBreathCounterVisible = () => {
     const showInhaleHoldCounter = breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1;
     const showExhaleHoldCounter = breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1;

@@ -6,13 +6,13 @@ import { FontType, Colors } from '../helpers/theme';
 interface Props {
   breathingState: BreathingState;
   exerciseNotStarted: boolean;
-  totalBreathCount: number;
+
   breathCounter?: number;
   inhaleHoldTime?: number;
   exhaleHoldTime?: number;
 }
 
-const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTime, exhaleHoldTime, breathingState, exerciseNotStarted, totalBreathCount }: Props) => {
+const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTime, exhaleHoldTime, breathingState, exerciseNotStarted }: Props) => {
   const animatedProgress = useRef(new Animated.Value(0)).current;
   const getBreathingStateText = () => {
 
@@ -22,9 +22,9 @@ const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTi
 
 
     switch (breathingState !== null) {
-      case (breathingState === BreathingState.Inhale && totalBreathCount < 5):
+      case (breathingState === BreathingState.Inhale):
         return "Breath in"
-      case (breathingState === BreathingState.Exhale && totalBreathCount < 5):
+      case (breathingState === BreathingState.Exhale):
         return "Breath out"
       case (breathingState === BreathingState.InhaleHold && showInhaleHold):
         return "Hold"

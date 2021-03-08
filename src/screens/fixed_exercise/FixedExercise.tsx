@@ -46,7 +46,7 @@ interface Progress {
   duration: number;
 }
 
-let totalBreathCount = 0;
+
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
@@ -145,9 +145,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         if (resp) NativeModules.IOSVibration.prepareHaptics();
       });
     }
-    return () => {
-      totalBreathCount = 0;
-    }
   }, [])
 
   const timerEnd = () => {
@@ -173,10 +170,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const exhaleEnd = () => {
-    totalBreathCount = totalBreathCount + 1;
+
   }
 
   const startExhale = (duration = exhaleTime) => {
+    console.log('exhale duration', duration);
     hasSwell && startSwellExhale(exhaleTime);
     vibrationType === 'purr_exhale' && startVibration(exhaleTime);
     startBreathCounter(duration)
@@ -282,7 +280,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
   }
 
-  console.log('gradient', backgroundImage)
+
   return (
     <LinearGradient
       useAngle={true}
@@ -312,7 +310,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       {!isPaused && !optionsVisible &&
         <>
           <BreathingInstruction
-            breathCounter={breathCounter} totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
+            breathCounter={breathCounter} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
             inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime}
           />
           <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />

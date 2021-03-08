@@ -66,11 +66,11 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const exerciseData = route.params.exercise;
 
   const {
-    calibrationInhale, calibrationExhale, targetInhale, targetExhale, targetDuration, primaryColor,
+    inhaleTime: initInhaleTime, exhaleTime: initExhaleTime, targetInhale, targetExhale, targetDuration, primaryColor,
     displayName, backgroundImagePath, backgroundGradient, about, tips,
   } = exerciseData;
 
-  const [calibration, setCalibration] = useState<{ inhale: number, exhale: number }>({ inhale: calibrationInhale, exhale: calibrationExhale })
+  const [calibration, setCalibration] = useState<{ inhale: number, exhale: number }>({ inhale: initInhaleTime, exhale: initExhaleTime })
 
   const hasSwell = backgroundMusic === 'swell';
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
@@ -193,6 +193,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const exhaleEnd = () => {
     totalBreathCount = totalBreathCount + 1;
     const noIncrement = totalBreathCount > targetBreathCount;
+    console.log("inhale ===>", totalBreathCount);
+    console.log("exhaleIncrement", exhaleIncrement)
     if (noIncrement) {
       startInhale();
     } else {
@@ -321,19 +323,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
       {isStopped && <BackgroundCircle opacity={fadeOutAnimation} />}
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
-      {exerciseNotStarted &&
-        <>
-
-          {calibrationComplete
-            ? <CalibrationComplete calibrationComplete={calibrationComplete} />
-            : <CalibraitonButton handlePress={goToCalibration} />
-          }
-          <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />
-        </>
-      }
-
-
-
+      {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
       {(isStopped || optionsVisible) &&
         <>
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
@@ -343,7 +333,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         </>
       }
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} inhaleEnd={inhaleEnd} />
-      { (!isPaused && !optionsVisible) && <BreathingInstruction totalBreathCount={totalBreathCount} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
+      { (!isPaused && !optionsVisible) && <BreathingInstruction breathingState={breathingState} exerciseNotStarted={exerciseNotStarted} />}
 
       <TapHandler handleTap={handleTap} />
       { isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}

@@ -4,8 +4,6 @@ import { RouteProp } from '@react-navigation/native';
 import TrackPlayer, { useTrackPlayerProgress } from 'react-native-track-player';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
-import useBreathCounter from "../../hooks/useBreathCounter";
-import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
@@ -69,7 +67,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const allBackgroundMusic = useSelector(selectBackgroundMusic);
   const settings = useSelector(selectSettings)
 
-  const { id: courseId, inhaleTime, primaryColor, lessons, thumbnail, totalLessons, name, exhaleTime, backgroundImage, backgroundGradient, } = route.params.course;
+  const { id: courseId, primaryColor, lessons, thumbnail, totalLessons, name, backgroundImage, backgroundGradient, } = route.params.course;
   // this line needs to be changed;
   const backgroundMusic = contentSettings[courseId] && contentSettings[courseId].backgroundMusic ? contentSettings[courseId].backgroundMusic : 'river';
   const previouslyListened = contentSettings[courseId];
@@ -130,20 +128,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const initializeLesson = async () => {
     if (previouslyListened) {
       const lastListenedLesson = lessons.find((item) => item.order === maxListened);
-      await TrackPlayer.skip(lastListenedLesson.id)
+      if (lastListenedLesson.id) {
+        await TrackPlayer.skip(lastListenedLesson.id)
+      }
+
     }
   }
 
-  const breathCountEnd = () => {
-    switch (breathingState !== 0) {
-      case (breathingState === BreathingState.Inhale):
-        startExhale();
-        return
-      case (breathingState === BreathingState.Exhale):
-        startInhale();
-        return
-    }
-  }
+
 
 
   const onStartAnimation = () => {
@@ -193,7 +185,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }, [])
 
-  const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
+
 
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
   const isPaused = exerciseState === ExerciseState.Paused;
@@ -207,20 +199,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
   const showBackgroundCircle = (isStopped || isPaused || optionsVisible);
 
-  const startExhale = (duration = exhaleTime) => {
-    hasSwell && startSwellExhale(exhaleTime);
-    startBreathCounter(duration)
-    setBreathingState(BreathingState.Exhale)
-  }
 
-  const startInhale = (duration = inhaleTime) => {
-    hasSwell && startSwellInhale(inhaleTime);
-    startBreathCounter(duration)
-    setBreathingState(BreathingState.Inhale);
-  }
+
 
   const startExercise = () => {
-    startInhale();
     setExerciseState(ExerciseState.Play)
   }
 
@@ -258,8 +240,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const stop = () => {
     fadeOutAnimation.setValue(1);
-    stopBreathCounter();
-    hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
   }
 

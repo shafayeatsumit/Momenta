@@ -200,7 +200,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
-    vibrationType === 'purr_exhale' && startVibration(exhaleTime);
+
   }
 
   const exhaleEnd = () => {
@@ -211,7 +211,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     hasSwell && startSwellInhale(inhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
-    vibrationType === 'purr_inhale' && startVibration(inhaleTime);
+
     setProgress({ type: AnimationType.ExpandCircle, duration })
   }
 
@@ -334,18 +334,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       useNativeDriver: true,
     }).start(() => setOptionsVisible(false));
   }
-
-  const startVibration = (duration: number) => {
-    if (Platform.OS === 'android') {
-      NativeModules.AndroidVibration.startVibration(duration * 1000, 20);
-      return;
-    }
-    if (Platform.OS === 'ios') {
-      NativeModules.IOSVibration.startVibration(duration);
-      return;
-    }
-  }
-
 
   const stopVibration = () => {
     if (vibrationType === null) {

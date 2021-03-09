@@ -122,7 +122,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   useEffect(() => {
-    updateContent();
+    if (activeLesson) {
+      updateContent();
+    }
+
   }, [activeLesson])
 
   const initializeLesson = async () => {

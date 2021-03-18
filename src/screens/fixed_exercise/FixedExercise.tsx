@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, Platform, NativeModules } from 'react-native';
+import { Animated, Easing, Modal, Platform, NativeModules, ImageBackground } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -245,7 +245,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleTap = () => {
-    if (exerciseState === ExerciseState.Play) {
+    const canShowOptions = exerciseState === ExerciseState.Play || exerciseState === ExerciseState.Finish;
+    if (canShowOptions) {
       showOptions();
     }
   }
@@ -282,18 +283,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   return (
-    <LinearGradient
-      useAngle={true}
-      angle={192}
-      angleCenter={{ x: 0.5, y: 0.5 }}
-      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
-      colors={backgroundGradient}
-      style={{ flex: 1 }}
-    >
-      <BackgroundImage imagePath={backgroundImage} />
+    <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
+
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-      {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
       {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
       {(isStopped || optionsVisible) &&
@@ -316,11 +309,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
         </>
       }
-
+      {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
+
 
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />
 
@@ -343,7 +336,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
         />
       </Modal>
-    </LinearGradient>
+    </ImageBackground>
 
   );
 }

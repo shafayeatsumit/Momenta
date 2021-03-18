@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontType } from "../helpers/theme";
 import { eventButtonPush } from "../helpers/analytics";
+import { ScreenWidth } from '../helpers/constants';
 
 interface Props {
   handleFinish?: () => void;
@@ -18,8 +19,8 @@ const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, color }: Pro
     handleCourseFinish && handleCourseFinish();
   }
   return (
-    <TouchableOpacity style={[styles.button, handleCourseFinish && { left: 0, right: 0, alignSelf: 'center', bottom: 80 }]} onPress={pressHandler}>
-      <Text allowFontScaling={false} style={[styles.text, { color: color }]}>FINISH</Text>
+    <TouchableOpacity style={styles.button} onPress={pressHandler}>
+      <Text allowFontScaling={false} style={styles.text}>FINISH</Text>
     </TouchableOpacity>
   );
 }
@@ -27,17 +28,19 @@ const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, color }: Pro
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 85,
-    right: 25,
+    bottom: 100,
+    // right: 25,
     height: 40,
-    // width: 70,
+    width: 100,
+    left: (ScreenWidth / 2) - 50,
     zIndex: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    fontSize: 22,
+    fontSize: 26,
     fontFamily: FontType.Medium,
+    fontWeight: '400',
     color: 'white',
 
   }

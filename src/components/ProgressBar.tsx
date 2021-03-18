@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import { View, Animated, StyleSheet, Easing } from 'react-native';
+import { View, Text, Animated, StyleSheet, Easing } from 'react-native';
 import { ScreenWidth } from '../helpers/constants';
 import Svg, { Rect, Circle } from "react-native-svg";
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { registerPlaybackService } from 'react-native-track-player';
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 interface Props {
   duration: number;
@@ -10,26 +12,38 @@ interface Props {
   showProgressBar?: boolean;
 }
 
+const progressbarWidth = ScreenWidth - 80;
+const twoDigitPadding = (num: number) => String(num).padStart(2, '0');
+
 const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }: Props) => {
   const animatedWidth = useRef(new Animated.Value(0)).current;
   const totalDuration = 60 * duration;
+  const currentTimeMin = Math.floor(time / 60);
+  const currentTimeSec = Math.round(time % 60);
+  const targetTime = totalDuration;
+  const targetTimeMin = targetTime / 60;
+  const targetTimeSec = targetTime % 60;
 
-  const animateProgress = (value: number) => {
+
+  const animateProgress = (width: number) => {
     Animated.timing(animatedWidth, {
-      toValue: value,
+      toValue: width,
       duration: 980,
       easing: Easing.ease,
       useNativeDriver: true,
     }).start();
   }
 
-  const gerPrecentage = (time: number): number => {
-    return (ScreenWidth * time) / totalDuration;
+  const getNewWidth = (time: number): number => {
+    return (progressbarWidth * time) / totalDuration;
   }
 
   useEffect(() => {
-    const percentage = gerPrecentage(time);
-    animateProgress(percentage);
+    const width = getNewWidth(time);
+    if (width <= progressbarWidth) {
+      animateProgress(width);
+    }
+
   }, [time])
 
 
@@ -43,7 +57,12 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }
           height="5"
           fill={color}
         />
+
       </Svg>
+      <Animated.View style={[styles.circle, { backgroundColor: color, transform: [{ translateX: animatedWidth }] }]} />
+
+      <Text allowFontScaling={false} style={[styles.timeText, { left: -14 }]}> {currentTimeMin}:{twoDigitPadding(currentTimeSec)}</Text>
+      <Text allowFontScaling={false} style={[styles.timeText, { right: -14 }]}> {targetTimeMin}:{twoDigitPadding(targetTimeSec)}</Text>
     </View>
 
   );
@@ -52,13 +71,31 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 80,
     left: 0,
     right: 0,
     height: 5,
-    width: ScreenWidth,
-  },
+    marginLeft: 40,
+    width: progressbarWidth,
+    // alignSelf: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
 
+  },
+  circle: {
+    height: 16,
+    width: 16,
+    borderRadius: 8,
+    marginTop: -10,
+    marginLeft: -4,
+  },
+  timeText: {
+    fontSize: 18,
+    color: 'white',
+    lineHeight: 22,
+    fontWeight: '800',
+    position: 'absolute',
+    top: 16,
+  }
 });
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, View, Modal, NativeModules, Platform } from 'react-native';
+import { Animated, ImageBackground, Easing, View, Modal, NativeModules, Platform } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -67,7 +67,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
 
   const {
     inhaleTime: initInhaleTime, exhaleTime: initExhaleTime, targetInhale, targetExhale, targetDuration, primaryColor,
-    displayName, backgroundImagePath, backgroundGradient, about, tips,
+    displayName, backgroundImage, backgroundGradient, about, tips,
   } = exerciseData;
 
   const [calibration, setCalibration] = useState<{ inhale: number, exhale: number }>({ inhale: initInhaleTime, exhale: initExhaleTime })
@@ -309,17 +309,10 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     !isPaused && stop();
     navigation.goBack()
   }
-
+  console.log('image background path', backgroundImage);
   return (
-    <LinearGradient
-      useAngle={true}
-      angle={192}
-      angleCenter={{ x: 0.5, y: 0.5 }}
-      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
-      colors={backgroundGradient}
-      style={{ flex: 1 }}
-    >
-      <BackgroundImage imagePath={backgroundImagePath} />
+    <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
+
       {isStopped && <BackgroundCircle opacity={fadeOutAnimation} />}
 
       {showTimer && <Timer time={time} exerciseDuration={exerciseDuration} />}
@@ -369,13 +362,13 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
         <Calibraiton
           primaryColor={primaryColor}
           displayName={displayName}
-          backgroundImagePath={backgroundImagePath}
+          backgroundImagePath={backgroundImage}
           backgroundGradient={backgroundGradient}
           closeModal={closeCalibrationModal}
           updateCalibrationData={updateCalibrationData}
         />
       </Modal>
-    </LinearGradient >
+    </ImageBackground >
   );
 }
 

@@ -316,7 +316,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
       <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />
-
       <Modal
         animationType="fade"
         transparent={true}
@@ -325,7 +324,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       >
         <Settings vibrationType={vibrationType} backgroundMusic={backgroundMusic} showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
       </Modal>
-
       <Modal
         animationType="fade"
         transparent={true}

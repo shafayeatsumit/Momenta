@@ -4,9 +4,7 @@ import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useTimer from "../../hooks/useTimer";
-import Calibraiton from "../../screens/calibration/Calibration";
-import CalibrationComplete from "../../components/CalibrationComplete";
-import CalibraitonButton from "../../components/CalibrationButton";
+
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
@@ -98,8 +96,6 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
-  const [calibrationModalVisible, setCalibrationModalVisible] = useState<boolean>(false);
-  const [calibrationComplete, setCalibrationComplete] = useState<boolean>(false);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
 
   const renderCount = useRef(0);
@@ -224,8 +220,8 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     })
     inhaleTime = updatedInhaleTime;
     exhaleTime = updatedExhaleTime;
-    setCalibrationComplete(true);
-    closeCalibrationModal();
+
+
   }
 
   const startExercise = () => {
@@ -287,7 +283,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   }
   const closeSetting = () => setSettingsVisible(false);
   const closeInfoModal = () => setInfoModalVisible(false);
-  const closeCalibrationModal = () => setCalibrationModalVisible(false);
+
 
   const handlePressInfo = () => {
     if (exerciseNotStarted) {
@@ -304,12 +300,12 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
     navigation.goBack()
   }
 
-  const goToCalibration = () => setCalibrationModalVisible(true);
+
   const handleBack = () => {
     !isPaused && stop();
     navigation.goBack()
   }
-  console.log('image background path', backgroundImage);
+
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
 
@@ -353,21 +349,7 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
           title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
         />
       </Modal>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={calibrationModalVisible}
-        onRequestClose={closeCalibrationModal}
-      >
-        <Calibraiton
-          primaryColor={primaryColor}
-          displayName={displayName}
-          backgroundImagePath={backgroundImage}
-          backgroundGradient={backgroundGradient}
-          closeModal={closeCalibrationModal}
-          updateCalibrationData={updateCalibrationData}
-        />
-      </Modal>
+
     </ImageBackground >
   );
 }

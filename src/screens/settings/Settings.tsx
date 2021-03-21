@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import ModalButton from "../../components/ModalButton";
 import { FontType } from '../../helpers/theme';
+import MusicPicker from "../../components/MusicPicker";
 
 import SoundSettings from "./Sound";
 import Vibration from "./Vibration";
@@ -22,7 +23,7 @@ const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, 
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.spacer} />
-      <View style={{ flex: 1 }} />
+      <MusicPicker selectedMusic="swells" handleMusicSelect={() => { }} opacity={1} />
 
 
       <View style={styles.spacerBottom} />

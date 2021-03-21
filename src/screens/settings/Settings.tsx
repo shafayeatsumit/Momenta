@@ -20,19 +20,9 @@ interface Props {
 
 const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, closeModal, color, showVibrationSettings }: Props) => {
   return (
-    <LinearGradient
-      useAngle={true}
-      angle={192}
-      angleCenter={{ x: 0.5, y: 0.5 }}
-      start={{ x: 0, y: 0 }} end={{ x: 0.94, y: 0.6 }}
-      colors={['#353B47', '#0A120B']}
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1 }}>
       <View style={styles.spacer} />
-      <Text allowFontScaling={false} style={styles.settings}>Settings</Text>
-
-      <SoundSettings contentId={contentId} backgroundMusic={backgroundMusic} color={color} />
-      {showVibrationSettings && <Vibration vibrationType={vibrationType} color={color} contentId={contentId} />}
+      <View style={{ flex: 1 }} />
 
 
       <View style={styles.spacerBottom} />
@@ -42,7 +32,7 @@ const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, 
         </ModalButton>
       </View>
 
-    </LinearGradient>
+    </View>
   );
 }
 

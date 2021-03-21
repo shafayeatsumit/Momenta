@@ -1,127 +1,132 @@
-import React from 'react'
-import { View, StyleSheet, Text, ScrollView } from 'react-native';
-import ModalButton from '../../components/ModalButton'
-import { FontType } from '../../helpers/theme';
-import RadioButton from "../../components/RadioButton";
-import { RootState } from "../../redux/reducers";
-import { useSelector, useDispatch } from "react-redux";
-import { changeMusic } from "../../redux/actions/settings";
+import React, { useCallback } from 'react'
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  Animated,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from 'react-native';
+import { triggerHaptic } from "../../helpers/hapticFeedback";
 import { eventButtonPush } from "../../helpers/analytics";
-import { updateContentBackgroundMusic } from "../../redux/actions/contentSettings";
-
-import _ from 'lodash';
 
 interface Props {
-  color: string;
-  contentId?: string;
-  backgroundMusic: string | null;
+  onSelect: Function;
+  initialIndex: number;
+  listItems: string[] | number[];
+  itemWidth: number;
+  itemHeight: number;
+  isVertical?: boolean;
+  fontSize: number;
 }
 
-const Sound: React.FC<Props> = ({ color, backgroundMusic, contentId }) => {
-  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
-  const dispatch = useDispatch();
-  const musicFiles = _.values(useSelector(selectBackgroundMusic));
 
-  const getMusicName = (id: string | null) => {
-    if (id === null) {
-      return 'off'
-    }
-    if (id === 'swell') {
-      return 'swell'
-    }
-    const musicName = musicFiles.find((item) => item.id === id).name
-    return musicName;
+
+const ScrollPicker: React.FC<Props> = ({ onSelect, itemHeight, fontSize, initialIndex, itemWidth, listItems, isVertical = false }: Props) => {
+
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentIndex = Math.round(event.nativeEvent.contentOffset.x / itemWidth);
+    console.log('time picked', event.nativeEvent.contentOffset.x)
   }
 
-  const handlePress = (id: string | null) => {
-    const eventTitle = getMusicName(id);
-    eventButtonPush(`sound_settings_${eventTitle}`);
 
-    if (contentId) {
-      dispatch(updateContentBackgroundMusic(contentId, id));
-      return;
-    }
-    dispatch(changeMusic(id))
+  const _onViewableItemsChanged = useCallback(({ viewableItems, changed }) => {
+    triggerHaptic();
+  }, []);
 
+  const _viewabilityConfig = {
+    minimumViewTime: 150,
+    itemVisiblePercentThreshold: 10
   }
 
-  const OFF = () => (
-    <ModalButton handlePress={() => handlePress(null)} customStyle={styles.buttonStyle}>
-      <RadioButton selected={backgroundMusic === null} color={color} />
-      <Text allowFontScaling={false} style={styles.text}>Off</Text>
-    </ModalButton>
-  )
-
-  const SWELL = () => (
-    <ModalButton handlePress={() => handlePress('swell')} customStyle={styles.buttonStyle}>
-      <RadioButton selected={backgroundMusic === 'swell'} color={color} />
-      <Text allowFontScaling={false} style={styles.text}>Swell</Text>
-      <View style={[styles.recHolder, { backgroundColor: color }]}>
-        <Text allowFontScaling={false} style={styles.rec}>Recommended</Text>
-      </View>
-    </ModalButton>
-  )
 
 
   return (
-    <View style={styles.container}>
-      <Text allowFontScaling={false} style={styles.title}>Sound</Text>
-      <ScrollView style={{ flex: 1 }}>
-        <OFF />
-        {!contentId &&
-          <SWELL />
+    <Animated.View style={[styles.main, { width: itemWidth * 5 },
+    isVertical && { transform: [{ rotate: '90deg' }] }
+    ]}>
+      <Animated.FlatList
+        data={listItems}
+        horizontal
+        pagingEnabled={true}
+        onViewableItemsChanged={_onViewableItemsChanged}
+        viewabilityConfig={_viewabilityConfig}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScrollEnd}
+        snapToInterval={itemWidth}
+        initialScrollIndex={initialIndex}
+        getItemLayout={(data, index) =>
+          ({ length: itemWidth, offset: itemWidth * index, index })
         }
-
-        {musicFiles.map((item) => {
-          return (
-            <ModalButton key={item.name} handlePress={() => handlePress(item.id)} customStyle={styles.buttonStyle}>
-              <RadioButton selected={backgroundMusic === item.id} color={color} />
-              <Text allowFontScaling={false} style={styles.text}>{item.name}</Text>
-            </ModalButton>
+        decelerationRate="fast"
+        contentContainerStyle={{
+          paddingLeft: itemWidth * 2,
+          paddingRight: itemWidth * 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onScroll={
+          Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: true }
           )
-        })}
-      </ScrollView>
-    </View>
+        }
+        keyExtractor={(item) => item.toString()}
+        renderItem={({ item, index }) => {
+          const inputRange = [
+            (index - 2) * itemWidth,
+            (index - 1) * itemWidth,
+            (index) * itemWidth,
+            (index + 1) * itemWidth,
+            (index + 2) * itemWidth,
+          ]
+
+          const opacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.3, 0.4, 1, 0.4, 0.3]
+          })
+
+          const scale = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.4, 0.7, 1, 0.7, 0.4]
+          })
+
+          return (
+            <View style={[styles.textContainer, { width: itemWidth, height: itemHeight, },
+            isVertical && { transform: [{ rotate: '270deg' }] }]}>
+              <Animated.Text style={[styles.text,
+              { opacity, transform: [{ scale }], fontSize },
+              Number.isInteger(item) && item >= 10 && { fontSize: 30 }
+              ]}>{item}</Animated.Text>
+            </View>
+          );
+        }}
+      />
+    </Animated.View>
+
   );
 }
-
-export default Sound;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 20,
-    marginLeft: 30,
-    marginVertical: 10,
-    marginTop: 20,
-  },
-  buttonStyle: {
-    height: 50, width: '100%', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'
-  },
-  title: {
-    fontSize: 25,
-    paddingBottom: 10,
-    color: 'white',
-    fontFamily: FontType.Bold,
-    alignSelf: 'flex-start'
-  },
-  recHolder: {
+  main: {
     position: 'absolute',
-    right: 0,
-    padding: 7,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-  },
-  rec: {
-    fontFamily: FontType.Regular,
-    fontSize: 10,
-    color: 'white',
+    top: 50,
+    alignSelf: 'center',
+    flex: 1,
   },
   text: {
-    fontFamily: FontType.Regular,
-    fontSize: 22,
-    color: 'white',
-    paddingLeft: 17,
-  }
+    color: '#ffffff',
+    fontWeight: '600',
+  },
+  textContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
 
 });
+export default ScrollPicker;
+

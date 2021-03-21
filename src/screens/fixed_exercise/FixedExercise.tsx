@@ -70,7 +70,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImage, backgroundGradient, exhaleHoldTime } = route.params.exercise;
+  const { name, about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImage, exhaleHoldTime } = route.params.exercise;
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -287,7 +287,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-      {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+      {/* {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />} */}
 
       {(isStopped || optionsVisible) &&
         <>

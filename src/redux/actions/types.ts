@@ -9,6 +9,7 @@ import { FetchExerciseAction } from "./exercise";
 import { ChangeVibrationAction, ChangeMusicAction } from "./settings";
 import { FetchCourseAction } from "./course";
 import { FetchGuidedPracticeAction } from "./guidedPractice";
+import { ChangeExerciseMusicAction } from "./exerciseSettings";
 
 export enum ActionTypes {
   SignUpAnonymously = "SIGN_UP_ANONYMOUSLY",
@@ -26,9 +27,10 @@ export enum ActionTypes {
   ListenedLesson = "LISTENED_LESSON",
   FinishedCourse = "FINISHED_COURSE",
   ContentFinished = "CONTENT_FINISHED",
+  ChangeExerciseMusic = "CHANGE_EXERCISE_MUSIC",
 }
 
-
+export type ExerciseSettingsAction = ChangeExerciseMusicAction;
 export type UserAction = SignUpAnonymouslyAction;
 export type ContentSettingsAction = ListenedLessonAction | ListenedIntroLessonAction | ListenedWelcomeLessonAction | ContentFinishedAction | UpdateContentVibrationTypeAction | UpdateContentSettingsAction | UpdateContentBackgroundMusicAction;
 export type SettingsAction = ChangeVibrationAction | ChangeMusicAction;

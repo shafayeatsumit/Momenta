@@ -47,7 +47,8 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, itemHeight, fontSize, initial
 
   return (
     <Animated.View style={[styles.main, { width: itemWidth * 5 },
-    isVertical && { transform: [{ rotate: '90deg' }] }
+    isVertical && { transform: [{ rotate: '90deg' }], width: itemWidth * 3 }
+
     ]}>
       <Animated.FlatList
         data={listItems}
@@ -63,12 +64,14 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, itemHeight, fontSize, initial
           ({ length: itemWidth, offset: itemWidth * index, index })
         }
         decelerationRate="fast"
-        contentContainerStyle={{
+        contentContainerStyle={[{
           paddingLeft: itemWidth * 2,
           paddingRight: itemWidth * 2,
           justifyContent: 'center',
-          alignItems: 'center',
-        }}
+          alignItems: 'center'
+        },
+        isVertical && { paddingLeft: itemWidth, paddingRight: itemWidth }
+        ]}
         onScroll={
           Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
@@ -87,12 +90,12 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, itemHeight, fontSize, initial
 
           const opacity = scrollX.interpolate({
             inputRange,
-            outputRange: [0.3, 0.4, 1, 0.4, 0.3]
+            outputRange: [0.4, 0.5, 1, 0.5, 0.4]
           })
 
           const scale = scrollX.interpolate({
             inputRange,
-            outputRange: [0.4, 0.7, 1, 0.7, 0.4]
+            outputRange: [0.6, 0.8, 1, 0.8, 0.6]
           })
 
           return (

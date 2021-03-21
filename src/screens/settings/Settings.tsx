@@ -5,9 +5,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import ModalButton from "../../components/ModalButton";
 import { FontType } from '../../helpers/theme';
 import MusicPicker from "../../components/MusicPicker";
-
+import RhythmPicker from "../../components/RhythmPicker";
+import { useDispatch, useSelector } from "react-redux";
 import SoundSettings from "./Sound";
 import Vibration from "./Vibration";
+import { RootState } from "../../redux/reducers";
+import { changeMusic } from "../../redux/actions/exerciseSettings";
 
 interface Props {
   closeModal: () => void;
@@ -19,12 +22,23 @@ interface Props {
 
 }
 
+const rhythmList = [1, 5, 2, 3, 4, 7, 8, 9];
+
 const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, closeModal, color, showVibrationSettings }: Props) => {
+  const dispatch = useDispatch();
+  const selectSettings = (state: RootState) => state.exerciseSettings;
+  const exerciseSettings = useSelector(selectSettings)
+  const handleMusicSelect = (musicId: string) => {
+    dispatch(changeMusic('box', musicId));
+  }
+
+  console.log(`nex settings ${JSON.stringify(exerciseSettings)}`)
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.spacer} />
-      <MusicPicker selectedMusic="swells" handleMusicSelect={() => { }} opacity={1} />
-
+      <MusicPicker selectedMusic="swells" handleMusicSelect={handleMusicSelect} opacity={1} />
+      <RhythmPicker slectedRhythm={3} handleRhythmSelect={() => { }} rhythmList={rhythmList} />
 
       <View style={styles.spacerBottom} />
       <View style={styles.closeButton}>

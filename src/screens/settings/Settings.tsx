@@ -1,10 +1,11 @@
 import React from 'react'
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import ModalButton from "../../components/ModalButton";
 import { FontType } from '../../helpers/theme';
 import MusicPicker from "../../components/MusicPicker";
+import BackButton from "../../components/BackButton";
 import RhythmPicker from "../../components/RhythmPicker";
 import { useDispatch, useSelector } from "react-redux";
 import SoundSettings from "./Sound";
@@ -12,40 +13,56 @@ import Vibration from "./Vibration";
 import { RootState } from "../../redux/reducers";
 import { changeMusic } from "../../redux/actions/exerciseSettings";
 
+
+
 interface Props {
   closeModal: () => void;
-  color: string;
-  backgroundMusic: string | null,
   vibrationType: string | null,
-  contentId?: string;
-  showVibrationSettings?: boolean;
-
+  backgroundMusic: string,
+  exerciseName: string;
 }
 
-const rhythmList = [1, 5, 2, 3, 4, 7, 8, 9];
+const RhythmListAll = {
+  'calm': {
+    'standard': { inhaleTime: 5, exhaleTime: 5, breathsPerMin: 6 },
+    'faster': { inhaleTime: 3.5, exhaleTime: 3.5, breathsPerMin: 8 },
+    'slower': { inhaleTime: 3, exhaleTime: 3, breathsPerMin: 10 },
+  },
+  'box': {
+    'standard': { inhaleTime: 4, exhaleTime: 4, inhaleHoldTime: 4, exhaleHoldTime: 4, breathsPerMin: 4 },
+    'faster': { inhaleTime: 3, exhaleTime: 3, inhaleHoldTime: 3, exhaleHoldTime: 3, breathsPerMin: 5 },
+    'slower': { inhaleTime: 2.5, exhaleTime: 2.5, inhaleHoldTime: 2.5, exhaleHoldTime: 2.5, breathsPerMin: 6 },
+  }
+}
 
-const Settings: React.FC<Props> = ({ contentId, vibrationType, backgroundMusic, closeModal, color, showVibrationSettings }: Props) => {
+const Settings: React.FC<Props> = ({ exerciseName, vibrationType, backgroundMusic, closeModal, }: Props) => {
   const dispatch = useDispatch();
   const selectSettings = (state: RootState) => state.exerciseSettings;
   const exerciseSettings = useSelector(selectSettings)
   const handleMusicSelect = (musicId: string) => {
-    dispatch(changeMusic('box', musicId));
+    dispatch(changeMusic(exerciseName, musicId));
   }
 
-  console.log(`nex settings ${JSON.stringify(exerciseSettings)}`)
+  const handleRhythmSelect = (rhythm: string) => {
+    console.log(`rhythm ${rhythm}`)
+  }
+
+  const rythms = RhythmListAll[exerciseName]
+  const rhythmList = Object.keys(rythms);
+  const selectedRhythm = 'faster'
+  const breathsPerMin = rythms ? rythms[selectedRhythm].breathsPerMin : null;
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.spacer} />
-      <MusicPicker selectedMusic="swells" handleMusicSelect={handleMusicSelect} opacity={1} />
-      <RhythmPicker slectedRhythm={3} handleRhythmSelect={() => { }} rhythmList={rhythmList} />
 
-      <View style={styles.spacerBottom} />
-      <View style={styles.closeButton}>
-        <ModalButton handlePress={closeModal} >
-          <Text allowFontScaling={false} style={styles.buttonText}>DONE</Text>
-        </ModalButton>
-      </View>
+      <BackButton handlePress={closeModal} opacity={1} />
+      <MusicPicker selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
+      <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
+
+      <TouchableOpacity style={styles.vibraionIconHolder}>
+        <Image style={styles.vibrationIcon} source={require('../../../assets/images/vibration.png')} />
+      </TouchableOpacity>
+
 
     </View>
   );
@@ -77,6 +94,13 @@ const styles = StyleSheet.create({
     color: '#979797',
     fontFamily: FontType.Medium,
     fontSize: 20,
-  }
-
+  },
+  vibraionIconHolder: {
+    position: 'absolute',
+    bottom: 90,
+    left: 60,
+  },
+  vibrationIcon: {
+    height: 32, width: 32, tintColor: 'white', resizeMode: 'contain'
+  },
 });

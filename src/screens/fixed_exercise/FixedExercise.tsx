@@ -50,11 +50,8 @@ interface Progress {
 
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
-  const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
-  const selectSettings = (state: RootState) => state.settings;
-  const allBackgroundMusic = useSelector(selectBackgroundMusic);
-  const settings = useSelector(selectSettings)
-  const { backgroundMusic, vibrationType } = settings;
+  const selectSettings = (state: RootState) => state.exerciseSettings;
+  const settingsInfo = useSelector(selectSettings)
 
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -70,7 +67,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { name, about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, backgroundImage, exhaleHoldTime } = route.params.exercise;
+  const { name, about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, defaultMusic, backgroundImage, exhaleHoldTime } = route.params.exercise;
+  const backgroundMusic = settingsInfo.hasOwnProperty(name) ? settingsInfo[name].backgroundMusic : defaultMusic;
+
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -84,9 +83,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const stopVibration = () => {
-    if (vibrationType === null) {
-      return;
-    }
+    // if (vibrationType === null) {
+    //   return;
+    // }
     if (Platform.OS === 'android') {
       NativeModules.AndroidVibration.cancelVibration();
       return;
@@ -126,11 +125,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startBackgroundMusic = () => {
-    const music = allBackgroundMusic.find((item) => item.id === backgroundMusic);
-    if (music) {
-      playBackgroundMusic(music.fileName);
+    if (backgroundMusic) {
+      playBackgroundMusic(`${backgroundMusic}.wav`);
     }
-
   }
 
   useEffect(() => {
@@ -161,8 +158,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const showTimer = isPaused || exerciseFinished || optionsVisible;
   const showProgressBar = isPaused || optionsVisible;
   const showPause = optionsVisible && !isStopped;
-  const hasSwell = backgroundMusic === 'swell';
-  const hasBackgroundMusic = backgroundMusic !== 'swell' && backgroundMusic !== null;
+  const hasSwell = backgroundMusic === 'swells';
+  const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
+
   const showBackgroundCircle = (isStopped || isPaused);
 
   const handleTimeSelect = (time: number) => {
@@ -174,9 +172,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
-    console.log('exhale duration', duration);
     hasSwell && startSwellExhale(exhaleTime);
-    vibrationType === 'purr_exhale' && startVibration(exhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
@@ -194,7 +190,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startInhale = (duration = inhaleTime) => {
     hasSwell && startSwellInhale(inhaleTime);
-    vibrationType === 'purr_inhale' && startVibration(inhaleTime);
     startBreathCounter(duration)
     setBreathingState(BreathingState.Inhale);
     setProgress({ type: AnimationType.ExpandCircle, duration })
@@ -289,15 +284,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {/* {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />} */}
 
-      {(isStopped || optionsVisible) &&
+      {(isStopped || optionsVisible) && (!settingsVisible) &&
         <>
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-          <ExerciseTitle title={displayName} opacity={fadeOutAnimation} />
           <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
         </>
       }
-
+      {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
       <BreathingProgress primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
 
       {!isPaused && !optionsVisible &&
@@ -322,7 +316,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         visible={settingsVisible}
         onRequestClose={closeSetting}
       >
-        <Settings vibrationType={vibrationType} backgroundMusic={backgroundMusic} showVibrationSettings={true} closeModal={closeSetting} color={primaryColor} />
+        <Settings
+          vibrationType={'purr_inhale'}
+          backgroundMusic={backgroundMusic}
+          exerciseName={name}
+          closeModal={closeSetting}
+        />
       </Modal>
       <Modal
         animationType="fade"

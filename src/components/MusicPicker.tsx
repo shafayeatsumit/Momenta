@@ -13,7 +13,8 @@ interface Props {
 const defaultMusic = ['swells', 'wind', 'off', 'river', 'rain'];
 
 const MusicPicker: React.FC<Props> = ({ selectedMusic, handleMusicSelect, opacity, musicList = defaultMusic }: Props) => {
-  const selectedMusicIndex = musicList.findIndex((item) => item === selectedMusic);
+  let selectedMusicIndex = musicList.findIndex((item) => item === selectedMusic);
+
   return (
     <Animated.View style={[styles.container, { opacity }]}>
       <ScrollPicker

@@ -21,7 +21,7 @@ const MusicPicker: React.FC<Props> = ({ selectedMusic, handleMusicSelect, opacit
         listItems={musicList}
         onSelect={handleMusicSelect}
         initialIndex={selectedMusicIndex}
-        itemWidth={70}
+        itemWidth={80}
         itemHeight={50}
         fontSize={24}
       />

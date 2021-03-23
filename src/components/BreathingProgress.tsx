@@ -28,9 +28,10 @@ interface Props {
   exerciseState: ExerciseState;
   exhaleEnd?: () => void;
   inhaleEnd?: () => void;
+  rhythm: string;
 }
 
-const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseState, exhaleEnd, inhaleEnd }: Props) => {
+const AnimatedProgress: React.FC<Props> = ({ rhythm, primaryColor, progress, exerciseState, exhaleEnd, inhaleEnd }: Props) => {
   const radius = ExpandRadius;
   const circumference = Math.round(radius * 2 * Math.PI);
 
@@ -114,6 +115,10 @@ const AnimatedProgress: React.FC<Props> = ({ primaryColor, progress, exerciseSta
     radiusAnim.setValue(ShrinkRadius)
     strokeWidthAnim.setValue(ShrinkStrokeWidth)
   }
+
+  // useEffect(() => {
+  //   resetAnimation();
+  // }, [rhythm])
 
   useEffect(() => {
     if (exerciseState === ExerciseState.Paused) {

@@ -10,6 +10,7 @@ export enum ExerciseState {
   NotStarted,
   Paused,
   Play,
+  ViewSettings,
   Finish,
 }
 

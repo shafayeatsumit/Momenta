@@ -20,7 +20,11 @@ const RhythmPicker: React.FC<Props> = ({ breathsPerMin, slectedRhythm, handleRhy
         {rhythmList.map((item: string) => {
           return (
             <TouchableOpacity key={item} style={styles.textContainer} onPress={() => handleRhythmSelect(item)}>
-              <Text style={[styles.text, slectedRhythm === item && { fontFamily: FontType.ExtraBold, }]}>
+              <Text allowFontScaling={false}
+                style={[styles.text,
+                slectedRhythm === item ? { fontFamily: FontType.Bold, } : { fontFamily: FontType.Medium, color: 'rgba(255,255,255,0.4)' }
+                ]}
+              >
                 {_.capitalize(item)}
               </Text>
             </TouchableOpacity>
@@ -52,7 +56,7 @@ const styles = StyleSheet.create({
     color: 'white',
     position: 'absolute',
     bottom: 10,
-    right: 35,
+    right: 30,
   },
   textContainer: {
     width: 100,
@@ -64,8 +68,8 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    fontSize: 20,
-    lineHeight: 28,
+    fontSize: 18,
+    // lineHeight: 28,
     color: 'white',
     fontFamily: FontType.Medium,
 

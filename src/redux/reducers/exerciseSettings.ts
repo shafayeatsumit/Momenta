@@ -15,6 +15,22 @@ export const exerciseSettingReducer = (state: ExerciseSettings = initialState, a
           backgroundMusic: musicId,
         }
       }
+    case ActionTypes.ChangeExerciseRhythm:
+      const { rhythm } = action.payload;
+      return {
+        [action.payload.exerciseId]: {
+          ...state[action.payload.exerciseId],
+          rhythm,
+        }
+      }
+    case ActionTypes.ChangeVibrationType:
+      const { vibrationType } = action.payload;
+      return {
+        [action.payload.exerciseId]: {
+          ...state[action.payload.exerciseId],
+          vibrationType,
+        }
+      }
     default:
       return state;
 

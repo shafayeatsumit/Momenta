@@ -68,7 +68,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const { name, about, tips, primaryColor, inhaleTime, displayName, inhaleHoldTime, exhaleTime, defaultMusic, backgroundImage, exhaleHoldTime } = route.params.exercise;
-  const backgroundMusic = settingsInfo.hasOwnProperty(name) ? settingsInfo[name].backgroundMusic : defaultMusic;
+  const backgroundMusic = _.get(settingsInfo, `${name}.backgroundMusic`, defaultMusic);
+  const selectedRhythm = _.get(settingsInfo, `${name}.rhythm`, 'standard');
+  const vibrationType = _.get(settingsInfo, `${name}.vibrationType`, true);
 
 
   const startVibration = (duration: number) => {
@@ -282,7 +284,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-      {/* {exerciseNotStarted && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />} */}
+      {exerciseNotStarted && !settingsVisible && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
       {(isStopped || optionsVisible) && (!settingsVisible) &&
         <>
@@ -304,12 +306,12 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
       {exerciseFinished && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
+
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
+      {!settingsVisible && <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />}
 
-
-      <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />
       <Modal
         animationType="fade"
         transparent={true}
@@ -317,7 +319,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         onRequestClose={closeSetting}
       >
         <Settings
-          vibrationType={'purr_inhale'}
+          vibrationType={vibrationType}
+          selectedRhythm={selectedRhythm}
           backgroundMusic={backgroundMusic}
           exerciseName={name}
           closeModal={closeSetting}

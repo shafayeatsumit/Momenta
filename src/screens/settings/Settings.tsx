@@ -11,15 +11,16 @@ import { useDispatch, useSelector } from "react-redux";
 import SoundSettings from "./Sound";
 import Vibration from "./Vibration";
 import { RootState } from "../../redux/reducers";
-import { changeMusic } from "../../redux/actions/exerciseSettings";
+import { changeMusic, changeRhythm, changeVibrationType } from "../../redux/actions/exerciseSettings";
 
-
+import _ from 'lodash';
 
 interface Props {
   closeModal: () => void;
-  vibrationType: string | null,
+  vibrationType: boolean,
   backgroundMusic: string,
   exerciseName: string;
+  selectedRhythm: string;
 }
 
 const RhythmListAll = {
@@ -35,7 +36,7 @@ const RhythmListAll = {
   }
 }
 
-const Settings: React.FC<Props> = ({ exerciseName, vibrationType, backgroundMusic, closeModal, }: Props) => {
+const Settings: React.FC<Props> = ({ selectedRhythm, exerciseName, vibrationType, backgroundMusic, closeModal, }: Props) => {
   const dispatch = useDispatch();
   const selectSettings = (state: RootState) => state.exerciseSettings;
   const exerciseSettings = useSelector(selectSettings)
@@ -44,13 +45,17 @@ const Settings: React.FC<Props> = ({ exerciseName, vibrationType, backgroundMusi
   }
 
   const handleRhythmSelect = (rhythm: string) => {
-    console.log(`rhythm ${rhythm}`)
+    dispatch(changeRhythm(exerciseName, rhythm))
+  }
+
+  const handleVibrationSelect = () => {
+    dispatch(changeVibrationType(exerciseName, !vibrationType));
   }
 
   const rythms = RhythmListAll[exerciseName]
   const rhythmList = Object.keys(rythms);
-  const selectedRhythm = 'faster'
-  const breathsPerMin = rythms ? rythms[selectedRhythm].breathsPerMin : null;
+  const breathsPerMin = _.get(rythms, `${selectedRhythm}.breathsPerMin`, null)
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -59,8 +64,12 @@ const Settings: React.FC<Props> = ({ exerciseName, vibrationType, backgroundMusi
       <MusicPicker selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
       <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
 
-      <TouchableOpacity style={styles.vibraionIconHolder}>
-        <Image style={styles.vibrationIcon} source={require('../../../assets/images/vibration.png')} />
+      <TouchableOpacity style={styles.vibraionIconHolder} onPress={handleVibrationSelect}>
+        <Image style={styles.vibrationIcon}
+          source={
+            vibrationType ? require('../../../assets/images/vibration.png')
+              : require('../../../assets/images/vibration_off.png')}
+        />
       </TouchableOpacity>
 
 

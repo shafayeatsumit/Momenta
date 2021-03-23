@@ -36,7 +36,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     dispatch(fetchCourse());
     dispatch(fetchGuidedPractice());
   }, [])
-  console.log('fetch completed', fetchCompleted)
+
   return (
     <LinearGradient
       useAngle={true}

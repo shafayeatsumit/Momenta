@@ -18,9 +18,8 @@ const RhythmPicker: React.FC<Props> = ({ breathsPerMin, slectedRhythm, handleRhy
     <View style={styles.container}>
       <ScrollView horizontal={true} >
         {rhythmList.map((item: string) => {
-          console.log(`item ${item}`)
           return (
-            <TouchableOpacity key={item} style={styles.textContainer}>
+            <TouchableOpacity key={item} style={styles.textContainer} onPress={() => handleRhythmSelect(item)}>
               <Text style={[styles.text, slectedRhythm === item && { fontFamily: FontType.ExtraBold, }]}>
                 {_.capitalize(item)}
               </Text>

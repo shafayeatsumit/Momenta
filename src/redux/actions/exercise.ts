@@ -44,7 +44,6 @@ export const fetchExercise = () => {
   return async (dispatch: Dispatch) => {
     const response = await api.get(EXERCISE_URL)
     let exercises: Exercise[] = response.data
-    console.log('exercises', exercises);
     const exercisePayload: any = _.mapKeys(exercises, "id");
     dispatch<FetchExerciseAction>({
       type: ActionTypes.AddExercise,

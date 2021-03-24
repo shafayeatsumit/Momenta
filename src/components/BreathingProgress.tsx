@@ -116,9 +116,9 @@ const AnimatedProgress: React.FC<Props> = ({ rhythm, primaryColor, progress, exe
     strokeWidthAnim.setValue(ShrinkStrokeWidth)
   }
 
-  // useEffect(() => {
-  //   resetAnimation();
-  // }, [rhythm])
+  useEffect(() => {
+    resetAnimation();
+  }, [rhythm])
 
   useEffect(() => {
     if (exerciseState === ExerciseState.Paused) {

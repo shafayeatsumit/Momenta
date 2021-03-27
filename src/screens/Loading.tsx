@@ -53,6 +53,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
 
   );
 }
+
 export default Loading;
 
 const styles = StyleSheet.create({

@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   courseTitle: {
     textAlign: 'center',
     fontFamily: FontType.Bold,
-    fontSize: 22,
+    fontSize: 24,
     color: 'white',
     paddingHorizontal: 80,
   },

@@ -44,7 +44,6 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, progressOpacity }
   }, [time])
   const totalDuration = formatted(duration);
   const currentTime = formatted(time);
-  console.log(`total duration ${currentTime} ${totalDuration}`)
   return (
     <Animated.View style={[styles.container, progressOpacity ? { opacity: progressOpacity } : { opacity: 1 }]}>
       <Svg height="100%" width="100%">

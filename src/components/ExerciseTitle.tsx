@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   text: {
-    fontSize: 26,
+    fontSize: 30,
     fontFamily: FontType.SemiBold,
     lineHeight: 32,
     color: 'white',

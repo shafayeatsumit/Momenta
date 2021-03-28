@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Animated, StyleSheet, ImageBackground, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
-import TrackPlayer, { useTrackPlayerProgress, usePlaybackState } from 'react-native-track-player';
+import TrackPlayer, { TrackPlayerEvents, useTrackPlayerEvents, useTrackPlayerProgress, usePlaybackState } from 'react-native-track-player';
 import BreathingProgress from "../../components/BreathingProgress";
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
@@ -71,11 +71,16 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [audioState, setAudioState] = useState<AudioState>(AudioState.STOPPED)
+  const [finished, setFinished] = useState<boolean>(false);
   //TODO: fetch it from global.
   const [backgroundMusic, setBackgroundMusic] = useState<string>(defaultMusic);
 
   const { position, duration: trackDuration } = useTrackPlayerProgress();
   const playbackState = usePlaybackState();
+
+  useTrackPlayerEvents(["playback-queue-ended"], async event => {
+    handleBack();
+  });
 
   const handleFinish = () => {
     triggerHaptic();
@@ -94,7 +99,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleBack = () => {
-    navigation.goBack()
+    navigation.goBack();
     TrackPlayer.stop();
     stopBackgroundMusic();
   }
@@ -110,14 +115,10 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     TrackPlayer.add([track])
   }
 
-  const handleQueueEndEvent = () => {
-    console.log('going back');
-    handleBack();
-  }
+
 
   useEffect(() => {
     prepareTrack();
-    TrackPlayer.addEventListener('playback-queue-ended', handleQueueEndEvent);
   }, [])
 
 
@@ -173,7 +174,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
 
-  const isStopped = playbackState !== TrackPlayer.STATE_PLAYING;
+  const isStopped = playbackState !== TrackPlayer.STATE_PLAYING || playbackState === TrackPlayer.STATE_NONE;
   const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
 
   const handleMusicSelect = (music: string) => {
@@ -189,7 +190,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      <ProgressBar duration={trackDuration} time={position} color={primaryColor} progressOpacity={fadeOutAnimation} />
+      <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
 
       {isStopped || optionsVisible ?
         <>
@@ -202,7 +203,8 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={defaultMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />
+      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={defaultMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
+
     </ImageBackground>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
 import { eventButtonPush } from "../helpers/analytics";
+import { ScreenHeight, ScreenWidth } from '../helpers/constants';
 
 const Button = require('../../assets/images/pause_button.png');
 
@@ -15,11 +16,11 @@ const PauseButton: React.FC<Props> = ({ handlePause, buttonOpacity }) => {
     handlePause();
   }
   return (
-    <Animated.View style={styles.absoluteContainer}>
-      <TouchableOpacity style={[styles.PauseButton]} onPress={pressHandler}>
-        <Animated.Image source={Button} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity ? buttonOpacity : 0.6 }} />
-      </TouchableOpacity>
-    </Animated.View>
+
+    <TouchableOpacity style={[styles.PauseButton]} onPress={pressHandler}>
+      <Animated.Image source={Button} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity ? buttonOpacity : 0.6 }} />
+    </TouchableOpacity>
+
   );
 }
 
@@ -27,21 +28,16 @@ export default PauseButton;
 
 const styles = StyleSheet.create({
 
-  absoluteContainer: {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-  },
+
   PauseButton: {
     height: 80,
     width: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 4,
-    // paddingLeft: 6
+
+    position: 'absolute',
+    bottom: (ScreenHeight / 2) - 43,
+    zIndex: 10,
+    left: (ScreenWidth / 2) - 40,
+
+
   },
 });

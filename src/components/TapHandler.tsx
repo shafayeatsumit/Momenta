@@ -19,9 +19,11 @@ export default ExerciseController;
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 0,
+    // top: 100,
     left: 0,
     right: 0,
     height: ScreenHeight,
+    zIndex: 1,
+    // backgroundColor: 'yellow',
   },
 });

@@ -5,6 +5,12 @@ import _ from "lodash";
 
 const GUIDED_PRACTICE_URL = "guided-practices";
 
+interface Track {
+  id: string,
+  name: string,
+  url: string,
+}
+
 export interface GuidePractice {
   id: string,
   primaryColor: string,
@@ -15,7 +21,7 @@ export interface GuidePractice {
   name: string,
   info: string,
   summary: string,
-  duration: number,
+  tracks: Track[];
   defaultMusic: string,
 }
 
@@ -32,7 +38,7 @@ export const fetchGuidedPractice = () => {
   return async (dispatch: Dispatch) => {
     const response = await api.get(GUIDED_PRACTICE_URL);
     let guidedPractices: GuidePractice[] = response.data;
-    console.log('guided practice', guidedPractices)
+
     const payload: any = _.mapKeys(guidedPractices, "name");
     dispatch<FetchGuidedPracticeAction>({
       type: ActionTypes.AddGuidedPractice,

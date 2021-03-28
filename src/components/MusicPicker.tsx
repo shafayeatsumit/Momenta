@@ -1,5 +1,5 @@
 import React from 'react'
-import { Animated, Text, View, StyleSheet } from 'react-native';
+import { Animated, Text, View, StyleSheet, ViewStyle } from 'react-native';
 import ScrollPicker from "./ScrollPicker";
 
 
@@ -8,15 +8,16 @@ interface Props {
   handleMusicSelect: (music: string) => void;
   opacity: any;
   musicList?: string[],
+  containerStyle?: ViewStyle,
 }
 
 const defaultMusic = ['swells', 'wind', 'off', 'river', 'rain'];
 
-const MusicPicker: React.FC<Props> = ({ selectedMusic, handleMusicSelect, opacity, musicList = defaultMusic }: Props) => {
+const MusicPicker: React.FC<Props> = ({ containerStyle, selectedMusic, handleMusicSelect, opacity, musicList = defaultMusic }: Props) => {
   let selectedMusicIndex = musicList.findIndex((item) => item === selectedMusic);
 
   return (
-    <Animated.View style={[styles.container, { opacity }]}>
+    <Animated.View style={[styles.container, containerStyle && containerStyle, { opacity }]}>
       <ScrollPicker
         listItems={musicList}
         onSelect={handleMusicSelect}
@@ -34,7 +35,6 @@ const styles = StyleSheet.create({
     height: 110,
     width: 350,
     position: 'absolute',
-    top: 100,
     alignSelf: 'center',
     zIndex: 10,
   }

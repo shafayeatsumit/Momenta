@@ -57,9 +57,10 @@ const backgroundFadeIn = (duration = 5000) => {
 }
 
 export const playBackgroundMusic = (file: string, volume = 1) => {
+  console.log('I am playing play background', file)
   sound = new Sound(file, Sound.MAIN_BUNDLE,
     (error: any) => {
-      console.log('error loading swell file', error);
+      console.log('error loading background file', error);
     },
   );
   setTimeout(() => {

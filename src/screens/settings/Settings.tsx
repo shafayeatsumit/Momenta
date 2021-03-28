@@ -61,7 +61,7 @@ const Settings: React.FC<Props> = ({ selectedRhythm, exerciseName, vibrationType
     <View style={{ flex: 1 }}>
 
       <BackButton handlePress={closeModal} opacity={1} />
-      <MusicPicker selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
+      <MusicPicker containerStyle={{ top: 60 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
       <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
 
       <TouchableOpacity style={styles.vibraionIconHolder} onPress={handleVibrationSelect}>

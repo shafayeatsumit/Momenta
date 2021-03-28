@@ -9,8 +9,9 @@ import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
+import MusicPicker from '../../components/MusicPicker';
 import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
-import { playBackgroundMusic, fadeInBackground, stopBackgroundMusic } from "../../helpers/LessonPlayer";
+import { playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import ProgressBar from './ProgressBar';
 import DurationPicker from "../../components/DurationPicker";
 
@@ -60,71 +61,99 @@ enum AudioState {
   STOPPED = "stopped",
 }
 
+const MusicList = ['wind', 'off', 'river', 'rain'];
+
+
 
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
-  const { id: practiceId, duration, primaryColor, backgroundImage, file, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
+  const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [audioState, setAudioState] = useState<AudioState>(AudioState.STOPPED)
+  //TODO: fetch it from global.
+  const [backgroundMusic, setBackgroundMusic] = useState<string>(defaultMusic);
+
   const { position, duration: trackDuration } = useTrackPlayerProgress();
   const playbackState = usePlaybackState();
-  console.log(`playbackState ${playbackState}`)
+
   const handleFinish = () => {
     triggerHaptic();
     handleBack();
   }
 
-
+  const onStartAnimation = () => {
+    Animated.timing(fadeOutAnimation, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      TrackPlayer.play();
+    });
+  }
 
   const handleBack = () => {
     navigation.goBack()
     TrackPlayer.stop();
+    stopBackgroundMusic();
   }
 
   const prepareTrack = () => {
-    const track = {
-      id: practiceId,
-      url: file,
+    // TODO: change this later
+    let track = tracks[0]
+    track = {
+      ...track,
       artist: "",
-      duration: duration,
-      title: practiceName,
+      title: track.name,
     }
     TrackPlayer.add([track])
   }
 
   const handleQueueEndEvent = () => {
-    TrackPlayer.stop();
+    console.log('going back');
+    handleBack();
   }
 
   useEffect(() => {
     prepareTrack();
-    // TrackPlayer.addEventListener('playback-queue-ended', handleQueueEndEvent)
-
+    TrackPlayer.addEventListener('playback-queue-ended', handleQueueEndEvent);
   }, [])
 
 
   const showOptions = () => {
     if (!optionsVisible) {
+      fadeOutAnimation.setValue(1);
       setOptionsVisible(true);
       hideOptions();
     }
   }
 
   const handleTap = () => {
-    showOptions();
-    console.log('show handler tap');
+    const isPlaying = playbackState === TrackPlayer.STATE_PLAYING
+    console.log(`is playing ${isPlaying} && options not visible ${!optionsVisible}`);
+    if (isPlaying && !optionsVisible) {
+      console.log('get the options visible now')
+      fadeOutAnimation.setValue(1);
+      setOptionsVisible(true);
+      hideOptions();
+    } else {
+      console.log('options not visible')
+    }
   }
+
   const handleStart = () => {
     triggerHaptic();
-    TrackPlayer.play();
-    setAudioState(AudioState.PLAYING);
+    onStartAnimation();
+    setOptionsVisible(false);
   }
 
   const handlePause = () => {
-    setAudioState(AudioState.STOPPED);
     triggerHaptic();
     TrackPlayer.pause();
+    fadeOutAnimation.setValue(1);
+    setOptionsVisible(true);
+
   }
 
   const hideOptions = () => {
@@ -137,19 +166,43 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     }).start(() => setOptionsVisible(false));
   }
 
-  const isStopped = audioState === AudioState.STOPPED;
-  const isPlaying = audioState === AudioState.PLAYING;
+  const startBackgroundMusic = () => {
+    if (backgroundMusic) {
+      playBackgroundMusic(`${backgroundMusic}.wav`);
+    }
+  }
+
+
+  const isStopped = playbackState !== TrackPlayer.STATE_PLAYING;
+  const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
+
+  const handleMusicSelect = (music: string) => {
+    setBackgroundMusic(music);
+  }
+
+
+
+  useEffect(() => {
+    stopBackgroundMusic();
+    startBackgroundMusic();
+  }, [backgroundMusic])
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-      <CourseTitle title={practiceName} />
+      <ProgressBar duration={trackDuration} time={position} color={primaryColor} progressOpacity={fadeOutAnimation} />
 
-      <BackgroundCircle opacity={fadeOutAnimation} />
-      <ProgressBar duration={trackDuration} time={position} color={primaryColor} showProgressBar />
+      {isStopped || optionsVisible ?
+        <>
+          <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
+          <CourseTitle title={practiceName} />
+          <BackgroundCircle opacity={fadeOutAnimation} />
+        </> : null
+      }
+
+      <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-
+      <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={defaultMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />
     </ImageBackground>
   );
 }

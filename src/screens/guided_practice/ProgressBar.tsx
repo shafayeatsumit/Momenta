@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { View, Text, Animated, StyleSheet, Easing } from 'react-native';
 import { ScreenWidth } from '../../helpers/constants';
 import Svg, { Rect, Circle } from "react-native-svg";
+import moment from 'moment';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { registerPlaybackService } from 'react-native-track-player';
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
@@ -9,19 +10,19 @@ interface Props {
   duration: number;
   time: number;
   color: string;
-  showProgressBar?: boolean;
+  // showProgressBar?: boolean;
+  progressOpacity?: any;
 }
 
 const progressbarWidth = ScreenWidth - 80;
-const twoDigitPadding = (num: number) => String(num).padStart(2, '0');
 
-const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }: Props) => {
+
+
+const formatted = (secs: number) => moment.utc(secs * 1000).format('mm:ss');
+
+
+const ProgressBar: React.FC<Props> = ({ duration, time, color, progressOpacity }: Props) => {
   const animatedWidth = useRef(new Animated.Value(0)).current;
-
-
-
-
-
   const animateProgress = (width: number) => {
     Animated.timing(animatedWidth, {
       toValue: width,
@@ -40,12 +41,12 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }
     if (width <= progressbarWidth) {
       animateProgress(width);
     }
-
   }, [time])
-
-
+  const totalDuration = formatted(duration);
+  const currentTime = formatted(time);
+  console.log(`total duration ${currentTime} ${totalDuration}`)
   return (
-    <View style={[styles.container, showProgressBar ? { opacity: 1 } : { opacity: 0 }]}>
+    <Animated.View style={[styles.container, progressOpacity ? { opacity: progressOpacity } : { opacity: 1 }]}>
       <Svg height="100%" width="100%">
         <AnimatedRect
           x="0"
@@ -57,8 +58,10 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }
 
       </Svg>
       <Animated.View style={[styles.circle, { backgroundColor: color, transform: [{ translateX: animatedWidth }] }]} />
+      <Text allowFontScaling={false} style={[styles.timeText, { left: -14 }]}> {currentTime}</Text>
+      <Text allowFontScaling={false} style={[styles.timeText, { right: -14 }]}>{totalDuration}</Text>
 
-    </View>
+    </Animated.View>
 
   );
 }
@@ -66,7 +69,7 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, showProgressBar }
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 100,
     left: 0,
     right: 0,
     height: 5,
@@ -84,12 +87,12 @@ const styles = StyleSheet.create({
     marginLeft: -4,
   },
   timeText: {
-    fontSize: 18,
+    fontSize: 15,
     color: 'white',
     lineHeight: 22,
-    fontWeight: '800',
+    fontWeight: '700',
     position: 'absolute',
-    top: 16,
+    bottom: -35,
   }
 });
 

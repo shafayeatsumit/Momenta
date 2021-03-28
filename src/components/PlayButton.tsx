@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, StyleSheet, Animated, TouchableOpacity, Image } from 'react-native';
 import { eventButtonPush } from "../helpers/analytics";
+import { ScreenHeight, ScreenWidth } from '../helpers/constants';
 
 const playButton = require('../../assets/images/play_button.png');
 
@@ -16,11 +17,12 @@ const PlayButton: React.FC<Props> = ({ handleStart, buttonOpacity }) => {
     eventButtonPush('play');
   }
   return (
-    <Animated.View style={styles.absoluteContainer}>
-      <TouchableOpacity style={[styles.playButton]} onPress={pressHandler}>
-        <Animated.Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity }} />
-      </TouchableOpacity>
-    </Animated.View>
+
+    <TouchableOpacity style={[styles.playButton]} onPress={pressHandler}>
+      <Animated.Image source={playButton} resizeMode="contain" style={{ height: 70, width: 70, opacity: buttonOpacity }} />
+    </TouchableOpacity>
+
+
   );
 }
 
@@ -36,13 +38,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
+
   },
   playButton: {
     height: 80,
     width: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 4,
-    paddingLeft: 6
+    // backgroundColor: 'red',
+    position: 'absolute',
+    bottom: (ScreenHeight / 2) - 45,
+    zIndex: 10,
+    left: (ScreenWidth / 2) - 40,
+    paddingLeft: 8,
+
+
+
   },
 });

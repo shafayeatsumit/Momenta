@@ -6,8 +6,16 @@ export default function useBreathCounter(breathCounterEnd: Function) {
   const [breathCounterIsRunning, setBreathCounterIsRunning] = useState<boolean>(false);
 
   const startBreathCounter = (duration = breathCounter) => {
-    setBreathCounter(duration);
-    setBreathCounterIsRunning(true);
+    const remainder = duration % 1;
+    const countDuratoin = remainder ? Math.trunc(duration) : duration - 1;
+    const delay = remainder ? remainder * 1000 : 1000;
+
+
+    setTimeout(() => {
+      setBreathCounter(countDuratoin);
+      setBreathCounterIsRunning(true);
+    }, delay)
+
   }
 
   const stopBreathCounter = () => setBreathCounterIsRunning(false);

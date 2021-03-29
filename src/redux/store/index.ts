@@ -12,7 +12,7 @@ const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitelist: [
-    'user',
+    'user', 'guidedPracticeSettings',
     'backgroundMusic', 'fetchCompleted',
     'settings', 'contentSettings'
   ],

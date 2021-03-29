@@ -10,6 +10,7 @@ import { ChangeVibrationAction, ChangeMusicAction } from "./settings";
 import { FetchCourseAction } from "./course";
 import { FetchGuidedPracticeAction } from "./guidedPractice";
 import { ChangeExerciseMusicAction, ChangeRhythmAction, ChangeVibrationTypeAction } from "./exerciseSettings";
+import { ChangePracticeMusicAction, UpdateLastPracticeAction } from "./guidedPracticeSettings";
 
 export enum ActionTypes {
   SignUpAnonymously = "SIGN_UP_ANONYMOUSLY",
@@ -29,8 +30,11 @@ export enum ActionTypes {
   ChangeExerciseMusic = "CHANGE_EXERCISE_MUSIC",
   ChangeExerciseRhythm = "CHANGE_EXERCISE_RHYTHM",
   ChangeVibrationType = "CHANGE_VIBRATION_TYPE",
+  ChangePracticeMusic = "CHANGE_PRACTICE_MUSIC",
+  UpdateLastPractice = "UPDATE_LAST_PRACTICE",
 }
 
+export type GuidedPracticeSettingsAction = ChangePracticeMusicAction | UpdateLastPracticeAction;
 export type ExerciseSettingsAction = ChangeVibrationTypeAction | ChangeExerciseMusicAction | ChangeRhythmAction;
 export type UserAction = SignUpAnonymouslyAction;
 export type ContentSettingsAction = ListenedLessonAction | ListenedIntroLessonAction | ListenedWelcomeLessonAction | ContentFinishedAction | UpdateContentVibrationTypeAction | UpdateContentSettingsAction | UpdateContentBackgroundMusicAction;

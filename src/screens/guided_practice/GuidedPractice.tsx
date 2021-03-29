@@ -8,13 +8,13 @@ import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
-import Settings from '../settings/Settings';
+import SettingsScreen from '../settings/Settings';
 import MusicPicker from '../../components/MusicPicker';
 import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
 import { playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import ProgressBar from './ProgressBar';
 import DurationPicker from "../../components/DurationPicker";
-
+import { findNextTrack } from "../../helpers/common";
 import BackgroundImage from "../../components/BackgroundImage";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 import LessonBackButton from "../../components/LessonBack";
@@ -32,8 +32,8 @@ import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
-import { listenedLesson, listenedIntroLesson, listenedWelcomeLesson, contentFinished, ContentSettings } from "../../redux/actions/contentSettings";
 
+import { changePracticeMusic, updateLastPractice } from "../../redux/actions/guidedPracticeSettings";
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector, useDispatch } from 'react-redux';
@@ -41,47 +41,37 @@ import _, { update } from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
 
 
-
 interface Props {
   route: RouteProp<any, any>;
   navigation: any;
 }
-
-interface TrackType {
-  id: string,
-  url: string,
-  artist: string,
-  order: number,
-  duration: number,
-  title: string,
-}
-
-
 const MusicList = ['wind', 'off', 'river', 'rain'];
-
 
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
+  const [currentTrack, setCurrentTrack] = useState<string>("");
   //TODO: fetch it from global.
-  const [backgroundMusic, setBackgroundMusic] = useState<string>(defaultMusic);
+
+
+  const selectSettings = (state: RootState) => state.guidedPracticeSettings;
+  const settings = useSelector(selectSettings)
 
   const { position, duration: trackDuration } = useTrackPlayerProgress();
   const playbackState = usePlaybackState();
-
   const isStopped = playbackState !== TrackPlayer.STATE_PLAYING || playbackState === TrackPlayer.STATE_NONE;
   const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
 
+  const backgroundMusic = _.get(settings, `${practiceName}.backgroundMusic`, defaultMusic);
+  const lastPlayedTrack = _.get(settings, `${practiceName}.lastPlayed`, null);
+
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
+    dispatch(updateLastPractice(practiceName, currentTrack));
     handleBack();
   });
 
-  const handleFinish = () => {
-    triggerHaptic();
-    handleBack();
-  }
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -100,14 +90,22 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     stopBackgroundMusic();
   }
 
+  const getTrack = () => {
+    const trackIndex = findNextTrack(tracks, lastPlayedTrack)
+    const track = tracks[trackIndex];
+    return track
+  }
+
   const prepareTrack = () => {
     // TODO: change this later
-    let track = tracks[0]
+    let track = getTrack();
+
     track = {
       ...track,
       artist: "",
       title: track.name,
     }
+    setCurrentTrack(track.id);
     TrackPlayer.add([track])
   }
 
@@ -167,7 +165,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const handleMusicSelect = (music: string) => {
-    setBackgroundMusic(music);
+    dispatch(changePracticeMusic(practiceName, music))
   }
 
 
@@ -192,7 +190,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={defaultMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
+      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
 
     </ImageBackground>
   );

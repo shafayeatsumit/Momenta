@@ -56,13 +56,8 @@ interface TrackType {
   title: string,
 }
 
-enum AudioState {
-  PLAYING = "playing",
-  STOPPED = "stopped",
-}
 
 const MusicList = ['wind', 'off', 'river', 'rain'];
-
 
 
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
@@ -70,13 +65,14 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
-  const [audioState, setAudioState] = useState<AudioState>(AudioState.STOPPED)
-  const [finished, setFinished] = useState<boolean>(false);
   //TODO: fetch it from global.
   const [backgroundMusic, setBackgroundMusic] = useState<string>(defaultMusic);
 
   const { position, duration: trackDuration } = useTrackPlayerProgress();
   const playbackState = usePlaybackState();
+
+  const isStopped = playbackState !== TrackPlayer.STATE_PLAYING || playbackState === TrackPlayer.STATE_NONE;
+  const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
     handleBack();
@@ -131,15 +127,10 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handleTap = () => {
-    const isPlaying = playbackState === TrackPlayer.STATE_PLAYING
-    console.log(`is playing ${isPlaying} && options not visible ${!optionsVisible}`);
-    if (isPlaying && !optionsVisible) {
-      console.log('get the options visible now')
-      fadeOutAnimation.setValue(1);
-      setOptionsVisible(true);
-      hideOptions();
-    } else {
-      console.log('options not visible')
+    // audio is playing but options are not visible.
+    const canShowOptions = isPlaying && !optionsVisible;
+    if (canShowOptions) {
+      showOptions();
     }
   }
 
@@ -174,8 +165,6 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
 
-  const isStopped = playbackState !== TrackPlayer.STATE_PLAYING || playbackState === TrackPlayer.STATE_NONE;
-  const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
 
   const handleMusicSelect = (music: string) => {
     setBackgroundMusic(music);

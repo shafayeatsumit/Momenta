@@ -282,15 +282,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handlePressSettings = () => {
+    handlePause();
     setSettingsVisible(true);
-    stopTimer();
+
   }
 
   const closeSetting = () => {
     setSettingsVisible(false);
-    if (!exerciseNotStarted) {
-      startExercise();
-    }
   }
 
   const closeInfoModal = () => setInfoModalVisible(false);

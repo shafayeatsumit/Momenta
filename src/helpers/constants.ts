@@ -18,6 +18,6 @@ export const ExercisesRhythm = {
   'box': {
     'standard': { inhaleTime: 4, exhaleTime: 4, inhaleHoldTime: 4, exhaleHoldTime: 4, breathsPerMin: 4 },
     'faster': { inhaleTime: 3, exhaleTime: 3, inhaleHoldTime: 3, exhaleHoldTime: 3, breathsPerMin: 5 },
-    'slower': { inhaleTime: 2, exhaleTime: 2, inhaleHoldTime: 2, exhaleHoldTime: 2, breathsPerMin: 6 },
+    'slower': { inhaleTime: 2.5, exhaleTime: 2.5, inhaleHoldTime: 2.5, exhaleHoldTime: 2.5, breathsPerMin: 6 },
   }
 }

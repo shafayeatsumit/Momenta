@@ -22,7 +22,7 @@ export default function useBreathCounter(breathCounterEnd: Function) {
 
   useInterval(() => {
     const updatedTime = breathCounter - 1;
-    if (updatedTime === 0) {
+    if (updatedTime < 0) {
       setBreathCounterIsRunning(false);
       breathCounterEnd();
       return;

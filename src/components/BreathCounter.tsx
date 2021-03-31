@@ -53,7 +53,7 @@ const BreathCounter: React.FC<Props> = ({ breathCounter, breathingState, inhaleH
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: ScreenHeight / 2 - 13,
+    marginTop: ScreenHeight / 2 - 13 + 35,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center'

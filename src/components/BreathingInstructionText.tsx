@@ -17,9 +17,10 @@ const BreathingInstructionText: React.FC<Props> = ({ breathCounter, inhaleHoldTi
   const getBreathingStateText = () => {
 
 
-    const showInhaleHold = inhaleHoldTime ? breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1 : false;
-    const showExhaleHold = exhaleHoldTime ? breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1 : false;
-
+    // const showInhaleHold = inhaleHoldTime ? breathCounter === inhaleHoldTime || breathCounter === inhaleHoldTime - 1 : false;
+    // const showExhaleHold = exhaleHoldTime ? breathCounter === exhaleHoldTime || breathCounter === exhaleHoldTime - 1 : false;
+    const showInhaleHold = true;
+    const showExhaleHold = true;
 
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):

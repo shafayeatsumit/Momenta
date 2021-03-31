@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, Platform, NativeModules, ImageBackground } from 'react-native';
+import { Animated, Easing, Modal, Text, Platform, NativeModules, ImageBackground } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -25,11 +25,12 @@ import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
-import { ExercisesRhythm } from "../../helpers/constants";
+import { ExercisesRhythm, ScreenHeight, ScreenWidth } from "../../helpers/constants";
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
+import LottieView from 'lottie-react-native';
 
 interface Props {
   route: RouteProp<any, any>;
@@ -52,6 +53,7 @@ interface Progress {
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectSettings = (state: RootState) => state.exerciseSettings;
   const settingsInfo = useSelector(selectSettings)
+  const circleProgress = useRef(new Animated.Value(0)).current;
 
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -72,7 +74,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectedRhythm = _.get(settingsInfo, `${name}.rhythm`, 'standard');
   const vibrationType = _.get(settingsInfo, `${name}.vibrationType`, true);
   const { inhaleTime, exhaleTime, inhaleHoldTime, exhaleHoldTime } = ExercisesRhythm[name][selectedRhythm]
-  console.log('inhale time', inhaleTime, exhaleTime, inhaleHoldTime, exhaleHoldTime);
+
 
   const startVibration = (duration: number) => {
     if (Platform.OS === 'android') {
@@ -100,20 +102,28 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
-  const breathCountEnd = () => {
-    switch (breathingState !== 0) {
+  const getBreathingStateText = () => {
+    switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
-        inhaleHoldTime ? startInhaleHold() : startExhale();
-        return
+        return "Breath in"
       case (breathingState === BreathingState.Exhale):
-        exhaleHoldTime ? startExhaleHold() : startInhale();
-        return
+        return "Breath out"
       case (breathingState === BreathingState.InhaleHold):
-        startExhale();
-        return
+        return "Hold"
       case (breathingState === BreathingState.ExhaleHold):
-        startInhale();
-        return
+        return "Hold"
+      default:
+        return ""
+    }
+  }
+
+  const holdTimeEnd = () => {
+    if (breathingState === BreathingState.InhaleHold) {
+      console.log('Inhale Hold END');
+      startExhale();
+    } else if (breathingState === BreathingState.ExhaleHold) {
+      console.log('Exhale HOLD END');
+      startInhale();
     }
   }
 
@@ -158,7 +168,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setExerciseState(ExerciseState.Finish);
   }
 
-  const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(breathCountEnd)
+  const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(holdTimeEnd)
   const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
   const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
   const isPaused = exerciseState === ExerciseState.Paused;
@@ -177,12 +187,18 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const exhaleEnd = () => {
-
+    exhaleHoldTime ? startExhaleHold() : startInhale();
   }
 
   const startExhale = (duration = exhaleTime) => {
     hasSwell && startSwellExhale(exhaleTime);
-    startBreathCounter(duration)
+    Animated.timing(circleProgress, {
+      toValue: 1,
+      duration: duration * 1000,
+      useNativeDriver: true,
+      easing: Easing.linear,
+    }).start(exhaleEnd);
+
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
   }
@@ -197,12 +213,22 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     startBreathCounter(duration)
   }
 
+
+  const inhaleEnd = () => {
+    inhaleHoldTime ? startInhaleHold() : startExhale();
+  }
+
   const startInhale = (duration = inhaleTime) => {
     hasSwell && startSwellInhale(inhaleTime);
     vibrationType && startVibration(inhaleTime);
-    startBreathCounter(duration)
+    circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);
-    setProgress({ type: AnimationType.ExpandCircle, duration })
+    Animated.timing(circleProgress, {
+      toValue: 0.5,
+      duration: duration * 1000,
+      useNativeDriver: true,
+      easing: Easing.linear,
+    }).start(inhaleEnd);
   }
 
   const startExercise = () => {
@@ -225,7 +251,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const hideOptions = () => {
-    console.log('+++++ hiding options +++++++')
     Animated.timing(fadeOutAnimation, {
       toValue: 0,
       duration: 300,
@@ -284,6 +309,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
   }
 
+  // console.log(`breathing state ${breathingState}`);
+
   const handleBack = () => {
     !isPaused && stop();
     navigation.goBack()
@@ -304,15 +331,37 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
       {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
-      <BreathingProgress rhythm={selectedRhythm} primaryColor={primaryColor} progress={progress} exerciseState={exerciseState} exhaleEnd={exhaleEnd} />
+
+      <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
+
 
       {(!isPaused && !optionsVisible) &&
         <>
-          <BreathingInstruction
+
+          <Text style={{
+            position: 'absolute',
+            bottom: (ScreenHeight / 2) - 20,
+            left: ScreenWidth / 2 - 50,
+            fontSize: 30, color: 'white'
+          }}>
+            {getBreathingStateText(breathingState)}
+          </Text>
+          {breathCounter && getBreathingStateText(breathingState) === "Hold" ?
+            <Text style={{
+              position: 'absolute',
+              bottom: (ScreenHeight / 2) - 70,
+              left: ScreenWidth / 2 - 20,
+              fontSize: 30, color: 'white'
+            }}>
+              {breathCounter}
+            </Text>
+            : null
+          }
+          {/* <BreathingInstruction
             breathCounter={breathCounter} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
             inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime}
           />
-          <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} />
+          <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} /> */}
         </>
       }
       {exerciseFinished && !settingsVisible && <FinishButton color={primaryColor} handleFinish={handleFinish} />}

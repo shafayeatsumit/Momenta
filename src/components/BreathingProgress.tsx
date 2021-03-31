@@ -138,15 +138,11 @@ const AnimatedProgress: React.FC<Props> = ({ rhythm, primaryColor, progress, exe
           width: ScreenWidth * .8 + 10,
           justifyContent: 'center',
           alignItems: 'center',
-          // backgroundColor: 'pink',
         }}
       >
 
         <Svg width={"100%"} height={'100%'}
-          style={{
-            flex: 1,
-            // backgroundColor: 'yellow'
-          }}
+          style={{ flex: 1 }}
         >
 
           <AnimatedCircle

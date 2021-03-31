@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, Text, Platform, NativeModules, ImageBackground } from 'react-native';
+import { Animated, Easing, View, Modal, Text, Platform, NativeModules, ImageBackground } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -193,6 +193,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     hasSwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
+      delay: 500,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -224,6 +225,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setBreathingState(BreathingState.Inhale);
     Animated.timing(circleProgress, {
       toValue: 0.5,
+      delay: 500,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -317,59 +319,72 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
+      { !settingsVisible ? <>
+        {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-      {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
+        {exerciseNotStarted && !settingsVisible && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
 
-      {exerciseNotStarted && !settingsVisible && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+        {(isStopped || optionsVisible) && (!settingsVisible) &&
+          <>
+            <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
+            <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
+            <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
+          </>
+        }
+        {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
+        {!isPaused &&
 
-      {(isStopped || optionsVisible) && (!settingsVisible) &&
-        <>
-          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
-          <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-          <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
-        </>
+          <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
+
+
+        }
+
+
+
+        {(!isPaused && !optionsVisible) &&
+          <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+        }
+        {exerciseFinished && !settingsVisible && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
+
+        <TapHandler handleTap={handleTap} />
+        {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
+        {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
+        {!settingsVisible && <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />}
+
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={infoModalVisible}
+          onRequestClose={closeInfoModal}
+        >
+          <InfoModal
+            title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
+          />
+        </Modal>
+      </>
+        :
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={settingsVisible}
+          onRequestClose={closeSetting}
+        >
+          <Settings
+            iosHapticStatus={iosHapticStatus}
+            selectedRhythm={selectedRhythm}
+            backgroundMusic={backgroundMusic}
+            name={name}
+            about={about}
+            tips={tips}
+            backgroundImage={backgroundImage}
+            primaryColor={primaryColor}
+            vibrationType={vibrationType}
+            closeModal={closeSetting}
+          />
+        </Modal>
       }
-      {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
-      {!isPaused &&
-        <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
-      }
 
-
-
-      {(!isPaused && !optionsVisible) &&
-        <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
-      }
-      {exerciseFinished && !settingsVisible && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
-
-      <TapHandler handleTap={handleTap} />
-      {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      {!settingsVisible && <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />}
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={settingsVisible}
-        onRequestClose={closeSetting}
-      >
-        <Settings
-          vibrationType={vibrationType}
-          selectedRhythm={selectedRhythm}
-          backgroundMusic={backgroundMusic}
-          exerciseName={name}
-          closeModal={closeSetting}
-        />
-      </Modal>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={infoModalVisible}
-        onRequestClose={closeInfoModal}
-      >
-        <InfoModal
-          title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
-        />
-      </Modal>
     </ImageBackground>
 
   );

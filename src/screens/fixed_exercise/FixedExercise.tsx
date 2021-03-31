@@ -31,6 +31,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
+import BreathingInstructionText from '../../components/BreathingInstructionText';
 
 interface Props {
   route: RouteProp<any, any>;
@@ -119,10 +120,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const holdTimeEnd = () => {
     if (breathingState === BreathingState.InhaleHold) {
-      console.log('Inhale Hold END');
       startExhale();
     } else if (breathingState === BreathingState.ExhaleHold) {
-      console.log('Exhale HOLD END');
       startInhale();
     }
   }
@@ -262,6 +261,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const stop = () => {
     fadeOutAnimation.setValue(1);
+
     stopTimer();
     stopVibration();
     stopBreathCounter();
@@ -315,6 +315,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     !isPaused && stop();
     navigation.goBack()
   }
+  const instructionText = getBreathingStateText();
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
@@ -331,38 +332,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         </>
       }
       {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
+      {!isPaused &&
+        <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
+      }
 
-      <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
 
 
       {(!isPaused && !optionsVisible) &&
-        <>
-
-          <Text style={{
-            position: 'absolute',
-            bottom: (ScreenHeight / 2) - 20,
-            left: ScreenWidth / 2 - 50,
-            fontSize: 30, color: 'white'
-          }}>
-            {getBreathingStateText(breathingState)}
-          </Text>
-          {breathCounter && getBreathingStateText(breathingState) === "Hold" ?
-            <Text style={{
-              position: 'absolute',
-              bottom: (ScreenHeight / 2) - 70,
-              left: ScreenWidth / 2 - 20,
-              fontSize: 30, color: 'white'
-            }}>
-              {breathCounter}
-            </Text>
-            : null
-          }
-          {/* <BreathingInstruction
-            breathCounter={breathCounter} breathingState={breathingState} exerciseNotStarted={exerciseNotStarted}
-            inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime}
-          />
-          <BreathCounter breathCounter={breathCounter} breathingState={breathingState} inhaleTime={inhaleTime} exhaleTime={exhaleTime} inhaleHoldTime={inhaleHoldTime} exhaleHoldTime={exhaleHoldTime} /> */}
-        </>
+        <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
       }
       {exerciseFinished && !settingsVisible && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
 

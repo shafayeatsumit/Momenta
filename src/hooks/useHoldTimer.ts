@@ -7,7 +7,7 @@ export default function useHoldTimer(holdTimeEnd: Function) {
 
   useInterval(() => {
     const updatedTime = holdTimer - 1;
-    if (updatedTime === 0) {
+    if (updatedTime === 1) {
       setHoldTimerIsRunning(false);
       holdTimeEnd();
       return

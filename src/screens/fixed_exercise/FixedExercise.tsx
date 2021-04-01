@@ -5,6 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
+
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
@@ -47,9 +48,6 @@ interface Progress {
   type: AnimationType | null;
   duration: number;
 }
-
-
-
 
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectSettings = (state: RootState) => state.exerciseSettings;
@@ -106,9 +104,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const getBreathingStateText = () => {
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
-        return "Breath in"
+        return "Breathe in"
       case (breathingState === BreathingState.Exhale):
-        return "Breath out"
+        return "Breathe out"
       case (breathingState === BreathingState.InhaleHold):
         return "Hold"
       case (breathingState === BreathingState.ExhaleHold):
@@ -137,7 +135,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startBackgroundMusic = () => {
-    if (backgroundMusic) {
+    if (backgroundMusic && backgroundMusic !== 'swells') {
       playBackgroundMusic(`${backgroundMusic}.wav`);
     }
   }
@@ -147,6 +145,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   })
 
   useEffect(() => {
+
     if (settingsVisible) {
       stopBackgroundMusic();
       startBackgroundMusic();
@@ -155,11 +154,15 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   useEffect(() => {
+
     if (Platform.OS === 'ios') {
       NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
         setIOSHapticStatus(resp)
         if (resp) NativeModules.IOSVibration.prepareHaptics();
       });
+    }
+    return () => {
+
     }
   }, [])
 
@@ -178,7 +181,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const showPause = optionsVisible && !isStopped;
   const hasSwell = backgroundMusic === 'swells';
   const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
-
+  const canPlaySwell = hasSwell && !settingsVisible;
   const showBackgroundCircle = (isStopped || isPaused);
 
   const handleTimeSelect = (time: number) => {
@@ -190,7 +193,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
-    hasSwell && startSwellExhale(exhaleTime);
+    canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
       delay: 500,
@@ -219,7 +222,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startInhale = (duration = inhaleTime) => {
-    hasSwell && startSwellInhale(inhaleTime);
+    canPlaySwell && startSwellInhale(inhaleTime);
     vibrationType && startVibration(inhaleTime);
     circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);

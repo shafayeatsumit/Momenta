@@ -7,6 +7,7 @@ import { FontType } from '../../helpers/theme';
 import RhythmPicker from "../../components/RhythmPicker";
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
+import useDidUpdateEffect from "../../hooks/useDidUpdateEffect";
 import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
@@ -46,9 +47,6 @@ interface Progress {
   type: AnimationType | null;
   duration: number;
 }
-
-
-
 
 const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, about, tips, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
@@ -98,9 +96,9 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const getBreathingStateText = () => {
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
-        return "Breath in"
+        return "Breathe in"
       case (breathingState === BreathingState.Exhale):
-        return "Breath out"
+        return "Breathe out"
       case (breathingState === BreathingState.InhaleHold):
         return "Hold"
       case (breathingState === BreathingState.ExhaleHold):
@@ -129,7 +127,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   }
 
   const startBackgroundMusic = () => {
-    if (backgroundMusic) {
+    if (backgroundMusic && backgroundMusic !== 'swells') {
       playBackgroundMusic(`${backgroundMusic}.wav`);
     }
   }
@@ -147,7 +145,11 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
 
 
   useEffect(() => {
-    setTimeout(handleStart, 1000);
+    setTimeout(handleStart, 300);
+
+    return () => {
+      handleBack();
+    }
   }, [])
 
 
@@ -158,14 +160,14 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
 
   const hasSwell = backgroundMusic === 'swells';
   const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
-
+  const canPlaySwell = hasSwell;
 
   const exhaleEnd = () => {
     exhaleHoldTime ? startExhaleHold() : startInhale();
   }
 
   const startExhale = (duration = exhaleTime) => {
-    hasSwell && startSwellExhale(exhaleTime);
+    canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
       delay: 300,
@@ -194,7 +196,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   }
 
   const startInhale = (duration = inhaleTime) => {
-    hasSwell && startSwellInhale(inhaleTime);
+    canPlaySwell && startSwellInhale(inhaleTime);
     vibrationType && startVibration(inhaleTime);
     circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);
@@ -220,31 +222,24 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   }
 
 
-
-
-
   const stop = () => {
     fadeOutAnimation.setValue(1);
-
-
     stopVibration();
     stopBreathCounter();
     hasSwell && stopSwellSound();
     hasBackgroundMusic && stopBackgroundMusic();
   }
 
-
-
-
-
   const closeInfoModal = () => setInfoModalVisible(false);
   const handlePressInfo = () => {
   }
 
   const handleBack = () => {
+    Animated.timing(circleProgress).stop();
     stop();
     closeModal();
   }
+
   const instructionText = getBreathingStateText();
   const handleMusicSelect = (musicId: string) => {
     dispatch(changeMusic(name, musicId));
@@ -262,13 +257,18 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const rhythmList = Object.keys(rythms);
   const breathsPerMin = _.get(rythms, `${selectedRhythm}.breathsPerMin`, null)
 
-  useEffect(() => {
-    stop();
-    setShowCircle(false)
-    setTimeout(() => {
-      setShowCircle(true);
-      onStartAnimation();
-    }, 1000)
+  // useEffect(() => {
+  //   // stop();
+  //   // setShowCircle(false)
+  //   // setTimeout(() => {
+  //   //   setShowCircle(true);
+  //   //   onStartAnimation();
+  //   // }, 1000)
+
+  // }, [breathsPerMin])
+
+  useDidUpdateEffect(() => {
+    console.log(`breaths per min ${breathsPerMin}`);
   }, [breathsPerMin])
 
   return (

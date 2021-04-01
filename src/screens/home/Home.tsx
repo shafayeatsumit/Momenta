@@ -13,6 +13,7 @@ import { Exercise } from "../../redux/actions/exercise";
 import LinearGradient from 'react-native-linear-gradient';
 import { Course } from '../../redux/actions/course';
 import { GuidePractice } from '../../redux/actions/guidedPractice';
+import TrackPlayer from 'react-native-track-player';
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
@@ -60,6 +61,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     );
     return () => {
       backHandler.remove();
+      TrackPlayer.destroy();
     }
   }, [])
 

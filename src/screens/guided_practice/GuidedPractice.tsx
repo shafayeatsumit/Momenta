@@ -68,6 +68,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const lastPlayedTrack = _.get(settings, `${practiceName}.lastPlayed`, null);
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
+    console.log('going back');
     dispatch(updateLastPractice(practiceName, currentTrack));
     handleBack();
   });
@@ -81,6 +82,9 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       useNativeDriver: true,
     }).start(() => {
       TrackPlayer.play();
+      if (Platform.OS === 'android') {
+        startBackgroundMusic();
+      }
     });
   }
 
@@ -96,7 +100,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     return track
   }
 
-  const prepareTrack = () => {
+  const prepareTrack = async () => {
     // TODO: change this later
     let track = getTrack();
 
@@ -106,13 +110,17 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       title: track.name,
     }
     setCurrentTrack(track.id);
-    TrackPlayer.add([track])
+    await TrackPlayer.add([track])
   }
 
 
 
   useEffect(() => {
     prepareTrack();
+    return () => {
+      stopBackgroundMusic();
+      TrackPlayer.reset();
+    }
   }, [])
 
 
@@ -162,13 +170,9 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
-
-
   const handleMusicSelect = (music: string) => {
     dispatch(changePracticeMusic(practiceName, music))
   }
-
-
 
   useEffect(() => {
     stopBackgroundMusic();

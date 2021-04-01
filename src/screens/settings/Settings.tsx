@@ -52,18 +52,16 @@ interface Progress {
 
 const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, about, tips, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
-  const selectSettings = (state: RootState) => state.exerciseSettings;
-  const settingsInfo = useSelector(selectSettings)
   const circleProgress = useRef(new Animated.Value(0)).current;
 
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
-
+  const [showCircle, setShowCircle] = useState<boolean>(true);
 
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
-  const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
+
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -149,30 +147,18 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
 
 
   useEffect(() => {
-    setTimeout(handleStart, 2000);
+    setTimeout(handleStart, 1000);
   }, [])
 
-  const timerEnd = () => {
-    setExerciseState(ExerciseState.Finish);
-  }
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(holdTimeEnd)
-  const { time, startTimer, stopTimer } = useTimer(timerEnd, exerciseDuration)
-  const exerciseNotStarted = exerciseState === ExerciseState.NotStarted;
-  const isPaused = exerciseState === ExerciseState.Paused;
-  const isStopped = exerciseState === ExerciseState.NotStarted || exerciseState === ExerciseState.Paused;
 
-  const exerciseFinished = exerciseState === ExerciseState.Finish;
-  const showProgressBar = isPaused || optionsVisible;
-  const showPause = optionsVisible && !isStopped;
+
+
+
   const hasSwell = backgroundMusic === 'swells';
   const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
 
-  const showBackgroundCircle = (isStopped || isPaused);
-
-  const handleTimeSelect = (time: number) => {
-    setExerciseDuration(time);
-  }
 
   const exhaleEnd = () => {
     exhaleHoldTime ? startExhaleHold() : startInhale();
@@ -224,7 +210,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const startExercise = () => {
     startInhale();
     setExerciseState(ExerciseState.Play)
-    startTimer();
+
   }
 
   const handleStart = () => {
@@ -240,7 +226,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const stop = () => {
     fadeOutAnimation.setValue(1);
 
-    stopTimer();
+
     stopVibration();
     stopBreathCounter();
     hasSwell && stopSwellSound();
@@ -276,13 +262,27 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const rhythmList = Object.keys(rythms);
   const breathsPerMin = _.get(rythms, `${selectedRhythm}.breathsPerMin`, null)
 
+  useEffect(() => {
+    stop();
+    setShowCircle(false)
+    setTimeout(() => {
+      setShowCircle(true);
+      onStartAnimation();
+    }, 1000)
+  }, [breathsPerMin])
+
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
       <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
       <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
       <ExerciseTitle title={name} opacity={fadeOutAnimation} />
-      <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
-      <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+      {showCircle &&
+        <>
+          <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
+          <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+        </>
+      }
+
 
       <BackButton handlePress={closeModal} opacity={1} />
       <MusicPicker containerStyle={{ top: 60 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />

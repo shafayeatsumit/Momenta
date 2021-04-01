@@ -145,8 +145,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
 
 
   useEffect(() => {
-    setTimeout(handleStart, 300);
-
+    setTimeout(handleStart, 250);
     return () => {
       handleBack();
     }

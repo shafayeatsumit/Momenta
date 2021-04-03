@@ -26,7 +26,7 @@ import BackButton from "../../components/BackButton";
 import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
-import { ExercisesRhythm, ScreenHeight, ScreenWidth } from "../../helpers/constants";
+import { ExercisesRhythm, LottieFiles } from "../../helpers/constants";
 import { BreathingState, ExerciseState } from "../../helpers/types";
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
@@ -102,6 +102,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const getBreathingStateText = () => {
+    console.log("breathing state", breathingState);
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
         return "Breathe in"
@@ -319,6 +320,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
   }
   const instructionText = getBreathingStateText();
+  const anaimationFile = LottieFiles[name];
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
@@ -336,8 +338,10 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         }
         {(isStopped || optionsVisible) && <ExerciseTitle title={name} opacity={fadeOutAnimation} />}
         {!isPaused &&
+          <View style={{ position: 'absolute', top: 0, left: 40, right: 40, bottom: 0, }}>
+            <LottieView source={anaimationFile} progress={circleProgress} />
+          </View>
 
-          <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
 
 
         }

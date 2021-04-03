@@ -189,7 +189,6 @@ const GuidedExercise: React.FC<Props> = ({ navigation, route }: Props) => {
   const exhaleEnd = () => {
     totalBreathCount = totalBreathCount + 1;
     const noIncrement = totalBreathCount > targetBreathCount;
-    console.log("inhale ===>", totalBreathCount);
     console.log("exhaleIncrement", exhaleIncrement)
     if (noIncrement) {
       startInhale();

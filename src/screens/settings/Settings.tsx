@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, StyleSheet, TouchableOpacity, Image, Text, Platform, NativeModules, ImageBackground } from 'react-native';
+import { View, Animated, Easing, Modal, StyleSheet, TouchableOpacity, Image, Text, Platform, NativeModules, ImageBackground } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 import MusicPicker from "../../components/MusicPicker";
 import { FontType } from '../../helpers/theme';
@@ -18,7 +18,7 @@ import { changeMusic, changeRhythm, changeVibrationType } from "../../redux/acti
 
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
-import { ExercisesRhythm, ScreenHeight, ScreenWidth } from "../../helpers/constants";
+import { ExercisesRhythm, ScreenHeight, ScreenWidth, LottieFiles } from "../../helpers/constants";
 import { BreathingState, ExerciseState } from "../../helpers/types";
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -47,6 +47,7 @@ interface Progress {
   type: AnimationType | null;
   duration: number;
 }
+let resetting = false;
 
 const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, about, tips, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
@@ -57,7 +58,6 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [showCircle, setShowCircle] = useState<boolean>(true);
-
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
 
 
@@ -137,10 +137,8 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   })
 
   useEffect(() => {
-
     stopBackgroundMusic();
     startBackgroundMusic();
-
   }, [backgroundMusic])
 
 
@@ -148,15 +146,12 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
     setTimeout(handleStart, 250);
     return () => {
       handleBack();
+      resetting = false;
     }
   }, [])
 
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(holdTimeEnd)
-
-
-
-
   const hasSwell = backgroundMusic === 'swells';
   const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
   const canPlaySwell = hasSwell;
@@ -180,13 +175,19 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   }
 
   const startInhaleHold = (duration = inhaleHoldTime) => {
-    setBreathingState(BreathingState.InhaleHold);
-    startBreathCounter(duration)
+    console.log('calling inhale hold');
+    if (!resetting) {
+      setBreathingState(BreathingState.InhaleHold);
+      startBreathCounter(duration)
+    }
   }
 
   const startExhaleHold = (duration = exhaleHoldTime) => {
-    setBreathingState(BreathingState.ExhaleHold);
-    startBreathCounter(duration)
+    console.log('calling exhale hold');
+    if (!resetting) {
+      setBreathingState(BreathingState.ExhaleHold);
+      startBreathCounter(duration)
+    }
   }
 
 
@@ -222,6 +223,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
 
 
   const stop = () => {
+    Animated.timing(circleProgress).stop();
     fadeOutAnimation.setValue(1);
     stopVibration();
     stopBreathCounter();
@@ -230,11 +232,11 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   }
 
   const closeInfoModal = () => setInfoModalVisible(false);
+
   const handlePressInfo = () => {
   }
 
   const handleBack = () => {
-    Animated.timing(circleProgress).stop();
     stop();
     closeModal();
   }
@@ -256,28 +258,28 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   const rhythmList = Object.keys(rythms);
   const breathsPerMin = _.get(rythms, `${selectedRhythm}.breathsPerMin`, null)
 
-  // useEffect(() => {
-  //   // stop();
-  //   // setShowCircle(false)
-  //   // setTimeout(() => {
-  //   //   setShowCircle(true);
-  //   //   onStartAnimation();
-  //   // }, 1000)
-
-  // }, [breathsPerMin])
-
   useDidUpdateEffect(() => {
-    console.log(`breaths per min ${breathsPerMin}`);
+    resetting = true;
+    stop();
+    setTimeout(() => {
+      onStartAnimation();
+      resetting = false;
+    }, 200)
+
   }, [breathsPerMin])
+  const naimationFile = LottieFiles[name];
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
       <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
       <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
       <ExerciseTitle title={name} opacity={fadeOutAnimation} />
-      {showCircle &&
+      {!resetting &&
         <>
-          <LottieView source={require('../../../assets/anims/anim.json')} progress={circleProgress} />
+          <View style={{ position: 'absolute', top: 0, left: 40, right: 40, bottom: 0, }}>
+            <LottieView source={naimationFile} progress={circleProgress} />
+          </View>
+
           <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
         </>
       }

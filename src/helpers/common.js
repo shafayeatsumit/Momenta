@@ -14,3 +14,4 @@ export const findNextTrack = (tracks, lastTrack) => {
   }
   return currentTrackIndex + 1;
 }
+

@@ -37,13 +37,11 @@ const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
           resizeMode={"cover"}
         >
           <Text allowFontScaling={false} style={styles.textBold}>{displayName}</Text>
-          <Text allowFontScaling={false} style={styles.level}>{exercise.level}</Text>
+
         </ImageBackground>
       </View>
 
-      <View style={styles.textContainer}>
-        <Text allowFontScaling={false} style={styles.title}>{exercise.thumbnailTitle}</Text>
-      </View>
+
     </TouchableOpacity>
 
   );
@@ -53,20 +51,16 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 2.35,
-    height: ScreenWidth / 1.9,
+    height: ScreenWidth / 2.5,
     marginHorizontal: 10,
-    // backgroundColor: 'red',
-    // backgroundColor: 'red',
+    marginBottom: 30,
   },
   thumbnailContainer: {
     flex: 5,
-    // backgroundColor: 'pink',
   },
   textContainer: {
     paddingTop: 8,
     flex: 1.3,
-    // padding: 5,
-    // backgroundColor: 'orange',
   },
   thumbnail: {
     height: '100%',

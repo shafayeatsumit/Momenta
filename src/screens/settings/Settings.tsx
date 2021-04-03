@@ -28,7 +28,7 @@ import BreathingInstructionText from '../../components/BreathingInstructionText'
 
 interface Props {
   name: string,
-  about: string, tips: string,
+  info: string,
   primaryColor: string,
   backgroundMusic: string,
   backgroundImage: string,
@@ -49,7 +49,7 @@ interface Progress {
 }
 let resetting = false;
 
-const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, about, tips, primaryColor, backgroundMusic, backgroundImage }: Props) => {
+const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, info, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
   const circleProgress = useRef(new Animated.Value(0)).current;
 
@@ -303,7 +303,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
         onRequestClose={closeInfoModal}
       >
         <InfoModal
-          title={name} about={about} tips={tips} handleClose={closeInfoModal}
+          title={name} info={info} handleClose={closeInfoModal}
         />
       </Modal>
     </ImageBackground>
@@ -311,7 +311,7 @@ const FixedExercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, c
   );
 }
 
-export default FixedExercise;
+export default Exercise;
 
 const styles = StyleSheet.create({
   spacer: {

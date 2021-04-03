@@ -10,23 +10,11 @@ const EXERCISE_URL = "exercises";
 export interface Exercise {
   id: string;
   name: string;
-  exerciseType: string;
-  duration: number;
   primaryColor: string;
-  backgroundGradient: Array<string>;
-  inhaleTime: number,
-  exhaleTime: number,
-  targetInhale?: number;
-  targetExhale?: number;
-  targetDuration?: number;
-  inhaleHoldTime?: number;
-  exhaleHoldTime?: number;
   thumbnail: string;
-  thumbnailTitle: string;
-  about: string;
-  tips: string;
+  summary: string;
+  info: string;
   defaultMusic: string;
-  level: string;
   backgroundImage: string;
 }
 

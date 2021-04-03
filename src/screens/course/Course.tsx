@@ -58,7 +58,7 @@ let lessonStarted = false;
 
 
 
-const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
+const Exercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const selectBackgroundMusic = (state: RootState) => state.backgroundMusic;
   const selectSettings = (state: RootState) => state.settings;
@@ -349,4 +349,4 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   );
 }
 
-export default FixedExercise;
+export default Exercise;

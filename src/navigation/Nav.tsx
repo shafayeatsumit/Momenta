@@ -5,8 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from '../screens/home/Home';
 import LoadingScreen from '../screens/Loading';
-import GuidedExerciseScreen from "../screens/guided_exercise/GuidedExercise";
-import FixedExerciseScreen from "../screens/fixed_exercise/FixedExercise";
+
+import ExerciseScreen from "../screens/exercise/Exercise";
 import CalibrationScreen from "../screens/calibration/Calibration";
 import CourseScreen from '../screens/course/Course';
 import GuidedPracticeScreen from '../screens/guided_practice/GuidedPractice';
@@ -52,8 +52,7 @@ class Nav extends Component {
 
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="GuidedExercise" component={GuidedExerciseScreen} />
-          <Stack.Screen name="FixedExercise" component={FixedExerciseScreen} />
+          <Stack.Screen name="Exercise" component={ExerciseScreen} />
           <Stack.Screen name="Calibraiton" component={CalibrationScreen} />
           <Stack.Screen name="Course" component={CourseScreen} />
           <Stack.Screen name="GuidedPractice" component={GuidedPracticeScreen} />

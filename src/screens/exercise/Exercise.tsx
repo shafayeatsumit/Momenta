@@ -68,7 +68,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { name, about, tips, primaryColor, displayName, defaultMusic, backgroundImage } = route.params.exercise;
+  const { name, info, summary, primaryColor, displayName, defaultMusic, backgroundImage } = route.params.exercise;
+  console.log('info ====>', info)
   const backgroundMusic = _.get(settingsInfo, `${name}.backgroundMusic`, defaultMusic);
   const selectedRhythm = _.get(settingsInfo, `${name}.rhythm`, 'standard');
   const vibrationType = _.get(settingsInfo, `${name}.vibrationType`, true);
@@ -197,7 +198,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
-      delay: 500,
+      delay: inhaleHoldTime ? 0 : 500,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -229,7 +230,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     setBreathingState(BreathingState.Inhale);
     Animated.timing(circleProgress, {
       toValue: 0.5,
-      delay: 500,
+      delay: exhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -366,7 +367,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           onRequestClose={closeInfoModal}
         >
           <InfoModal
-            title={displayName} about={about} tips={tips} handleClose={closeInfoModal}
+            title={displayName} info={info} handleClose={closeInfoModal}
           />
         </Modal>
       </>
@@ -382,8 +383,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
             selectedRhythm={selectedRhythm}
             backgroundMusic={backgroundMusic}
             name={name}
-            about={about}
-            tips={tips}
+            info={info}
             backgroundImage={backgroundImage}
             primaryColor={primaryColor}
             vibrationType={vibrationType}

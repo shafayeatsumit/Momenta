@@ -5,7 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import { triggerHaptic } from "../../helpers/hapticFeedback";
 import useBreathCounter from "../../hooks/useBreathCounter";
 import useTimer from "../../hooks/useTimer";
-
+import styles from "./Exercise.styles";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
 import Settings from '../settings/Settings';
@@ -33,6 +33,7 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import LottieView from 'lottie-react-native';
 import BreathingInstructionText from '../../components/BreathingInstructionText';
+
 
 interface Props {
   route: RouteProp<any, any>;
@@ -69,7 +70,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
   const { name, info, summary, primaryColor, displayName, defaultMusic, backgroundImage } = route.params.exercise;
-  console.log('info ====>', info)
+
   const backgroundMusic = _.get(settingsInfo, `${name}.backgroundMusic`, defaultMusic);
   const selectedRhythm = _.get(settingsInfo, `${name}.rhythm`, 'standard');
   const vibrationType = _.get(settingsInfo, `${name}.vibrationType`, true);
@@ -198,7 +199,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
-      delay: inhaleHoldTime ? 0 : 500,
+      delay: inhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -328,7 +329,15 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       { !settingsVisible ? <>
         {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
-        {exerciseNotStarted && !settingsVisible && <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />}
+        {exerciseNotStarted && !settingsVisible &&
+          <>
+            <View style={styles.summaryContainer}>
+              <Text style={styles.summary}> {summary} </Text>
+            </View>
+            <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />
+          </>
+        }
+
 
         {(isStopped || optionsVisible) && (!settingsVisible) &&
           <>
@@ -342,9 +351,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           <View style={{ position: 'absolute', top: 0, left: 40, right: 40, bottom: 0, }}>
             <LottieView source={anaimationFile} progress={circleProgress} />
           </View>
-
-
-
         }
 
 

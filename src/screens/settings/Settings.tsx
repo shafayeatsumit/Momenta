@@ -164,7 +164,7 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
     canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
-      delay: 300,
+      delay: inhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
@@ -202,7 +202,7 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
     setBreathingState(BreathingState.Inhale);
     Animated.timing(circleProgress, {
       toValue: 0.5,
-      delay: 300,
+      delay: exhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,

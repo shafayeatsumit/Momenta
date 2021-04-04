@@ -16,8 +16,21 @@ const styles = StyleSheet.create({
   lottieFile: {
     height: ScreenWidth * .8, width: ScreenWidth * .8,
   },
-
-
+  summaryContainer: {
+    position: 'absolute',
+    top: 150,
+    marginHorizontal: 30,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    alignSelf: 'center'
+  },
+  summary: {
+    color: 'white',
+    fontSize: 18,
+    fontFamily: FontType.Medium,
+    textAlign: 'center',
+  },
   backgroundImageContainer: {
     position: 'absolute',
     top: 0,

@@ -24,6 +24,7 @@ import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import NavigateLesson from "../../components/NavigateLesson";
 import Timer from "../../components/Timer";
+import SleepTimer from "./SleepTimer";
 
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
@@ -47,12 +48,17 @@ interface Props {
 }
 const MusicList = ['wind', 'off', 'river', 'rain'];
 
+let expiryTime = null;
+
+
+
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
+  const [showTimer, setShowTimer] = useState<boolean>(false);
   //TODO: fetch it from global.
 
 
@@ -70,7 +76,15 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
     console.log('going back');
     dispatch(updateLastPractice(practiceName, currentTrack));
-    handleBack();
+    if (practiceName === 'sleep') {
+
+      expiryTime = new Date();
+      expiryTime.setSeconds(expiryTime.getSeconds() + 60);
+      setShowTimer(true);
+    } else {
+      handleBack();
+    }
+
   });
 
 
@@ -182,7 +196,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
       <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
-
+      {showTimer && <SleepTimer onExpire={handleBack} expiryTimestamp={expiryTime} />}
       {isStopped || optionsVisible ?
         <>
           <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
@@ -195,6 +209,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
       {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
+      {showTimer && <FinishButton containerStyle={{ bottom: 140 }} handleFinish={handleBack} />}
 
     </ImageBackground>
   );

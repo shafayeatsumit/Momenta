@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: ScreenHeight,
-    zIndex: 1,
+    zIndex: 2,
     // backgroundColor: 'yellow',
   },
 });

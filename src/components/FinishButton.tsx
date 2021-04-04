@@ -7,19 +7,20 @@ import { ScreenWidth } from '../helpers/constants';
 interface Props {
   handleFinish?: () => void;
   handleCourseFinish?: () => void;
-  color: string;
+  containerStyle: any;
+
 }
 
 
 
-const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, color }: Props) => {
+const Timer: React.FC<Props> = ({ handleFinish, handleCourseFinish, containerStyle }: Props) => {
   const pressHandler = () => {
     eventButtonPush('finish');
     handleFinish && handleFinish();
     handleCourseFinish && handleCourseFinish();
   }
   return (
-    <TouchableOpacity style={styles.button} onPress={pressHandler}>
+    <TouchableOpacity style={[styles.button, containerStyle]} onPress={pressHandler}>
       <Text allowFontScaling={false} style={styles.text}>FINISH</Text>
     </TouchableOpacity>
   );

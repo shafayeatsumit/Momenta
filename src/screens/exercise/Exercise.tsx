@@ -104,7 +104,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const getBreathingStateText = () => {
-    console.log("breathing state", breathingState);
     switch (breathingState !== null) {
       case (breathingState === BreathingState.Inhale):
         return "Breathe in"
@@ -203,7 +202,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(exhaleEnd);
+    }).start(({ finished }) => {
+      finished && exhaleEnd()
+    });
 
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
@@ -235,7 +236,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(inhaleEnd);
+    }).start(({ finished }) => {
+      finished && inhaleEnd();
+    });
   }
 
   const startExercise = () => {
@@ -315,7 +318,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     navigation.goBack()
   }
 
-  // console.log(`breathing state ${breathingState}`);
+
 
   const handleBack = () => {
     !isPaused && stop();

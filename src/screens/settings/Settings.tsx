@@ -168,14 +168,15 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(exhaleEnd);
+    }).start(({ finished }) => {
+      finished && exhaleEnd()
+    });
 
     setBreathingState(BreathingState.Exhale)
     setProgress({ type: AnimationType.ShrinkCircle, duration })
   }
 
   const startInhaleHold = (duration = inhaleHoldTime) => {
-    console.log('calling inhale hold');
     if (!resetting) {
       setBreathingState(BreathingState.InhaleHold);
       startBreathCounter(duration)
@@ -183,7 +184,6 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
   }
 
   const startExhaleHold = (duration = exhaleHoldTime) => {
-    console.log('calling exhale hold');
     if (!resetting) {
       setBreathingState(BreathingState.ExhaleHold);
       startBreathCounter(duration)
@@ -206,7 +206,9 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
       duration: duration * 1000,
       useNativeDriver: true,
       easing: Easing.linear,
-    }).start(inhaleEnd);
+    }).start(({ finished }) => {
+      finished && inhaleEnd()
+    });
   }
 
   const startExercise = () => {

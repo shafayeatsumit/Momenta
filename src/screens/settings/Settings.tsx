@@ -35,6 +35,7 @@ interface Props {
   iosHapticStatus: boolean,
   selectedRhythm: any,
   vibrationType: boolean,
+  appStateVisible: string,
   closeModal: () => void,
 }
 
@@ -49,7 +50,7 @@ interface Progress {
 }
 let resetting = false;
 
-const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeModal, iosHapticStatus, info, primaryColor, backgroundMusic, backgroundImage }: Props) => {
+const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selectedRhythm, closeModal, iosHapticStatus, info, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
   const circleProgress = useRef(new Animated.Value(0)).current;
 
@@ -141,6 +142,11 @@ const Exercise: React.FC<Props> = ({ name, vibrationType, selectedRhythm, closeM
     startBackgroundMusic();
   }, [backgroundMusic])
 
+  useEffect(() => {
+    if (appStateVisible === 'background') {
+      handleBack();
+    }
+  }, [appStateVisible])
 
   useEffect(() => {
     setTimeout(handleStart, 250);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Animated, Easing, View, Modal, Text, Platform, NativeModules, ImageBackground } from 'react-native';
+import { Animated, Easing, View, AppState, Modal, Text, Platform, NativeModules, ImageBackground } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { triggerHaptic } from "../../helpers/hapticFeedback";
@@ -54,6 +54,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectSettings = (state: RootState) => state.exerciseSettings;
   const settingsInfo = useSelector(selectSettings)
   const circleProgress = useRef(new Animated.Value(0)).current;
+  const appState = useRef(AppState.currentState);
 
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
@@ -63,10 +64,13 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [iosHapticStatus, setIOSHapticStatus] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
+
+
 
 
   const { name, info, summary, primaryColor, displayName, defaultMusic, backgroundImage } = route.params.exercise;
@@ -126,6 +130,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
+  console.log("app state visible", appStateVisible);
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -147,25 +152,38 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   })
 
   useEffect(() => {
-
     if (settingsVisible) {
       stopBackgroundMusic();
       startBackgroundMusic();
     }
   }, [backgroundMusic])
 
+  const handleAppStateChange = (nextAppState) => {
+    if (
+      appState.current.match(/background/) &&
+      nextAppState === "active"
+    ) {
+      console.log("App has come to the foreground!");
+    } else {
+      handlePause();
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    console.log("AppState", appState.current);
+  };
 
   useEffect(() => {
-
     if (Platform.OS === 'ios') {
       NativeModules.IOSVibration.getHapticStatus((error: any, resp: boolean) => {
         setIOSHapticStatus(resp)
         if (resp) NativeModules.IOSVibration.prepareHaptics();
       });
     }
+    AppState.addEventListener("change", handleAppStateChange);
     return () => {
-
-    }
+      AppState.removeEventListener("change", handleAppStateChange);
+    };
   }, [])
 
   const timerEnd = () => {
@@ -304,9 +322,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const closeInfoModal = () => setInfoModalVisible(false);
   const handlePressInfo = () => {
-    if (exerciseNotStarted) {
-      stop();
-    } else if (!isPaused) {
+    if (!isPaused) {
       handlePause();
     }
     setInfoModalVisible(true);
@@ -326,10 +342,11 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
   const instructionText = getBreathingStateText();
   const anaimationFile = LottieFiles[name];
+  const showModal = settingsVisible || infoModalVisible;
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      { !settingsVisible ? <>
+      { !showModal ? <>
         {showBackgroundCircle && <BackgroundCircle opacity={fadeOutAnimation} />}
 
         {exerciseNotStarted && !settingsVisible &&
@@ -368,37 +385,43 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         {showPause && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
         {!settingsVisible && <ProgressBar duration={exerciseDuration} time={time} color={primaryColor} showProgressBar={showProgressBar} />}
 
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={infoModalVisible}
-          onRequestClose={closeInfoModal}
-        >
-          <InfoModal
-            title={displayName} info={info} handleClose={closeInfoModal}
-          />
-        </Modal>
       </>
         :
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={settingsVisible}
-          onRequestClose={closeSetting}
-        >
-          <Settings
-            iosHapticStatus={iosHapticStatus}
-            selectedRhythm={selectedRhythm}
-            backgroundMusic={backgroundMusic}
-            name={name}
-            info={info}
-            backgroundImage={backgroundImage}
-            primaryColor={primaryColor}
-            vibrationType={vibrationType}
-            closeModal={closeSetting}
-          />
-        </Modal>
+        <>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={infoModalVisible}
+            onRequestClose={closeInfoModal}
+          >
+            <InfoModal
+              title={name}
+              info={info}
+              handleClose={closeInfoModal}
+            />
+          </Modal>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={settingsVisible}
+            onRequestClose={closeSetting}
+          >
+            <Settings
+              iosHapticStatus={iosHapticStatus}
+              selectedRhythm={selectedRhythm}
+              backgroundMusic={backgroundMusic}
+              name={name}
+              info={info}
+              appStateVisible={appStateVisible}
+              backgroundImage={backgroundImage}
+              primaryColor={primaryColor}
+              vibrationType={vibrationType}
+              closeModal={closeSetting}
+            />
+          </Modal>
+
+        </>
+
       }
 
     </ImageBackground>

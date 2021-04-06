@@ -58,6 +58,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
+  const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(false);
   //TODO: fetch it from global.
 
@@ -79,7 +80,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     if (practiceName === 'sleep') {
 
       expiryTime = new Date();
-      expiryTime.setSeconds(expiryTime.getSeconds() + 60);
+      expiryTime.setSeconds(expiryTime.getSeconds() + 300);
       setShowTimer(true);
     } else {
       handleBack();
@@ -165,7 +166,15 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     TrackPlayer.pause();
     fadeOutAnimation.setValue(1);
     setOptionsVisible(true);
+  }
 
+  const closeInfoModal = () => setInfoModalVisible(false);
+  const handlePressInfo = () => {
+    const isPaused = playbackState === TrackPlayer.STATE_PAUSED;
+    if (!isPaused) {
+      handlePause();
+    }
+    setInfoModalVisible(true);
   }
 
   const hideOptions = () => {
@@ -192,24 +201,43 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     stopBackgroundMusic();
     startBackgroundMusic();
   }, [backgroundMusic])
-
+  const showModal = infoModalVisible;
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
-      {showTimer && <SleepTimer onExpire={handleBack} expiryTimestamp={expiryTime} />}
-      {isStopped || optionsVisible ?
+      {!showModal ?
         <>
-          <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-          <CourseTitle title={practiceName} />
-          <BackgroundCircle opacity={fadeOutAnimation} />
-        </> : null
-      }
+          <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
+          {showTimer && <SleepTimer onExpire={handleBack} expiryTimestamp={expiryTime} />}
+          <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
+          {isStopped || optionsVisible ?
+            <>
+              <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
+              <CourseTitle title={practiceName} />
+              <BackgroundCircle opacity={fadeOutAnimation} />
+            </> : null
+          }
 
-      <TapHandler handleTap={handleTap} />
-      {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
-      {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
-      {showTimer && <FinishButton containerStyle={{ bottom: 140 }} handleFinish={handleBack} />}
+          <TapHandler handleTap={handleTap} />
+          {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
+          {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
+          {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
+          {showTimer && <FinishButton containerStyle={{ bottom: 140 }} handleFinish={handleBack} />}
+        </>
+        :
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={infoModalVisible}
+          onRequestClose={closeInfoModal}
+        >
+          <InfoModal
+            title={practiceName}
+            info={info}
+            handleClose={closeInfoModal}
+          />
+        </Modal>
+
+      }
 
     </ImageBackground>
   );

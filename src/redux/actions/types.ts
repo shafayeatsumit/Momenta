@@ -12,6 +12,7 @@ import { FetchGuidedPracticeAction } from "./guidedPractice";
 import { FetchChallengeAction } from "./challenge";
 import { ChangeExerciseMusicAction, ChangeRhythmAction, ChangeVibrationTypeAction } from "./exerciseSettings";
 import { ChangePracticeMusicAction, UpdateLastPracticeAction } from "./guidedPracticeSettings";
+import { FinishedChallengeLessonAction, ChangeChallengeBackgroundAction } from "./challengeSettings";
 
 export enum ActionTypes {
   SignUpAnonymously = "SIGN_UP_ANONYMOUSLY",
@@ -34,8 +35,11 @@ export enum ActionTypes {
   ChangeVibrationType = "CHANGE_VIBRATION_TYPE",
   ChangePracticeMusic = "CHANGE_PRACTICE_MUSIC",
   UpdateLastPractice = "UPDATE_LAST_PRACTICE",
+  ChangeChallengeBackground = "CHANGE_CHALLENGE_BACKGROUND",
+  FinishedChallengeLesson = "FINISHED_CHALLENGE_LESSON",
 }
 
+export type ChallengeSettingsAction = FinishedChallengeLessonAction | ChangeChallengeBackgroundAction;
 export type GuidedPracticeSettingsAction = ChangePracticeMusicAction | UpdateLastPracticeAction;
 export type ExerciseSettingsAction = ChangeVibrationTypeAction | ChangeExerciseMusicAction | ChangeRhythmAction;
 export type UserAction = SignUpAnonymouslyAction;

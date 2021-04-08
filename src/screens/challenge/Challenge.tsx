@@ -16,7 +16,6 @@ interface Props {
 }
 
 const Challenge = ({ route, navigation }: Props) => {
-  const dispatch = useDispatch();
   const { name, lessons, info, primaryColor, backgroundImage } = route.params.challenge;
   const [listingVisible, setListingVisible] = useState<boolean>(true);
   const [infoVisible, setInfoVisible] = useState<boolean>(false);
@@ -54,6 +53,7 @@ const Challenge = ({ route, navigation }: Props) => {
       {infoVisible && <InfoModal handleClose={closeInfo} title={name} info={info} />}
       {showAudioPlayer &&
         <AudioPlayer
+          challengeName={name}
           primaryColor={primaryColor}
           lesson={selectedLesson}
           defaultMusic={'off'}

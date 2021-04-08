@@ -20,10 +20,12 @@ import { Settings } from "../actions/settings";
 import { Courses } from "../actions/course";
 import { GuidePractices } from "../actions/guidedPractice";
 import { BackgroundMusic } from "../reducers/backgroundMusic";
+import { challengeSettingReducer } from "../reducers/challengeSettings";
 import { ContentSettings } from "../actions/contentSettings";
 import { ExerciseSettings } from "../actions/exerciseSettings";
 import { GuidedPracticeSettings } from "../actions/guidedPracticeSettings";
 import { Challenges } from "../actions/challenge";
+import { ChallengeSettings } from "../actions/challengeSettings";
 
 export interface RootState {
   user: User | {};
@@ -37,6 +39,7 @@ export interface RootState {
   exerciseSettings: ExerciseSettings | {};
   guidedPracticeSettings: GuidedPracticeSettings | {};
   challenge: Challenges | {};
+  challengeSettings: ChallengeSettings | {};
 }
 
 export const rootReducers = combineReducers<RootState>({
@@ -51,4 +54,5 @@ export const rootReducers = combineReducers<RootState>({
   exerciseSettings: exerciseSettingReducer,
   guidedPracticeSettings: guidedPracticeSettingReducer,
   challenge: challengeReducer,
+  challengeSettings: challengeSettingReducer,
 });

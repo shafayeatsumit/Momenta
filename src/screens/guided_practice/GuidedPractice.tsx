@@ -50,8 +50,6 @@ const MusicList = ['wind', 'off', 'river', 'rain'];
 
 let expiryTime = null;
 
-
-
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;

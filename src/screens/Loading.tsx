@@ -5,6 +5,7 @@ import { signUpAnonymously } from "../redux/actions/user";
 import { fetchExercise } from "../redux/actions/exercise";
 import { fetchGuidedPractice } from "../redux/actions/guidedPractice";
 import { fetchCourse } from "../redux/actions/course";
+import { fetchChallenge } from "../redux/actions/challenge";
 import { RootState } from "../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -31,10 +32,10 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
   useEffect(() => {
     if (isExistingUser) eventSetUserId(user.id)
     if (!isExistingUser) dispatch(signUpAnonymously());
-    // if (!exerciseFetchCompleted) dispatch(fetchExercise());
     dispatch(fetchExercise());
     dispatch(fetchCourse());
     dispatch(fetchGuidedPractice());
+    dispatch(fetchChallenge());
   }, [])
 
   return (

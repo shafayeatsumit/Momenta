@@ -21,7 +21,7 @@ const InfoModal: React.FC<Props> = ({ info, title, handleClose }) => {
   return (
     <View style={{ flex: 1 }}>
 
-      <ExerciseTitle title={title} opacity={1} />
+      <ExerciseTitle title={title} opacity={1} textStyle={{ fontSize: 24 }} />
       <ScrollView style={styles.container}>
         <Text allowFontScaling={false} style={styles.text}>{jsonEscape(info)}</Text>
       </ScrollView>

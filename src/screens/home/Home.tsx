@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, Text, BackHandler, ScrollView, Platform } from 'react-native';
 import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
+import ChallengeThumbnail from "./ChallengeThumbnail";
 import GuidedPracticeThumbnail from './GuidedPracticeThumbnail';
 import CourseThumbnail from './CourseThumbnail';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -14,16 +15,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Course } from '../../redux/actions/course';
 import { GuidePractice } from '../../redux/actions/guidedPractice';
 import TrackPlayer from 'react-native-track-player';
+import { Challenge } from '../../redux/actions/challenge';
 
 export interface Props {
   navigation: StackNavigationProp<any, any>;
 };
 
 const Home: React.FC<Props> = ({ navigation }: Props) => {
-  const selectUser = (state: RootState) => state.user;
-  const user = useSelector(selectUser);
   const selectExercise = (state: RootState) => state.exercise;
   const allExercise = _.values(useSelector(selectExercise));
+  const selectChallenge = (state: RootState) => state.challenge;
+  const allChallenge = _.values(useSelector(selectChallenge));
   const selectCourse = (state: RootState) => state.course;
   const allCourse = _.values(useSelector(selectCourse));
   const selectGuidedPractice = (state: RootState) => state.guidedPracitce;
@@ -37,6 +39,11 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
   const goToCourse = (course: Course) => {
     eventButtonPush(`go_to_${course.name}`);
     navigation.navigate('Course', { course })
+  }
+
+  const goToChallenge = (challenge: Challenge) => {
+    eventButtonPush(`go_to_${challenge.name}`);
+    navigation.navigate('Challenge', { challenge })
   }
 
   const goToGuidedPractice = (guidePractice: GuidePractice) => {
@@ -74,6 +81,17 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
     >
       <View style={styles.spacer} />
       <ScrollView>
+        <View style={styles.titleHolder}>
+          <Text style={styles.title}>Challenges</Text>
+        </View>
+        <View >
+          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+            {allChallenge.map((challenge) =>
+              <ChallengeThumbnail goToChallenge={goToChallenge} key={challenge.id} challenge={challenge} />
+            )}
+          </ScrollView>
+        </View>
+
         <View style={styles.titleHolder}>
           <Text style={styles.title}>Exercises</Text>
         </View>

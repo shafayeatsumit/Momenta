@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from '../screens/home/Home';
 import LoadingScreen from '../screens/Loading';
-
+import ChallengeScreen from "../screens/challenge/Challenge";
 import ExerciseScreen from "../screens/exercise/Exercise";
 import CalibrationScreen from "../screens/calibration/Calibration";
 import CourseScreen from '../screens/course/Course';
@@ -52,6 +52,7 @@ class Nav extends Component {
 
           <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Challenge" component={ChallengeScreen} />
           <Stack.Screen name="Exercise" component={ExerciseScreen} />
           <Stack.Screen name="Calibraiton" component={CalibrationScreen} />
           <Stack.Screen name="Course" component={CourseScreen} />

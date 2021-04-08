@@ -13,6 +13,7 @@ const anonymousEndpoints = [
   'auth/local/register',
   'exercises',
   'courses',
+  'challenges',  
   'guided-practices',
 ];
 

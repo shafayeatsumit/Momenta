@@ -6,12 +6,14 @@ import _ from 'lodash';
 interface Props {
   title: string;
   opacity?: any;
+  containerStyle?: any;
+  textStyle?: any;
 }
 
-const ExerciseTitle: React.FC<Props> = ({ title, opacity }: Props) => {
+const ExerciseTitle: React.FC<Props> = ({ title, opacity, containerStyle, textStyle }: Props) => {
   return (
-    <Animated.View style={[styles.container, { opacity }]}>
-      <Text allowFontScaling={false} style={styles.text}>
+    <Animated.View style={[styles.container, containerStyle, { opacity }]}>
+      <Text allowFontScaling={false} style={[styles.text, textStyle]}>
         {_.upperFirst(title)}
       </Text>
     </Animated.View>
@@ -22,15 +24,18 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     top: 35,
-    height: 50,
-    width: 200,
+    textAlign: 'center',
+    // backgroundColor: 'red',
+    paddingVertical: 5,
+    // height: 50,
+    width: 230,
     zIndex: 5,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
   },
   text: {
-    fontSize: 30,
+    fontSize: 24,
     fontFamily: FontType.SemiBold,
     lineHeight: 32,
     color: 'white',

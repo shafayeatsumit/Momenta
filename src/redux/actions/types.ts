@@ -9,6 +9,7 @@ import { FetchExerciseAction } from "./exercise";
 import { ChangeVibrationAction, ChangeMusicAction } from "./settings";
 import { FetchCourseAction } from "./course";
 import { FetchGuidedPracticeAction } from "./guidedPractice";
+import { FetchChallengeAction } from "./challenge";
 import { ChangeExerciseMusicAction, ChangeRhythmAction, ChangeVibrationTypeAction } from "./exerciseSettings";
 import { ChangePracticeMusicAction, UpdateLastPracticeAction } from "./guidedPracticeSettings";
 
@@ -17,6 +18,7 @@ export enum ActionTypes {
   AddExercise = "ADD_EXERCISE",
   AddCourse = "ADD_COURSE",
   AddGuidedPractice = "ADD_GUIDED_PRACTICE",
+  AddChallenge = "ADD_CHALLENGE",
   FetchCompleted = "FETCH_COMPLETED",
   ChangeBackgroundMusic = "CHANGE_BACKGROUND_MUSIC",
   UpdateContentSettings = "UPDATE_CONTENT_SETTINGS",
@@ -40,6 +42,7 @@ export type UserAction = SignUpAnonymouslyAction;
 export type ContentSettingsAction = ListenedLessonAction | ListenedIntroLessonAction | ListenedWelcomeLessonAction | ContentFinishedAction | UpdateContentVibrationTypeAction | UpdateContentSettingsAction | UpdateContentBackgroundMusicAction;
 export type SettingsAction = ChangeVibrationAction | ChangeMusicAction;
 export type ExerciseAction = FetchExerciseAction;
+export type ChallengeAction = FetchChallengeAction;
 export type CountAction = AddCountAction | RemoveCountAction;
 export type FetchCompletedAction = FetchExerciseAction;
 export type CourseAction = FetchCourseAction;

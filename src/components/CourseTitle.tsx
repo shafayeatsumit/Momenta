@@ -2,6 +2,7 @@ import React from 'react'
 import { Animated, Text, View, StyleSheet } from 'react-native';
 import { eventButtonPush } from "../helpers/analytics";
 import { FontType } from '../helpers/theme';
+import _ from 'lodash';
 
 interface Props {
   title: string;
@@ -12,7 +13,7 @@ const CourseTitle: React.FC<Props> = ({ title, opacity }: Props) => {
   return (
     <Animated.View style={[styles.container, { opacity }]}>
       <Text style={styles.courseTitle}>
-        {title}
+        {_.upperFirst(title)}
       </Text>
     </Animated.View >
   );

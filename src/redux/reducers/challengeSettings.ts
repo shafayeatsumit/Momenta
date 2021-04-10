@@ -1,5 +1,6 @@
 import { ActionTypes, ChallengeSettingsAction } from "../actions";
 import { ChallengeSettings } from "../actions/challengeSettings"
+import moment from 'moment';
 
 const initialState = {}
 
@@ -22,7 +23,7 @@ export const challengeSettingReducer = (state: ChallengeSettings = initialState,
           ...state[action.payload.challengeId],
           [lessonId]: {
             finished: true,
-            finishedAt: new Date(),
+            finishedAt: moment(),
           },
         }
       }

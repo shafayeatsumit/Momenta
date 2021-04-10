@@ -14,8 +14,11 @@ const persistConfig = {
   whitelist: [
     'user',
     // 'guidedPracticeSettings',
-    'backgroundMusic', 'fetchCompleted',
-    'settings', 'contentSettings'
+    'backgroundMusic',
+    'fetchCompleted',
+    'settings',
+    'contentSettings',
+    'challengeSettings',
   ],
 };
 

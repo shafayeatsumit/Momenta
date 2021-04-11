@@ -19,6 +19,7 @@ const persistConfig = {
     'settings',
     'contentSettings',
     'challengeSettings',
+    'courseSettings',
   ],
 };
 

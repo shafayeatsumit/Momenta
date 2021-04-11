@@ -5,25 +5,27 @@ import _ from "lodash";
 
 const COURSE_URL = "courses";
 
-export interface courseLesson {
-  id: string;
-  order: number;
-  title: string;
-  url: string;
+export interface Lesson {
+  id: string,
+  title: string,
+  duration: number,
+  order: number,
+  url: string,
+  listingTitle: string,
 }
 
 export interface Course {
-  id: string;
-  name: string;
-  backgroundGradient: Array<string>;
-  thumbnail: string;
-  thumbnailTitle: string;
-  level: string;
-  backgroundImage: string;
-  lesons: Array<courseLesson>;
-  totalLessons: number;
-  totalDuration: number;
-  about: string;
+  id: string,
+  primaryColor: string,
+  backgroundImage: string,
+  thumbnail: string,
+  thumbnailTitle: string,
+  name: string,
+  info: string,
+  summary: string,
+  lessons: Lesson[];
+  defaultMusic: string,
+  numberOfDays: number,
 }
 
 export type Courses = {

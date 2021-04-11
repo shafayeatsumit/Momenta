@@ -8,7 +8,7 @@ import { playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPla
 import ProgressBar from '../guided_practice/ProgressBar';
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
-import Header from "./Header";
+import Header from "../../screens/challenge/Header";
 
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
@@ -16,11 +16,11 @@ import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
 import { RootState } from "../../redux/reducers";
-import { changeChallengeBackground, finishedChallengeLesson } from "../../redux/actions/challengeSettings";
+import { changeCourseBackground, finishedCourseLesson } from "../../redux/actions/courseSettings";
 import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
-import CourseTitle from '../../components/CourseTitle';
-import { Lesson } from '../../redux/actions/challenge';
+import { Lesson } from '../../redux/actions/course';
+
 
 
 interface Props {
@@ -29,16 +29,16 @@ interface Props {
   defaultMusic: string;
   goBack: Function;
   pressInfo: Function;
-  challengeName: string;
+  courseName: string;
 }
 
 const MusicList = ['wind', 'off', 'river', 'rain'];
 
 
-const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, defaultMusic, goBack, pressInfo }: Props) => {
+const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, defaultMusic, goBack, pressInfo }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
-  const selectSettings = (state: RootState) => state.challengeSettings;
+  const selectSettings = (state: RootState) => state.courseSettings;
   const settings = useSelector(selectSettings)
 
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
@@ -50,15 +50,15 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
   const isStopped = playbackState !== TrackPlayer.STATE_PLAYING || playbackState === TrackPlayer.STATE_NONE;
   const isPlaying = playbackState === TrackPlayer.STATE_PLAYING;
 
-  const backgroundMusic = _.get(settings, `${challengeName}.backgroundMusic`, defaultMusic);
-  const isFinished = _.get(settings, `${challengeName}.${lesson.id}.finished`, false)
+  const backgroundMusic = _.get(settings, `${courseName}.backgroundMusic`, defaultMusic);
+  const isFinished = _.get(settings, `${courseName}.${lesson.id}.finished`, false)
 
-  console.log('challenge settings', settings);
+  console.log('course settings', settings);
   console.log('is finished', isFinished);
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
     if (!isFinished) {
-      dispatch(finishedChallengeLesson(challengeName, lesson.id));
+      dispatch(finishedCourseLesson(courseName, lesson.id));
     }
     handleBack();
   });
@@ -163,7 +163,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
   }
 
   const handleMusicSelect = (music: string) => {
-    dispatch(changeChallengeBackground(challengeName, music))
+    dispatch(changeCourseBackground(courseName, music))
   }
 
   useEffect(() => {

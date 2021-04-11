@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
 import { ScreenWidth } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
-import { Lesson } from "../../redux/actions/challenge";
-import Header from "./Header";
+import { Lesson } from "../../redux/actions/course";
+import Header from "../../screens/challenge/Header";
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -20,11 +20,10 @@ interface Props {
 const ICONS = {
   'finished': require('../../../assets/images/finish.png'),
   'unlocked': require('../../../assets/images/unchecked.png'),
-  'locked': require('../../../assets/images/lock.png'),
 }
 
 const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Props) => {
-  const selectSettings = (state: RootState) => state.challengeSettings;
+  const selectSettings = (state: RootState) => state.courseSettings;
   const settings = useSelector(selectSettings)
 
   const getLessonStateus = (lesson: any) => {
@@ -32,24 +31,14 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
     if (isFinished) {
       return 'finished'
     }
-    if (lesson.order === 0) {
-      return 'unlocked'
-    }
-    const prevLesson = lessons[lesson.order - 1]
-    const prevLessonFinishedAt = _.get(settings, `${name}.${prevLesson.id}.finishedAt`, null)
-    // past 12 hours 
-    const TwelveHours = moment(prevLessonFinishedAt).add(12, 'hours');
-    if (moment() > TwelveHours) {
-      return 'unlocked'
-    }
-    return 'locked'
+    return 'unlocked'
   }
 
   const renderItem = ({ item }) => {
     const lessonStatus = getLessonStateus(item)
 
     return (
-      <TouchableOpacity disabled={lessonStatus === 'locked'} style={styles.item} activeOpacity={0.6} onPress={() => handlePress(item)}>
+      <TouchableOpacity style={styles.item} activeOpacity={0.6} onPress={() => handlePress(item)}>
         <View style={{ flexDirection: 'row', flex: 3, }}>
           <Image source={ICONS[lessonStatus]} style={{ resizeMode: 'contain', height: 22, width: 24, marginHorizontal: 10 }} />
           <Text style={styles.title}>{item.title}</Text>

@@ -19,7 +19,6 @@ export default function useBreathCounter(breathCounterEnd: Function) {
   }
 
   const stopBreathCounter = () => {
-    console.log('+++++breath counter stops++++');
     setBreathCounter(0);
     setBreathCounterIsRunning(false);
   }

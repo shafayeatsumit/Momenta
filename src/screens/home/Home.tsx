@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, BackHandler, ScrollView, Platform } from 'react-native';
+import { View, SafeAreaView, Text, BackHandler, ScrollView, Platform } from 'react-native';
 import { eventButtonPush } from "../../helpers/analytics";
 import Thumbnail from "./Thumbnail";
 import ChallengeThumbnail from "./ChallengeThumbnail";
@@ -79,50 +79,52 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
       colors={["#323545", "#121118"]}
       style={styles.mainContainer}
     >
-      <View style={styles.spacer} />
-      <ScrollView>
-        <View style={styles.titleHolder}>
-          <Text style={styles.title}>Challenges</Text>
-        </View>
-        <View >
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
-            {allChallenge.map((challenge) =>
-              <ChallengeThumbnail goToChallenge={goToChallenge} key={challenge.id} challenge={challenge} />
-            )}
-          </ScrollView>
-        </View>
+      <SafeAreaView>
 
-        <View style={styles.titleHolder}>
-          <Text style={styles.title}>Exercises</Text>
-        </View>
-        <View >
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
-            {allExercise.map((exercise) =>
-              <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
-            )}
-          </ScrollView>
-        </View>
-        <View style={styles.titleHolder}>
-          <Text style={styles.title}>Guided Practices</Text>
-        </View>
-        <View >
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
-            {allGuidedPractice.map((practice) =>
-              <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
-            )}
-          </ScrollView>
-        </View>
-        <View style={styles.titleHolder}>
-          <Text style={styles.title}>Courses</Text>
-        </View>
-        <View >
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
-            {allCourse.map((course) =>
-              <CourseThumbnail goToPractice={goToCourse} key={course.id} content={course} />
-            )}
-          </ScrollView>
-        </View>
-      </ScrollView>
+        <ScrollView style={{ paddingTop: 10 }}>
+          <View style={styles.titleHolder}>
+            <Text style={styles.title}>Challenges</Text>
+          </View>
+          <View >
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+              {allChallenge.map((challenge) =>
+                <ChallengeThumbnail goToChallenge={goToChallenge} key={challenge.id} challenge={challenge} />
+              )}
+            </ScrollView>
+          </View>
+
+          <View style={styles.titleHolder}>
+            <Text style={styles.title}>Exercises</Text>
+          </View>
+          <View >
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+              {allExercise.map((exercise) =>
+                <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
+              )}
+            </ScrollView>
+          </View>
+          <View style={styles.titleHolder}>
+            <Text style={styles.title}>Guided Practices</Text>
+          </View>
+          <View >
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+              {allGuidedPractice.map((practice) =>
+                <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
+              )}
+            </ScrollView>
+          </View>
+          <View style={styles.titleHolder}>
+            <Text style={styles.title}>Courses</Text>
+          </View>
+          <View >
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+              {allCourse.map((course) =>
+                <CourseThumbnail goToPractice={goToCourse} key={course.id} content={course} />
+              )}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </LinearGradient>
   );
 };

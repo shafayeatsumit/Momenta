@@ -44,6 +44,7 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, progressOpacity }
   }, [time])
   const totalDuration = formatted(duration);
   const currentTime = formatted(time);
+  const inProgress = totalDuration !== "00:00";
   return (
     <Animated.View style={[styles.container, progressOpacity ? { opacity: progressOpacity } : { opacity: 1 }]}>
       <Svg height="100%" width="100%">
@@ -57,8 +58,13 @@ const ProgressBar: React.FC<Props> = ({ duration, time, color, progressOpacity }
 
       </Svg>
       <Animated.View style={[styles.circle, { backgroundColor: color, transform: [{ translateX: animatedWidth }] }]} />
-      <Text allowFontScaling={false} style={[styles.timeText, { left: -14 }]}> {currentTime}</Text>
-      <Text allowFontScaling={false} style={[styles.timeText, { right: -14 }]}>{totalDuration}</Text>
+      {inProgress &&
+        <>
+          <Text allowFontScaling={false} style={[styles.timeText, { left: -14 }]}> {currentTime}</Text>
+          <Text allowFontScaling={false} style={[styles.timeText, { right: -14 }]}>{totalDuration}</Text>
+        </>
+      }
+
 
     </Animated.View>
 

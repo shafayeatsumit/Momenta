@@ -56,7 +56,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const circleProgress = useRef(new Animated.Value(0)).current;
   const appState = useRef(AppState.currentState);
 
-  const [exerciseDuration, setExerciseDuration] = useState<number>(2);
+  const [exerciseDuration, setExerciseDuration] = useState<number>(1);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
@@ -130,8 +130,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
-  console.log("app state visible", appStateVisible);
-
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
       toValue: 0,
@@ -170,7 +168,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
     appState.current = nextAppState;
     setAppStateVisible(appState.current);
-    console.log("AppState", appState.current);
   };
 
   useEffect(() => {
@@ -213,13 +210,14 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
+    console.log('duration', duration)
     canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
       delay: inhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
-      easing: Easing.linear,
+      easing: Easing.bezier(0.47, 0.0, 0.745, 0.715),
     }).start(({ finished }) => {
       finished && exhaleEnd()
     });
@@ -245,6 +243,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startInhale = (duration = inhaleTime) => {
     canPlaySwell && startSwellInhale(inhaleTime);
+    console.log(`inhale duration ${duration}`)
     vibrationType && startVibration(inhaleTime);
     circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);
@@ -299,7 +298,9 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const handlePause = () => {
-    setExerciseState(ExerciseState.Paused);
+    if (!exerciseNotStarted) {
+      setExerciseState(ExerciseState.Paused);
+    }
     stop();
   }
 
@@ -363,6 +364,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           <>
             <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
             <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
+
             <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
           </>
         }

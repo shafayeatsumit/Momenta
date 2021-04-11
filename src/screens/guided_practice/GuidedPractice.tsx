@@ -73,7 +73,6 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const lastPlayedTrack = _.get(settings, `${practiceName}.lastPlayed`, null);
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
-    console.log('going back');
     dispatch(updateLastPractice(practiceName, currentTrack));
     if (practiceName === 'sleep') {
 
@@ -202,6 +201,8 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const showModal = infoModalVisible;
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
+      {isPlaying && <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,0.6)' }} />}
+
       {!showModal ?
         <>
           <ProgressBar duration={trackDuration} time={position} color={primaryColor} />

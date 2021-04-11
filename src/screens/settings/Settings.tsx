@@ -60,7 +60,8 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
   const [progress, setProgress] = useState<Progress>({ type: null, duration: 0 });
   const [showCircle, setShowCircle] = useState<boolean>(true);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
-
+  const vibrationTypeRef = useRef(vibrationType);
+  vibrationTypeRef.current = vibrationType;
 
   const renderCount = useRef(0);
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
@@ -133,9 +134,6 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
     }
   }
 
-  useEffect(() => {
-    renderCount.current = renderCount.current + 1;
-  })
 
   useEffect(() => {
     stopBackgroundMusic();
@@ -158,16 +156,18 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
 
 
   const { breathCounter, startBreathCounter, stopBreathCounter } = useBreathCounter(holdTimeEnd)
-  const hasSwell = backgroundMusic === 'swells';
-  const hasBackgroundMusic = backgroundMusic !== 'swells' && backgroundMusic !== null;
-  const canPlaySwell = hasSwell;
+
+  let backgroundMusicRef = useRef(backgroundMusic);
+  backgroundMusicRef.current = backgroundMusic;
+
+
 
   const exhaleEnd = () => {
     exhaleHoldTime ? startExhaleHold() : startInhale();
   }
 
   const startExhale = (duration = exhaleTime) => {
-    canPlaySwell && startSwellExhale(exhaleTime);
+    backgroundMusicRef.current === 'swells' && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
       delay: inhaleHoldTime ? 0 : 400,
@@ -200,10 +200,12 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
   const inhaleEnd = () => {
     inhaleHoldTime ? startInhaleHold() : startExhale();
   }
-
+  console.log('backgroundMusicRef ', backgroundMusicRef.current);
   const startInhale = (duration = inhaleTime) => {
-    canPlaySwell && startSwellInhale(inhaleTime);
-    vibrationType && startVibration(inhaleTime);
+
+    backgroundMusicRef.current === 'swells' && startSwellInhale(inhaleTime);
+
+    vibrationTypeRef.current && startVibration(inhaleTime);
     circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);
     Animated.timing(circleProgress, {
@@ -225,7 +227,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
 
   const handleStart = () => {
     triggerHaptic();
-    hasBackgroundMusic && startBackgroundMusic();
+    startBackgroundMusic();
     onStartAnimation();
   }
 
@@ -235,13 +237,18 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
     fadeOutAnimation.setValue(1);
     stopVibration();
     stopBreathCounter();
-    hasSwell && stopSwellSound();
-    hasBackgroundMusic && stopBackgroundMusic();
+    backgroundMusicRef.current === 'swells' && stopSwellSound();
+    stopBackgroundMusic();
   }
 
-  const closeInfoModal = () => setInfoModalVisible(false);
+  const closeInfoModal = () => {
+    setInfoModalVisible(false);
+    startExercise();
+  }
 
   const handlePressInfo = () => {
+    stop();
+    setInfoModalVisible(true);
   }
 
   const handleBack = () => {
@@ -270,6 +277,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
     resetting = true;
     stop();
     setTimeout(() => {
+      startBackgroundMusic();
       onStartAnimation();
       resetting = false;
     }, 200)
@@ -279,41 +287,49 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
 
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
-      <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-      <ExerciseTitle title={name} opacity={fadeOutAnimation} />
-      {!resetting &&
+      {!infoModalVisible ?
         <>
-          <View style={{ position: 'absolute', top: 0, left: 40, right: 40, bottom: 0, }}>
-            <LottieView source={naimationFile} progress={circleProgress} />
-          </View>
+          <ExerciseInfo opacity={1} handlePress={handlePressInfo} />
+          <BackButton handlePress={handleBack} opacity={1} />
+          <ExerciseTitle title="configure" opacity={1} />
 
-          <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+          {!resetting &&
+            <>
+              <View style={{ position: 'absolute', top: 0, left: 40, right: 40, bottom: 0, }}>
+                <LottieView source={naimationFile} progress={circleProgress} />
+              </View>
+
+              <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+            </>
+          }
+
+
+
+          <MusicPicker containerStyle={{ top: 60 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
+          <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
+
+          <TouchableOpacity style={styles.vibraionIconHolder} onPress={handleVibrationSelect}>
+            <Image style={[styles.vibrationIcon, !vibrationType && { tintColor: '#464646' }]}
+              source={
+                vibrationType
+                  ? require('../../../assets/images/vibration.png')
+                  : require('../../../assets/images/vibration_off.png')}
+            />
+          </TouchableOpacity>
         </>
+        :
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={infoModalVisible}
+          onRequestClose={closeInfoModal}
+        >
+          <InfoModal
+            title={name} info={info} handleClose={closeInfoModal}
+          />
+        </Modal>
+
       }
-
-
-      <BackButton handlePress={closeModal} opacity={1} />
-      <MusicPicker containerStyle={{ top: 60 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
-      <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
-
-      <TouchableOpacity style={styles.vibraionIconHolder} onPress={handleVibrationSelect}>
-        <Image style={styles.vibrationIcon}
-          source={
-            vibrationType ? require('../../../assets/images/vibration.png')
-              : require('../../../assets/images/vibration_off.png')}
-        />
-      </TouchableOpacity>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={infoModalVisible}
-        onRequestClose={closeInfoModal}
-      >
-        <InfoModal
-          title={name} info={info} handleClose={closeInfoModal}
-        />
-      </Modal>
     </ImageBackground>
 
   );

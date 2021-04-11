@@ -30,13 +30,15 @@ const styles = StyleSheet.create({
     left: 10,
     height: 50,
     width: 50,
-    zIndex: 5,
+    zIndex: 10,
   },
   buttonContainer: {
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 50,
+    width: 60,
+    paddingLeft: 10,
+    // zIndex: 4,
     // backgroundColor: 'red',
   },
   icon: {

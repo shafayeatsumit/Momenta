@@ -217,7 +217,8 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
       delay: inhaleHoldTime ? 0 : 400,
       duration: duration * 1000,
       useNativeDriver: true,
-      easing: Easing.bezier(0.47, 0.0, 0.745, 0.715),
+      // easing: Easing.bezier(0.47, 0.0, 0.745, 0.715),
+      easing: Easing.linear,
     }).start(({ finished }) => {
       finished && exhaleEnd()
     });

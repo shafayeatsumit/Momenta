@@ -46,7 +46,7 @@ interface Props {
   route: RouteProp<any, any>;
   navigation: any;
 }
-const MusicList = ['wind', 'off', 'river', 'rain'];
+const MusicList = ['flying', 'wind', 'off', 'river', 'rain', 'wave'];
 
 let expiryTime = null;
 
@@ -119,7 +119,6 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     track = {
       ...track,
       artist: "",
-      title: track.name,
     }
     setCurrentTrack(track.id);
     await TrackPlayer.add([track])

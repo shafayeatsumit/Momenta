@@ -9,10 +9,8 @@ const styles = StyleSheet.create({
     height: 60,
   },
   tilesContainer: {
-    paddingTop: 10,
-    // paddingBottom: 10,
     flexGrow: 1,
-    marginHorizontal: 20,
+    paddingRight: 10,
   },
   titleHolder: {
     width: 280,

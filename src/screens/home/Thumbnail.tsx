@@ -6,42 +6,44 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { ScreenWidth } from '../../helpers/constants/common';
+import { ScreenWidth, ScreenHeight } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
 import { Exercise } from "../../redux/actions/exercise";
 
 interface Props {
-  exercise: Exercise;
-  goToExercise: Function;
+  item: any;
+  handlePress: Function;
+  containerStyle: any;
 }
 
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const Thumbnail: React.FC<Props> = ({ exercise, goToExercise }) => {
-  const thumbnailSource = exercise.thumbnail;
-  const displayName = capitalizeFirstLetter(exercise.name);
+const Thumbnail: React.FC<Props> = ({ item, containerStyle, handlePress }) => {
+  const thumbnailSource = item.thumbnail;
+  const displayName = capitalizeFirstLetter(item.name);
 
   return (
 
     <TouchableOpacity
-      style={styles.tiles}
+      style={[styles.tiles, containerStyle]}
       activeOpacity={0.8}
-      onPress={() => goToExercise(exercise)}>
+      onPress={() => handlePress(item)}>
 
-      <View style={styles.thumbnailContainer}>
+      <View style={styles.thumbContainer}>
         <ImageBackground
           source={{ uri: thumbnailSource }}
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
           <Text allowFontScaling={false} style={styles.textBold}>{displayName}</Text>
-
         </ImageBackground>
       </View>
 
-
+      <View style={styles.subHolder} >
+        <Text allowFontScaling={false} style={styles.subTitle}>{item.thumbnailTitle}</Text>
+      </View>
     </TouchableOpacity>
 
   );
@@ -51,16 +53,32 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 2.35,
-    height: ScreenWidth / 2.8,
-    marginHorizontal: 10,
-    marginBottom: 30,
+    height: ScreenHeight / 4.5,
+    marginLeft: 20,
+    marginTop: 13,
+    overflow: 'hidden',
   },
-  thumbnailContainer: {
-    flex: 5,
+  title: {
+    fontFamily: FontType.Bold,
+    fontSize: 22,
+    color: 'white',
+    textAlign: 'left',
   },
-  textContainer: {
-    paddingTop: 8,
-    flex: 1.3,
+  subHolder: {
+    height: 35,
+    justifyContent: 'center',
+
+  },
+  subTitle: {
+    fontSize: 12,
+    fontFamily: FontType.Regular,
+    color: '#D3D3D3',
+    textAlign: 'left',
+    flexShrink: 1,
+  },
+  thumbContainer: {
+    marginTop: 15,
+    flex: 1,
   },
   thumbnail: {
     height: '100%',
@@ -68,14 +86,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
   },
+
+
   textBold: {
     fontSize: 20,
     position: 'absolute',
     top: 15,
     left: 15,
-    fontFamily: FontType.Bold,
+    fontFamily: FontType.SemiBold,
     color: 'white',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   level: {
     fontSize: 13,
@@ -87,17 +107,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
 
   },
-  title: {
-    fontSize: 14,
-    fontFamily: FontType.Bold,
-    color: 'white',
-    textAlign: 'left',
-  },
-  subTitle: {
-    fontSize: 12,
-    lineHeight: 18,
-    fontFamily: FontType.Regular,
-    color: '#D3D3D3',
-    textAlign: 'left',
-  }
+
+
 });

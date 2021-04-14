@@ -11,7 +11,7 @@ interface Props {
   containerStyle?: ViewStyle,
 }
 
-const defaultMusic = ['swells', 'wind', 'off', 'river', 'rain'];
+const defaultMusic = ['swells', 'wave', 'off', 'river', 'rain'];
 
 const MusicPicker: React.FC<Props> = ({ containerStyle, selectedMusic, handleMusicSelect, opacity, musicList = defaultMusic }: Props) => {
   let selectedMusicIndex = musicList.findIndex((item) => item === selectedMusic);

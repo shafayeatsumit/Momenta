@@ -32,7 +32,7 @@ interface Props {
   challengeName: string;
 }
 
-const MusicList = ['flying', 'wind', 'off', 'river', 'rain', 'wave'];
+const MusicList = ['flying', 'wave', 'off', 'river', 'rain'];
 
 
 const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, defaultMusic, goBack, pressInfo }: Props) => {

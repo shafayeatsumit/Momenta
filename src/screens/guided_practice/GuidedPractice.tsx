@@ -46,7 +46,7 @@ interface Props {
   route: RouteProp<any, any>;
   navigation: any;
 }
-const MusicList = ['flying', 'wind', 'off', 'river', 'rain', 'wave'];
+const MusicList = ['flying', 'wave', 'off', 'river', 'rain'];
 
 let expiryTime = null;
 

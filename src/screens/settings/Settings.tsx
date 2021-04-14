@@ -136,6 +136,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
 
 
   useEffect(() => {
+    stopSwellSound();
     stopBackgroundMusic();
     startBackgroundMusic();
   }, [backgroundMusic])
@@ -305,7 +306,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
 
 
 
-          <MusicPicker containerStyle={{ top: 60 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
+          <MusicPicker containerStyle={{ top: 45 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={1} />
           <RhythmPicker breathsPerMin={breathsPerMin} slectedRhythm={selectedRhythm} handleRhythmSelect={handleRhythmSelect} rhythmList={rhythmList} />
 
           <TouchableOpacity style={styles.vibraionIconHolder} onPress={handleVibrationSelect}>

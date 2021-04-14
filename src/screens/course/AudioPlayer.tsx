@@ -9,7 +9,7 @@ import ProgressBar from '../guided_practice/ProgressBar';
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import Header from "../../screens/challenge/Header";
-
+import BackgroundImage from "../../components/BackgroundImage"
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
@@ -40,7 +40,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const selectSettings = (state: RootState) => state.courseSettings;
   const settings = useSelector(selectSettings)
-
+  const [lesonDuration, setLessonDuration] = useState<number>(0);
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(false);
 
@@ -92,7 +92,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
       artist: "",
       title: lesson.title,
     }
-
+    setLessonDuration(track.duration);
     await TrackPlayer.add([track])
   }
 
@@ -174,7 +174,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
   return (
     <View style={styles.container}>
       <Header title={lesson.title} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={fadeOutAnimation} />
-      <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
+      <ProgressBar duration={lesonDuration} time={position} color={primaryColor} />
       {isStopped || optionsVisible ?
         <BackgroundCircle opacity={fadeOutAnimation} />
         : null

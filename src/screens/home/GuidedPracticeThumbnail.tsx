@@ -7,11 +7,12 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { ScreenWidth } from '../../helpers/constants/common';
+import { ScreenWidth, ScreenHeight } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
 import { GuidePractice } from "../../redux/actions/guidedPractice";
 import { RootState } from "../../redux/reducers";
 import { useDispatch, useSelector } from "react-redux";
+import _ from 'lodash';
 
 interface Props {
   content: GuidePractice;
@@ -37,7 +38,7 @@ const Thumbnail: React.FC<Props> = ({ content, goToPractice }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text allowFontScaling={false} style={styles.textBold}>{content.name}</Text>
+          <Text allowFontScaling={false} style={styles.textBold}>{_.upperFirst(content.name)}</Text>
           <Text allowFontScaling={false} style={styles.level}>{content.level}</Text>
           {/* {isFinished &&
             <View style={styles.checkmarkHolder}>
@@ -61,9 +62,8 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 1.35,
-    height: ScreenWidth / 1.9,
+    height: ScreenHeight / 4,
     marginHorizontal: 10,
-    // backgroundColor: 'yellow',
   },
   thumbnailContainer: {
     flex: 5,

@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
     fontFamily: FontType.SemiBold,
     lineHeight: 32,
     color: 'white',
-    fontWeight: '700'
+    // fontWeight: '700'
   }
 });

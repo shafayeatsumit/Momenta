@@ -32,7 +32,7 @@ const RhythmPicker: React.FC<Props> = ({ breathsPerMin, slectedRhythm, handleRhy
         })}
       </ScrollView>
       <Text style={styles.numberText}>{breathsPerMin}</Text>
-      <Text style={styles.numberCaption}>Breaths/Min</Text>
+      <Text style={styles.numberCaption}> Breaths/Min</Text>
     </View>
 
 
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 
   numberText: {
     textAlign: 'center',
-    fontSize: 35,
+    fontSize: 25,
     fontFamily: FontType.SemiBold,
     color: 'white',
     position: 'absolute',
@@ -51,11 +51,11 @@ const styles = StyleSheet.create({
   },
   numberCaption: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: FontType.Medium,
     color: 'white',
     position: 'absolute',
-    bottom: 10,
+    bottom: 6,
     right: 30,
   },
   textContainer: {

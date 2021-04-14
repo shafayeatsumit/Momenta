@@ -16,6 +16,8 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* three_thoughtsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* three_thoughtsTests.m */; };
 		3122B03424339B40001C2A30 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3122B03324339B40001C2A30 /* Assets.xcassets */; };
+		317D33562626B47D008A16FB /* flying.wav in Resources */ = {isa = PBXBuildFile; fileRef = 317D33512626B47C008A16FB /* flying.wav */; };
+		317D33572626B47D008A16FB /* wave.wav in Resources */ = {isa = PBXBuildFile; fileRef = 317D33522626B47C008A16FB /* wave.wav */; };
 		31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31822BCB24D14DE800C41C29 /* Montserrat-Light.ttf */; };
 		318DC6E1253032CC00D3795E /* BradleyHandITCTT-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */; };
 		31915665257DFAC700022EE6 /* IOSVibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31915664257DFAC700022EE6 /* IOSVibration.swift */; };
@@ -23,13 +25,13 @@
 		31AB3069250AFEF5008A738B /* Cousine-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31AB3068250AFEF5008A738B /* Cousine-Regular.ttf */; };
 		31ADD53725AC53630008FCA9 /* swell_inhale.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 31ADD53625AC53630008FCA9 /* swell_inhale.mp3 */; };
 		31ADD53D25AC53690008FCA9 /* swell_exhale.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 31ADD53C25AC53690008FCA9 /* swell_exhale.mp3 */; };
+		31B857742626B7B300C50A30 /* flying.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31B857702626B7B200C50A30 /* flying.wav */; };
+		31B857752626B7B300C50A30 /* rain.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31B857712626B7B200C50A30 /* rain.wav */; };
+		31B857762626B7B300C50A30 /* wave.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31B857722626B7B200C50A30 /* wave.wav */; };
+		31B857772626B7B300C50A30 /* wind.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31B857732626B7B300C50A30 /* wind.wav */; };
+		31B8577D2626B84C00C50A30 /* river.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31B8577C2626B84C00C50A30 /* river.wav */; };
 		31C6EEC224BAB9080030BBE5 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C6EEC124BAB9080030BBE5 /* File.swift */; };
 		31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 31E39EB52465098C00F1116E /* GoogleService-Info.plist */; };
-		31F0964B26244F0100B4D4C6 /* wind.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31F0964626244EFF00B4D4C6 /* wind.wav */; };
-		31F0964C26244F0100B4D4C6 /* river.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31F0964726244EFF00B4D4C6 /* river.wav */; };
-		31F0964D26244F0100B4D4C6 /* flying.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31F0964826244F0000B4D4C6 /* flying.wav */; };
-		31F0964E26244F0100B4D4C6 /* wave.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31F0964926244F0100B4D4C6 /* wave.wav */; };
-		31F0964F26244F0100B4D4C6 /* rain.wav in Resources */ = {isa = PBXBuildFile; fileRef = 31F0964A26244F0100B4D4C6 /* rain.wav */; };
 		31F1645624A626D7001F00EA /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31F1645424A626D6001F00EA /* Montserrat-Bold.ttf */; };
 		31F1645724A626D7001F00EA /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 31F1645524A626D6001F00EA /* Montserrat-ExtraBold.ttf */; };
 		36ED219C9AFB48548213E8DA /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 894A7DAC3DDB47BEB6BCFE49 /* Montserrat-SemiBold.ttf */; };
@@ -91,6 +93,8 @@
 		316BFC652431D3D90083A48C /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
 		316BFC662431D3D90083A48C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		316BFC672431D3D90083A48C /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
+		317D33512626B47C008A16FB /* flying.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flying.wav; sourceTree = "<group>"; };
+		317D33522626B47C008A16FB /* wave.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wave.wav; sourceTree = "<group>"; };
 		31822BCB24D14DE800C41C29 /* Montserrat-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Light.ttf"; path = "../assets/fonts/Montserrat-Light.ttf"; sourceTree = "<group>"; };
 		318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BradleyHandITCTT-Bold.ttf"; path = "../assets/fonts/BradleyHandITCTT-Bold.ttf"; sourceTree = "<group>"; };
 		31915664257DFAC700022EE6 /* IOSVibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSVibration.swift; sourceTree = "<group>"; };
@@ -99,14 +103,14 @@
 		31AB306A250B01B3008A738B /* Cousine-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cousine-Regular.ttf"; sourceTree = "<group>"; };
 		31ADD53625AC53630008FCA9 /* swell_inhale.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = swell_inhale.mp3; path = ../../../Documents/swell_inhale.mp3; sourceTree = "<group>"; };
 		31ADD53C25AC53690008FCA9 /* swell_exhale.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = swell_exhale.mp3; path = ../../../Documents/swell_exhale.mp3; sourceTree = "<group>"; };
+		31B857702626B7B200C50A30 /* flying.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flying.wav; sourceTree = "<group>"; };
+		31B857712626B7B200C50A30 /* rain.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rain.wav; sourceTree = "<group>"; };
+		31B857722626B7B200C50A30 /* wave.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wave.wav; sourceTree = "<group>"; };
+		31B857732626B7B300C50A30 /* wind.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wind.wav; sourceTree = "<group>"; };
+		31B8577C2626B84C00C50A30 /* river.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = river.wav; sourceTree = "<group>"; };
 		31C6EEC024BAB9070030BBE5 /* three_thoughts-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "three_thoughts-Bridging-Header.h"; sourceTree = "<group>"; };
 		31C6EEC124BAB9080030BBE5 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		31E39EB52465098C00F1116E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		31F0964626244EFF00B4D4C6 /* wind.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = wind.wav; path = ../../../Downloads/wind.wav; sourceTree = "<group>"; };
-		31F0964726244EFF00B4D4C6 /* river.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = river.wav; path = ../../../Downloads/river.wav; sourceTree = "<group>"; };
-		31F0964826244F0000B4D4C6 /* flying.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flying.wav; sourceTree = "<group>"; };
-		31F0964926244F0100B4D4C6 /* wave.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wave.wav; sourceTree = "<group>"; };
-		31F0964A26244F0100B4D4C6 /* rain.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rain.wav; path = ../../../Downloads/rain.wav; sourceTree = "<group>"; };
 		31F1645424A626D6001F00EA /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Bold.ttf"; path = "../assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		31F1645524A626D6001F00EA /* Montserrat-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-ExtraBold.ttf"; path = "../assets/fonts/Montserrat-ExtraBold.ttf"; sourceTree = "<group>"; };
 		4F34C1E3B2101FBC2D21D8E3 /* Pods-three_thoughtsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-three_thoughtsTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-three_thoughtsTests/Pods-three_thoughtsTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -182,12 +186,9 @@
 		13B07FAE1A68108700A75B9A /* three_thoughts */ = {
 			isa = PBXGroup;
 			children = (
+				317D33512626B47C008A16FB /* flying.wav */,
+				317D33522626B47C008A16FB /* wave.wav */,
 				31ADD53C25AC53690008FCA9 /* swell_exhale.mp3 */,
-				31F0964826244F0000B4D4C6 /* flying.wav */,
-				31F0964A26244F0100B4D4C6 /* rain.wav */,
-				31F0964726244EFF00B4D4C6 /* river.wav */,
-				31F0964926244F0100B4D4C6 /* wave.wav */,
-				31F0964626244EFF00B4D4C6 /* wind.wav */,
 				31ADD53625AC53630008FCA9 /* swell_inhale.mp3 */,
 				31E39EB52465098C00F1116E /* GoogleService-Info.plist */,
 				3122B03324339B40001C2A30 /* Assets.xcassets */,
@@ -264,6 +265,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				31B8577C2626B84C00C50A30 /* river.wav */,
+				31B857702626B7B200C50A30 /* flying.wav */,
+				31B857712626B7B200C50A30 /* rain.wav */,
+				31B857722626B7B200C50A30 /* wave.wav */,
+				31B857732626B7B300C50A30 /* wind.wav */,
 				318DC6E0253032CC00D3795E /* BradleyHandITCTT-Bold.ttf */,
 				31AB3068250AFEF5008A738B /* Cousine-Regular.ttf */,
 				31AB306A250B01B3008A738B /* Cousine-Regular.ttf */,
@@ -456,24 +462,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31F0964C26244F0100B4D4C6 /* river.wav in Resources */,
-				31F0964E26244F0100B4D4C6 /* wave.wav in Resources */,
+				317D33572626B47D008A16FB /* wave.wav in Resources */,
 				318DC6E1253032CC00D3795E /* BradleyHandITCTT-Bold.ttf in Resources */,
 				31ADD53725AC53630008FCA9 /* swell_inhale.mp3 in Resources */,
 				31AB3069250AFEF5008A738B /* Cousine-Regular.ttf in Resources */,
+				317D33562626B47D008A16FB /* flying.wav in Resources */,
+				31B8577D2626B84C00C50A30 /* river.wav in Resources */,
 				31F1645624A626D7001F00EA /* Montserrat-Bold.ttf in Resources */,
-				31F0964F26244F0100B4D4C6 /* rain.wav in Resources */,
-				31F0964B26244F0100B4D4C6 /* wind.wav in Resources */,
 				31F1645724A626D7001F00EA /* Montserrat-ExtraBold.ttf in Resources */,
 				31ADD53D25AC53690008FCA9 /* swell_exhale.mp3 in Resources */,
+				31B857752626B7B300C50A30 /* rain.wav in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				31B857772626B7B300C50A30 /* wind.wav in Resources */,
 				2230DC331FA240BA960526CC /* Montserrat-Medium.ttf in Resources */,
 				BCA444CA6D6543AA847EB15A /* Montserrat-Regular.ttf in Resources */,
 				36ED219C9AFB48548213E8DA /* Montserrat-SemiBold.ttf in Resources */,
 				3122B03424339B40001C2A30 /* Assets.xcassets in Resources */,
 				31E39EB62465098C00F1116E /* GoogleService-Info.plist in Resources */,
+				31B857762626B7B300C50A30 /* wave.wav in Resources */,
 				31822BCC24D14DE800C41C29 /* Montserrat-Light.ttf in Resources */,
-				31F0964D26244F0100B4D4C6 /* flying.wav in Resources */,
+				31B857742626B7B300C50A30 /* flying.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

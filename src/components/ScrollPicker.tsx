@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { triggerHaptic } from "../helpers/hapticFeedback";
 import { eventButtonPush } from "../helpers/analytics";
+import _ from 'lodash';
 
 interface Props {
   onSelect: Function;
@@ -104,7 +105,7 @@ const ScrollPicker: React.FC<Props> = ({ onSelect, itemHeight, fontSize, initial
               <Animated.Text style={[styles.text,
               { opacity, transform: [{ scale }], fontSize },
               Number.isInteger(item) && item >= 10 && { fontSize: 30 }
-              ]}>{item}</Animated.Text>
+              ]}>{_.upperFirst(item)}</Animated.Text>
             </View>
           );
         }}
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#ffffff',
-    fontWeight: '600',
   },
   textContainer: {
     justifyContent: 'center',

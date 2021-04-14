@@ -43,7 +43,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
 
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(false);
-
+  const [lesonDuration, setLessonDuration] = useState<number>(0);
 
   const { position, duration: trackDuration } = useTrackPlayerProgress();
   const playbackState = usePlaybackState();
@@ -52,9 +52,6 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
 
   const backgroundMusic = _.get(settings, `${challengeName}.backgroundMusic`, defaultMusic);
   const isFinished = _.get(settings, `${challengeName}.${lesson.id}.finished`, false)
-
-  console.log('challenge settings', settings);
-  console.log('is finished', isFinished);
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
     if (!isFinished) {
@@ -92,7 +89,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
       artist: "",
       title: lesson.title,
     }
-
+    setLessonDuration(track.duration);
     await TrackPlayer.add([track])
   }
 
@@ -174,7 +171,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
   return (
     <View style={styles.container}>
       <Header title={lesson.title} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={fadeOutAnimation} />
-      <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
+      <ProgressBar duration={lesonDuration} time={position} color={primaryColor} />
       {isStopped || optionsVisible ?
         <BackgroundCircle opacity={fadeOutAnimation} />
         : null

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, ImageBackground, View, Image, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
-
-import { RootState } from "../../redux/reducers";
+import LinearGradient from 'react-native-linear-gradient';
 import { RouteProp } from '@react-navigation/native';
 import Listing from './Listing';
 import { Lesson } from '../../redux/actions/challenge';
-import ExerciseInfo from "../../components/ExerciseInfo";
 import InfoModal from '../../components/Info';
 import AudioPlayer from "./AudioPlayer";
+import BackgroundImage from '../../components/BackgroundImage';
 
 interface Props {
   route: RouteProp<any, any>;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 const Course = ({ route, navigation }: Props) => {
-  const { name, lessons, info, primaryColor, backgroundImage } = route.params.course;
+  const { name, lessons, backgroundGradient, info, primaryColor, backgroundImage } = route.params.course;
   const [listingVisible, setListingVisible] = useState<boolean>(true);
   const [infoVisible, setInfoVisible] = useState<boolean>(false);
   const [selectedLesson, setSelectedLesson] = useState<null | Lesson>(null)
@@ -47,7 +46,16 @@ const Course = ({ route, navigation }: Props) => {
   const showAudioPlayer = !listingVisible && !infoVisible;
   const showListing = listingVisible && !infoVisible;
   return (
-    <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
+    <LinearGradient
+      useAngle={true}
+      angle={192}
+      angleCenter={{ x: 0.5, y: 0.5 }}
+      start={{ x: 0, y: 0 }} end={{ x: 0.05, y: 0.95 }}
+      colors={backgroundGradient}
+      style={{ flex: 1 }}
+    >
+      <BackgroundImage imagePath={backgroundImage} />
+
 
       {showListing && <Listing name={name} handleBack={handleBack} handlePressInfo={handlePressInfo} lessons={lessons} handlePress={handleLessonSelect} />}
       {infoVisible && <InfoModal handleClose={closeInfo} title={name} info={info} />}
@@ -61,7 +69,8 @@ const Course = ({ route, navigation }: Props) => {
           pressInfo={handlePressInfo}
         />
       }
-    </ImageBackground >
+
+    </LinearGradient>
   )
 }
 

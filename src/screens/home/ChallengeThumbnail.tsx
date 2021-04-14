@@ -6,7 +6,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { ScreenWidth } from '../../helpers/constants/common';
+import { ScreenWidth, ScreenHeight } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
 import { Challenge } from "../../redux/actions/challenge";
 
@@ -55,7 +55,7 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 1.15,
-    height: ScreenWidth / 2.5,
+    height: ScreenHeight / 5,
     marginHorizontal: 10,
     marginBottom: 30,
   },
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     bottom: 15,
     left: 15,
     fontFamily: FontType.Regular,
-    fontWeight: '500',
     color: 'white',
     textAlign: 'center',
 

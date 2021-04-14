@@ -13,13 +13,10 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: [
     'user',
-    // 'guidedPracticeSettings',
-    'backgroundMusic',
-    'fetchCompleted',
-    'settings',
-    'contentSettings',
+    'guidedPracticeSettings',
     'challengeSettings',
     'courseSettings',
+    'exerciseSettings',
   ],
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity, View, Image } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
-import { ScreenWidth } from '../../helpers/constants';
+import { ScreenHeight, ScreenWidth } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
 import { Lesson } from "../../redux/actions/course";
 import Header from "../../screens/challenge/Header";
@@ -36,7 +36,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
 
   const renderItem = ({ item }) => {
     const lessonStatus = getLessonStateus(item)
-
+    const formattedDuration = (secs: number) => moment.utc(secs * 1000).format('m.ss');
     return (
       <TouchableOpacity style={styles.item} activeOpacity={0.6} onPress={() => handlePress(item)}>
         <View style={{ flexDirection: 'row', flex: 3, }}>
@@ -44,7 +44,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
           <Text style={styles.title}>{item.title}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.duration}>{item.duration} mins</Text>
+          <Text style={styles.duration}>{formattedDuration(item.duration)} mins</Text>
         </View>
 
       </TouchableOpacity>
@@ -54,13 +54,14 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
   return (
     <View>
       <Header title={name} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={1} />
-      <FlatList
-        contentContainerStyle={styles.container}
-        data={lessons}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
-
+      <View style={styles.container}>
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={lessons}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
+      </View>
     </View>
   )
 }
@@ -69,7 +70,8 @@ export default Listing;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 130,
+    marginTop: 120,
+    height: ScreenHeight * .80,
   },
   item: {
     // height: 60,
@@ -89,9 +91,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   duration: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 16,
+    fontSize: 13,
   }
 
 });

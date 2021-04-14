@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     fontFamily: FontType.Regular,
     fontSize: 18,
     textAlign: 'center',
-    fontWeight: '500',
     color: 'white',
   }
 

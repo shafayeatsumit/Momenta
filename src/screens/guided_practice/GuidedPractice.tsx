@@ -58,6 +58,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const [currentTrack, setCurrentTrack] = useState<string>("");
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(false);
+  const [lessonDuration, setLessonDuration] = useState<number>(0);
   //TODO: fetch it from global.
 
 
@@ -84,7 +85,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     }
 
   });
-
+  console.log('track duration', trackDuration);
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -121,6 +122,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
       artist: "",
     }
     setCurrentTrack(track.id);
+    setLessonDuration(track.duration);
     await TrackPlayer.add([track])
   }
 
@@ -204,7 +206,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
 
       {!showModal ?
         <>
-          <ProgressBar duration={trackDuration} time={position} color={primaryColor} />
+          <ProgressBar duration={lessonDuration} time={position} color={primaryColor} />
           {showTimer && <SleepTimer onExpire={handleBack} expiryTimestamp={expiryTime} />}
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
           {isStopped || optionsVisible ?

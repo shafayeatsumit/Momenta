@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity, View, Image } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/reducers";
-import { ScreenWidth } from '../../helpers/constants';
+import { ScreenHeight, ScreenWidth } from '../../helpers/constants';
 import { FontType } from '../../helpers/theme';
 import { Lesson } from "../../redux/actions/challenge";
 import Header from "./Header";
@@ -44,7 +44,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
     }
     return 'locked'
   }
-
+  const formattedDuration = (secs: number) => moment.utc(secs * 1000).format('m.ss');
   const renderItem = ({ item }) => {
     const lessonStatus = getLessonStateus(item)
 
@@ -55,7 +55,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
           <Text style={styles.title}>{item.title}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.duration}>{item.duration} mins</Text>
+          <Text style={styles.duration}>{formattedDuration(item.duration)} mins</Text>
         </View>
 
       </TouchableOpacity>
@@ -63,14 +63,16 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
   };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Header title={name} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={1} />
-      <FlatList
-        contentContainerStyle={styles.container}
-        data={lessons}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
+      <View style={styles.container}>
+        <FlatList
+          contentContainerStyle={{ flexGrow: 1 }}
+          data={lessons}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
+      </View>
 
     </View>
   )
@@ -80,14 +82,16 @@ export default Listing;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 130,
+    marginTop: 120,
+    height: ScreenHeight * .80,
+    // backgroundColor: 'red',
   },
   item: {
     // height: 60,
     paddingVertical: 20,
     width: ScreenWidth * .85,
     backgroundColor: 'rgba(0,0,0,0.35)',
-    marginVertical: 20,
+    marginVertical: 13,
     alignSelf: 'center',
     borderRadius: 5,
     flexDirection: 'row',
@@ -100,9 +104,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   duration: {
-    fontFamily: FontType.Medium,
+    fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 16,
+    fontSize: 13,
   }
 
 });

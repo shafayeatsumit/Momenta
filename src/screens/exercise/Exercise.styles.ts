@@ -27,9 +27,9 @@ const styles = StyleSheet.create({
   },
   summary: {
     color: 'white',
-    fontSize: 18,
-    fontFamily: FontType.Medium,
-    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: FontType.Regular,
+    textAlign: 'left',
   },
   backgroundImageContainer: {
     position: 'absolute',

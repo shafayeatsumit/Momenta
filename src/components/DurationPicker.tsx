@@ -24,7 +24,7 @@ const DurationPicker: React.FC<Props> = ({ exerciseDuration, handleTimeSelect, o
         initialIndex={initialIndex}
         itemWidth={50}
         itemHeight={50}
-        fontSize={34}
+        fontSize={28}
       />
     </Animated.View>
   );

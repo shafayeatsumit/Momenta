@@ -51,7 +51,7 @@ export default Thumbnail;
 const styles = StyleSheet.create({
   tiles: {
     width: ScreenWidth / 2.35,
-    height: ScreenWidth / 2.5,
+    height: ScreenWidth / 2.8,
     marginHorizontal: 10,
     marginBottom: 30,
   },
@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     bottom: 15,
     left: 15,
     fontFamily: FontType.Regular,
-    fontWeight: '500',
     color: 'white',
     textAlign: 'center',
 

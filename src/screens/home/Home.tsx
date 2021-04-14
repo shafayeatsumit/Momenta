@@ -92,6 +92,17 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
               )}
             </ScrollView>
           </View>
+          <View style={styles.titleHolder}>
+            <Text style={styles.title}>Guided Practices</Text>
+          </View>
+          <View >
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
+              {allGuidedPractice.map((practice) =>
+                <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
+              )}
+            </ScrollView>
+          </View>
+
 
           <View style={styles.titleHolder}>
             <Text style={styles.title}>Exercises</Text>
@@ -100,16 +111,6 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
             <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
               {allExercise.map((exercise) =>
                 <Thumbnail goToExercise={goToExercise} key={exercise.id} exercise={exercise} />
-              )}
-            </ScrollView>
-          </View>
-          <View style={styles.titleHolder}>
-            <Text style={styles.title}>Guided Practices</Text>
-          </View>
-          <View >
-            <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} contentContainerStyle={styles.tilesContainer}>
-              {allGuidedPractice.map((practice) =>
-                <GuidedPracticeThumbnail goToPractice={goToGuidedPractice} key={practice.id} content={practice} />
               )}
             </ScrollView>
           </View>

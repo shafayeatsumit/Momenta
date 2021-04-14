@@ -9,19 +9,18 @@ const styles = StyleSheet.create({
     height: 60,
   },
   tilesContainer: {
-    paddingTop: 20,
+    paddingTop: 10,
     // paddingBottom: 10,
     flexGrow: 1,
     marginHorizontal: 20,
   },
   titleHolder: {
     width: 280,
-    // marginTop: 0,
     marginLeft: 40,
   },
   title: {
     fontFamily: FontType.Bold,
-    fontSize: 25,
+    fontSize: 20,
     color: 'white',
   }
 });

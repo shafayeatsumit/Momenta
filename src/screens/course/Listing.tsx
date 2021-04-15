@@ -39,11 +39,11 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
     const formattedDuration = (secs: number) => Math.round(secs / 60)
     return (
       <TouchableOpacity style={styles.item} activeOpacity={0.6} onPress={() => handlePress(item)}>
-        <View style={{ flexDirection: 'row', flex: 4, }}>
-          <Image source={ICONS[lessonStatus]} style={{ resizeMode: 'contain', height: 18, width: 18, marginHorizontal: 10 }} />
-          <Text style={styles.title}>{item.title}</Text>
+        <View style={{ flexDirection: 'row', flex: 4, alignItems: 'center' }}>
+          <Image source={ICONS[lessonStatus]} style={styles.image} />
+          <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.duration}>{formattedDuration(item.duration)} mins</Text>
         </View>
 
@@ -84,10 +84,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  image: {
+    resizeMode: 'contain', height: 20, width: 20, marginHorizontal: 10
+  },
   title: {
     fontFamily: FontType.Regular,
     color: 'white',
-    fontSize: 15,
+    fontSize: 13,
     flexShrink: 1,
   },
   duration: {

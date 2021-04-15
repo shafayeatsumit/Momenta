@@ -14,13 +14,14 @@ interface Props {
   item: any;
   handlePress: Function;
   containerStyle: any;
+  titleStyle?: any;
 }
 
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const Thumbnail: React.FC<Props> = ({ item, containerStyle, handlePress }) => {
+const Thumbnail: React.FC<Props> = ({ item, containerStyle, handlePress, titleStyle }) => {
   const thumbnailSource = item.thumbnail;
   const displayName = capitalizeFirstLetter(item.name);
 
@@ -37,7 +38,7 @@ const Thumbnail: React.FC<Props> = ({ item, containerStyle, handlePress }) => {
           style={styles.thumbnail}
           resizeMode={"cover"}
         >
-          <Text allowFontScaling={false} style={styles.textBold}>{displayName}</Text>
+          <Text allowFontScaling={false} style={[styles.textBold, titleStyle]}>{displayName}</Text>
         </ImageBackground>
       </View>
 

@@ -139,7 +139,7 @@ const Home: React.FC<Props> = ({ navigation }: Props) => {
                   width: ScreenWidth / 2.0,
                   height: ScreenHeight / 4.0,
                 }}
-
+                titleStyle={{ fontSize: 16 }}
                 handlePress={goToCourse}
                 key={course.id}
                 item={course}

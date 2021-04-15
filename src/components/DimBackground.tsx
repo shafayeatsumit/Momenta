@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Animated, View, Easing, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { eventButtonPush } from "../helpers/analytics";
+import TrackPlayer from 'react-native-track-player';
 
 interface Props {
   exerciseState: any
@@ -20,18 +21,23 @@ const DimBackground: React.FC<Props> = ({ exerciseState }: Props) => {
   }
 
   const resetBackground = () => {
-    dimOpacity.setValue(0);
+    Animated.timing(dimOpacity, {
+      toValue: 0,
+      duration: 200,
+      delay: 0,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
   }
 
   useEffect(() => {
-    console.log('dim background ', exerciseState);
-    if (exerciseState === 'playing') {
+    if (exerciseState === TrackPlayer.STATE_PLAYING) {
       dimBackground();
     }
-    if (exerciseState === 'paused') {
+    if (exerciseState === TrackPlayer.STATE_PAUSED) {
       resetBackground();
     }
-
+    console.log(`dim background ${exerciseState}`);
   }, [exerciseState])
 
   return (

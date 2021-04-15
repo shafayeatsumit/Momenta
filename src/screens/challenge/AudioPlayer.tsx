@@ -181,7 +181,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
       <TapHandler handleTap={handleTap} />
       {isStopped && <PlayButton handleStart={handleStart} buttonOpacity={fadeOutAnimation} />}
       {isPlaying && <PauseButton handlePause={handlePause} buttonOpacity={fadeOutAnimation} />}
-      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 130 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
+      {isStopped && <MusicPicker musicList={MusicList} containerStyle={{ bottom: 200 }} selectedMusic={backgroundMusic} handleMusicSelect={handleMusicSelect} opacity={fadeOutAnimation} />}
       {showTimer && <FinishButton containerStyle={{ bottom: 140 }} handleFinish={handleBack} />}
     </View>
   );

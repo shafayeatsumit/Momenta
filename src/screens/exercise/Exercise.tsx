@@ -23,7 +23,6 @@ import ExerciseTitle from "../../components/ExerciseTitle";
 import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
-import BreathCounter from "../../components/BreathCounter";
 import TapHandler from "../../components/TapHandler";
 import BreathingInstruction from "../../components/BreathingInstructionText";
 import { ExercisesRhythm, LottieFiles } from "../../helpers/constants";
@@ -50,10 +49,13 @@ interface Progress {
   duration: number;
 }
 
+
+
 const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const selectSettings = (state: RootState) => state.exerciseSettings;
   const settingsInfo = useSelector(selectSettings)
   const circleProgress = useRef(new Animated.Value(0)).current;
+  const totalBreathCount = useRef(0);
   const appState = useRef(AppState.currentState);
 
   const [exerciseDuration, setExerciseDuration] = useState<number>(1);
@@ -66,7 +68,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-  const renderCount = useRef(0);
 
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
@@ -145,9 +146,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
     }
   }
 
-  useEffect(() => {
-    renderCount.current = renderCount.current + 1;
-  })
 
   useEffect(() => {
     if (settingsVisible) {
@@ -210,7 +208,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   }
 
   const startExhale = (duration = exhaleTime) => {
-    console.log('duration', duration)
+    totalBreathCount.current = totalBreathCount.current + 1;
     canPlaySwell && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
@@ -244,7 +242,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const startInhale = (duration = inhaleTime) => {
     canPlaySwell && startSwellInhale(inhaleTime);
-    console.log(`inhale duration ${duration}`)
     vibrationType && startVibration(inhaleTime);
     circleProgress.setValue(0);
     setBreathingState(BreathingState.Inhale);
@@ -301,6 +298,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
   const handlePause = () => {
     if (!exerciseNotStarted) {
       setExerciseState(ExerciseState.Paused);
+      totalBreathCount.current = 0;
     }
     stop();
   }
@@ -365,7 +363,6 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
           <>
             <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
             <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
-
             <SettingsButton opacity={fadeOutAnimation} handlePress={handlePressSettings} />
           </>
         }
@@ -379,7 +376,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
 
 
         {(!isPaused && !optionsVisible) &&
-          <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+          <BreathingInstructionText totalBreathCount={totalBreathCount.current} instructionText={instructionText} count={breathCounter} />
         }
         {exerciseFinished && !settingsVisible && <FinishButton color={primaryColor} handleFinish={handleFinish} />}
 

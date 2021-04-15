@@ -22,8 +22,8 @@ const InfoModal: React.FC<Props> = ({ info, title, handleClose }) => {
     <View style={{ flex: 1 }}>
 
       <ExerciseTitle title={title} opacity={1} textStyle={{ fontSize: 24 }} />
-      <ScrollView style={styles.container}>
-        <Text allowFontScaling={false} style={styles.text}>{jsonEscape(info)}</Text>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
+        <Text allowFontScaling={false} style={styles.text}>{info}</Text>
       </ScrollView>
 
       <View style={styles.closeButton}>
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'rgba(0,0,0,0.4)',
     marginTop: 100,
-    marginHorizontal: 30,
+    marginHorizontal: 35,
     padding: 30,
-    marginBottom: 80,
+    marginBottom: 10,
     borderRadius: 10,
   },
   settings: {
@@ -68,18 +68,14 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   text: {
-    fontSize: 18,
-    lineHeight: 20,
+    fontSize: 16,
     color: 'white',
-    // alignSelf: 'center',
     fontFamily: FontType.Medium,
   },
   closeButton: {
-    // position: 'absolute',
     height: 80,
     width: 80,
     bottom: 20,
-    // backgroundColor: 'red',
     marginVertical: 20,
     alignSelf: 'center',
   },

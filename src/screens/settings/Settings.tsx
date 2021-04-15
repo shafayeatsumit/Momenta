@@ -53,7 +53,7 @@ let resetting = false;
 const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selectedRhythm, closeModal, iosHapticStatus, info, primaryColor, backgroundMusic, backgroundImage }: Props) => {
   const dispatch = useDispatch();
   const circleProgress = useRef(new Animated.Value(0)).current;
-
+  const totalBreathCount = useRef(0);
   const [exerciseDuration, setExerciseDuration] = useState<number>(2);
   const [breathingState, setBreathingState] = useState<BreathingState>(BreathingState.NotStarted)
   const [exerciseState, setExerciseState] = useState<ExerciseState>(ExerciseState.NotStarted);
@@ -168,6 +168,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
   }
 
   const startExhale = (duration = exhaleTime) => {
+    totalBreathCount.current = totalBreathCount.current + 1;
     backgroundMusicRef.current === 'swells' && startSwellExhale(exhaleTime);
     Animated.timing(circleProgress, {
       toValue: 1,
@@ -290,9 +291,6 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
       {!infoModalVisible ?
         <>
-          <ExerciseInfo opacity={1} handlePress={handlePressInfo} />
-          <BackButton handlePress={handleBack} opacity={1} />
-          <ExerciseTitle title="configure" opacity={1} />
 
           {!resetting &&
             <>
@@ -300,7 +298,7 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
                 <LottieView source={naimationFile} progress={circleProgress} />
               </View>
 
-              <BreathingInstructionText instructionText={instructionText} count={breathCounter} />
+              <BreathingInstructionText totalBreathCount={totalBreathCount.current} instructionText={instructionText} count={breathCounter} />
             </>
           }
 
@@ -317,6 +315,11 @@ const Exercise: React.FC<Props> = ({ name, appStateVisible, vibrationType, selec
                   : require('../../../assets/images/vibration_off.png')}
             />
           </TouchableOpacity>
+          <ExerciseTitle title="configure" opacity={1} />
+
+          <BackButton handlePress={handleBack} opacity={1} />
+          <ExerciseInfo opacity={1} handlePress={handlePressInfo} />
+
         </>
         :
         <Modal

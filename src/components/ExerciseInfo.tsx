@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     right: 20,
     height: 50,
     width: 50,
-    zIndex: 5,
+    zIndex: 10,
   },
   buttonContainer: {
     height: 50,

@@ -7,14 +7,20 @@ import BreathCounter from './BreathCounter';
 interface Props {
   instructionText: string,
   count: number,
+  totalBreathCount: number,
 }
 
-const BreathingInstructionText: React.FC<Props> = ({ instructionText, count }: Props) => {
-  const showCount = instructionText === "Hold" && count;
+const BreathingInstructionText: React.FC<Props> = ({ instructionText, count, totalBreathCount }: Props) => {
+  const showCount = (instructionText === "Hold" && count > 0)
+  const showInstructionText = totalBreathCount < 3 && !showCount;
+
   return (
     <View style={styles.absoluteContainer}>
       <Text style={[styles.text]}>
-        {showCount ? count : instructionText}
+        {/* {showCount ? count : instructionText} */}
+        {showCount && count}
+        {showInstructionText && instructionText}
+
       </Text>
 
     </View>

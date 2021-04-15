@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   summary: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: FontType.Regular,
     textAlign: 'left',
   },

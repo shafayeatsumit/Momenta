@@ -9,7 +9,7 @@ import ProgressBar from '../guided_practice/ProgressBar';
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import Header from "./Header";
-
+import DimBackground from "../../components/DimBackground"
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
@@ -170,6 +170,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
 
   return (
     <View style={styles.container}>
+      <DimBackground exerciseState={playbackState} />
       <Header title={lesson.title} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={fadeOutAnimation} />
       <ProgressBar duration={lesonDuration} time={position} color={primaryColor} />
       {isStopped || optionsVisible ?

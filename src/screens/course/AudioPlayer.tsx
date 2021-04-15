@@ -9,11 +9,9 @@ import ProgressBar from '../guided_practice/ProgressBar';
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
 import Header from "../../screens/challenge/Header";
-import BackgroundImage from "../../components/BackgroundImage"
+import DimBackground from "../../components/DimBackground"
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
-import ExerciseInfo from "../../components/ExerciseInfo";
-import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
 import { RootState } from "../../redux/reducers";
 import { changeCourseBackground, finishedCourseLesson } from "../../redux/actions/courseSettings";
@@ -173,6 +171,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
 
   return (
     <View style={styles.container}>
+      <DimBackground exerciseState={playbackState} />
       <Header title={lesson.title} handleBack={handleBack} handlePressInfo={handlePressInfo} opacity={fadeOutAnimation} />
       <ProgressBar duration={lesonDuration} time={position} color={primaryColor} />
       {isStopped || optionsVisible ?

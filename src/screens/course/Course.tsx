@@ -8,6 +8,7 @@ import { Lesson } from '../../redux/actions/challenge';
 import InfoModal from '../../components/Info';
 import AudioPlayer from "./AudioPlayer";
 import BackgroundImage from '../../components/BackgroundImage';
+import DimBackground from '../../components/DimBackground';
 
 interface Props {
   route: RouteProp<any, any>;
@@ -55,8 +56,6 @@ const Course = ({ route, navigation }: Props) => {
       style={{ flex: 1 }}
     >
       <BackgroundImage imagePath={backgroundImage} />
-
-
       {showListing && <Listing name={name} handleBack={handleBack} handlePressInfo={handlePressInfo} lessons={lessons} handlePress={handleLessonSelect} />}
       {infoVisible && <InfoModal handleClose={closeInfo} title={name} info={info} />}
       {showAudioPlayer &&

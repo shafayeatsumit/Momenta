@@ -28,17 +28,14 @@ import SleepTimer from "./SleepTimer";
 
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
-import LessonTitle from "../../components/LessonTitle";
-import SettingsButton from "../../components/SettingsButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
 import BackButton from "../../components/BackButton";
 import TapHandler from "../../components/TapHandler";
+import DimBackground from "../../components/DimBackground";
 
 import { changePracticeMusic, updateLastPractice } from "../../redux/actions/guidedPracticeSettings";
-import { BreathingState, ExerciseState } from "../../helpers/types";
-import LinearGradient from 'react-native-linear-gradient';
 import { useSelector, useDispatch } from 'react-redux';
-import _, { update } from 'lodash';
+import _ from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
 
 
@@ -53,6 +50,8 @@ let expiryTime = null;
 const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
+
+
   const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
@@ -85,7 +84,9 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     }
 
   });
-  console.log('track duration', trackDuration);
+
+
+
 
   const onStartAnimation = () => {
     Animated.timing(fadeOutAnimation, {
@@ -200,10 +201,10 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     startBackgroundMusic();
   }, [backgroundMusic])
   const showModal = infoModalVisible;
+
   return (
     <ImageBackground source={{ uri: backgroundImage }} style={{ height: '100%', width: '100%' }}>
-      {isPlaying && <View style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,0.6)' }} />}
-
+      <DimBackground exerciseState={playbackState} />
       {!showModal ?
         <>
           <ProgressBar duration={lessonDuration} time={position} color={primaryColor} />
@@ -249,5 +250,5 @@ const styles = StyleSheet.create({
   bgImage: {
     height: '100%',
     width: '100%',
-  }
+  },
 })

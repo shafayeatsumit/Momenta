@@ -44,7 +44,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
     }
     return 'locked'
   }
-  const formattedDuration = (secs: number) => moment.utc(secs * 1000).format('m.ss');
+  const formattedDuration = (secs: number) => Math.round(secs / 60);
   const renderItem = ({ item }) => {
     const lessonStatus = getLessonStateus(item)
 

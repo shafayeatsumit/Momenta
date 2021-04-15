@@ -43,7 +43,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
           <Image source={ICONS[lessonStatus]} style={styles.image} />
           <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
         </View>
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={styles.duration}>{formattedDuration(item.duration)} mins</Text>
         </View>
 

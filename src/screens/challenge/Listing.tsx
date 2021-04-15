@@ -50,11 +50,11 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
 
     return (
       <TouchableOpacity disabled={lessonStatus === 'locked'} style={styles.item} activeOpacity={0.6} onPress={() => handlePress(item)}>
-        <View style={{ flexDirection: 'row', flex: 3, }}>
-          <Image source={ICONS[lessonStatus]} style={{ resizeMode: 'contain', height: 22, width: 24, marginHorizontal: 10 }} />
+        <View style={{ flexDirection: 'row', flex: 3, alignItems: 'center' }}>
+          <Image source={ICONS[lessonStatus]} style={styles.image} />
           <Text style={styles.title}>{item.title}</Text>
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={styles.duration}>{formattedDuration(item.duration)} mins</Text>
         </View>
 
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
     height: ScreenHeight * .80,
     // backgroundColor: 'red',
   },
+  image: {
+    resizeMode: 'contain', height: 24, width: 24, marginHorizontal: 10
+  },
   item: {
     // height: 60,
     paddingVertical: 20,
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: FontType.Medium,
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     flexShrink: 1,
   },
   duration: {

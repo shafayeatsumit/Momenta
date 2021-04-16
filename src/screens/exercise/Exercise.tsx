@@ -352,7 +352,7 @@ const FixedExercise: React.FC<Props> = ({ route, navigation }: Props) => {
         {exerciseNotStarted && !settingsVisible &&
           <>
             <View style={styles.summaryContainer}>
-              <Text style={styles.summary}> {summary} </Text>
+              <Text style={styles.summary}>{summary}</Text>
             </View>
             <DurationPicker exerciseDuration={exerciseDuration} handleTimeSelect={handleTimeSelect} opacity={fadeOutAnimation} />
           </>

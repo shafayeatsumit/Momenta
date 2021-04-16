@@ -20,10 +20,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 150,
     marginHorizontal: 30,
-    padding: 10,
+    padding: 15,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    alignSelf: 'center'
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   summary: {
     color: 'white',

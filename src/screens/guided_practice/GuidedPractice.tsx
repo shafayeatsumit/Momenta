@@ -1,31 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Animated, StyleSheet, ImageBackground, Easing, Modal, Text, Platform, View, NativeModules } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
-import TrackPlayer, { TrackPlayerEvents, useTrackPlayerEvents, useTrackPlayerProgress, usePlaybackState } from 'react-native-track-player';
-import BreathingProgress from "../../components/BreathingProgress";
+import TrackPlayer, { useTrackPlayerEvents, useTrackPlayerProgress, usePlaybackState } from 'react-native-track-player';
 import { triggerHaptic } from "../../helpers/hapticFeedback";
-import useBreathCounter from "../../hooks/useBreathCounter";
-import useTimer from "../../hooks/useTimer";
 import { RootState } from "../../redux/reducers";
 import InfoModal from "../../components/Info";
-import SettingsScreen from '../settings/Settings';
 import MusicPicker from '../../components/MusicPicker';
-import { startSwellExhale, startSwellInhale, stopSwellSound } from "../../helpers/SoundPlayer";
 import { playBackgroundMusic, stopBackgroundMusic } from "../../helpers/SoundPlayer";
 import ProgressBar from './ProgressBar';
-import DurationPicker from "../../components/DurationPicker";
 import { findNextTrack } from "../../helpers/common";
-import BackgroundImage from "../../components/BackgroundImage";
-import BreathingInstruction from "../../components/BreathingInstructionText";
-import LessonBackButton from "../../components/LessonBack";
-import FinishCheckMark from "../../components/FinishCheckMark";
-import LessonForwardButton from "../../components/LessonForward";
 import BackgroundCircle from "../../components/BackgroundCircle"
 import FinishButton from "../../components/FinishButton";
-import NavigateLesson from "../../components/NavigateLesson";
-import Timer from "../../components/Timer";
 import SleepTimer from "./SleepTimer";
-
 import PlayButton from "../../components/PlayButton";
 import PauseButton from "../../components/PauseButton";
 import ExerciseInfo from "../../components/ExerciseInfo";
@@ -37,6 +23,7 @@ import { changePracticeMusic, updateLastPractice } from "../../redux/actions/gui
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
+import { FontType } from '../../helpers/theme';
 
 
 interface Props {
@@ -52,9 +39,10 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { id: practiceId, duration, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
+  const { id: practiceId, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
+  const [exerciseStarted, setExerciseStarted] = useState<boolean>(false);
   const [infoModalVisible, setInfoModalVisible] = useState<boolean>(false);
   const [showTimer, setShowTimer] = useState<boolean>(false);
   const [lessonDuration, setLessonDuration] = useState<number>(0);
@@ -158,6 +146,9 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
     triggerHaptic();
     onStartAnimation();
     setOptionsVisible(false);
+    if (!exerciseStarted) {
+      setExerciseStarted(true)
+    }
   }
 
   const handlePause = () => {
@@ -210,6 +201,13 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
           <ProgressBar duration={lessonDuration} time={position} color={primaryColor} />
           {showTimer && <SleepTimer onExpire={handleBack} expiryTimestamp={expiryTime} />}
           <ExerciseInfo opacity={fadeOutAnimation} handlePress={handlePressInfo} />
+
+          {!exerciseStarted &&
+            <View style={styles.summaryContainer}>
+              <Text style={styles.summary}>{summary}</Text>
+            </View>
+          }
+
           {isStopped || optionsVisible ?
             <>
               <BackButton handlePress={handleBack} opacity={fadeOutAnimation} />
@@ -251,4 +249,20 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
+  summaryContainer: {
+    position: 'absolute',
+    top: 150,
+    marginHorizontal: 30,
+    padding: 15,
+    borderRadius: 10,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  summary: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: FontType.Regular,
+    textAlign: 'left',
+  },
+
 })

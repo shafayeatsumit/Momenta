@@ -33,9 +33,12 @@ const styles = StyleSheet.create({
   },
   courseTitle: {
     textAlign: 'center',
-    fontFamily: FontType.Bold,
+    fontFamily: FontType.SemiBold,
     fontSize: 24,
     color: 'white',
     paddingHorizontal: 80,
+
+    lineHeight: 32,
+
   },
 });

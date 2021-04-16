@@ -19,7 +19,7 @@ const Header = ({ title, handleBack, opacity, handlePressInfo }: Props) => {
     <>
       <ExerciseTitle title={title} textStyle={{ fontSize: 24 }} opacity={opacity} />
       <BackButton handlePress={handleBack} opacity={opacity} />
-      <ExerciseInfo opacity={opacity} handlePress={handlePressInfo} opacity={opacity} />
+      {/* <ExerciseInfo opacity={opacity} handlePress={handlePressInfo} opacity={opacity} /> */}
     </>
   )
 }

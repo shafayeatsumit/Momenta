@@ -15,16 +15,18 @@ if (!__DEV__) {
 }
 
 TrackPlayer.setupPlayer();
+
+// TrackPlayer.registerPlaybackService(() => require('./src/helpers/trackplayerServices.js'));
+
 TrackPlayer.updateOptions({
   stopWithApp: false,
-
-  capabilities: [
-    TrackPlayer.CAPABILITY_PLAY,
-    TrackPlayer.CAPABILITY_PAUSE,
-    TrackPlayer.CAPABILITY_STOP,
-    TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-    TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-  ],
+  // capabilities: [
+  //   // TrackPlayer.CAPABILITY_PLAY,
+  //   // TrackPlayer.CAPABILITY_PAUSE,
+  //   // TrackPlayer.CAPABILITY_STOP,
+  //   // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+  //   // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+  // ],
 })
 
 

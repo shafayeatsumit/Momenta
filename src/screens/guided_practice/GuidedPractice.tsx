@@ -24,6 +24,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import CourseTitle from '../../components/CourseTitle';
 import { FontType } from '../../helpers/theme';
+import Thumbnail from '../home/CourseThumbnail';
 
 
 interface Props {
@@ -39,7 +40,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
 
 
-  const { id: practiceId, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
+  const { id: practiceId, thumbnail, primaryColor, backgroundImage, tracks, name: practiceName, info, summary, defaultMusic } = route.params.guidePractice;
   const [optionsVisible, setOptionsVisible] = useState<boolean>(false);
   const [currentTrack, setCurrentTrack] = useState<string>("");
   const [exerciseStarted, setExerciseStarted] = useState<boolean>(false);
@@ -108,6 +109,7 @@ const GuidedPractice: React.FC<Props> = ({ route, navigation }: Props) => {
 
     track = {
       ...track,
+      artwork: thumbnail,
       artist: "",
     }
     setCurrentTrack(track.id);

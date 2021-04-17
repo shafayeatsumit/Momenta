@@ -16,7 +16,7 @@ interface Props {
 }
 
 const Challenge = ({ route, navigation }: Props) => {
-  const { name, lessons, info, primaryColor, backgroundImage } = route.params.challenge;
+  const { name, lessons, thumbnail, info, primaryColor, backgroundImage } = route.params.challenge;
   const [listingVisible, setListingVisible] = useState<boolean>(true);
   const [infoVisible, setInfoVisible] = useState<boolean>(false);
   const [selectedLesson, setSelectedLesson] = useState<null | Lesson>(null)
@@ -55,6 +55,7 @@ const Challenge = ({ route, navigation }: Props) => {
         <AudioPlayer
           challengeName={name}
           primaryColor={primaryColor}
+          thumbnail={thumbnail}
           lesson={selectedLesson}
           defaultMusic={'off'}
           goBack={handleBack}

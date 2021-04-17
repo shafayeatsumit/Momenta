@@ -28,12 +28,13 @@ interface Props {
   goBack: Function;
   pressInfo: Function;
   courseName: string;
+  thumbnail: string;
 }
 
 const MusicList = ['flying', 'wave', 'off', 'river', 'rain'];
 
 
-const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, defaultMusic, goBack, pressInfo }: Props) => {
+const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, defaultMusic, goBack, pressInfo, thumbnail }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const selectSettings = (state: RootState) => state.courseSettings;
@@ -51,8 +52,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
   const backgroundMusic = _.get(settings, `${courseName}.backgroundMusic`, defaultMusic);
   const isFinished = _.get(settings, `${courseName}.${lesson.id}.finished`, false)
 
-  console.log('course settings', settings);
-  console.log('is finished', isFinished);
+
 
   useTrackPlayerEvents(["playback-queue-ended"], async event => {
     if (!isFinished) {
@@ -89,6 +89,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, courseName, lesson, def
       ...lesson,
       artist: "",
       title: lesson.title,
+      artwork: thumbnail,
     }
     setLessonDuration(track.duration);
     await TrackPlayer.add([track])

@@ -30,12 +30,13 @@ interface Props {
   goBack: Function;
   pressInfo: Function;
   challengeName: string;
+  thumbnail: string;
 }
 
 const MusicList = ['flying', 'wave', 'off', 'river', 'rain'];
 
 
-const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, defaultMusic, goBack, pressInfo }: Props) => {
+const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, defaultMusic, goBack, pressInfo, thumbnail }: Props) => {
   const dispatch = useDispatch();
   const fadeOutAnimation = useRef(new Animated.Value(1)).current;
   const selectSettings = (state: RootState) => state.challengeSettings;
@@ -88,6 +89,7 @@ const GuidedPractice: React.FC<Props> = ({ primaryColor, challengeName, lesson, 
       ...lesson,
       artist: "",
       title: lesson.title,
+      artwork: thumbnail,
     }
     setLessonDuration(track.duration);
     await TrackPlayer.add([track])

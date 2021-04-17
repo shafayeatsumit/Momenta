@@ -16,7 +16,7 @@ interface Props {
 }
 
 const Course = ({ route, navigation }: Props) => {
-  const { name, lessons, backgroundGradient, info, primaryColor, backgroundImage } = route.params.course;
+  const { name, lessons, thumbnail, backgroundGradient, info, primaryColor, backgroundImage } = route.params.course;
   const [listingVisible, setListingVisible] = useState<boolean>(true);
   const [infoVisible, setInfoVisible] = useState<boolean>(false);
   const [selectedLesson, setSelectedLesson] = useState<null | Lesson>(null)
@@ -63,6 +63,7 @@ const Course = ({ route, navigation }: Props) => {
           courseName={name}
           primaryColor={primaryColor}
           lesson={selectedLesson}
+          thumbnail={thumbnail}
           defaultMusic={'off'}
           goBack={handleBack}
           pressInfo={handlePressInfo}

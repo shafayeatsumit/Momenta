@@ -32,7 +32,7 @@ const Listing = ({ lessons, handlePress, name, handlePressInfo, handleBack }: Pr
     if (isFinished) {
       return 'finished'
     }
-    if (lesson.order === 0) {
+    if (lesson.order === 0 || lesson.order === 1) {
       return 'unlocked'
     }
     const prevLesson = lessons[lesson.order - 1]

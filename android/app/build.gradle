@@ -134,8 +134,8 @@ android {
         applicationId "org.threethoughtshealthierllc.momenta"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "2.2"
+        versionCode 17
+        versionName "2.6"
         multiDexEnabled true
     }
     signingConfigs {

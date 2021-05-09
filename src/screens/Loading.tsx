@@ -49,7 +49,7 @@ const Loading: React.FC<Props> = ({ navigation }: Props) => {
     >
       <Image source={require('../../assets/images/momenta.png')} />
       <ActivityIndicator style={styles.loader} size="large" color="#808080" />
-      <Text allowFontScaling={false} style={styles.text}>Breathe better.</Text>
+      <Text allowFontScaling={false} style={styles.text}>Use your breath to feel how you want.</Text>
     </LinearGradient>
 
   );
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: FontType.Regular,
     paddingTop: 10,
-    fontSize: 18,
+    fontSize: 15,
     lineHeight: 22,
     color: 'white',
   }
